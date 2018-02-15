@@ -1,6 +1,6 @@
 require "wcc/contentful/version"
 
-module Wcc
+module WCC
   module Contentful
     # Your code goes here...
   end

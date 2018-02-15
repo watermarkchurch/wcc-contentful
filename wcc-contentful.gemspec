@@ -5,7 +5,7 @@ require "wcc/contentful/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "wcc-contentful"
-  spec.version       = Wcc::Contentful::VERSION
+  spec.version       = WCC::Contentful::VERSION
   spec.authors       = ["Watermark Dev"]
   spec.email         = ["dev@watermark.org"]
 
