@@ -1,0 +1,79 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=redirect&fields.slug=redirect-with-slug-and-page-reference&include=10
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - RubyContentfulGem/0.12.0
+      Authorization:
+      - Bearer <CONTENTFUL_ACCESS_TOKEN>
+      Content-Type:
+      - application/vnd.contentful.delivery.v1+json
+      Accept-Encoding:
+      - gzip
+      Connection:
+      - close
+      Host:
+      - cdn.contentful.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Access-Control-Allow-Headers:
+      - Accept,Accept-Language,Authorization,Cache-Control,Content-Length,Content-Range,Content-Type,DNT,Destination,Expires,If-Match,If-Modified-Since,If-None-Match,Keep-Alive,Last-Modified,Origin,Pragma,Range,User-Agent,X-Http-Method-Override,X-Mx-ReqToken,X-Requested-With,X-Contentful-Version,X-Contentful-Content-Type,X-Contentful-Organization,X-Contentful-Skip-Transformation,X-Contentful-User-Agent,X-Contentful-Enable-Alpha-Feature
+      Access-Control-Allow-Methods:
+      - GET,HEAD,OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Etag
+      Access-Control-Max-Age:
+      - '86400'
+      Cache-Control:
+      - max-age=0
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/vnd.contentful.delivery.v1+json
+      Etag:
+      - W/"53f9bf8021d12bfd9f63a21710dd7342"
+      Server:
+      - Contentful
+      X-Content-Type-Options:
+      - nosniff
+      X-Contentful-Request-Id:
+      - 665df080f278bfb5ec1c4b5071eac414
+      Content-Length:
+      - '3144'
+      Accept-Ranges:
+      - bytes
+      Date:
+      - Fri, 16 Feb 2018 05:22:18 GMT
+      Via:
+      - 1.1 varnish
+      Age:
+      - '0'
+      Connection:
+      - close
+      X-Served-By:
+      - cache-mdw17331-MDW
+      X-Cache:
+      - MISS
+      X-Cache-Hits:
+      - '0'
+      X-Timer:
+      - S1518758539.500876,VS0,VE245
+      Vary:
+      - Accept-Encoding
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        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
+    http_version: 
+  recorded_at: Fri, 16 Feb 2018 05:22:18 GMT
+recorded_with: VCR 4.0.0
