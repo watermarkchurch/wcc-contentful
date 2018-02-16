@@ -16,8 +16,23 @@ Or install it yourself as:
 
     $ gem install wcc-contentful
 
+## Configure
+
+```ruby
+WCC::Contentful.configure do |config|
+  config.access_token = <CONTENTFUL_ACCESS_TOKEN>
+  config.space = <CONTENTFUL_SPACE_ID>
+  config.default_locale = "en-US"
+end
+```
+
 ## Usage
 
+```ruby
+redirect_object = WCC::Contentful::Redirect.find_by_slug('new')
+
+redirect_object.location
+```
 
 ## Development
 
