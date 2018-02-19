@@ -14,11 +14,11 @@ module WCC::Contentful
 
     def location
       if !self.url.nil?
-        return self.url
+        self.url
       elsif valid_page_reference?(self.pageReference)
-        return "/#{self.pageReference.url}"
+        "/#{self.pageReference.url}"
       else
-        return nil
+        nil
       end
     end
 
