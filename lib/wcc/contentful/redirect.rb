@@ -15,10 +15,18 @@ module WCC::Contentful
     def location
       if !self.url.nil?
         return self.url
-      elsif !self.pageReference.nil?
+      elsif valid_page_reference?(self.pageReference)
         return "/#{self.pageReference.url}"
       else
         return nil
+      end
+    end
+
+    def valid_page_reference?(page_ref)
+      unless page_ref.nil? || defined?(page_ref.url).nil?
+        true
+      else
+        false
       end
     end
   end
