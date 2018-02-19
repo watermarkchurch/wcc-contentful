@@ -5,9 +5,9 @@ RSpec.describe WCC::Contentful::Redirect, type: :model do
   describe '.find_by_slug' do
     before do
       WCC::Contentful.configure do |config|
-        config.access_token = "<CONTENTFUL_ACCESS_TOKEN>"
-        config.space = "<CONTENTFUL_SPACE_ID>"
-        config.default_locale = "en-US"
+        config.access_token = '<CONTENTFUL_ACCESS_TOKEN>'
+        config.space = '<CONTENTFUL_SPACE_ID>'
+        config.default_locale = 'en-US'
       end
     end
     context 'when the Redirect model in Contentful has a slug and url, but no pageReference' do
@@ -93,4 +93,34 @@ RSpec.describe WCC::Contentful::Redirect, type: :model do
       end
     end
   end
+
+  describe '#valid_page_reference?' do
+    context 'when the Redirect model has a pageReference that includes a url' do
+      it 'should return true' do
+        VCR.use_cassette('models/wcc_contentful/redirect/has_slug_and_page_reference', record: :none) do
+          response = described_class.find_by_slug('redirect-with-slug-and-page-reference')
+          expect(response.valid_page_reference?(response.pageReference)).to eq(true)
+        end
+      end
+    end
+
+    context 'when the Redirect model has a pageReference that does not include a url' do
+      it 'should return false' do
+        VCR.use_cassette('models/wcc_contentful/redirect/page_ref_with_no_url') do
+          response = described_class.find_by_slug('page-ref-with-no-url')
+          expect(response.valid_page_reference?(response.pageReference)).to eq(false)
+        end
+      end
+    end
+
+    context 'when the Redirect model does not have a pageReference' do
+      it 'should return false' do
+        VCR.use_cassette('models/wcc_contentful/redirect/has_slug_only', record: :none) do
+          response = described_class.find_by_slug('redirect-with-slug-only')
+          expect(response.valid_page_reference?(response.pageReference)).to eq(false)
+        end
+      end
+    end
+  end
+
 end
