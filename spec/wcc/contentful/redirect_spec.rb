@@ -4,8 +4,6 @@ RSpec.describe WCC::Contentful::Redirect, type: :model do
 
   describe '.find_by_slug' do
     before do
-      VCR.turn_on!
-
       WCC::Contentful.configure do |config|
         config.access_token = "<CONTENTFUL_ACCESS_TOKEN>"
         config.space = "<CONTENTFUL_SPACE_ID>"
@@ -68,10 +66,6 @@ RSpec.describe WCC::Contentful::Redirect, type: :model do
   end
 
   describe '#location' do
-    before do
-      VCR.turn_on!
-    end
-
     context 'when the Redirect model in Contentful has a slug and url, but no pageReference' do
       it 'should return the url of the Redirect model' do
         VCR.use_cassette('models/wcc_contentful/redirect/has_slug_and_url', record: :none) do
