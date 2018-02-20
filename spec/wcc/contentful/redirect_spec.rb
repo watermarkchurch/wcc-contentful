@@ -63,6 +63,20 @@ RSpec.describe WCC::Contentful::Redirect, type: :model do
         end
       end 
     end
+
+    context 'when the slug lettercase is different from the slug in Contentful' do
+      it 'should still grab the Redirect object with matching slug' do
+        VCR.use_cassette('models/wcc_contentful/redirect/has_slug_and_url', record: :none) do
+          response = described_class.find_by_slug('redirect-with-slug-and-url')
+          VCR.use_cassette('models/wcc_contentful/redirect/has_slug_and_url_uppercase', record: :none) do
+            resp = described_class.find_by_slug('ReDiReCt-WiTh-SlUg-AND-UrL')
+
+            expect(resp.url.nil?).to eq(false)
+            expect(response.url).to eq(resp.url)
+          end
+        end
+      end
+    end
   end
 
   describe '#location' do
