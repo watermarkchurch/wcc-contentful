@@ -9,7 +9,7 @@ module WCC::Contentful
     self.content_type_id = 'redirect'
 
     def self.find_by_slug(slug)
-      self.find_by(slug: slug).load_children(load_depth).load.first
+      self.find_by(slug: slug.downcase).load_children(load_depth).load.first
     end
 
     def location
