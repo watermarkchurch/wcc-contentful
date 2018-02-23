@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe WCC::Contentful do
   it 'has a version number' do
     expect(WCC::Contentful::VERSION).not_to be nil
@@ -8,7 +10,6 @@ RSpec.describe WCC::Contentful do
     let(:valid_contentful_space_id) { '<VALID_CONTENTFUL_SPACE_ID>' }
     let(:valid_contentful_default_locale) { 'en-US' }
 
-
     context 'before WCC::Contentful has been configured' do
       it 'should return nil' do
         config = WCC::Contentful.configuration
@@ -18,7 +19,7 @@ RSpec.describe WCC::Contentful do
     end
 
     context 'after WCC::Contentful has been configured' do
-      before do 
+      before do
         WCC::Contentful.configure do |config|
           config.access_token = valid_contentful_access_token
           config.space = valid_contentful_space_id
@@ -46,7 +47,7 @@ RSpec.describe WCC::Contentful do
     let(:invalid_contentful_default_locale) { 'simmer-down-now-fella' }
 
     context 'when passed VALID configuration arguments' do
-      before do 
+      before do
         WCC::Contentful.configure do |config|
           config.access_token = valid_contentful_access_token
           config.space = valid_contentful_space_id
@@ -81,7 +82,7 @@ RSpec.describe WCC::Contentful do
     end
 
     context 'when passed INVALID configuration arguments' do
-      before do 
+      before do
         WCC::Contentful.configure do |config|
           config.access_token = invalid_contentful_access_token
           config.space = invalid_contentful_space_id
@@ -118,5 +119,4 @@ RSpec.describe WCC::Contentful do
       end
     end
   end
-
 end

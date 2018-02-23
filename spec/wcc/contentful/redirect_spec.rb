@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe WCC::Contentful::Redirect, type: :model do
-
   describe '.find_by_slug' do
     before do
       WCC::Contentful.configure do |config|
@@ -22,7 +21,7 @@ RSpec.describe WCC::Contentful::Redirect, type: :model do
           response = described_class.find_by_slug('redirect-with-slug-and-url')
           expect(response.pageReference.nil?).to eq(true)
         end
-      end 
+      end
     end
 
     context 'when the Redirect model in Contentful has a slug and pageReference, but no url' do
@@ -38,7 +37,7 @@ RSpec.describe WCC::Contentful::Redirect, type: :model do
           response = described_class.find_by_slug('redirect-with-slug-and-page-reference')
           expect(response.url.nil?).to eq(true)
         end
-      end      
+      end
     end
 
     context 'when the Redirect model in Contentful has a slug, but no url nor pageReference' do
@@ -61,7 +60,7 @@ RSpec.describe WCC::Contentful::Redirect, type: :model do
           response = described_class.find_by_slug('redirect-with-slug-only')
           expect(response.pageReference.nil?).to eq(true)
         end
-      end 
+      end
     end
 
     context 'when the slug lettercase is different from the slug in Contentful' do
@@ -84,7 +83,7 @@ RSpec.describe WCC::Contentful::Redirect, type: :model do
       it 'should return the url of the Redirect model' do
         VCR.use_cassette('models/wcc_contentful/redirect/has_slug_and_url', record: :none) do
           response = described_class.find_by_slug('redirect-with-slug-and-url')
-          expect(response.location).to eq("#{response.url}")
+          expect(response.location).to eq(response.url.to_s)
         end
       end
     end
@@ -136,5 +135,4 @@ RSpec.describe WCC::Contentful::Redirect, type: :model do
       end
     end
   end
-
 end

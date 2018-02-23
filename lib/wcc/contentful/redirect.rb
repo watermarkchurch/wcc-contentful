@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'contentful_model'
 
 module WCC::Contentful
@@ -9,24 +10,22 @@ module WCC::Contentful
     self.content_type_id = 'redirect'
 
     def self.find_by_slug(slug)
-      self.find_by(slug: slug.downcase).load_children(load_depth).load.first
+      find_by(slug: slug.downcase).load_children(load_depth).load.first
     end
 
     def location
-      if !self.url.nil?
-        self.url
-      elsif valid_page_reference?(self.pageReference)
-        "/#{self.pageReference.url}"
-      else
-        nil
+      if !url.nil?
+        url
+      elsif valid_page_reference?(pageReference)
+        "/#{pageReference.url}"
       end
     end
 
     def valid_page_reference?(page_ref)
-      unless page_ref.nil? || defined?(page_ref.url).nil?
-        true
-      else
+      if page_ref.nil? || defined?(page_ref.url).nil?
         false
+      else
+        true
       end
     end
   end

@@ -1,9 +1,10 @@
-require "wcc/contentful/version"
+# frozen_string_literal: true
+
+require 'wcc/contentful/version'
 require 'contentful_model'
 
 module WCC
   module Contentful
-
     class << self
       attr_accessor :configuration
     end
@@ -18,9 +19,9 @@ module WCC
       attr_accessor :access_token, :space, :default_locale
 
       def initialize
-        @access_token = ""
-        @space = ""
-        @default_locale = ""
+        @access_token = ''
+        @space = ''
+        @default_locale = ''
       end
 
       def self.configure_contentful_model
@@ -31,8 +32,7 @@ module WCC
         end
       end
     end
-
   end
 end
 
-require "wcc/contentful/redirect"
+require 'wcc/contentful/redirect'
