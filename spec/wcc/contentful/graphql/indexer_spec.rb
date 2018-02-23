@@ -13,17 +13,17 @@ RSpec.describe WCC::Contentful::Graphql::Indexer do
 
     # assert
     expect(subject.types.keys.sort).to eq(
-      [
-        'ContentfulAsset',
-        'ContentfulFaq',
-        'ContentfulHomepage',
-        'ContentfulMenu',
-        'ContentfulMenuItem',
-        'ContentfulMigrationHistory',
-        'ContentfulPage',
-        'ContentfulRedirect',
-        'ContentfulSection-Faq',
-        'ContentfulSection-VideoHighlight'
+      %w[
+        ContentfulAsset
+        ContentfulFaq
+        ContentfulHomepage
+        ContentfulMenu
+        ContentfulMenuItem
+        ContentfulMigrationHistory
+        ContentfulPage
+        ContentfulRedirect
+        ContentfulSection_Faq
+        ContentfulSection_VideoHighlight
       ]
     )
 
@@ -35,6 +35,9 @@ RSpec.describe WCC::Contentful::Graphql::Indexer do
     expect(faq.dig(:fields, 'dateOfFaq', :type)).to eq(:DateTime)
     expect(faq.dig(:fields, 'truthyOrFalsy', :type)).to eq(:Boolean)
     expect(faq.dig(:fields, 'placeOfFaq', :type)).to eq(:Location)
+
+    json = subject.types.to_json
+    File.write('test.json', json)
   end
 
   it 'resolves potential linked types' do
@@ -53,9 +56,11 @@ RSpec.describe WCC::Contentful::Graphql::Indexer do
 
     homepage = subject.types['ContentfulHomepage']
     sections_ref = homepage.dig(:fields, 'sections')
-    expect(sections_ref[:link_types].sort).to eq([
-                                                   'ContentfulSection-Faq',
-                                                   'ContentfulSection-VideoHighlight'
-                                                 ])
+    expect(sections_ref[:link_types].sort).to eq(
+      %w[
+        ContentfulSection_Faq
+        ContentfulSection_VideoHighlight
+      ]
+    )
   end
 end

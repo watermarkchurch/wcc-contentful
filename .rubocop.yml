@@ -38,14 +38,26 @@ Metrics/BlockLength:
     - 'spec/**/*.rb'
     # dsl files https://stackoverflow.com/a/41187163
 
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/PerceivedComplexity:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
+
 Metrics/MethodLength:
-  Max: 15
-  Exclude:
-    # DSL files where we expect to have long methods
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
 
 Metrics/ModuleLength:
   Exclude:
-   - 'lib/wcc/utils.rb'
    - 'spec/**/*.rb'
 
 Performance/HashEachMethods:

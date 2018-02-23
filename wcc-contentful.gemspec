@@ -36,7 +36,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'guard-rspec', '~> 4.7'
   spec.add_development_dependency 'guard-rubocop', '~> 1.3.0'
 
+  spec.add_dependency 'activesupport', '~> 5'
   spec.add_dependency 'contentful_model', '~> 0.2.0'
   spec.add_dependency 'graphql', '~> 1.7'
-  spec.add_dependency 'activesupport', '~> 5'
 end

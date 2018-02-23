@@ -1,0 +1,325 @@
+{
+  "ContentfulHomepage": {
+    "name": "ContentfulHomepage",
+    "content_type": "homepage",
+    "fields": {
+      "siteTitle": {
+        "name": "siteTitle",
+        "type": "String"
+      },
+      "favicons": {
+        "name": "favicons",
+        "type": "Asset"
+      },
+      "mainMenu": {
+        "name": "mainMenu",
+        "type": "Link",
+        "link_id": [
+          "FNlqULSV0sOy4IoGmyWOW"
+        ],
+        "link_types": [
+          "ContentfulMenu"
+        ]
+      },
+      "heroImage": {
+        "name": "heroImage",
+        "type": "Asset"
+      },
+      "heroText": {
+        "name": "heroText",
+        "type": "String"
+      },
+      "heroButtons": {
+        "name": "heroButtons",
+        "type": "Link",
+        "link_id": [
+          "4W3ADPamKsMOg6Gu8aGwOu",
+          "3Jmk4yOwhOY0yKsI6mAQ2a"
+        ],
+        "link_types": [
+          "ContentfulMenuItem"
+        ]
+      },
+      "sections": {
+        "name": "sections",
+        "type": "Link",
+        "link_id": [
+          "6nDGEkPhn28Awg2MqeEAAK",
+          "3hYHDfAalGMAQOUeuKSa6E"
+        ],
+        "link_types": [
+          "ContentfulSection_Faq",
+          "ContentfulSection_VideoHighlight"
+        ]
+      }
+    }
+  },
+  "ContentfulSection_Faq": {
+    "name": "ContentfulSection_Faq",
+    "content_type": "section-Faq",
+    "fields": {
+      "helpText": {
+        "name": "helpText",
+        "type": "String"
+      },
+      "faqs": {
+        "name": "faqs",
+        "type": "Link",
+        "link_id": [
+          "1nzrZZShhWQsMcey28uOUQ",
+          "60sCaqwpUsui2i0eeaySoM"
+        ],
+        "link_types": [
+          "ContentfulFaq"
+        ]
+      }
+    }
+  },
+  "ContentfulFaq": {
+    "name": "ContentfulFaq",
+    "content_type": "faq",
+    "fields": {
+      "question": {
+        "name": "question",
+        "type": "String"
+      },
+      "answer": {
+        "name": "answer",
+        "type": "String"
+      },
+      "numFaqs": {
+        "name": "numFaqs",
+        "type": "Int"
+      },
+      "numFaqsFloat": {
+        "name": "numFaqsFloat",
+        "type": "Float"
+      },
+      "dateOfFaq": {
+        "name": "dateOfFaq",
+        "type": "DateTime"
+      },
+      "truthyOrFalsy": {
+        "name": "truthyOrFalsy",
+        "type": "Boolean"
+      },
+      "placeOfFaq": {
+        "name": "placeOfFaq",
+        "type": "Location"
+      }
+    }
+  },
+  "ContentfulRedirect": {
+    "name": "ContentfulRedirect",
+    "content_type": "redirect",
+    "fields": {
+      "slug": {
+        "name": "slug",
+        "type": "String",
+        "link_id": [],
+        "link_types": []
+      },
+      "pageReference": {
+        "name": "pageReference",
+        "type": "Link",
+        "link_id": [
+          "1UojJt7YoMiemCq2mGGUmQ"
+        ],
+        "link_types": [
+          "ContentfulPage"
+        ]
+      },
+      "url": {
+        "name": "url",
+        "type": "String"
+      }
+    }
+  },
+  "ContentfulMigrationHistory": {
+    "name": "ContentfulMigrationHistory",
+    "content_type": "migrationHistory",
+    "fields": {
+      "migrationName": {
+        "name": "migrationName",
+        "type": "DateTime"
+      },
+      "started": {
+        "name": "started",
+        "type": "DateTime"
+      },
+      "completed": {
+        "name": "completed",
+        "type": "DateTime"
+      },
+      "detail": {
+        "name": "detail",
+        "type": "Json"
+      }
+    }
+  },
+  "ContentfulMenuItem": {
+    "name": "ContentfulMenuItem",
+    "content_type": "menuItem",
+    "fields": {
+      "text": {
+        "name": "text",
+        "type": "String",
+        "link_id": [],
+        "link_types": []
+      },
+      "iconFA": {
+        "name": "iconFA",
+        "type": "String",
+        "link_id": [],
+        "link_types": []
+      },
+      "buttonStyle": {
+        "name": "buttonStyle",
+        "type": "String",
+        "link_id": [],
+        "link_types": []
+      },
+      "link": {
+        "name": "link",
+        "type": "Link",
+        "link_id": [
+          "JhYhSfZPAOMqsaK8cYOUK",
+          "JhYhSfZPAOMqsaK8cYOUK",
+          "1UojJt7YoMiemCq2mGGUmQ",
+          "3Azc4SjWSsYIuYO8m8qqQE",
+          "1loILDsvKYkmGWoiKOOgkE",
+          "1tPGouM76soIsM2e0uikgw",
+          "4lD8cHrr0QSAcY0sguqmss",
+          "47PsST8EicKgWIWwK2AsW6",
+          "32EYWhG184SgoiYo2e6iOo",
+          "47PsST8EicKgWIWwK2AsW6"
+        ],
+        "link_types": [
+          "ContentfulPage"
+        ]
+      },
+      "customButtonCss": {
+        "name": "customButtonCss",
+        "type": "String",
+        "link_id": [],
+        "link_types": []
+      },
+      "externalLink": {
+        "name": "externalLink",
+        "type": "String"
+      }
+    }
+  },
+  "ContentfulPage": {
+    "name": "ContentfulPage",
+    "content_type": "page",
+    "fields": {
+      "title": {
+        "name": "title",
+        "type": "String",
+        "link_id": [],
+        "link_types": []
+      },
+      "slug": {
+        "name": "slug",
+        "type": "String",
+        "link_id": [],
+        "link_types": []
+      },
+      "heroText": {
+        "name": "heroText",
+        "type": "DateTime"
+      }
+    }
+  },
+  "ContentfulSection_VideoHighlight": {
+    "name": "ContentfulSection_VideoHighlight",
+    "content_type": "section-VideoHighlight",
+    "fields": {
+      "text": {
+        "name": "text",
+        "type": "String"
+      },
+      "youtubeLink": {
+        "name": "youtubeLink",
+        "type": "String"
+      }
+    }
+  },
+  "ContentfulMenu": {
+    "name": "ContentfulMenu",
+    "content_type": "menu",
+    "fields": {
+      "name": {
+        "name": "name",
+        "type": "String",
+        "link_id": [],
+        "link_types": []
+      },
+      "icon": {
+        "name": "icon",
+        "type": "Asset"
+      },
+      "secondGroup": {
+        "name": "secondGroup",
+        "type": "Link",
+        "link_id": [
+          "3bZRv5ISCkui6kguIwM2U0",
+          "1EjBdAgOOgAQKAggQoY2as",
+          "1TikjmGeSIisEWoC4CwokQ",
+          "ZosJIuGfgkky0cA2GsymW"
+        ],
+        "link_types": []
+      },
+      "thirdGroup": {
+        "name": "thirdGroup",
+        "type": "Link",
+        "link_id": [
+          "2X7Pm2VQmQyAWK0y2wy8me",
+          "4Gye0ybf2EiWCgSyEg0cyE"
+        ],
+        "link_types": [
+          "ContentfulMenuItem"
+        ]
+      },
+      "hamburger": {
+        "name": "hamburger",
+        "type": "Link",
+        "link_id": [
+          "6y9DftpiYoA4YiKg2CgoUU"
+        ],
+        "link_types": [
+          "ContentfulMenu"
+        ]
+      },
+      "firstGroup": {
+        "name": "firstGroup",
+        "type": "Link",
+        "link_id": [
+          "1IJEXB4AKEqQYEm4WuceG2",
+          "5NBhDw3i2kUqSwqYok4YQO",
+          "4tMhra8IAwcEoKS6QSQYcc"
+        ],
+        "link_types": []
+      }
+    }
+  },
+  "ContentfulAsset": {
+    "name": "ContentfulAsset",
+    "content_type": "Asset",
+    "fields": {
+      "title": {
+        "name": "title",
+        "type": "String",
+        "link_id": [],
+        "link_types": []
+      },
+      "file": {
+        "name": "file",
+        "type": "Json",
+        "link_id": [],
+        "link_types": []
+      }
+    }
+  }
+}

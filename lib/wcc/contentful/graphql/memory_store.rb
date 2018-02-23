@@ -22,5 +22,13 @@ module WCC::Contentful::Graphql
         @hash[key]
       end
     end
+
+    def find_by(content_type:)
+      @hash.each_with_object([]) do |(_k, v), a|
+        content_type = v.dig('sys', 'contentType', 'sys', 'id')
+        next if content_type.nil?
+        a << v
+      end
+    end
   end
 end

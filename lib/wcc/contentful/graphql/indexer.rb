@@ -22,7 +22,10 @@ module WCC::Contentful::Graphql
       content_type_name = find_content_type_name(value)
 
       content_type = create_type_from_value(content_type_name, value)
-      content_type = sync { @types[content_type[:name]] = merge(@types[content_type[:name]], content_type) }
+      content_type =
+        @mutex.synchronize do
+          @types[content_type[:name]] = merge(@types[content_type[:name]], content_type)
+        end
 
       @store.index(id, value)
 
@@ -31,7 +34,8 @@ module WCC::Contentful::Graphql
 
     def create_type_from_value(name, value)
       content_type = {
-        name: "Contentful#{name.camelize}",
+        name: "Contentful#{name.camelize.gsub(/[^_a-zA-Z0-9]/, '_')}",
+        content_type: name,
         fields: {}
       }
 
@@ -115,8 +119,8 @@ module WCC::Contentful::Graphql
     end
 
     def resolve_links(id, type_name)
-      sync do
-        @types.each do |_, type_def|
+      @mutex.synchronize do
+        @types.each_value do |type_def|
           type_def[:fields].each do |(_, field)|
             next unless field[:link_id]&.include?(id)
 
@@ -129,8 +133,8 @@ module WCC::Contentful::Graphql
           next unless field[:link_id]
 
           field[:link_types] ||= []
-          field[:link_id].each do |id|
-            link_value = @store.find(id)
+          field[:link_id].each do |link_id|
+            link_value = @store.find(link_id)
             next unless link_value.present?
             link_type = @types[find_content_type_name(link_value)]
             next unless link_type.present?
@@ -145,12 +149,6 @@ module WCC::Contentful::Graphql
       Time.zone.parse(value)
     rescue ArgumentError
       false
-    end
-
-    def sync
-      @mutex.synchronize do
-        yield
-      end
     end
   end
 end
