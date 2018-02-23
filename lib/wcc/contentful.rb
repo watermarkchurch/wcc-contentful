@@ -36,3 +36,4 @@ module WCC
 end
 
 require 'wcc/contentful/redirect'
+require 'wcc/contentful/graphql/indexer'
