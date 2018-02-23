@@ -24,10 +24,42 @@ module WCC::Contentful::Graphql
     end
 
     def find_by(content_type:)
-      @hash.each_with_object([]) do |(_k, v), a|
-        content_type = v.dig('sys', 'contentType', 'sys', 'id')
-        next if content_type.nil?
-        a << v
+      relation =
+        @hash.each_with_object([]) do |(_k, v), a|
+          value_content_type = v.dig('sys', 'contentType', 'sys', 'id')
+          next if value_content_type.nil? || value_content_type != content_type
+          puts "finding by content type #{content_type} - #{value_content_type}"
+          a << v
+        end
+      Query.new(relation)
+    end
+
+    class Query
+      attr_reader :relation
+      delegate :first, to: :@relation
+
+      def initialize(relation)
+        @relation = relation
+      end
+
+      def apply(filter, context)
+        if filter[:eq]
+          eq(filter[:field], filter[:eq], context)
+        else
+          raise ArgumentError, "Filter not implemented: #{filter}"
+        end
+      end
+
+      def eq(field, expected, context)
+        locale = context[:locale] || 'en-US'
+        Query.new(@relation.select do |v|
+          val = v.dig('fields', field, locale)
+          if val.is_a? Array
+            val.include?(expected)
+          else
+            val == expected
+          end
+        end)
       end
     end
   end

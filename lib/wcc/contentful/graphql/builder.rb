@@ -3,6 +3,8 @@
 require 'singleton'
 require 'graphql'
 
+require_relative 'types'
+
 module WCC::Contentful::Graphql
   class Builder
     def initialize(types, store)
@@ -49,10 +51,13 @@ module WCC::Contentful::Graphql
           end
 
           field "all#{schema_type.name}".to_sym do
-            type schema_type
+            type schema_type.to_list_type
+            argument :filter, Types::FilterType
 
-            resolve ->(_obj, _args, _ctx) {
-              store.find_by(content_type: raw[:content_type])
+            resolve ->(_obj, args, ctx) {
+              relation = store.find_by(content_type: raw[:content_type])
+              relation = relation.apply(args[:filter], ctx) if args[:filter]
+              relation.relation
             }
           end
         end

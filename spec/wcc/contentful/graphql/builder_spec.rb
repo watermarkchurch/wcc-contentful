@@ -84,4 +84,36 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
       }
     )
   end
+
+  it 'can filter by arbitrary field' do
+    schema = subject.build_schema
+
+    # act
+    query_string = '{
+      item: allContentfulMenuItem(filter: { field: "buttonStyle", eq: "rounded" }) {
+        id
+        text
+      }
+    }'
+    result = schema.execute(query_string)
+
+    # assert
+    expect(result.to_h['errors']).to be_nil
+    expect(result.to_h['data']).to eq(
+      { 'item' => [
+        {
+          'id' => '3Jmk4yOwhOY0yKsI6mAQ2a',
+          'text' => 'Find A Ministry for Your Church'
+        },
+        {
+          'id' => '3bZRv5ISCkui6kguIwM2U0',
+          'text' => 'Ministries'
+        },
+        {
+          'id' => '4Gye0ybf2EiWCgSyEg0cyE',
+          'text' => 'Cart'
+        }
+      ] }
+    )
+  end
 end
