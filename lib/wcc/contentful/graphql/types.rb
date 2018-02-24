@@ -6,23 +6,18 @@ module WCC::Contentful::Graphql::Types
     GraphQL::ScalarType.define do
       name 'DateTime'
 
-      coerce_input ->(value, _ctx) { Time.zone.parse(value) }
-      coerce_result ->(value, _ctx) { value.utc.iso8601 }
+      coerce_result ->(value, _ctx) { Time.zone.parse(value) }
     end
 
   HashType =
     GraphQL::ScalarType.define do
       name 'Hash'
 
-      coerce_input ->(value, _ctx) {
-        puts "coercing input: #{value}"
+      coerce_result ->(value, _ctx) {
+        return value if value.is_a? Array
         return value.to_h if value.respond_to?(:to_h)
         return JSON.parse(value) if value.is_a? String
         raise ArgumentError, "Cannot coerce value '#{value}' to a hash"
-      }
-      coerce_result ->(value, _ctx) {
-        value.to_json if value.respond_to?(:to_json)
-        raise ArgumentError, "Cannot coerce hash to string - #{value.inspect}"
       }
     end
 

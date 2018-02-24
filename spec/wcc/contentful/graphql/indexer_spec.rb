@@ -63,4 +63,21 @@ RSpec.describe WCC::Contentful::Graphql::Indexer do
       ]
     )
   end
+
+  it 'resolves date times correctly' do
+    sync_initial = JSON.parse(load_fixture('contentful/sync_initial.json'))
+
+    # act
+    sync_initial.each do |k, v|
+      subject.index(k, v)
+    end
+
+    # assert
+    history = subject.types['ContentfulMigrationHistory']
+    started = history.dig(:fields, 'started')
+    expect(started[:type]).to eq(:DateTime)
+
+    migration_name = history.dig(:fields, 'migrationName')
+    expect(migration_name[:type]).to eq(:String)
+  end
 end

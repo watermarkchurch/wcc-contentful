@@ -85,6 +85,48 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
     )
   end
 
+  it 'resolves date times and json blobs' do
+    schema = subject.build_schema
+
+    # act
+    query_string = '{
+    migration: ContentfulMigrationHistory {
+      id
+      migrationName
+      started
+      completed
+      detail
+    }
+    }'
+    result = schema.execute(query_string)
+
+    # assert
+    expect(result.to_h['errors']).to be_nil
+    expect(result.to_h['data']['migration']).to include(
+      {
+        'id' => '7d73xC0RPiciy68yUWEoYU',
+          'started' => Time.zone.parse('2018-02-22T21:12:45.621Z'),
+          'completed' => Time.zone.parse('2018-02-22T21:12:46.699Z')
+      }
+    )
+
+    expect(result.to_h.dig('data', 'migration', 'detail', 0, 'intent', 'intents')).to include(
+      {
+        'meta' => {
+          'callsite' => {
+            'file' => '/Users/gburgett/projects/wm/jtj-com/db/migrate/20180219160530_test_migration.ts',
+            'line' => 3
+          },
+          'contentTypeInstanceId' => 'contentType/dog/0'
+        },
+        'type' => 'contentType/create',
+        'payload' => {
+          'contentTypeId' => 'dog'
+        }
+      }
+    )
+  end
+
   it 'can filter by arbitrary field' do
     schema = subject.build_schema
 

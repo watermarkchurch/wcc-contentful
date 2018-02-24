@@ -42,7 +42,6 @@ module WCC::Contentful::Graphql
 
             resolve ->(_obj, args, _ctx) {
               if args['id'].nil?
-                puts "schema_type: #{schema_type.get_field('content_type').methods}"
                 store.find_by(content_type: raw[:content_type]).first
               else
                 store.find(args['id'])
@@ -94,11 +93,19 @@ module WCC::Contentful::Graphql
           when :Link
             next
           when :DateTime
-            next
+            field(f[:name].to_sym, Types::DateTimeType) do
+              resolve ->(obj, _args, ctx) {
+                obj.dig('fields', f[:name], ctx[:locale] || 'en-US')
+              }
+            end
           when :Location
             next
           when :Json
-            next
+            field(f[:name].to_sym, Types::HashType) do
+              resolve ->(obj, _args, ctx) {
+                obj.dig('fields', f[:name], ctx[:locale] || 'en-US')
+              }
+            end
           else
             field(f[:name].to_sym, types.public_send(f[:type])) do
               resolve ->(obj, _args, ctx) {

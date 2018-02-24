@@ -141,7 +141,7 @@
     "fields": {
       "migrationName": {
         "name": "migrationName",
-        "type": "DateTime"
+        "type": "String"
       },
       "started": {
         "name": "started",
@@ -228,7 +228,7 @@
       },
       "heroText": {
         "name": "heroText",
-        "type": "DateTime"
+        "type": "String"
       }
     }
   },

@@ -28,7 +28,6 @@ module WCC::Contentful::Graphql
         @hash.each_with_object([]) do |(_k, v), a|
           value_content_type = v.dig('sys', 'contentType', 'sys', 'id')
           next if value_content_type.nil? || value_content_type != content_type
-          puts "finding by content type #{content_type} - #{value_content_type}"
           a << v
         end
       Query.new(relation)
