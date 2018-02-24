@@ -1,28 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe WCC::Contentful::ModelBuilder do
-  let(:types) {
-    JSON.parse(load_fixture('contentful/indexed_types.json'))
-      .each_with_object({}) do |(k, v), h|
-        v = v.symbolize_keys
-        v[:fields] =
-          v[:fields].each_with_object({}) do |(k2, v2), h2|
-            v2 = v2.symbolize_keys
-            v2[:type] = v2[:type].to_sym
-            h2[k2] = v2
-          end
-        h[k] = v
-      end
-  }
-  let!(:store) {
-    sync_initial = JSON.parse(load_fixture('contentful/sync_initial.json'))
-
-    store = WCC::Contentful::Sync::MemoryStore.new
-    sync_initial.each do |k, v|
-      store.index(k, v)
-    end
-    store
-  }
+  let(:types) { load_indexed_types }
+  let!(:store) { load_store_from_sync }
   subject {
     WCC::Contentful::ModelBuilder.new(types)
   }
