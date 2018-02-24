@@ -4,9 +4,8 @@ module WCC::Contentful
   class ModelBuilder
     include Helpers
 
-    def initialize(types, store)
+    def initialize(types)
       @types = types
-      @store = store
     end
 
     def build_models
@@ -18,22 +17,42 @@ module WCC::Contentful
     private
 
     def build_model(t)
-      puts "building model #{t[:name]}"
       const = constant_from_content_type(t[:content_type])
       return WCC::Contentful.const_get(const) if WCC::Contentful.const_defined?(const)
 
       # TODO: https://github.com/dkubb/ice_nine ?
       typedef = t.deep_dup.freeze
+      fields = typedef[:fields].keys
       WCC::Contentful.const_set(const,
         Class.new(Model) do
-          class << self
-            define_method(:content_type) do
-              typedef[:content_type]
-            end
+          define_singleton_method(:content_type) do
+            typedef[:content_type]
+          end
 
-            define_method(:content_type_definition) do
-              typedef
+          define_singleton_method(:content_type_definition) do
+            typedef
+          end
+
+          define_singleton_method(:find) do |id, context = nil|
+            raw = Model.store.find(id)
+            new(raw, context)
+          end
+
+          define_singleton_method(:find_all) do |context = nil|
+            raw = Model.store.find_by(content_type: content_type)
+            raw.map { |r| new(r, context) }
+          end
+
+          define_singleton_method(:find_by) do |filter, context = nil|
+            filter.transform_keys! { |k| k.to_s.camelize(:lower) }
+            bad_fields = filter.keys.reject { |k| fields.include?(k) }
+            raise ArgumentError, "These fields do not exist: #{bad_fields}" unless bad_fields.empty?
+
+            query = Model.store.find_by(content_type: content_type)
+            filter.each do |field, v|
+              query = query.eq(field, v, context)
             end
+            query.map { |r| new(r, context) }
           end
 
           define_method(:initialize) do |raw, context = nil|
@@ -74,6 +93,7 @@ module WCC::Contentful
                 val = instance_variable_get(var_name)
                 Time.zone.parse(val) if val.present?
               end
+              alias_method name.underscore, name
             when :Location
               next
             when :Json
@@ -84,10 +104,12 @@ module WCC::Contentful
                 return JSON.parse(value) if value.is_a? String
                 raise ArgumentError, "Cannot coerce value '#{value}' to a hash"
               end
+              alias_method name.underscore, name
             else
               define_method(name) do
                 instance_variable_get(var_name)
               end
+              alias_method name.underscore, name
             end
           end
         end)

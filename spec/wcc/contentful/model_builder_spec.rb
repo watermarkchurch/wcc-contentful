@@ -14,7 +14,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
         h[k] = v
       end
   }
-  let(:store) {
+  let!(:store) {
     sync_initial = JSON.parse(load_fixture('contentful/sync_initial.json'))
 
     store = WCC::Contentful::Graphql::MemoryStore.instance
@@ -24,7 +24,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     store
   }
   subject {
-    WCC::Contentful::ModelBuilder.new(types, store)
+    WCC::Contentful::ModelBuilder.new(types)
   }
 
   it 'builds models from loaded types' do
@@ -51,7 +51,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
   end
 
   it 'finds types by ID' do
-    schema = subject.build_models
+    subject.build_models
     WCC::Contentful::Model.store = store
 
     # act
@@ -66,6 +66,71 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     expect(main_menu.space).to eq('343qxys30lid')
 
     expect(main_menu.name).to eq('Main Menu')
+  end
+
+  it 'finds by ID on derived class' do
+    subject.build_models
+    WCC::Contentful::Model.store = store
+
+    # act
+    main_menu = WCC::Contentful::Menu.find('FNlqULSV0sOy4IoGmyWOW')
+
+    # assert
+    expect(main_menu).to be_instance_of(WCC::Contentful::Menu)
+    expect(main_menu.id).to eq('FNlqULSV0sOy4IoGmyWOW')
+    expect(main_menu.created_at).to eq(Time.parse('2018-02-12T20:09:38.819Z'))
+    expect(main_menu.updated_at).to eq(Time.parse('2018-02-12T21:59:43.653Z'))
+    expect(main_menu.revision).to eq(2)
+    expect(main_menu.space).to eq('343qxys30lid')
+
+    expect(main_menu.name).to eq('Main Menu')
+  end
+
+  it 'finds types by content type' do
+    subject.build_models
+    WCC::Contentful::Model.store = store
+
+    # act
+    menu_items = WCC::Contentful::MenuItem.find_all
+
+    # assert
+    expect(menu_items.length).to eq(11)
+    expect(menu_items.map(&:id).sort).to eq(
+      %w[
+        1EjBdAgOOgAQKAggQoY2as
+        1IJEXB4AKEqQYEm4WuceG2
+        1TikjmGeSIisEWoC4CwokQ
+        2X7Pm2VQmQyAWK0y2wy8me
+        3Jmk4yOwhOY0yKsI6mAQ2a
+        3bZRv5ISCkui6kguIwM2U0
+        4Gye0ybf2EiWCgSyEg0cyE
+        4W3ADPamKsMOg6Gu8aGwOu
+        4tMhra8IAwcEoKS6QSQYcc
+        5NBhDw3i2kUqSwqYok4YQO
+        ZosJIuGfgkky0cA2GsymW
+      ]
+    )
+    menu_item = menu_items.find { |i| i.id == '4tMhra8IAwcEoKS6QSQYcc' }
+    expect(menu_item.custom_button_css).to eq(
+      [
+        'text-decoration: underline;',
+        'color: brown;'
+      ]
+    )
+  end
+
+  it 'finds with filter' do
+    subject.build_models
+    WCC::Contentful::Model.store = store
+
+    # act
+    menu_items = WCC::Contentful::MenuItem.find_by(button_style: 'custom')
+
+    # assert
+    expect(menu_items.length).to eq(2)
+    expect(menu_items.map(&:id).sort).to eq(
+      %w[3bZRv5ISCkui6kguIwM2U0 4tMhra8IAwcEoKS6QSQYcc]
+    )
   end
 
   it 'resolves date times and json blobs'

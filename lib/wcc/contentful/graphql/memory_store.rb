@@ -36,6 +36,7 @@ module WCC::Contentful::Graphql
     class Query
       attr_reader :relation
       delegate :first, to: :@relation
+      delegate :map, to: :@relation
 
       def initialize(relation)
         @relation = relation
@@ -48,7 +49,8 @@ module WCC::Contentful::Graphql
       end
 
       def eq(field, expected, context)
-        locale = context[:locale] || 'en-US'
+        locale = context[:locale] if context.present?
+        locale ||= 'en-US'
         Query.new(@relation.select do |v|
           val = v.dig('fields', field, locale)
           if val.is_a? Array
