@@ -66,6 +66,27 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     expect(main_menu.name).to eq('Main Menu')
   end
 
+  it 'returns nil if cannot find ID' do
+    subject.build_models
+    WCC::Contentful::Model.store = store
+
+    # act
+    main_menu = WCC::Contentful::Menu.find('asdf')
+
+    # assert
+    expect(main_menu).to be_nil
+  end
+
+  it 'errors fast if ID is wrong content type' do
+    subject.build_models
+    WCC::Contentful::Model.store = store
+
+    # act
+    expect {
+      actually_a_menu = WCC::Contentful::Page.find('FNlqULSV0sOy4IoGmyWOW')
+    }.to raise_error(ArgumentError)
+  end
+
   it 'finds types by content type' do
     subject.build_models
     WCC::Contentful::Model.store = store

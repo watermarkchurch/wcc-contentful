@@ -25,6 +25,8 @@ module WCC::Contentful
       fields = typedef[:fields].keys
       WCC::Contentful.const_set(const,
         Class.new(Model) do
+          include Helpers
+
           define_singleton_method(:content_type) do
             typedef[:content_type]
           end
@@ -35,7 +37,7 @@ module WCC::Contentful
 
           define_singleton_method(:find) do |id, context = nil|
             raw = Model.store.find(id)
-            new(raw, context)
+            new(raw, context) if raw.present?
           end
 
           define_singleton_method(:find_all) do |context = nil|
@@ -56,6 +58,12 @@ module WCC::Contentful
           end
 
           define_method(:initialize) do |raw, context = nil|
+            ct = content_type_from_raw(raw)
+            if ct != typedef[:content_type]
+              raise ArgumentError, 'Wrong Content Type - ' \
+                "'#{raw.dig('sys', 'id')}' is a #{ct}, expected #{typedef[:content_type]}"
+            end
+
             @locale = context[:locale] if context.present?
             @locale ||= 'en-US'
             @id = raw.dig('sys', 'id')
