@@ -8,6 +8,7 @@ module WCC::Contentful::Sync
     end
 
     def index(key, value)
+      value = value.deep_dup.freeze
       @mutex.synchronize do
         @hash[key] = value
       end
@@ -19,12 +20,17 @@ module WCC::Contentful::Sync
       end
     end
 
+    def find_all
+      Query.new(@mutex.synchronize { @hash.values })
+    end
+
     def find_by(content_type:)
+      relation = @mutex.synchronize { @hash.values }
+
       relation =
-        @hash.each_with_object([]) do |(_k, v), a|
+        relation.reject do |v|
           value_content_type = v.dig('sys', 'contentType', 'sys', 'id')
-          next if value_content_type.nil? || value_content_type != content_type
-          a << v
+          value_content_type.nil? || value_content_type != content_type
         end
       Query.new(relation)
     end
@@ -33,6 +39,7 @@ module WCC::Contentful::Sync
       attr_reader :relation
       delegate :first, to: :@relation
       delegate :map, to: :@relation
+      delegate :count, to: :@relation
 
       def initialize(relation)
         @relation = relation
