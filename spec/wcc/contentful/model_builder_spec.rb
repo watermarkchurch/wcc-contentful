@@ -133,5 +133,46 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     )
   end
 
-  it 'resolves date times and json blobs'
+  it 'resolves date times and json blobs' do
+    subject.build_models
+    WCC::Contentful::Model.store = store
+
+    # act
+    migration = WCC::Contentful::MigrationHistory.find_all.first
+
+    # assert
+    expect(migration.started).to eq(Time.zone.parse('2018-02-22T21:12:45.621Z'))
+    expect(migration.completed).to eq(Time.zone.parse('2018-02-22T21:12:46.699Z'))
+
+    expect(migration.detail).to be_instance_of(Array)
+    expect(migration.detail[0]).to be_instance_of(Hash)
+    expect(migration.detail.dig(0, 'intent', 'intents')).to include(
+      {
+        'meta' => {
+          'callsite' => {
+            'file' => '/Users/gburgett/projects/wm/jtj-com/db/migrate/20180219160530_test_migration.ts',
+            'line' => 3
+          },
+          'contentTypeInstanceId' => 'contentType/dog/0'
+        },
+        'type' => 'contentType/create',
+        'payload' => {
+          'contentTypeId' => 'dog'
+        }
+      }
+    )
+  end
+
+  it 'resolves location' do
+    subject.build_models
+    WCC::Contentful::Model.store = store
+
+    # act
+    faq = WCC::Contentful::Faq.find('1nzrZZShhWQsMcey28uOUQ')
+
+    # assert
+    expect(faq.place_of_faq).to be_instance_of(WCC::Contentful::Location)
+    expect(faq.placeOfFaq.lat).to eq(52.5391688192368)
+    expect(faq.placeOfFaq.lon).to eq(13.4033203125)
+  end
 end

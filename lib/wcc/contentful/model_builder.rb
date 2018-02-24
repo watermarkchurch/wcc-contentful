@@ -95,7 +95,11 @@ module WCC::Contentful
               end
               alias_method name.underscore, name
             when :Location
-              next
+              define_method(name) do
+                val = instance_variable_get(var_name)
+                Location.new(val['lat'], val['lon'])
+              end
+              alias_method name.underscore, name
             when :Json
               define_method(name) do
                 value = instance_variable_get(var_name)
