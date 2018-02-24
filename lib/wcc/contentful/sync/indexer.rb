@@ -1,19 +1,14 @@
 # frozen_string_literal: true
 
-require 'singleton'
-require 'graphql'
-
 require_relative 'memory_store'
 
-module WCC::Contentful::Graphql
+module WCC::Contentful::Sync
   class Indexer
-    include Singleton
-
     attr_reader :types
     attr_reader :store
 
-    def initialize
-      @store = MemoryStore.instance
+    def initialize(store = nil)
+      @store = store || MemoryStore.new
       @types = {}
       @mutex = Mutex.new
     end

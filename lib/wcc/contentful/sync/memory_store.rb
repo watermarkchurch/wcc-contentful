@@ -1,11 +1,7 @@
 # frozen_string_literal: true
 
-require 'singleton'
-
-module WCC::Contentful::Graphql
+module WCC::Contentful::Sync
   class MemoryStore
-    include Singleton
-
     def initialize
       @hash = {}
       @mutex = Mutex.new

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.describe WCC::Contentful::Graphql::Indexer do
-  subject { WCC::Contentful::Graphql::Indexer.instance }
+RSpec.describe WCC::Contentful::Sync::Indexer do
+  subject { WCC::Contentful::Sync::Indexer.new(WCC::Contentful::Sync::MemoryStore.new) }
 
   it 'loads data from sync API' do
     sync_initial = JSON.parse(load_fixture('contentful/sync_initial.json'))

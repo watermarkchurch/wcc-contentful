@@ -17,7 +17,7 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
   let(:store) {
     sync_initial = JSON.parse(load_fixture('contentful/sync_initial.json'))
 
-    store = WCC::Contentful::Graphql::MemoryStore.instance
+    store = WCC::Contentful::Sync::MemoryStore.new
     sync_initial.each do |k, v|
       store.index(k, v)
     end
