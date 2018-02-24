@@ -25,7 +25,12 @@ module WCC::Contentful::Graphql::Types
     GraphQL::UnionType.define do
       name 'Any'
 
-      possible_types [GraphQL::STRING_TYPE, GraphQL::INT_TYPE, GraphQL::FLOAT_TYPE, GraphQL::BOOLEAN_TYPE]
+      possible_types [
+        GraphQL::STRING_TYPE,
+        GraphQL::INT_TYPE,
+        GraphQL::FLOAT_TYPE,
+        GraphQL::BOOLEAN_TYPE
+      ]
     end
 
   AnyScalarInputType =

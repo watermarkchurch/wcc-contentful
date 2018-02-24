@@ -42,11 +42,9 @@ module WCC::Contentful::Graphql
       end
 
       def apply(filter, context)
-        if filter[:eq]
-          eq(filter[:field], filter[:eq], context)
-        else
-          raise ArgumentError, "Filter not implemented: #{filter}"
-        end
+        return eq(filter[:field], filter[:eq], context) if filter[:eq]
+
+        raise ArgumentError, "Filter not implemented: #{filter}"
       end
 
       def eq(field, expected, context)
