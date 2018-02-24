@@ -181,7 +181,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     WCC::Contentful::Model.store = store
 
     # act
-    main_menu = WCC::Contentful::Model.find('FNlqULSV0sOy4IoGmyWOW')
+    main_menu = WCC::Contentful::Menu.find('FNlqULSV0sOy4IoGmyWOW')
 
     # assert
     expect(main_menu.hamburger).to be_instance_of(WCC::Contentful::Menu)

@@ -158,4 +158,79 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
       ] }
     )
   end
+
+  it 'resolves location' do
+    schema = subject.build_schema
+
+    # act
+    query_string = '{
+    faq: ContentfulFaq(id: "1nzrZZShhWQsMcey28uOUQ") {
+      id
+      placeOfFaq {
+        lat
+        lon
+      }
+    }
+    }'
+    result = schema.execute(query_string)
+
+    # assert
+    expect(result.to_h['errors']).to be_nil
+    loc = result.to_h['data']['faq']['placeOfFaq']
+    expect(loc['lat']).to eq(52.5391688192368)
+    expect(loc['lon']).to eq(13.4033203125)
+  end
+
+  it 'resolves linked types' do
+    schema = subject.build_schema
+
+    # act
+    query_string = '{
+    menu: ContentfulMenu(id: "FNlqULSV0sOy4IoGmyWOW") {
+      hamburger {
+        firstGroup {
+          link {
+            title
+          }
+        }
+      }
+    }
+    }'
+    result = schema.execute(query_string)
+
+    # assert
+    expect(result.to_h['errors']).to be_nil
+    expect(result.dig('data', 'menu', 'hamburger', 'firstGroup', 1, 'link', 'title'))
+      .to eq('Mission')
+  end
+
+  it 'resolves linked assets' do
+    schema = subject.build_schema
+
+    # act
+    query_string = '{
+    homepage: ContentfulHomepage {
+      heroImage {
+        title
+        file
+      }
+      favicons {
+        file
+      }
+    }
+    }'
+    result = schema.execute(query_string)
+
+    # assert
+    expect(result.to_h['errors']).to be_nil
+    expect(result.dig('data', 'homepage', 'heroImage', 'title')).to eq('worship')
+    expect(result.dig('data', 'homepage', 'heroImage', 'file', 'url')).to eq(
+      '//images.contentful.com/343qxys30lid/' \
+      '572YrsdGZGo0sw2Www2Si8/545f53511e362a78a8f34e1837868256/worship.jpg'
+    )
+    expect(result.dig('data', 'homepage', 'heroImage', 'file', 'contentType')).to eq('image/jpeg')
+
+    expect(result.dig('data', 'homepage', 'favicons').length).to eq(4)
+    expect(result.dig('data', 'homepage', 'favicons', 0, 'file', 'fileName')).to eq('favicon.ico')
+  end
 end

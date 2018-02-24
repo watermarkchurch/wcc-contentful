@@ -47,6 +47,7 @@ module WCC::Contentful::Graphql
           type: find_field_type(first_localized_value)
         }
         field[:link_id] = extract_link_ids(first_localized_value) if field[:type] == :Link
+        field[:array] = true if first_localized_value.is_a? Array
         content_type[:fields][field_name] = field
       end
 
@@ -107,6 +108,8 @@ module WCC::Contentful::Graphql
       # If the "float" happens to be an integer like '2.0'
       # Contentful will send back the integer '2' in the JSON response
       field_a[:type] = :Float if field_a[:type] == :Int && field_b[:type] == :Float
+
+      field_a[:array] = true if field_a[:array] || field_b[:array]
 
       field_a[:link_id] = (field_a[:link_id] || []) + (field_b[:link_id] || [])
       field_a[:link_id].uniq

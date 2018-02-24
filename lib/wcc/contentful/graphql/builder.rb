@@ -7,15 +7,17 @@ require_relative 'types'
 
 module WCC::Contentful::Graphql
   class Builder
+    attr_reader :schema_types
+
     def initialize(types, store)
       @types = types
       @store = store
     end
 
     def build_schema
-      schema_types = build_schema_types
+      @schema_types = build_schema_types
 
-      root_query_type = build_root_query(schema_types)
+      root_query_type = build_root_query(@schema_types)
 
       GraphQL::Schema.define do
         query root_query_type
@@ -73,6 +75,9 @@ module WCC::Contentful::Graphql
     end
 
     def build_schema_type(v)
+      store = @store
+      builder = self
+
       GraphQL::ObjectType.define do
         name(v[:name])
         description('Generated from Contentful schema')
@@ -88,28 +93,60 @@ module WCC::Contentful::Graphql
         v[:fields].each_value do |f|
           case f[:type]
           when :Asset
-            # todo
-            next
-          when :Link
-            next
-          when :DateTime
-            field(f[:name].to_sym, Types::DateTimeType) do
+            field(f[:name].to_sym, -> {
+              type = builder.schema_types['ContentfulAsset'][:typed]
+              type = type.to_list_type if f[:array]
+              type
+            }) do
               resolve ->(obj, _args, ctx) {
-                obj.dig('fields', f[:name], ctx[:locale] || 'en-US')
+                links = obj.dig('fields', f[:name], ctx[:locale] || 'en-US')
+                return if links.nil?
+
+                if links.is_a? Array
+                  links.reject(&:nil?).map { |l| store.find(l.dig('sys', 'id')) }
+                else
+                  store.find(links.dig('sys', 'id'))
+                end
               }
             end
-          when :Location
-            next
-          when :Json
-            field(f[:name].to_sym, Types::HashType) do
+          when :Link
+            field(f[:name].to_sym, -> {
+              # TODO: Sections w/ a Union Type
+              type = builder.schema_types[f[:link_types].first][:typed]
+              type = type.to_list_type if f[:array]
+              type
+            }) do
               resolve ->(obj, _args, ctx) {
-                obj.dig('fields', f[:name], ctx[:locale] || 'en-US')
+                links = obj.dig('fields', f[:name], ctx[:locale] || 'en-US')
+                return if links.nil?
+
+                if links.is_a? Array
+                  links.reject(&:nil?).map { |l| store.find(l.dig('sys', 'id')) }
+                else
+                  store.find(links.dig('sys', 'id'))
+                end
               }
             end
           else
-            field(f[:name].to_sym, types.public_send(f[:type])) do
+            type =
+              case f[:type]
+              when :DateTime
+                Types::DateTimeType
+              when :Location
+                Types::LocationType
+              when :Json
+                Types::HashType
+              else
+                types.public_send(f[:type])
+              end
+            type = type.to_list_type if f[:array]
+            field(f[:name].to_sym, type) do
               resolve ->(obj, _args, ctx) {
-                obj.dig('fields', f[:name], ctx[:locale] || 'en-US')
+                if obj.is_a? Array
+                  obj.map { |o| o.dig('fields', f[:name], ctx[:locale] || 'en-US') }
+                else
+                  obj.dig('fields', f[:name], ctx[:locale] || 'en-US')
+                end
               }
             end
           end

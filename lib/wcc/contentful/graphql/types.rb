@@ -21,16 +21,12 @@ module WCC::Contentful::Graphql::Types
       }
     end
 
-  AnyScalarType =
-    GraphQL::UnionType.define do
-      name 'Any'
+  LocationType =
+    GraphQL::ObjectType.define do
+      name 'Location'
 
-      possible_types [
-        GraphQL::STRING_TYPE,
-        GraphQL::INT_TYPE,
-        GraphQL::FLOAT_TYPE,
-        GraphQL::BOOLEAN_TYPE
-      ]
+      field :lat, !types.Float, hash_key: 'lat'
+      field :lon, !types.Float, hash_key: 'lon'
     end
 
   AnyScalarInputType =

@@ -9,7 +9,8 @@
       },
       "favicons": {
         "name": "favicons",
-        "type": "Asset"
+        "type": "Asset",
+        "array": true
       },
       "mainMenu": {
         "name": "mainMenu",
@@ -36,6 +37,7 @@
           "4W3ADPamKsMOg6Gu8aGwOu",
           "3Jmk4yOwhOY0yKsI6mAQ2a"
         ],
+        "array": true,
         "link_types": [
           "ContentfulMenuItem"
         ]
@@ -47,6 +49,7 @@
           "6nDGEkPhn28Awg2MqeEAAK",
           "3hYHDfAalGMAQOUeuKSa6E"
         ],
+        "array": true,
         "link_types": [
           "ContentfulSection_Faq",
           "ContentfulSection_VideoHighlight"
@@ -69,6 +72,7 @@
           "1nzrZZShhWQsMcey28uOUQ",
           "60sCaqwpUsui2i0eeaySoM"
         ],
+        "array": true,
         "link_types": [
           "ContentfulFaq"
         ]
@@ -153,7 +157,8 @@
       },
       "detail": {
         "name": "detail",
-        "type": "Json"
+        "type": "Json",
+        "array": true
       }
     }
   },
@@ -176,6 +181,7 @@
       "buttonStyle": {
         "name": "buttonStyle",
         "type": "String",
+        "array": true,
         "link_id": [],
         "link_types": []
       },
@@ -201,6 +207,7 @@
       "customButtonCss": {
         "name": "customButtonCss",
         "type": "String",
+        "array": true,
         "link_id": [],
         "link_types": []
       },
@@ -269,7 +276,10 @@
           "1TikjmGeSIisEWoC4CwokQ",
           "ZosJIuGfgkky0cA2GsymW"
         ],
-        "link_types": []
+        "array": true,
+        "link_types": [
+          "ContentfulMenuItem"
+        ]
       },
       "thirdGroup": {
         "name": "thirdGroup",
@@ -278,6 +288,7 @@
           "2X7Pm2VQmQyAWK0y2wy8me",
           "4Gye0ybf2EiWCgSyEg0cyE"
         ],
+        "array": true,
         "link_types": [
           "ContentfulMenuItem"
         ]
@@ -300,7 +311,10 @@
           "5NBhDw3i2kUqSwqYok4YQO",
           "4tMhra8IAwcEoKS6QSQYcc"
         ],
-        "link_types": []
+        "array": true,
+        "link_types": [
+          "ContentfulMenuItem"
+        ]
       }
     }
   },

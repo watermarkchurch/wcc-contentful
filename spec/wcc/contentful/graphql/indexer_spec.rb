@@ -80,4 +80,18 @@ RSpec.describe WCC::Contentful::Graphql::Indexer do
     migration_name = history.dig(:fields, 'migrationName')
     expect(migration_name[:type]).to eq(:String)
   end
+
+  it 'sets array flag on array fields' do
+    sync_initial = JSON.parse(load_fixture('contentful/sync_initial.json'))
+
+    # act
+    sync_initial.each do |k, v|
+      subject.index(k, v)
+    end
+
+    # assert
+    homepage = subject.types['ContentfulHomepage']
+    favicons = homepage.dig(:fields, 'favicons')
+    expect(favicons[:array]).to be(true)
+  end
 end
