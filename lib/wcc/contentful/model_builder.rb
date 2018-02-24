@@ -83,23 +83,32 @@ module WCC::Contentful
             name = f[:name]
             var_name = '@' + name
             case f[:type]
-            when :Asset
-              # todo
-              next
-            when :Link
-              next
+            when :Asset, :Link
+              define_method(name) do
+                val = instance_variable_get(var_name + '_resolved')
+                return val if val.present?
+
+                val = instance_variable_get(var_name)
+                val =
+                  if val.is_a? Array
+                    val.map { |v| Model.find(v.dig('sys', 'id')) }
+                  else
+                    Model.find(val.dig('sys', 'id'))
+                  end
+
+                instance_variable_set(var_name + '_resolved', val)
+                val
+              end
             when :DateTime
               define_method(name) do
                 val = instance_variable_get(var_name)
                 Time.zone.parse(val) if val.present?
               end
-              alias_method name.underscore, name
             when :Location
               define_method(name) do
                 val = instance_variable_get(var_name)
                 Location.new(val['lat'], val['lon'])
               end
-              alias_method name.underscore, name
             when :Json
               define_method(name) do
                 value = instance_variable_get(var_name)
@@ -108,13 +117,12 @@ module WCC::Contentful
                 return JSON.parse(value) if value.is_a? String
                 raise ArgumentError, "Cannot coerce value '#{value}' to a hash"
               end
-              alias_method name.underscore, name
             else
               define_method(name) do
                 instance_variable_get(var_name)
               end
-              alias_method name.underscore, name
             end
+            alias_method name.underscore, name
           end
         end)
     end

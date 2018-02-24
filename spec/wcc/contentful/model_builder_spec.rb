@@ -175,4 +175,37 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     expect(faq.placeOfFaq.lat).to eq(52.5391688192368)
     expect(faq.placeOfFaq.lon).to eq(13.4033203125)
   end
+
+  it 'resolves linked types' do
+    subject.build_models
+    WCC::Contentful::Model.store = store
+
+    # act
+    main_menu = WCC::Contentful::Model.find('FNlqULSV0sOy4IoGmyWOW')
+
+    # assert
+    expect(main_menu.hamburger).to be_instance_of(WCC::Contentful::Menu)
+    expect(main_menu.hamburger.first_group[0]).to be_instance_of(WCC::Contentful::MenuItem)
+    expect(main_menu.hamburger.first_group[0].link).to be_instance_of(WCC::Contentful::Page)
+    expect(main_menu.hamburger.first_group[0].link.title).to eq('About')
+  end
+
+  it 'resolves linked assets' do
+    subject.build_models
+    WCC::Contentful::Model.store = store
+
+    # act
+    homepage = WCC::Contentful::Homepage.find_all.first
+
+    # assert
+    expect(homepage.hero_image).to be_instance_of(WCC::Contentful::Asset)
+    expect(homepage.hero_image.title).to eq('worship')
+    expect(homepage.hero_image.file['url']).to eq('//images.contentful.com/343qxys30lid/' \
+      '572YrsdGZGo0sw2Www2Si8/545f53511e362a78a8f34e1837868256/worship.jpg')
+    expect(homepage.hero_image.file['contentType']).to eq('image/jpeg')
+
+    expect(homepage.favicons.length).to eq(4)
+    expect(homepage.favicons[0]).to be_instance_of(WCC::Contentful::Asset)
+    expect(homepage.favicons[0].file['fileName']).to eq('favicon.ico')
+  end
 end
