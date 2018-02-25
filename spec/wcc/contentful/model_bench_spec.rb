@@ -26,17 +26,17 @@ RSpec.describe WCC::Contentful::Model, :bench do
     it 'bench Homepage expand 15 links' do
       subject.build_models
 
-      run_bench(content_type: 'homepage') do |id| 
+      run_bench(content_type: 'homepage') do |id|
         homepage = WCC::Contentful::Homepage.find(id)
         # 13 links via main_menu
-        main_menu = homepage.main_menu # 1
-        main_menu.icon.file[:url] # 1
-        main_menu.second_group.each { |item| item.link&.title } # 2 -> 2
-        main_menu.third_group.each { |item| item.link&.title } # 2 -> 2
-        main_menu.hamburger.first_group[0].link.title # 1 -> 1 -> 1
+        main_menu = homepage.main_menu1
+        main_menu.icon.file[:url]
+        main_menu.second_group.each { |item| item.link&.title }
+        main_menu.third_group.each { |item| item.link&.title }
+        main_menu.hamburger.first_group[0].link.title
 
         # 2 more links via sections
-        homepage.sections.each { |s| s.id }
+        homepage.sections.each(&:id)
       end
     end
 

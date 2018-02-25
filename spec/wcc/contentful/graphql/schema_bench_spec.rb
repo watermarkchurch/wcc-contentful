@@ -14,7 +14,6 @@ RSpec.describe 'graphql querying', :bench do
   }
 
   context 'with MemoryStore' do
-      
     it 'bench find by id' do
       query_string = '
       query getMenuItem($id: ID!) {
@@ -31,14 +30,14 @@ RSpec.describe 'graphql querying', :bench do
 
       schema = nil
       run_bench(content_type: 'menuItem',
-        before: ->(store) {
-          schema = WCC::Contentful::Graphql::Builder.new(
-            types,
-            store
-          ).build_schema
-        }) do |id|
+                before: ->(store) {
+                          schema = WCC::Contentful::Graphql::Builder.new(
+                            types,
+                            store
+                          ).build_schema
+                        }) do |id|
 
-        result = schema.execute(query_string, variables: {"id" => id})
+        result = schema.execute(query_string, variables: { 'id' => id })
         expect(result.to_h['errors']).to be_nil
         expect(result.to_h.dig('data', 'ContentfulMenuItem', 'id')).to eq(id)
       end
@@ -78,12 +77,12 @@ RSpec.describe 'graphql querying', :bench do
 
       schema = nil
       run_bench(content_type: 'menuItem',
-        before: ->(store) {
-          schema = WCC::Contentful::Graphql::Builder.new(
-            types,
-            store
-          ).build_schema
-        }) do |id|
+                before: ->(store) {
+                          schema = WCC::Contentful::Graphql::Builder.new(
+                            types,
+                            store
+                          ).build_schema
+                        }) do |_id|
 
         result = schema.execute(query_string)
         expect(result.to_h['errors']).to be_nil
@@ -105,20 +104,19 @@ RSpec.describe 'graphql querying', :bench do
 
       schema = nil
       run_bench(content_type: 'menuItem',
-        before: ->(store) {
-          schema = WCC::Contentful::Graphql::Builder.new(
-            types,
-            store
-          ).build_schema
-        }) do |_, i|
+                before: ->(store) {
+                          schema = WCC::Contentful::Graphql::Builder.new(
+                            types,
+                            store
+                          ).build_schema
+                        }) do |_, i|
 
         result = schema.execute(
           query_string,
-          variables: {"style" => styles[i % styles.length]}
+          variables: { 'style' => styles[i % styles.length] }
         )
         expect(result.to_h['errors']).to be_nil
       end
     end
   end
-
 end

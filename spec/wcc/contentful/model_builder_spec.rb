@@ -83,7 +83,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
     # act
     expect {
-      actually_a_menu = WCC::Contentful::Page.find('FNlqULSV0sOy4IoGmyWOW')
+      _actually_a_menu = WCC::Contentful::Page.find('FNlqULSV0sOy4IoGmyWOW')
     }.to raise_error(ArgumentError)
   end
 
