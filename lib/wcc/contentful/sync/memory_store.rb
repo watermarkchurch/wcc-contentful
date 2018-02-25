@@ -49,13 +49,13 @@ module WCC::Contentful::Sync
         @relation = relation
       end
 
-      def apply(filter, context)
+      def apply(filter, context = nil)
         return eq(filter[:field], filter[:eq], context) if filter[:eq]
 
         raise ArgumentError, "Filter not implemented: #{filter}"
       end
 
-      def eq(field, expected, context)
+      def eq(field, expected, context = nil)
         locale = context[:locale] if context.present?
         locale ||= 'en-US'
         Query.new(@relation.select do |v|
