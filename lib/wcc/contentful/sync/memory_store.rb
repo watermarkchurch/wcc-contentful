@@ -14,6 +14,10 @@ module WCC::Contentful::Sync
       end
     end
 
+    def keys
+      @mutex.synchronize { @hash.keys }
+    end
+
     def find(key)
       @mutex.synchronize do
         @hash[key]

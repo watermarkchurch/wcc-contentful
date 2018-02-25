@@ -6,6 +6,7 @@ require 'wcc/contentful/redirect'
 require 'vcr'
 
 require 'fixtures_helper'
+require 'bench_helper'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
@@ -19,6 +20,8 @@ RSpec.configure do |config|
   end
 
   Time.zone ||= 'Central Time (US & Canada)'
+
+  config.filter_run_excluding bench: true
 
   config.include FixturesHelper
 end
