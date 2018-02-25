@@ -113,9 +113,9 @@
       }
     }
   },
-  "ContentfulRedirect": {
-    "name": "ContentfulRedirect",
-    "content_type": "redirect",
+  "ContentfulRedirect2": {
+    "name": "ContentfulRedirect2",
+    "content_type": "redirect2",
     "fields": {
       "slug": {
         "name": "slug",

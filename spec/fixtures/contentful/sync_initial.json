@@ -229,7 +229,7 @@
         "sys": {
           "type": "Link",
           "linkType": "ContentType",
-          "id": "redirect"
+          "id": "redirect2"
         }
       }
     },
@@ -266,7 +266,7 @@
         "sys": {
           "type": "Link",
           "linkType": "ContentType",
-          "id": "redirect"
+          "id": "redirect2"
         }
       }
     },

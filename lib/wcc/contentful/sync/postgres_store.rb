@@ -24,6 +24,7 @@ module WCC::Contentful::Sync
 
     def find(key)
       result = @conn.exec_prepared('select_entry', [key])
+      return if result.num_tuples == 0
       JSON.parse(result.getvalue(0, 1))
     end
 
@@ -61,7 +62,7 @@ module WCC::Contentful::Sync
         params = @params.dup
 
         statement = @statement + " AND data->'fields'->$#{push_param(field, params)}" \
-          "->>$#{push_param(locale, params)} = $#{push_param(expected, params)}"
+          "->$#{push_param(locale, params)} ? $#{push_param(expected, params)}"
 
         Query.new(
           @conn,
@@ -70,18 +71,15 @@ module WCC::Contentful::Sync
         )
       end
 
-      def resolve
-        statement = 'SELECT * FROM contentful_raw ' + @statement
-        @conn.exec(statement, @params)
-      end
-
       def count
+        return @count if @count
         statement = 'SELECT count(*) FROM contentful_raw ' + @statement
         result = @conn.exec(statement, @params)
-        result.getvalue(0, 0).to_i
+        @count = result.getvalue(0, 0).to_i
       end
 
       def first
+        return @first if @first
         statement = 'SELECT * FROM contentful_raw ' + @statement + ' LIMIT 1'
         result = @conn.exec(statement, @params)
         JSON.parse(result.getvalue(0, 1))
@@ -93,7 +91,19 @@ module WCC::Contentful::Sync
         arr
       end
 
+      def result
+        arr = []
+        resolve.each { |row| arr << JSON.parse(row['data']) }
+        arr
+      end
+
       private
+
+      def resolve
+        return @resolved if @resolved
+        statement = 'SELECT * FROM contentful_raw ' + @statement
+        @resolved = @conn.exec(statement, @params)
+      end
 
       def push_param(param, params)
         params << param
@@ -105,14 +115,15 @@ module WCC::Contentful::Sync
       conn.exec(<<~HEREDOC
         CREATE TABLE IF NOT EXISTS contentful_raw (
           id char(22) PRIMARY KEY,
-          data json
+          data jsonb
         );
-        CREATE INDEX contentful_raw_value_type ON contentful_raw ((data->'sys'->>'type'));
-        CREATE INDEX contentful_raw_value_content_type ON contentful_raw ((data->'sys'->'contentType'->'sys'->>'id'));
+        CREATE INDEX IF NOT EXISTS contentful_raw_value_type ON contentful_raw ((data->'sys'->>'type'));
+        CREATE INDEX IF NOT EXISTS contentful_raw_value_content_type ON contentful_raw ((data->'sys'->'contentType'->'sys'->>'id'));
 HEREDOC
       )
 
-      conn.prepare('index_entry', 'INSERT INTO contentful_raw (id, data) values ($1, $2)')
+      conn.prepare('index_entry', 'INSERT INTO contentful_raw (id, data) values ($1, $2) ' \
+        'ON CONFLICT (id) DO UPDATE SET data = $2')
       conn.prepare('select_entry', 'SELECT * FROM contentful_raw WHERE id = $1')
       conn.prepare('select_ids', 'SELECT id FROM contentful_raw')
     end

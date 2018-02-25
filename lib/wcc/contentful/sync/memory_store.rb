@@ -40,10 +40,13 @@ module WCC::Contentful::Sync
     end
 
     class Query
-      attr_reader :relation
       delegate :first, to: :@relation
       delegate :map, to: :@relation
       delegate :count, to: :@relation
+
+      def result
+        @relation.dup
+      end
 
       def initialize(relation)
         @relation = relation

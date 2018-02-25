@@ -24,7 +24,7 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
         ContentfulMenuItem
         ContentfulMigrationHistory
         ContentfulPage
-        ContentfulRedirect
+        ContentfulRedirect2
         ContentfulSection_Faq
         ContentfulSection_VideoHighlight
         allContentfulAsset
@@ -34,7 +34,7 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
         allContentfulMenuItem
         allContentfulMigrationHistory
         allContentfulPage
-        allContentfulRedirect
+        allContentfulRedirect2
         allContentfulSection_Faq
         allContentfulSection_VideoHighlight
       ]

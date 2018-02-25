@@ -2,7 +2,6 @@
 
 require 'bundler/setup'
 require 'wcc/contentful'
-require 'wcc/contentful/redirect'
 require 'vcr'
 
 require 'fixtures_helper'

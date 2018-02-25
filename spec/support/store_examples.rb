@@ -85,7 +85,7 @@ RSpec.shared_examples 'contentful store' do
     )
   end
 
-  it 'find_by can apply filter query' do
+  it 'filter query eq can find value in array' do
     content_types = %w[test1 test2 test3 test4]
     data =
       1.upto(10).map do |i|
@@ -94,14 +94,14 @@ RSpec.shared_examples 'contentful store' do
             'id' => "k#{i}",
             'contentType' => { 'sys' => { 'id' => content_types[i % content_types.length] } }
           },
-          'fields' => { 'name' => { 'en-US' => "test#{i}" } }
+          'fields' => { 'name' => { 'en-US' => ["test#{i}", "test_2_#{i}"] } }
         }
       end
     data.each { |d| subject.index(d.dig('sys', 'id'), d) }
 
     # act
     found = subject.find_by(content_type: 'test2')
-      .apply({ field: 'name', eq: 'test5' })
+      .apply({ field: 'name', eq: 'test_2_5' })
 
     # assert
     expect(found.count).to eq(1)

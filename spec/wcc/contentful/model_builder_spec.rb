@@ -2,7 +2,9 @@
 
 RSpec.describe WCC::Contentful::ModelBuilder do
   let(:types) { load_indexed_types }
-  let!(:store) { load_store_from_sync }
+  let!(:store) {
+    load_store_from_sync
+  }
   subject {
     WCC::Contentful::ModelBuilder.new(types)
   }
@@ -21,7 +23,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
         WCC::Contentful::MenuItem
         WCC::Contentful::MigrationHistory
         WCC::Contentful::Page
-        WCC::Contentful::Redirect
+        WCC::Contentful::Redirect2
         WCC::Contentful::Section_Faq
         WCC::Contentful::Section_VideoHighlight
       ]
@@ -132,6 +134,18 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     expect(menu_items.map(&:id).sort).to eq(
       %w[3bZRv5ISCkui6kguIwM2U0 4tMhra8IAwcEoKS6QSQYcc]
     )
+  end
+
+  it 'finds single item with filter' do
+    subject.build_models
+    WCC::Contentful::Model.store = store
+
+    # act
+    redirect = WCC::Contentful::Redirect2.find_by(slug: 'mister_roboto')
+
+    # assert
+    expect(redirect.length).to eq(1)
+    expect(redirect[0].pageReference.title).to eq('Conferences')
   end
 
   it 'resolves date times and json blobs' do

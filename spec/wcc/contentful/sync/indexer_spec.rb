@@ -21,7 +21,7 @@ RSpec.describe WCC::Contentful::Sync::Indexer do
         ContentfulMenuItem
         ContentfulMigrationHistory
         ContentfulPage
-        ContentfulRedirect
+        ContentfulRedirect2
         ContentfulSection_Faq
         ContentfulSection_VideoHighlight
       ]
@@ -49,7 +49,7 @@ RSpec.describe WCC::Contentful::Sync::Indexer do
     end
 
     # assert
-    redirect = subject.types['ContentfulRedirect']
+    redirect = subject.types['ContentfulRedirect2']
     redirect_ref = redirect.dig(:fields, 'pageReference')
     expect(redirect_ref[:type]).to eq(:Link)
     expect(redirect_ref[:link_types]).to include('ContentfulPage')

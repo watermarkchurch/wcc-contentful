@@ -2,16 +2,20 @@
 # frozen_string_literal: true
 
 module BenchHelper
-  def build_store(store: nil, copies: 1)
+  def build_store(store_builder: nil, copies: 1)
     sync_initial = JSON.parse(load_fixture('contentful/sync_initial.json'))
-    store ||= WCC::Contentful::Sync::MemoryStore.new
+    store = store_builder.present? ? store_builder.call : WCC::Contentful::Sync::MemoryStore.new
 
     sync_initial.each do |k, v|
       1.upto(copies) do |i|
         v = v.deep_dup
         if i > 1
-          k += i.to_s
+          # Make n copies with unique 22 character IDs
+          uniquifier = "_#{i}"
+          k = k.slice(0, 22 - uniquifier.length) + uniquifier
           v['sys']['id'] = k
+          # Each copy should have distinct slug enabling "find single" by slug test
+          v['fields']['slug']['en-US'] += uniquifier if v.dig('fields', 'slug')
         end
         store.index(k, v)
       end
@@ -19,14 +23,14 @@ module BenchHelper
     WCC::Contentful::Model.store = store
   end
 
-  def run_bench(content_type: nil, iterations: nil, copies: nil, before: nil)
-    iterations ||= [1000, 10_000, 100_000]
+  def run_bench(content_type: nil, iterations: nil, copies: nil, before: nil, store_builder: nil)
+    iterations ||= [100]
     copies ||= [10, 100, 1000]
 
     Benchmark.benchmark(Benchmark::CAPTION, 35, Benchmark::FORMAT, '>avg:') do |x|
       times = []
       copies.each do |c|
-        store = build_store(copies: c)
+        store = build_store(store_builder: store_builder, copies: c)
         all_ids =
           if content_type.nil?
             store.keys.shuffle

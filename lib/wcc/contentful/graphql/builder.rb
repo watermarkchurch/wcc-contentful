@@ -57,7 +57,7 @@ module WCC::Contentful::Graphql
             resolve ->(_obj, args, ctx) {
               relation = store.find_by(content_type: raw[:content_type])
               relation = relation.apply(args[:filter], ctx) if args[:filter]
-              relation.relation
+              relation.result
             }
           end
         end
