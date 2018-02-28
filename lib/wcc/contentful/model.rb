@@ -22,7 +22,5 @@ module WCC::Contentful
     end
   end
 
-  Location =
-    Struct.new(:lat, :lon) do
-    end
+  Location = Struct.new(:lat, :lon)
 end
