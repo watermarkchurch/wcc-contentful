@@ -24,7 +24,7 @@ module BenchHelper
   end
 
   def run_bench(content_type: nil, iterations: nil, copies: nil, before: nil, store_builder: nil)
-    iterations ||= [100]
+    iterations ||= [100, 10_000]
     copies ||= [10, 100, 1000]
 
     Benchmark.benchmark(Benchmark::CAPTION, 35, Benchmark::FORMAT, '>avg:') do |x|

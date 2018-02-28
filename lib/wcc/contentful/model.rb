@@ -3,9 +3,9 @@
 
 module WCC::Contentful
   class Model
-    class << self
-      include Helpers
+    extend Helpers
 
+    class << self
       attr_accessor :store
     end
 

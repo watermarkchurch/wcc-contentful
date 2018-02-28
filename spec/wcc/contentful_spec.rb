@@ -6,17 +6,9 @@ RSpec.describe WCC::Contentful do
   end
 
   describe '.configuration' do
-    let(:valid_contentful_access_token) { '<VALID_CONTENTFUL_ACCESS_TOKEN>' }
-    let(:valid_contentful_space_id) { '<VALID_CONTENTFUL_SPACE_ID>' }
+    let(:valid_contentful_access_token) { ENV['CONTENTFUL_ACCESS_TOKEN'] }
+    let(:valid_contentful_space_id) { ENV['CONTENTFUL_SPACE_ID'] }
     let(:valid_contentful_default_locale) { 'en-US' }
-
-    context 'before WCC::Contentful has been configured' do
-      it 'should return nil' do
-        config = WCC::Contentful.configuration
-
-        expect(config.nil?).to eq(true)
-      end
-    end
 
     context 'after WCC::Contentful has been configured' do
       before do

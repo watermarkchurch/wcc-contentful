@@ -11,3 +11,11 @@
 .rspec_status
 
 Gemfile.lock
+
+# exports and error logs from contentful
+contentful-export*
+contentful-*-error-log-*
+
+# User local env
+.envrc
+.env.*.local

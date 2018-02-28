@@ -161,7 +161,8 @@ RSpec.describe 'graphql querying', :bench do
         ensure
           conn.close
         end
-        WCC::Contentful::Model.store = WCC::Contentful::Sync::PostgresStore.new(ENV['POSTGRES_CONNECTION'])
+        WCC::Contentful::Model.store =
+          WCC::Contentful::Sync::PostgresStore.new(ENV['POSTGRES_CONNECTION'])
       }
     }
 

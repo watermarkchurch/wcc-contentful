@@ -12,7 +12,9 @@ RSpec.shared_examples 'model querying' do
   it 'bench Homepage.find by id' do
     subject.build_models
 
-    run_bench(store_builder: store_builder, content_type: 'homepage') { |id| WCC::Contentful::Homepage.find(id) }
+    run_bench(store_builder: store_builder, content_type: 'homepage') do |id|
+      WCC::Contentful::Homepage.find(id)
+    end
   end
 
   it 'bench Homepage expand 15 links' do
@@ -79,7 +81,8 @@ RSpec.describe WCC::Contentful::Model, :bench do
         ensure
           conn.close
         end
-        WCC::Contentful::Model.store = WCC::Contentful::Sync::PostgresStore.new(ENV['POSTGRES_CONNECTION'])
+        WCC::Contentful::Model.store =
+          WCC::Contentful::Sync::PostgresStore.new(ENV['POSTGRES_CONNECTION'])
       }
     }
 
