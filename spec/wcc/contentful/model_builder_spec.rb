@@ -160,7 +160,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     expect(migration.completed).to eq(Time.zone.parse('2018-02-22T21:12:46.699Z'))
 
     expect(migration.detail).to be_instance_of(Array)
-    expect(migration.detail[0]).to be_instance_of(Hash)
+    expect(migration.detail[0]).to be_instance_of(OpenStruct)
     expect(migration.detail.dig(0, 'intent', 'intents')).to include(
       {
         'meta' => {
@@ -214,13 +214,15 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
     # assert
     expect(homepage.hero_image).to be_instance_of(WCC::Contentful::Asset)
+    expect(homepage.hero_image.file).to be_a(OpenStruct)
     expect(homepage.hero_image.title).to eq('worship')
     expect(homepage.hero_image.file['url']).to eq('//images.contentful.com/343qxys30lid/' \
       '572YrsdGZGo0sw2Www2Si8/545f53511e362a78a8f34e1837868256/worship.jpg')
     expect(homepage.hero_image.file['contentType']).to eq('image/jpeg')
 
+    expect(homepage.favicons).to be_a(Array)
     expect(homepage.favicons.length).to eq(4)
     expect(homepage.favicons[0]).to be_instance_of(WCC::Contentful::Asset)
-    expect(homepage.favicons[0].file['fileName']).to eq('favicon.ico')
+    expect(homepage.favicons[0].file.fileName).to eq('favicon.ico')
   end
 end

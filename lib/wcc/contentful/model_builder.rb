@@ -120,10 +120,17 @@ module WCC::Contentful
             when :Json
               define_method(name) do
                 value = instance_variable_get(var_name)
-                return value if value.is_a? Array
-                return value.to_h if value.respond_to?(:to_h)
-                return JSON.parse(value) if value.is_a? String
-                raise ArgumentError, "Cannot coerce value '#{value}' to a hash"
+
+                parse_value =
+                  ->(v) do
+                    return v.to_h if v.respond_to?(:to_h)
+
+                    raise ArgumentError, "Cannot coerce value '#{value}' to a hash"
+                  end
+
+                return value.map { |v| OpenStruct.new(parse_value.call(v)) } if value.is_a?(Array)
+
+                OpenStruct.new(parse_value.call(value))
               end
             else
               define_method(name) do
