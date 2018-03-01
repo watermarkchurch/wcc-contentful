@@ -14,20 +14,20 @@ RSpec.describe WCC::Contentful::Sync::Indexer do
     # assert
     expect(subject.types.keys.sort).to eq(
       %w[
-        ContentfulAsset
-        ContentfulFaq
-        ContentfulHomepage
-        ContentfulMenu
-        ContentfulMenuItem
-        ContentfulMigrationHistory
-        ContentfulPage
-        ContentfulRedirect2
-        ContentfulSection_Faq
-        ContentfulSection_VideoHighlight
+        Asset
+        Faq
+        Homepage
+        Menu
+        MenuItem
+        MigrationHistory
+        Page
+        Redirect2
+        Section_Faq
+        Section_VideoHighlight
       ]
     )
 
-    faq = subject.types['ContentfulFaq']
+    faq = subject.types['Faq']
     expect(faq.dig(:fields, 'question', :type)).to eq(:String)
     expect(faq.dig(:fields, 'answer', :type)).to eq(:String)
     expect(faq.dig(:fields, 'numFaqs', :type)).to eq(:Int)
@@ -49,17 +49,17 @@ RSpec.describe WCC::Contentful::Sync::Indexer do
     end
 
     # assert
-    redirect = subject.types['ContentfulRedirect2']
+    redirect = subject.types['Redirect2']
     redirect_ref = redirect.dig(:fields, 'pageReference')
     expect(redirect_ref[:type]).to eq(:Link)
-    expect(redirect_ref[:link_types]).to include('ContentfulPage')
+    expect(redirect_ref[:link_types]).to include('Page')
 
-    homepage = subject.types['ContentfulHomepage']
+    homepage = subject.types['Homepage']
     sections_ref = homepage.dig(:fields, 'sections')
     expect(sections_ref[:link_types].sort).to eq(
       %w[
-        ContentfulSection_Faq
-        ContentfulSection_VideoHighlight
+        Section_Faq
+        Section_VideoHighlight
       ]
     )
   end
@@ -73,7 +73,7 @@ RSpec.describe WCC::Contentful::Sync::Indexer do
     end
 
     # assert
-    history = subject.types['ContentfulMigrationHistory']
+    history = subject.types['MigrationHistory']
     started = history.dig(:fields, 'started')
     expect(started[:type]).to eq(:DateTime)
 
@@ -90,7 +90,7 @@ RSpec.describe WCC::Contentful::Sync::Indexer do
     end
 
     # assert
-    homepage = subject.types['ContentfulHomepage']
+    homepage = subject.types['Homepage']
     favicons = homepage.dig(:fields, 'favicons')
     expect(favicons[:array]).to be(true)
   end

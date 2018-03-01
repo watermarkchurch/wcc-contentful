@@ -41,4 +41,14 @@ module WCC::Contentful::Graphql::Types
       argument :field, !types.String
       argument :eq, AnyScalarInputType
     end
+
+  BuildUnionType =
+    ->(from_types, union_type_name) do
+      possible_types = from_types.values.reject { |t| t.is_a? GraphQL::UnionType }
+
+      GraphQL::UnionType.define do
+        name union_type_name
+        possible_types possible_types
+      end
+    end
 end

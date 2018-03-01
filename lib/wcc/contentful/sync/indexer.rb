@@ -4,6 +4,8 @@ require_relative 'memory_store'
 
 module WCC::Contentful::Sync
   class Indexer
+    include WCC::Contentful::Helpers
+
     attr_reader :types
     attr_reader :store
 
@@ -14,7 +16,7 @@ module WCC::Contentful::Sync
     end
 
     def index(id, value)
-      content_type_name = find_content_type_name(value)
+      content_type_name = content_type_from_raw(value)
 
       content_type = create_type_from_value(content_type_name, value)
       content_type =
@@ -29,7 +31,7 @@ module WCC::Contentful::Sync
 
     def create_type_from_value(name, value)
       content_type = {
-        name: "Contentful#{name.camelize.gsub(/[^_a-zA-Z0-9]/, '_')}",
+        name: constant_from_content_type(name),
         content_type: name,
         fields: {}
       }
@@ -50,17 +52,6 @@ module WCC::Contentful::Sync
     end
 
     private
-
-    def find_content_type_name(value)
-      case value.dig('sys', 'type')
-      when 'Entry'
-        value.dig('sys', 'contentType', 'sys', 'id')
-      when 'Asset'
-        'Asset'
-      else
-        raise ArgumentError, "Unknown content type '#{value.dig('sys', 'type') || 'null'}'"
-      end
-    end
 
     # Float
     # String
@@ -134,7 +125,7 @@ module WCC::Contentful::Sync
           field[:link_id].each do |link_id|
             link_value = @store.find(link_id)
             next unless link_value.present?
-            link_type = @types[find_content_type_name(link_value)]
+            link_type = @types[content_type_from_raw(link_value)]
             next unless link_type.present?
             field[:link_types] << link_type[:name]
           end

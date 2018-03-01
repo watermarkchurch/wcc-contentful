@@ -17,26 +17,26 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
     query = types.find { |t| t['name'] == 'Query' }
     expect(query['fields'].map { |f| f['name'] }.sort).to eq(
       %w[
-        ContentfulAsset
-        ContentfulFaq
-        ContentfulHomepage
-        ContentfulMenu
-        ContentfulMenuItem
-        ContentfulMigrationHistory
-        ContentfulPage
-        ContentfulRedirect2
-        ContentfulSection_Faq
-        ContentfulSection_VideoHighlight
-        allContentfulAsset
-        allContentfulFaq
-        allContentfulHomepage
-        allContentfulMenu
-        allContentfulMenuItem
-        allContentfulMigrationHistory
-        allContentfulPage
-        allContentfulRedirect2
-        allContentfulSection_Faq
-        allContentfulSection_VideoHighlight
+        Asset
+        Faq
+        Homepage
+        Menu
+        MenuItem
+        MigrationHistory
+        Page
+        Redirect2
+        Section_Faq
+        Section_VideoHighlight
+        allAsset
+        allFaq
+        allHomepage
+        allMenu
+        allMenuItem
+        allMigrationHistory
+        allPage
+        allRedirect2
+        allSection_Faq
+        allSection_VideoHighlight
       ]
     )
   end
@@ -46,8 +46,9 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
 
     # act
     query_string = '{
-    homepage: ContentfulHomepage {
+    homepage: Homepage {
       id
+      _content_type
       siteTitle
     }
     }'
@@ -59,7 +60,8 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
       {
         'homepage' => {
           'id' => '4ssPJYNGPYQMMwo2gKmISo',
-          'siteTitle' => 'Watermark Resources'
+          'siteTitle' => 'Watermark Resources',
+          '_content_type' => 'homepage'
         }
       }
     )
@@ -70,7 +72,7 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
 
     # act
     query_string = '{
-    migration: ContentfulMigrationHistory {
+    migration: MigrationHistory {
       id
       migrationName
       started
@@ -112,7 +114,7 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
 
     # act
     query_string = '{
-      item: allContentfulMenuItem(filter: { field: "buttonStyle", eq: "rounded" }) {
+      item: allMenuItem(filter: { field: "buttonStyle", eq: "rounded" }) {
         id
         text
       }
@@ -144,7 +146,7 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
 
     # act
     query_string = '{
-    faq: ContentfulFaq(id: "1nzrZZShhWQsMcey28uOUQ") {
+    faq: Faq(id: "1nzrZZShhWQsMcey28uOUQ") {
       id
       placeOfFaq {
         lat
@@ -166,12 +168,36 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
 
     # act
     query_string = '{
-    menu: ContentfulMenu(id: "FNlqULSV0sOy4IoGmyWOW") {
-      hamburger {
-        firstGroup {
-          link {
-            title
+    faq: Section_Faq(id: "6nDGEkPhn28Awg2MqeEAAK") {
+      faqs {
+        question
+        answer
+      }
+    }
+    }'
+    result = schema.execute(query_string)
+
+    # assert
+    expect(result.to_h['errors']).to be_nil
+    expect(result.dig('data', 'faq', 'faqs', 0, 'question'))
+      .to eq('A Faq')
+  end
+
+  it 'resolves discriminated linked types' do
+    schema = subject.build_schema
+
+    # act
+    query_string = '{
+    home: Homepage {
+      sections {
+        ... on Section_Faq {
+          faqs {
+            question
+            answer
           }
+        }
+        ... on Section_VideoHighlight {
+          youtubeLink
         }
       }
     }
@@ -180,8 +206,10 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
 
     # assert
     expect(result.to_h['errors']).to be_nil
-    expect(result.dig('data', 'menu', 'hamburger', 'firstGroup', 1, 'link', 'title'))
-      .to eq('Mission')
+    expect(result.dig('data', 'home', 'sections').length).to eq(2)
+    expect(result.dig('data', 'home', 'sections', 0, 'faqs').length).to eq(2)
+    expect(result.dig('data', 'home', 'sections', 1, 'youtubeLink'))
+      .to eq('https://youtu.be/pyrxj8gRRLo')
   end
 
   it 'resolves linked assets' do
@@ -189,7 +217,7 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
 
     # act
     query_string = '{
-    homepage: ContentfulHomepage {
+    homepage: Homepage {
       heroImage {
         title
         file

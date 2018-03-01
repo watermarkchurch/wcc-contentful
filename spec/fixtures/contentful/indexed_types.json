@@ -1,6 +1,6 @@
 {
-  "ContentfulHomepage": {
-    "name": "ContentfulHomepage",
+  "Homepage": {
+    "name": "Homepage",
     "content_type": "homepage",
     "fields": {
       "siteTitle": {
@@ -19,7 +19,7 @@
           "FNlqULSV0sOy4IoGmyWOW"
         ],
         "link_types": [
-          "ContentfulMenu"
+          "Menu"
         ]
       },
       "heroImage": {
@@ -39,7 +39,7 @@
         ],
         "array": true,
         "link_types": [
-          "ContentfulMenuItem"
+          "MenuItem"
         ]
       },
       "sections": {
@@ -51,14 +51,14 @@
         ],
         "array": true,
         "link_types": [
-          "ContentfulSection_Faq",
-          "ContentfulSection_VideoHighlight"
+          "Section_Faq",
+          "Section_VideoHighlight"
         ]
       }
     }
   },
-  "ContentfulSection_Faq": {
-    "name": "ContentfulSection_Faq",
+  "Section_Faq": {
+    "name": "Section_Faq",
     "content_type": "section-Faq",
     "fields": {
       "helpText": {
@@ -74,13 +74,13 @@
         ],
         "array": true,
         "link_types": [
-          "ContentfulFaq"
+          "Faq"
         ]
       }
     }
   },
-  "ContentfulFaq": {
-    "name": "ContentfulFaq",
+  "Faq": {
+    "name": "Faq",
     "content_type": "faq",
     "fields": {
       "question": {
@@ -113,8 +113,8 @@
       }
     }
   },
-  "ContentfulRedirect2": {
-    "name": "ContentfulRedirect2",
+  "Redirect2": {
+    "name": "Redirect2",
     "content_type": "redirect2",
     "fields": {
       "slug": {
@@ -130,7 +130,7 @@
           "1UojJt7YoMiemCq2mGGUmQ"
         ],
         "link_types": [
-          "ContentfulPage"
+          "Page"
         ]
       },
       "url": {
@@ -139,8 +139,8 @@
       }
     }
   },
-  "ContentfulMigrationHistory": {
-    "name": "ContentfulMigrationHistory",
+  "MigrationHistory": {
+    "name": "MigrationHistory",
     "content_type": "migrationHistory",
     "fields": {
       "migrationName": {
@@ -162,8 +162,8 @@
       }
     }
   },
-  "ContentfulMenuItem": {
-    "name": "ContentfulMenuItem",
+  "MenuItem": {
+    "name": "MenuItem",
     "content_type": "menuItem",
     "fields": {
       "text": {
@@ -201,7 +201,7 @@
           "47PsST8EicKgWIWwK2AsW6"
         ],
         "link_types": [
-          "ContentfulPage"
+          "Page"
         ]
       },
       "customButtonCss": {
@@ -217,8 +217,8 @@
       }
     }
   },
-  "ContentfulPage": {
-    "name": "ContentfulPage",
+  "Page": {
+    "name": "Page",
     "content_type": "page",
     "fields": {
       "title": {
@@ -239,8 +239,8 @@
       }
     }
   },
-  "ContentfulSection_VideoHighlight": {
-    "name": "ContentfulSection_VideoHighlight",
+  "Section_VideoHighlight": {
+    "name": "Section_VideoHighlight",
     "content_type": "section-VideoHighlight",
     "fields": {
       "text": {
@@ -253,8 +253,8 @@
       }
     }
   },
-  "ContentfulMenu": {
-    "name": "ContentfulMenu",
+  "Menu": {
+    "name": "Menu",
     "content_type": "menu",
     "fields": {
       "name": {
@@ -277,9 +277,7 @@
           "ZosJIuGfgkky0cA2GsymW"
         ],
         "array": true,
-        "link_types": [
-          "ContentfulMenuItem"
-        ]
+        "link_types": []
       },
       "thirdGroup": {
         "name": "thirdGroup",
@@ -290,7 +288,7 @@
         ],
         "array": true,
         "link_types": [
-          "ContentfulMenuItem"
+          "MenuItem"
         ]
       },
       "hamburger": {
@@ -300,7 +298,7 @@
           "6y9DftpiYoA4YiKg2CgoUU"
         ],
         "link_types": [
-          "ContentfulMenu"
+          "Menu"
         ]
       },
       "firstGroup": {
@@ -312,14 +310,12 @@
           "4tMhra8IAwcEoKS6QSQYcc"
         ],
         "array": true,
-        "link_types": [
-          "ContentfulMenuItem"
-        ]
+        "link_types": []
       }
     }
   },
-  "ContentfulAsset": {
-    "name": "ContentfulAsset",
+  "Asset": {
+    "name": "Asset",
     "content_type": "Asset",
     "fields": {
       "title": {
