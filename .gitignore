@@ -18,4 +18,4 @@ contentful-*-error-log-*
 
 # User local env
 .envrc
-.env.*.local
+.env*
