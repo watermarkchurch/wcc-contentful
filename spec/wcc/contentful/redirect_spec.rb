@@ -112,7 +112,7 @@ RSpec.describe WCC::Contentful::Redirect, type: :model do
       it 'should return true' do
         VCR.use_cassette('models/wcc_contentful/redirect/has_slug_and_page_reference', record: :none) do
           response = described_class.find_by_slug('redirect-with-slug-and-page-reference')
-          expect(response.valid_page_reference?(response.pageReference)).to eq(true)
+          expect(response.valid_page_reference?).to eq(true)
         end
       end
     end
@@ -121,7 +121,7 @@ RSpec.describe WCC::Contentful::Redirect, type: :model do
       it 'should return false' do
         VCR.use_cassette('models/wcc_contentful/redirect/page_ref_with_no_url') do
           response = described_class.find_by_slug('page-ref-with-no-url')
-          expect(response.valid_page_reference?(response.pageReference)).to eq(false)
+          expect(response.valid_page_reference?).to eq(false)
         end
       end
     end
@@ -130,7 +130,7 @@ RSpec.describe WCC::Contentful::Redirect, type: :model do
       it 'should return false' do
         VCR.use_cassette('models/wcc_contentful/redirect/has_slug_only', record: :none) do
           response = described_class.find_by_slug('redirect-with-slug-only')
-          expect(response.valid_page_reference?(response.pageReference)).to eq(false)
+          expect(response.valid_page_reference?).to eq(false)
         end
       end
     end
