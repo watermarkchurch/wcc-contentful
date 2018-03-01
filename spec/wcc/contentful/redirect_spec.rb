@@ -4,8 +4,8 @@ RSpec.describe WCC::Contentful::Redirect, type: :model do
   describe '.find_by_slug' do
     before do
       WCC::Contentful.configure do |config|
-        config.access_token = ENV['CONTENTFUL_ACCESS_TOKEN']
-        config.space = ENV['CONTENTFUL_SPACE_ID']
+        config.access_token = ENV['CONTENTFUL_ACCESS_TOKEN'] || 'test1234'
+        config.space = ENV['CONTENTFUL_SPACE_ID'] || 'test1xab'
         config.default_locale = 'en-US'
       end
     end

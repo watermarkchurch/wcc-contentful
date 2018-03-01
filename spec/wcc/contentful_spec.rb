@@ -6,8 +6,8 @@ RSpec.describe WCC::Contentful do
   end
 
   describe '.configuration' do
-    let(:valid_contentful_access_token) { ENV['CONTENTFUL_ACCESS_TOKEN'] }
-    let(:valid_contentful_space_id) { ENV['CONTENTFUL_SPACE_ID'] }
+    let(:valid_contentful_access_token) { ENV['CONTENTFUL_ACCESS_TOKEN'] || 'test1234' }
+    let(:valid_contentful_space_id) { ENV['CONTENTFUL_SPACE_ID'] || 'test1xab' }
     let(:valid_contentful_default_locale) { 'en-US' }
 
     context 'after WCC::Contentful has been configured' do
@@ -31,11 +31,11 @@ RSpec.describe WCC::Contentful do
   end
 
   describe '.configure' do
-    let(:valid_contentful_access_token) { '<VALID_CONTENTFUL_ACCESS_TOKEN>' }
-    let(:valid_contentful_space_id) { '<VALID_CONTENTFUL_SPACE_ID>' }
+    let(:valid_contentful_access_token) { ENV['CONTENTFUL_ACCESS_TOKEN'] || 'test1234' }
+    let(:valid_contentful_space_id) { ENV['CONTENTFUL_SPACE_ID'] || 'test1xab' }
     let(:valid_contentful_default_locale) { 'en-US' }
-    let(:invalid_contentful_access_token) { '<INVALID_CONTENTFUL_ACCESS_TOKEN>' }
-    let(:invalid_contentful_space_id) { '<INVALID_CONTENTFUL_SPACE_ID>' }
+    let(:invalid_contentful_access_token) { 'test5678' }
+    let(:invalid_contentful_space_id) { 'testxxxx' }
     let(:invalid_contentful_default_locale) { 'simmer-down-now-fella' }
 
     context 'when passed VALID configuration arguments' do
