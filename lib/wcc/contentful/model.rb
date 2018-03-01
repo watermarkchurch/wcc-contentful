@@ -21,6 +21,4 @@ module WCC::Contentful
       const.new(raw, context)
     end
   end
-
-  Location = Struct.new(:lat, :lon)
 end

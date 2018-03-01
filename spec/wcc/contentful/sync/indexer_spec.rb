@@ -34,7 +34,7 @@ RSpec.describe WCC::Contentful::Sync::Indexer do
     expect(faq.dig(:fields, 'numFaqsFloat', :type)).to eq(:Float)
     expect(faq.dig(:fields, 'dateOfFaq', :type)).to eq(:DateTime)
     expect(faq.dig(:fields, 'truthyOrFalsy', :type)).to eq(:Boolean)
-    expect(faq.dig(:fields, 'placeOfFaq', :type)).to eq(:Location)
+    expect(faq.dig(:fields, 'placeOfFaq', :type)).to eq(:Coordinates)
 
     json = subject.types.to_json
     File.write('test.json', json)

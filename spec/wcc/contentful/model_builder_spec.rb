@@ -178,7 +178,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     )
   end
 
-  it 'resolves location' do
+  it 'resolves coordinates' do
     subject.build_models
     WCC::Contentful::Model.store = store
 
@@ -186,7 +186,6 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     faq = WCC::Contentful::Faq.find('1nzrZZShhWQsMcey28uOUQ')
 
     # assert
-    expect(faq.place_of_faq).to be_instance_of(WCC::Contentful::Location)
     expect(faq.placeOfFaq.lat).to eq(52.5391688192368)
     expect(faq.placeOfFaq.lon).to eq(13.4033203125)
   end

@@ -109,7 +109,7 @@
       },
       "placeOfFaq": {
         "name": "placeOfFaq",
-        "type": "Location"
+        "type": "Coordinates"
       }
     }
   },

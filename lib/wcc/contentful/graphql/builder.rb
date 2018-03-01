@@ -153,8 +153,8 @@ module WCC::Contentful::Graphql
               case f[:type]
               when :DateTime
                 Types::DateTimeType
-              when :Location
-                Types::LocationType
+              when :Coordinates
+                Types::CoordinatesType
               when :Json
                 Types::HashType
               else

@@ -21,9 +21,9 @@ module WCC::Contentful::Graphql::Types
       }
     end
 
-  LocationType =
+  CoordinatesType =
     GraphQL::ObjectType.define do
-      name 'Location'
+      name 'Coordinates'
 
       field :lat, !types.Float, hash_key: 'lat'
       field :lon, !types.Float, hash_key: 'lon'

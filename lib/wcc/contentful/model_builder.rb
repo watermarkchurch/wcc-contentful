@@ -112,10 +112,10 @@ module WCC::Contentful
                 val = instance_variable_get(var_name)
                 Time.zone.parse(val) if val.present?
               end
-            when :Location
+            when :Coordinates
               define_method(name) do
                 val = instance_variable_get(var_name)
-                Location.new(val['lat'], val['lon'])
+                OpenStruct.new(val.slice('lat', 'lon')) if val
               end
             when :Json
               define_method(name) do

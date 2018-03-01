@@ -70,7 +70,7 @@ module WCC::Contentful::Sync
       return find_field_type(value.first) if value.is_a? Array
 
       if value.is_a? Hash
-        return :Location if value['lon'].present?
+        return :Coordinates if value['lon'].present?
         return :Asset if value.dig('sys', 'linkType') == 'Asset'
         return :Link if value.dig('sys', 'linkType') == 'Entry'
       end
