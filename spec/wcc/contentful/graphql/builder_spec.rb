@@ -141,7 +141,7 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
     )
   end
 
-  it 'resolves location' do
+  it 'resolves coordinates' do
     schema = subject.build_schema
 
     # act
