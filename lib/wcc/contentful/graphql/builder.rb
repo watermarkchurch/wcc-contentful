@@ -124,11 +124,11 @@ module WCC::Contentful::Graphql
           when :Link
             field(f[:name].to_sym, -> {
               type =
-                if f[:link_types].length == 1
-                  builder.schema_types[f[:link_types].first]
-                elsif f[:link_types].empty?
+                if f[:link_types].nil? || f[:link_types].empty?
                   builder.schema_types['AnyContentful'] ||=
                     Types::BuildUnionType.call(builder.schema_types, 'AnyContentful')
+                elsif f[:link_types].length == 1
+                  builder.schema_types[f[:link_types].first]
                 else
                   from_types = builder.schema_types.select { |key| f[:link_types].include?(key) }
                   name = WCC::Contentful::Helpers.shared_prefix(from_types.keys).chomp('_')

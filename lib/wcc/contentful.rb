@@ -38,6 +38,7 @@ end
 require 'wcc/contentful/redirect'
 
 require 'wcc/contentful/helpers'
+require 'wcc/contentful/content_type_indexer'
 require 'wcc/contentful/model'
 require 'wcc/contentful/model_builder'
 require 'wcc/contentful/graphql'

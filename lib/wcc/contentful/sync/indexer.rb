@@ -23,9 +23,9 @@ module WCC::Contentful::Sync
     end
 
     def index(id, value)
-      content_type_name = content_type_from_raw(value)
+      content_type_id = content_type_from_raw(value)
 
-      content_type = create_type_from_value(content_type_name, value)
+      content_type = create_type_from_value(content_type_id, value)
       content_type =
         @mutex.synchronize do
           @links_resolved = false
@@ -35,10 +35,10 @@ module WCC::Contentful::Sync
       @store.index(id, value)
     end
 
-    def create_type_from_value(name, value)
+    def create_type_from_value(content_type_id, value)
       content_type = {
-        name: constant_from_content_type(name),
-        content_type: name,
+        name: constant_from_content_type(content_type_id),
+        content_type: content_type_id,
         fields: {}
       }
 
