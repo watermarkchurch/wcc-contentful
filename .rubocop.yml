@@ -86,6 +86,9 @@ Style/NumericPredicate:
 Style/RegexpLiteral:
   Enabled: false
 
+Style/ModuleFunction:
+  EnforcedStyle: extend_self
+
 # Danger uses the 'fail' keyword for reporting errors
 Style/SignalException:
   Enabled: false
