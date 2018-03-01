@@ -13,21 +13,24 @@ module WCC::Contentful
     end
 
     def index(raw_content_type)
-      content_type_id = raw_content_type.dig('sys', 'id')
-
-      content_type = create_type_from_raw(content_type_id, raw_content_type)
+      content_type =
+        if raw_content_type.is_a?(Contentful::ContentType)
+          create_type_from_raw(raw_content_type.id, raw_content_type.fields.map(&:raw))
+        else
+          create_type_from_raw(raw_content_type.dig('sys', 'id'), raw_content_type['fields'])
+        end
 
       @types[content_type[:name]] = content_type
     end
 
-    def create_type_from_raw(content_type_id, raw_content_type)
+    def create_type_from_raw(content_type_id, raw_fields)
       content_type = {
         name: constant_from_content_type(content_type_id),
         content_type: content_type_id,
         fields: {}
       }
 
-      raw_content_type['fields'].each do |raw_field|
+      raw_fields.each do |raw_field|
         field_name = raw_field['id']
         field = {
           name: field_name,
