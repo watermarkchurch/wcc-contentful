@@ -7,12 +7,15 @@ module WCC
   module Contentful
     class << self
       attr_accessor :configuration
+      attr_reader :client
     end
 
     def self.configure
       self.configuration ||= Configuration.new
       yield(configuration)
-      Configuration.configure_contentful_model
+      config = Configuration.configure_contentful_model
+      @client = ContentfulModel::Base.client
+      config
     end
 
     class Configuration
@@ -31,6 +34,10 @@ module WCC
           config.default_locale = WCC::Contentful.configuration.default_locale
         end
       end
+    end
+
+    def self.init!
+      raise ArgumentError, 'Please first call WCC:Contentful.Configure!' if configuration.nil?
     end
   end
 end
