@@ -58,7 +58,7 @@ module WCC::Contentful
     def create_asset_type
       {
         name: 'Asset',
-        content_type: 'asset',
+        content_type: 'Asset',
         fields: {
           'title' => { name: 'title', type: :String },
           'description' => { name: 'description', type: :String },

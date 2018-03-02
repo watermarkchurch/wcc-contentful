@@ -1,7 +1,7 @@
 {
   "Asset": {
     "name": "Asset",
-    "content_type": "asset",
+    "content_type": "Asset",
     "fields": {
       "title": {
         "name": "title",
