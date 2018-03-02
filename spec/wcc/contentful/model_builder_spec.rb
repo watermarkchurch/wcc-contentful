@@ -5,6 +5,12 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     WCC::Contentful::ModelBuilder.new(types)
   }
 
+  after(:each) do
+    @schema&.each do |c|
+      WCC::Contentful.send(:remove_const, c.to_s.split(':').last)
+    end
+  end
+
   context 'from sync indexer' do
     let(:types) { load_indexed_types }
     let!(:store) {
@@ -13,10 +19,10 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
     it 'builds models from loaded types' do
       # act
-      schema = subject.build_models
+      @schema = subject.build_models
 
       # assert
-      expect(schema.map(&:to_s).sort).to eq(
+      expect(@schema.map(&:to_s).sort).to eq(
         %w[
           WCC::Contentful::Asset
           WCC::Contentful::Faq
@@ -35,7 +41,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     end
 
     it 'finds types by ID' do
-      subject.build_models
+      @schema = subject.build_models
       WCC::Contentful::Model.store = store
 
       # act
@@ -53,7 +59,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     end
 
     it 'finds by ID on derived class' do
-      subject.build_models
+      @schema = subject.build_models
       WCC::Contentful::Model.store = store
 
       # act
@@ -71,7 +77,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     end
 
     it 'returns nil if cannot find ID' do
-      subject.build_models
+      @schema = subject.build_models
       WCC::Contentful::Model.store = store
 
       # act
@@ -82,7 +88,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     end
 
     it 'errors fast if ID is wrong content type' do
-      subject.build_models
+      @schema = subject.build_models
       WCC::Contentful::Model.store = store
 
       # act
@@ -92,7 +98,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     end
 
     it 'finds types by content type' do
-      subject.build_models
+      @schema = subject.build_models
       WCC::Contentful::Model.store = store
 
       # act
@@ -125,7 +131,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     end
 
     it 'finds with filter' do
-      subject.build_models
+      @schema = subject.build_models
       WCC::Contentful::Model.store = store
 
       # act
@@ -139,7 +145,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     end
 
     it 'finds single item with filter' do
-      subject.build_models
+      @schema = subject.build_models
       WCC::Contentful::Model.store = store
 
       # act
@@ -151,7 +157,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     end
 
     it 'resolves date times and json blobs' do
-      subject.build_models
+      @schema = subject.build_models
       WCC::Contentful::Model.store = store
 
       # act
@@ -182,7 +188,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     end
 
     it 'resolves coordinates' do
-      subject.build_models
+      @schema = subject.build_models
       WCC::Contentful::Model.store = store
 
       # act
@@ -194,7 +200,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     end
 
     it 'resolves linked types' do
-      subject.build_models
+      @schema = subject.build_models
       WCC::Contentful::Model.store = store
 
       # act
@@ -219,7 +225,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     end
 
     it 'resolves linked assets' do
-      subject.build_models
+      @schema = subject.build_models
       WCC::Contentful::Model.store = store
 
       # act
@@ -246,10 +252,10 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
     it 'builds models from loaded types' do
       # act
-      schema = subject.build_models
+      @schema = subject.build_models
 
       # assert
-      expect(schema.map(&:to_s).sort).to eq(
+      expect(@schema.map(&:to_s).sort).to eq(
         %w[
           WCC::Contentful::Asset
           WCC::Contentful::Dog
@@ -275,7 +281,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     end
 
     it 'finds types by ID' do
-      subject.build_models
+      @schema = subject.build_models
       WCC::Contentful::Model.store = store
 
       # act
@@ -293,7 +299,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     end
 
     it 'finds with filter' do
-      subject.build_models
+      @schema = subject.build_models
       WCC::Contentful::Model.store = store
 
       # act
@@ -307,7 +313,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     end
 
     it 'resolves date times and json blobs' do
-      subject.build_models
+      @schema = subject.build_models
       WCC::Contentful::Model.store = store
 
       # act
@@ -338,7 +344,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     end
 
     it 'resolves coordinates' do
-      subject.build_models
+      @schema = subject.build_models
       WCC::Contentful::Model.store = store
 
       # act
@@ -350,7 +356,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     end
 
     it 'resolves linked types' do
-      subject.build_models
+      @schema = subject.build_models
       WCC::Contentful::Model.store = store
 
       # act
@@ -375,7 +381,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     end
 
     it 'resolves linked assets' do
-      subject.build_models
+      @schema = subject.build_models
       WCC::Contentful::Model.store = store
 
       # act
