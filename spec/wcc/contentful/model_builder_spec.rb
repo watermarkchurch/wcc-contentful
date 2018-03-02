@@ -207,6 +207,17 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       expect(main_menu.hamburger.first_group[0].link.title).to eq('About')
     end
 
+    it 'handles nil linked types' do
+      subject.build_models
+      WCC::Contentful::Model.store = store
+
+      # act
+      ministries_page = WCC::Contentful::Page.find('JhYhSfZPAOMqsaK8cYOUK')
+
+      # assert
+      expect(ministries_page.menu).to be_nil
+    end
+
     it 'resolves linked assets' do
       subject.build_models
       WCC::Contentful::Model.store = store
@@ -350,6 +361,17 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       expect(main_menu.hamburger.first_group[0]).to be_instance_of(WCC::Contentful::MenuItem)
       expect(main_menu.hamburger.first_group[0].link).to be_instance_of(WCC::Contentful::Page)
       expect(main_menu.hamburger.first_group[0].link.title).to eq('About')
+    end
+
+    it 'handles nil linked types' do
+      subject.build_models
+      WCC::Contentful::Model.store = store
+
+      # act
+      ministries_page = WCC::Contentful::Page.find('JhYhSfZPAOMqsaK8cYOUK')
+
+      # assert
+      expect(ministries_page.menu).to be_nil
     end
 
     it 'resolves linked assets' do

@@ -96,7 +96,8 @@ module WCC::Contentful
                 val = instance_variable_get(var_name + '_resolved')
                 return val if val.present?
 
-                val = instance_variable_get(var_name)
+                return unless val = instance_variable_get(var_name)
+
                 val =
                   if val.is_a? Array
                     val.map { |v| Model.find(v.dig('sys', 'id')) }
