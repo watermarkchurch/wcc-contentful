@@ -101,4 +101,124 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
       expect(favicons[:array]).to be(true)
     end
   end
+
+  context 'index from contentful.rb management API' do
+    before do
+      VCR.use_cassette('models/wcc_contentful/content_types', record: :none) do
+        WCC::Contentful.configure do |config|
+          config.access_token = ENV['CONTENTFUL_ACCESS_TOKEN'] || 'test1234'
+          config.space = ENV['CONTENTFUL_SPACE_ID'] || 'test1xab'
+          config.management_token = ENV['CONTENTFUL_MANAGEMENT_TOKEN'] || 'CFPAT-xxxx'
+          config.default_locale = 'en-US'
+        end
+      end
+    end
+
+    let(:content_types) {
+      VCR.use_cassette('models/wcc_contentful/content_types/mgmt_api', record: :none) do
+        ContentfulModel::Management.new.content_types
+          .all(ContentfulModel.configuration.space)
+          .map { |t| t }
+      end
+    }
+
+    it 'generates type data' do
+      # act
+      content_types.each do |managed_content_type|
+        indexer.index(managed_content_type)
+      end
+
+      # assert
+      # includes non-published content types
+      expect(indexer.types.keys.sort).to eq(
+        %w[
+          Asdf
+          Asset
+          Dog
+          Faq
+          Homepage
+          Menu
+          MenuItem
+          MigrationHistory
+          Ministry
+          MinistryCard
+          Page
+          Redirect
+          Section_CardSearch
+          Section_Faq
+          Section_Testimonials
+          Section_VideoHighlight
+          Testimonial
+          Theme
+        ]
+      )
+
+      sections = indexer.types['Page'][:fields]['sections']
+      expect(sections[:link_types]).to eq(
+        %w[
+          Section_CardSearch
+          Section_Faq
+          Section_Testimonials
+          Section_VideoHighlight
+        ]
+      )
+    end
+  end
+
+  context 'index from contentful.rb CDN' do
+    before do
+      VCR.use_cassette('models/wcc_contentful/content_types', record: :none) do
+        WCC::Contentful.configure do |config|
+          config.access_token = ENV['CONTENTFUL_ACCESS_TOKEN'] || 'test1234'
+          config.space = ENV['CONTENTFUL_SPACE_ID'] || 'test1xab'
+          config.management_token = ENV['CONTENTFUL_MANAGEMENT_TOKEN'] || 'CFPAT-xxxx'
+          config.default_locale = 'en-US'
+        end
+      end
+    end
+
+    let(:content_types) {
+      ContentfulModel::Base.client.dynamic_entry_cache.values.map(&:content_type)
+    }
+
+    it 'generates type data' do
+      # act
+      content_types.each do |managed_content_type|
+        indexer.index(managed_content_type)
+      end
+
+      # assert
+      expect(indexer.types.keys.sort).to eq(
+        %w[
+          Asset
+          Dog
+          Faq
+          Homepage
+          Menu
+          MenuItem
+          MigrationHistory
+          Ministry
+          MinistryCard
+          Page
+          Redirect
+          Section_CardSearch
+          Section_Faq
+          Section_Testimonials
+          Section_VideoHighlight
+          Testimonial
+          Theme
+        ]
+      )
+
+      sections = indexer.types['Page'][:fields]['sections']
+      expect(sections[:link_types]).to eq(
+        %w[
+          Section_CardSearch
+          Section_Faq
+          Section_Testimonials
+          Section_VideoHighlight
+        ]
+      )
+    end
+  end
 end
