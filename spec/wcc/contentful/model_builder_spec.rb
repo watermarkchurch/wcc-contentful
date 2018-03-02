@@ -221,7 +221,11 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       ministries_page = WCC::Contentful::Page.find('JhYhSfZPAOMqsaK8cYOUK')
 
       # assert
-      expect(ministries_page.menu).to be_nil
+      # this is why the 'from content type indexer' is better -
+      # we'd love to be able to say this:
+      # expect(ministries_page.sub_menu).to be_nil
+      # but it doesn't exist.
+      expect(ministries_page).to_not respond_to(:sub_menu)
     end
 
     it 'resolves linked assets' do
@@ -377,7 +381,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       ministries_page = WCC::Contentful::Page.find('JhYhSfZPAOMqsaK8cYOUK')
 
       # assert
-      expect(ministries_page.menu).to be_nil
+      expect(ministries_page.sub_menu).to be_nil
     end
 
     it 'resolves linked assets' do
