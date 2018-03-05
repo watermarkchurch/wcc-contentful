@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe WCC::Contentful::Sync::Indexer do
-  subject { WCC::Contentful::Sync::Indexer.new(WCC::Contentful::Sync::MemoryStore.new) }
+  subject { WCC::Contentful::Sync::Indexer.new(WCC::Contentful::Store::MemoryStore.new) }
 
   context 'index sync data' do
     it 'generates type data' do

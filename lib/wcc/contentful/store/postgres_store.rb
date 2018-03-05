@@ -2,7 +2,7 @@
 
 require 'pg'
 
-module WCC::Contentful::Sync
+module WCC::Contentful::Store
   class PostgresStore
     def initialize(connection_options = nil)
       connection_options ||= { dbname: 'contentful' }

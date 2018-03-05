@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module WCC::Contentful::Sync
+module WCC::Contentful::Store
   class MemoryStore
     def initialize
       @hash = {}

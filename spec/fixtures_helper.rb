@@ -24,7 +24,7 @@ module FixturesHelper
   def load_store_from_sync(file_name: 'contentful/sync_initial.json', store: nil)
     sync_initial = JSON.parse(load_fixture(file_name))
 
-    store ||= WCC::Contentful::Sync::MemoryStore.new
+    store ||= WCC::Contentful::Store::MemoryStore.new
     sync_initial.each do |k, v|
       store.index(k, v)
     end

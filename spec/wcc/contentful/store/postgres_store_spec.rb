@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.describe WCC::Contentful::Sync::PostgresStore do
-  subject { WCC::Contentful::Sync::PostgresStore.new(ENV['POSTGRES_CONNECTION']) }
+RSpec.describe WCC::Contentful::Store::PostgresStore do
+  subject { WCC::Contentful::Store::PostgresStore.new(ENV['POSTGRES_CONNECTION']) }
 
   before :each do
     begin

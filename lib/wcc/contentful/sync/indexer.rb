@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'memory_store'
-
 module WCC::Contentful::Sync
   class Indexer
     include WCC::Contentful::Helpers

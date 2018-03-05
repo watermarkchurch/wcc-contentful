@@ -4,6 +4,7 @@ require 'wcc/contentful/version'
 require 'contentful_model'
 
 require 'wcc/contentful/helpers'
+require 'wcc/contentful/store'
 require 'wcc/contentful/sync'
 require 'wcc/contentful/content_type_indexer'
 require 'wcc/contentful/model'
@@ -79,7 +80,7 @@ module WCC
         end
 
       # TODO: allow configuration of which method & store to use
-      store = Sync::MemoryStore.new
+      store = Store::MemoryStore.new
 
       client.sync(initial: true).each_item do |item|
         # TODO: enrich existing type data using Sync::Indexer
