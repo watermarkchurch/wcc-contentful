@@ -3,10 +3,12 @@
 RSpec.describe WCC::Contentful::Redirect, type: :model do
   describe '.find_by_slug' do
     before do
-      WCC::Contentful.configure do |config|
-        config.access_token = ENV['CONTENTFUL_ACCESS_TOKEN'] || 'test1234'
-        config.space = ENV['CONTENTFUL_SPACE_ID'] || 'test1xab'
-        config.default_locale = 'en-US'
+      VCR.use_cassette('models/wcc_contentful/content_types', record: :none) do
+        WCC::Contentful.configure do |config|
+          config.access_token = ENV['CONTENTFUL_ACCESS_TOKEN'] || 'test1234'
+          config.space = ENV['CONTENTFUL_SPACE_ID'] || 'test1xab'
+          config.default_locale = 'en-US'
+        end
       end
     end
     context 'when the Redirect model in Contentful has a slug and url, but no pageReference' do

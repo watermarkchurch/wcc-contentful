@@ -163,6 +163,17 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
         ]
       )
     end
+
+    it 'generates link types even for single links' do
+      # act
+      content_types.each do |managed_content_type|
+        indexer.index(managed_content_type)
+      end
+
+      # assert
+      sub_menu = indexer.types['Page'][:fields]['subMenu']
+      expect(sub_menu[:link_types]).to eq(['Menu'])
+    end
   end
 
   context 'index from contentful.rb CDN' do
@@ -219,6 +230,20 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
           Section_VideoHighlight
         ]
       )
+    end
+
+    it 'fails to generate link types for single links' do
+      # act
+      content_types.each do |managed_content_type|
+        indexer.index(managed_content_type)
+      end
+
+      # assert
+      sub_menu = indexer.types['Page'][:fields]['subMenu']
+
+      # We would love for this to be present, but the contentful CDN
+      # does not give us this info.
+      expect(sub_menu[:link_types]).to_not be_present
     end
   end
 end

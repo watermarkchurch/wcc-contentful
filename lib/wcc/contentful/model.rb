@@ -14,7 +14,8 @@ module WCC::Contentful
     end
 
     def self.find(id, context = nil)
-      raw = store.find(id)
+      return unless raw = store.find(id)
+
       content_type = content_type_from_raw(raw)
 
       const = WCC::Contentful.const_get(constant_from_content_type(content_type))
