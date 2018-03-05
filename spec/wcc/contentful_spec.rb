@@ -15,6 +15,7 @@ RSpec.describe WCC::Contentful do
         config.access_token = valid_contentful_access_token
         config.space = valid_contentful_space_id
         config.default_locale = valid_contentful_default_locale
+        config.content_delivery = :eager_sync
       end
     end
   end
@@ -152,6 +153,30 @@ RSpec.describe WCC::Contentful do
         expect(asset).to_not be_nil
         expect(asset).to be_a(WCC::Contentful::Asset)
         expect(asset.file.fileName).to eq('favicon.ico')
+      end
+    end
+
+    context 'content_delivery = direct' do
+      before(:each) do
+        WCC::Contentful.configure do |config|
+          config.content_delivery = :direct
+        end
+      end
+
+      it 'builds out store using CDNAdapter' do
+        # act
+        VCR.use_cassette('models/wcc_contentful/content_types/mgmt_api', record: :none) do
+          WCC::Contentful.init!
+        end
+
+        # assert
+        expect(WCC::Contentful::Model.store).to be_a(WCC::Contentful::Store::CDNAdapter)
+
+        page =
+          VCR.use_cassette('models/wcc_contentful/entries/JhYhSfZPAOMqsaK8cYOUK') do
+            WCC::Contentful::Page.find('JhYhSfZPAOMqsaK8cYOUK')
+          end
+        expect(page.title).to eq('Ministries')
       end
     end
   end
