@@ -12,22 +12,6 @@ RSpec.shared_examples 'contentful store' do
     expect(found).to eq(data)
   end
 
-  it 'returns all keys' do
-    data = { 'key' => 'val', '1' => { 'deep' => 9 } }
-
-    # act
-    subject.index('1234', data)
-    subject.index('5678', data)
-    subject.index('9999', data)
-    subject.index('8888', data)
-    keys = subject.keys
-
-    # assert
-    expect(keys.sort).to eq(
-      %w[1234 5678 8888 9999]
-    )
-  end
-
   it 'find_all gets everything' do
     data =
       1.upto(10).map do |i|
