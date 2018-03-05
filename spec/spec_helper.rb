@@ -38,4 +38,5 @@ VCR.configure do |c|
   c.filter_sensitive_data('<CONTENTFUL_MANAGEMENT_TOKEN>') {
     ENV['CONTENTFUL_MANAGEMENT_TOKEN'] || 'CFPAT-test1234'
   }
+  c.configure_rspec_metadata!
 end
