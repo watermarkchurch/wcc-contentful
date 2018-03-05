@@ -7,7 +7,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
   after(:each) do
     @schema&.each do |c|
-      WCC::Contentful.send(:remove_const, c.to_s.split(':').last)
+      WCC::ContentfulModel.send(:remove_const, c.to_s.split(':').last)
     end
   end
 
@@ -24,31 +24,31 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       # assert
       expect(@schema.map(&:to_s).sort).to eq(
         %w[
-          WCC::Contentful::Asset
-          WCC::Contentful::Faq
-          WCC::Contentful::Homepage
-          WCC::Contentful::Menu
-          WCC::Contentful::MenuItem
-          WCC::Contentful::MigrationHistory
-          WCC::Contentful::Page
-          WCC::Contentful::Redirect2
-          WCC::Contentful::Section_Faq
-          WCC::Contentful::Section_VideoHighlight
+          WCC::ContentfulModel::Asset
+          WCC::ContentfulModel::Faq
+          WCC::ContentfulModel::Homepage
+          WCC::ContentfulModel::Menu
+          WCC::ContentfulModel::MenuItem
+          WCC::ContentfulModel::MigrationHistory
+          WCC::ContentfulModel::Page
+          WCC::ContentfulModel::Redirect2
+          WCC::ContentfulModel::Section_Faq
+          WCC::ContentfulModel::Section_VideoHighlight
         ]
       )
 
-      expect(WCC::Contentful::Model.all_models).to include(WCC::Contentful::Page)
+      expect(WCC::ContentfulModel.all_models).to include(WCC::ContentfulModel::Page)
     end
 
     it 'finds types by ID' do
       @schema = subject.build_models
-      WCC::Contentful::Model.store = store
+      WCC::ContentfulModel.store = store
 
       # act
-      main_menu = WCC::Contentful::Model.find('FNlqULSV0sOy4IoGmyWOW')
+      main_menu = WCC::ContentfulModel.find('FNlqULSV0sOy4IoGmyWOW')
 
       # assert
-      expect(main_menu).to be_instance_of(WCC::Contentful::Menu)
+      expect(main_menu).to be_instance_of(WCC::ContentfulModel::Menu)
       expect(main_menu.id).to eq('FNlqULSV0sOy4IoGmyWOW')
       expect(main_menu.created_at).to eq(Time.parse('2018-02-12T20:09:38.819Z'))
       expect(main_menu.updated_at).to eq(Time.parse('2018-02-12T21:59:43.653Z'))
@@ -60,13 +60,13 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
     it 'finds by ID on derived class' do
       @schema = subject.build_models
-      WCC::Contentful::Model.store = store
+      WCC::ContentfulModel.store = store
 
       # act
-      main_menu = WCC::Contentful::Menu.find('FNlqULSV0sOy4IoGmyWOW')
+      main_menu = WCC::ContentfulModel::Menu.find('FNlqULSV0sOy4IoGmyWOW')
 
       # assert
-      expect(main_menu).to be_instance_of(WCC::Contentful::Menu)
+      expect(main_menu).to be_instance_of(WCC::ContentfulModel::Menu)
       expect(main_menu.id).to eq('FNlqULSV0sOy4IoGmyWOW')
       expect(main_menu.created_at).to eq(Time.parse('2018-02-12T20:09:38.819Z'))
       expect(main_menu.updated_at).to eq(Time.parse('2018-02-12T21:59:43.653Z'))
@@ -78,10 +78,10 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
     it 'returns nil if cannot find ID' do
       @schema = subject.build_models
-      WCC::Contentful::Model.store = store
+      WCC::ContentfulModel.store = store
 
       # act
-      main_menu = WCC::Contentful::Menu.find('asdf')
+      main_menu = WCC::ContentfulModel::Menu.find('asdf')
 
       # assert
       expect(main_menu).to be_nil
@@ -89,20 +89,20 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
     it 'errors fast if ID is wrong content type' do
       @schema = subject.build_models
-      WCC::Contentful::Model.store = store
+      WCC::ContentfulModel.store = store
 
       # act
       expect {
-        _actually_a_menu = WCC::Contentful::Page.find('FNlqULSV0sOy4IoGmyWOW')
+        _actually_a_menu = WCC::ContentfulModel::Page.find('FNlqULSV0sOy4IoGmyWOW')
       }.to raise_error(ArgumentError)
     end
 
     it 'finds types by content type' do
       @schema = subject.build_models
-      WCC::Contentful::Model.store = store
+      WCC::ContentfulModel.store = store
 
       # act
-      menu_items = WCC::Contentful::MenuItem.find_all
+      menu_items = WCC::ContentfulModel::MenuItem.find_all
 
       # assert
       expect(menu_items.length).to eq(11)
@@ -132,10 +132,10 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
     it 'finds with filter' do
       @schema = subject.build_models
-      WCC::Contentful::Model.store = store
+      WCC::ContentfulModel.store = store
 
       # act
-      menu_items = WCC::Contentful::MenuItem.find_by(button_style: 'custom')
+      menu_items = WCC::ContentfulModel::MenuItem.find_by(button_style: 'custom')
 
       # assert
       expect(menu_items.length).to eq(2)
@@ -146,10 +146,10 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
     it 'finds single item with filter' do
       @schema = subject.build_models
-      WCC::Contentful::Model.store = store
+      WCC::ContentfulModel.store = store
 
       # act
-      redirect = WCC::Contentful::Redirect2.find_by(slug: 'mister_roboto')
+      redirect = WCC::ContentfulModel::Redirect2.find_by(slug: 'mister_roboto')
 
       # assert
       expect(redirect.length).to eq(1)
@@ -158,10 +158,10 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
     it 'resolves date times and json blobs' do
       @schema = subject.build_models
-      WCC::Contentful::Model.store = store
+      WCC::ContentfulModel.store = store
 
       # act
-      migration = WCC::Contentful::MigrationHistory.find_all.first
+      migration = WCC::ContentfulModel::MigrationHistory.find_all.first
 
       # assert
       expect(migration.started).to eq(Time.zone.parse('2018-02-22T21:12:45.621Z'))
@@ -189,10 +189,10 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
     it 'resolves coordinates' do
       @schema = subject.build_models
-      WCC::Contentful::Model.store = store
+      WCC::ContentfulModel.store = store
 
       # act
-      faq = WCC::Contentful::Faq.find('1nzrZZShhWQsMcey28uOUQ')
+      faq = WCC::ContentfulModel::Faq.find('1nzrZZShhWQsMcey28uOUQ')
 
       # assert
       expect(faq.placeOfFaq.lat).to eq(52.5391688192368)
@@ -201,24 +201,24 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
     it 'resolves linked types' do
       @schema = subject.build_models
-      WCC::Contentful::Model.store = store
+      WCC::ContentfulModel.store = store
 
       # act
-      main_menu = WCC::Contentful::Menu.find('FNlqULSV0sOy4IoGmyWOW')
+      main_menu = WCC::ContentfulModel::Menu.find('FNlqULSV0sOy4IoGmyWOW')
 
       # assert
-      expect(main_menu.hamburger).to be_instance_of(WCC::Contentful::Menu)
-      expect(main_menu.hamburger.first_group[0]).to be_instance_of(WCC::Contentful::MenuItem)
-      expect(main_menu.hamburger.first_group[0].link).to be_instance_of(WCC::Contentful::Page)
+      expect(main_menu.hamburger).to be_instance_of(WCC::ContentfulModel::Menu)
+      expect(main_menu.hamburger.first_group[0]).to be_instance_of(WCC::ContentfulModel::MenuItem)
+      expect(main_menu.hamburger.first_group[0].link).to be_instance_of(WCC::ContentfulModel::Page)
       expect(main_menu.hamburger.first_group[0].link.title).to eq('About')
     end
 
     it 'handles nil linked types' do
       subject.build_models
-      WCC::Contentful::Model.store = store
+      WCC::ContentfulModel.store = store
 
       # act
-      ministries_page = WCC::Contentful::Page.find('JhYhSfZPAOMqsaK8cYOUK')
+      ministries_page = WCC::ContentfulModel::Page.find('JhYhSfZPAOMqsaK8cYOUK')
 
       # assert
       # this is why the 'from content type indexer' is better -
@@ -230,13 +230,13 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
     it 'resolves linked assets' do
       @schema = subject.build_models
-      WCC::Contentful::Model.store = store
+      WCC::ContentfulModel.store = store
 
       # act
-      homepage = WCC::Contentful::Homepage.find_all.first
+      homepage = WCC::ContentfulModel::Homepage.find_all.first
 
       # assert
-      expect(homepage.hero_image).to be_instance_of(WCC::Contentful::Asset)
+      expect(homepage.hero_image).to be_instance_of(WCC::ContentfulModel::Asset)
       expect(homepage.hero_image.file).to be_a(OpenStruct)
       expect(homepage.hero_image.title).to eq('worship')
       expect(homepage.hero_image.file['url']).to eq('//images.contentful.com/343qxys30lid/' \
@@ -245,7 +245,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
       expect(homepage.favicons).to be_a(Array)
       expect(homepage.favicons.length).to eq(4)
-      expect(homepage.favicons[0]).to be_instance_of(WCC::Contentful::Asset)
+      expect(homepage.favicons[0]).to be_instance_of(WCC::ContentfulModel::Asset)
       expect(homepage.favicons[0].file.fileName).to eq('favicon.ico')
     end
   end
@@ -261,38 +261,38 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       # assert
       expect(@schema.map(&:to_s).sort).to eq(
         %w[
-          WCC::Contentful::Asset
-          WCC::Contentful::Dog
-          WCC::Contentful::Faq
-          WCC::Contentful::Homepage
-          WCC::Contentful::Menu
-          WCC::Contentful::MenuItem
-          WCC::Contentful::MigrationHistory
-          WCC::Contentful::Ministry
-          WCC::Contentful::MinistryCard
-          WCC::Contentful::Page
-          WCC::Contentful::Redirect2
-          WCC::Contentful::Section_CardSearch
-          WCC::Contentful::Section_Faq
-          WCC::Contentful::Section_Testimonials
-          WCC::Contentful::Section_VideoHighlight
-          WCC::Contentful::Testimonial
-          WCC::Contentful::Theme
+          WCC::ContentfulModel::Asset
+          WCC::ContentfulModel::Dog
+          WCC::ContentfulModel::Faq
+          WCC::ContentfulModel::Homepage
+          WCC::ContentfulModel::Menu
+          WCC::ContentfulModel::MenuItem
+          WCC::ContentfulModel::MigrationHistory
+          WCC::ContentfulModel::Ministry
+          WCC::ContentfulModel::MinistryCard
+          WCC::ContentfulModel::Page
+          WCC::ContentfulModel::Redirect2
+          WCC::ContentfulModel::Section_CardSearch
+          WCC::ContentfulModel::Section_Faq
+          WCC::ContentfulModel::Section_Testimonials
+          WCC::ContentfulModel::Section_VideoHighlight
+          WCC::ContentfulModel::Testimonial
+          WCC::ContentfulModel::Theme
         ]
       )
 
-      expect(WCC::Contentful::Model.all_models).to include(WCC::Contentful::Page)
+      expect(WCC::ContentfulModel.all_models).to include(WCC::ContentfulModel::Page)
     end
 
     it 'finds types by ID' do
       @schema = subject.build_models
-      WCC::Contentful::Model.store = store
+      WCC::ContentfulModel.store = store
 
       # act
-      main_menu = WCC::Contentful::Model.find('FNlqULSV0sOy4IoGmyWOW')
+      main_menu = WCC::ContentfulModel.find('FNlqULSV0sOy4IoGmyWOW')
 
       # assert
-      expect(main_menu).to be_instance_of(WCC::Contentful::Menu)
+      expect(main_menu).to be_instance_of(WCC::ContentfulModel::Menu)
       expect(main_menu.id).to eq('FNlqULSV0sOy4IoGmyWOW')
       expect(main_menu.created_at).to eq(Time.parse('2018-02-12T20:09:38.819Z'))
       expect(main_menu.updated_at).to eq(Time.parse('2018-02-12T21:59:43.653Z'))
@@ -304,10 +304,10 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
     it 'finds with filter' do
       @schema = subject.build_models
-      WCC::Contentful::Model.store = store
+      WCC::ContentfulModel.store = store
 
       # act
-      menu_items = WCC::Contentful::MenuItem.find_by(button_style: 'custom')
+      menu_items = WCC::ContentfulModel::MenuItem.find_by(button_style: 'custom')
 
       # assert
       expect(menu_items.length).to eq(2)
@@ -318,10 +318,10 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
     it 'resolves date times and json blobs' do
       @schema = subject.build_models
-      WCC::Contentful::Model.store = store
+      WCC::ContentfulModel.store = store
 
       # act
-      migration = WCC::Contentful::MigrationHistory.find_all.first
+      migration = WCC::ContentfulModel::MigrationHistory.find_all.first
 
       # assert
       expect(migration.started).to eq(Time.zone.parse('2018-02-22T21:12:45.621Z'))
@@ -349,10 +349,10 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
     it 'resolves coordinates' do
       @schema = subject.build_models
-      WCC::Contentful::Model.store = store
+      WCC::ContentfulModel.store = store
 
       # act
-      faq = WCC::Contentful::Faq.find('1nzrZZShhWQsMcey28uOUQ')
+      faq = WCC::ContentfulModel::Faq.find('1nzrZZShhWQsMcey28uOUQ')
 
       # assert
       expect(faq.placeOfFaq.lat).to eq(52.5391688192368)
@@ -361,24 +361,24 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
     it 'resolves linked types' do
       @schema = subject.build_models
-      WCC::Contentful::Model.store = store
+      WCC::ContentfulModel.store = store
 
       # act
-      main_menu = WCC::Contentful::Menu.find('FNlqULSV0sOy4IoGmyWOW')
+      main_menu = WCC::ContentfulModel::Menu.find('FNlqULSV0sOy4IoGmyWOW')
 
       # assert
-      expect(main_menu.hamburger).to be_instance_of(WCC::Contentful::Menu)
-      expect(main_menu.hamburger.first_group[0]).to be_instance_of(WCC::Contentful::MenuItem)
-      expect(main_menu.hamburger.first_group[0].link).to be_instance_of(WCC::Contentful::Page)
+      expect(main_menu.hamburger).to be_instance_of(WCC::ContentfulModel::Menu)
+      expect(main_menu.hamburger.first_group[0]).to be_instance_of(WCC::ContentfulModel::MenuItem)
+      expect(main_menu.hamburger.first_group[0].link).to be_instance_of(WCC::ContentfulModel::Page)
       expect(main_menu.hamburger.first_group[0].link.title).to eq('About')
     end
 
     it 'handles nil linked types' do
       subject.build_models
-      WCC::Contentful::Model.store = store
+      WCC::ContentfulModel.store = store
 
       # act
-      ministries_page = WCC::Contentful::Page.find('JhYhSfZPAOMqsaK8cYOUK')
+      ministries_page = WCC::ContentfulModel::Page.find('JhYhSfZPAOMqsaK8cYOUK')
 
       # assert
       expect(ministries_page.sub_menu).to be_nil
@@ -386,13 +386,13 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
     it 'resolves linked assets' do
       @schema = subject.build_models
-      WCC::Contentful::Model.store = store
+      WCC::ContentfulModel.store = store
 
       # act
-      homepage = WCC::Contentful::Homepage.find_all.first
+      homepage = WCC::ContentfulModel::Homepage.find_all.first
 
       # assert
-      expect(homepage.hero_image).to be_instance_of(WCC::Contentful::Asset)
+      expect(homepage.hero_image).to be_instance_of(WCC::ContentfulModel::Asset)
       expect(homepage.hero_image.file).to be_a(OpenStruct)
       expect(homepage.hero_image.title).to eq('worship')
       expect(homepage.hero_image.file['url']).to eq('//images.contentful.com/343qxys30lid/' \
@@ -401,7 +401,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
       expect(homepage.favicons).to be_a(Array)
       expect(homepage.favicons.length).to eq(4)
-      expect(homepage.favicons[0]).to be_instance_of(WCC::Contentful::Asset)
+      expect(homepage.favicons[0]).to be_instance_of(WCC::ContentfulModel::Asset)
       expect(homepage.favicons[0].file.fileName).to eq('favicon.ico')
     end
   end

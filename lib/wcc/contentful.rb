@@ -8,7 +8,7 @@ require 'wcc/contentful/helpers'
 require 'wcc/contentful/store'
 require 'wcc/contentful/sync'
 require 'wcc/contentful/content_type_indexer'
-require 'wcc/contentful/model'
+require 'wcc/contentful_model'
 require 'wcc/contentful/model_builder'
 
 module WCC
@@ -24,7 +24,7 @@ module WCC
     def self.configure
       @configuration ||= Configuration.new
       yield(configuration)
-      configuration.configure_contentful_model if defined?(ContentfulModel)
+      configuration.configure_contentful_model if defined?(::ContentfulModel)
       configuration
     end
 
@@ -35,8 +35,8 @@ module WCC
       content_types =
         if configuration.management_token.present?
           # prefer from mgmt API since it has richer data
-          ContentfulModel::Management.new.content_types
-            .all(ContentfulModel.configuration.space).map { |t| t }
+          ::ContentfulModel::Management.new.content_types
+            .all(::ContentfulModel.configuration.space).map { |t| t }
         else
           client.dynamic_entry_cache
             .values.map(&:content_type)
@@ -55,10 +55,10 @@ module WCC
           # TODO: enrich existing type data using Sync::Indexer
           store.index(item.id, item.marshal_dump)
         end
-        WCC::Contentful::Model.store = store
+        WCC::ContentfulModel.store = store
       when :direct
         store = Store::CDNAdapter.new(client)
-        WCC::Contentful::Model.store = store
+        WCC::ContentfulModel.store = store
       end
 
       WCC::Contentful::ModelBuilder.new(types.types).build_models

@@ -73,10 +73,10 @@ RSpec.describe WCC::Contentful do
 
   describe '.init' do
     after(:each) do
-      consts = WCC::Contentful::Model.all_models.map(&:to_s).uniq
+      consts = WCC::ContentfulModel.all_models.map(&:to_s).uniq
       consts.each do |c|
         begin
-          WCC::Contentful.send(:remove_const, c.split(':').last)
+          WCC::ContentfulModel.send(:remove_const, c.split(':').last)
         rescue StandardError => e
           warn e
         end
@@ -100,7 +100,7 @@ RSpec.describe WCC::Contentful do
         end
 
         # assert
-        content_type = WCC::Contentful::MenuItem.content_type
+        content_type = WCC::ContentfulModel::MenuItem.content_type
         expect(content_type).to eq('menuItem')
       end
 
@@ -111,9 +111,9 @@ RSpec.describe WCC::Contentful do
         end
 
         # assert
-        page = WCC::Contentful::Model.find('1UojJt7YoMiemCq2mGGUmQ')
+        page = WCC::ContentfulModel.find('1UojJt7YoMiemCq2mGGUmQ')
         expect(page).to_not be_nil
-        expect(page).to be_a(WCC::Contentful::Page)
+        expect(page).to be_a(WCC::ContentfulModel::Page)
         expect(page.slug).to eq('/conferences')
 
         expect(page.sections).to be_nil
@@ -136,7 +136,7 @@ RSpec.describe WCC::Contentful do
         end
 
         # assert
-        content_type = WCC::Contentful::Page.content_type
+        content_type = WCC::ContentfulModel::Page.content_type
         expect(content_type).to eq('page')
       end
 
@@ -149,9 +149,9 @@ RSpec.describe WCC::Contentful do
         end
 
         # assert
-        asset = WCC::Contentful::Asset.find('2zKTmej544IakmIqoEu0y8')
+        asset = WCC::ContentfulModel::Asset.find('2zKTmej544IakmIqoEu0y8')
         expect(asset).to_not be_nil
-        expect(asset).to be_a(WCC::Contentful::Asset)
+        expect(asset).to be_a(WCC::ContentfulModel::Asset)
         expect(asset.file.fileName).to eq('favicon.ico')
       end
     end
@@ -170,11 +170,11 @@ RSpec.describe WCC::Contentful do
         end
 
         # assert
-        expect(WCC::Contentful::Model.store).to be_a(WCC::Contentful::Store::CDNAdapter)
+        expect(WCC::ContentfulModel.store).to be_a(WCC::Contentful::Store::CDNAdapter)
 
         page =
           VCR.use_cassette('models/wcc_contentful/entries/JhYhSfZPAOMqsaK8cYOUK') do
-            WCC::Contentful::Page.find('JhYhSfZPAOMqsaK8cYOUK')
+            WCC::ContentfulModel::Page.find('JhYhSfZPAOMqsaK8cYOUK')
           end
         expect(page.title).to eq('Ministries')
       end

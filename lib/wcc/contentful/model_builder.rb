@@ -18,13 +18,13 @@ module WCC::Contentful
 
     def build_model(t)
       const = constant_from_content_type(t[:content_type])
-      return WCC::Contentful.const_get(const) if WCC::Contentful.const_defined?(const)
+      return WCC::ContentfulModel.const_get(const) if WCC::ContentfulModel.const_defined?(const)
 
       # TODO: https://github.com/dkubb/ice_nine ?
       typedef = t.deep_dup.freeze
       fields = typedef[:fields].keys
-      WCC::Contentful.const_set(const,
-        Class.new(Model) do
+      WCC::ContentfulModel.const_set(const,
+        Class.new(WCC::ContentfulModel) do
           include Helpers
 
           define_singleton_method(:content_type) do
@@ -36,12 +36,12 @@ module WCC::Contentful
           end
 
           define_singleton_method(:find) do |id, context = nil|
-            raw = Model.store.find(id)
+            raw = WCC::ContentfulModel.store.find(id)
             new(raw, context) if raw.present?
           end
 
           define_singleton_method(:find_all) do |context = nil|
-            raw = Model.store.find_by(content_type: content_type)
+            raw = WCC::ContentfulModel.store.find_by(content_type: content_type)
             raw.map { |r| new(r, context) }
           end
 
@@ -50,7 +50,7 @@ module WCC::Contentful
             bad_fields = filter.keys.reject { |k| fields.include?(k) }
             raise ArgumentError, "These fields do not exist: #{bad_fields}" unless bad_fields.empty?
 
-            query = Model.store.find_by(content_type: content_type)
+            query = WCC::ContentfulModel.store.find_by(content_type: content_type)
             filter.each do |field, v|
               query = query.eq(field, v, context)
             end
@@ -100,9 +100,9 @@ module WCC::Contentful
 
                 val =
                   if val.is_a? Array
-                    val.map { |v| Model.find(v.dig('sys', 'id')) }
+                    val.map { |v| WCC::ContentfulModel.find(v.dig('sys', 'id')) }
                   else
-                    Model.find(val.dig('sys', 'id'))
+                    WCC::ContentfulModel.find(val.dig('sys', 'id'))
                   end
 
                 instance_variable_set(var_name + '_resolved', val)

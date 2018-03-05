@@ -55,7 +55,7 @@ RSpec.shared_examples 'model querying' do
   end
 end
 
-RSpec.describe WCC::Contentful::Model, :bench do
+RSpec.describe WCC::ContentfulModel, :bench do
   include BenchHelper
 
   let(:types) { load_indexed_types }
@@ -65,7 +65,7 @@ RSpec.describe WCC::Contentful::Model, :bench do
 
   context 'with memory store' do
     let(:store_builder) {
-      -> { WCC::Contentful::Sync::MemoryStore.new }
+      -> { WCC::Contentful::Store::MemoryStore.new }
     }
 
     include_examples 'model querying'
@@ -82,7 +82,7 @@ RSpec.describe WCC::Contentful::Model, :bench do
           conn.close
         end
         WCC::Contentful::Model.store =
-          WCC::Contentful::Sync::PostgresStore.new(ENV['POSTGRES_CONNECTION'])
+          WCC::Contentful::Store::PostgresStore.new(ENV['POSTGRES_CONNECTION'])
       }
     }
 

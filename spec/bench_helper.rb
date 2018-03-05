@@ -4,7 +4,7 @@
 module BenchHelper
   def build_store(store_builder: nil, copies: 1)
     sync_initial = JSON.parse(load_fixture('contentful/sync_initial.json'))
-    store = store_builder.present? ? store_builder.call : WCC::Contentful::Sync::MemoryStore.new
+    store = store_builder.present? ? store_builder.call : WCC::Contentful::Store::MemoryStore.new
 
     sync_initial.each do |k, v|
       1.upto(copies) do |i|

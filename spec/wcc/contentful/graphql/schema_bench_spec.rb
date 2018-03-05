@@ -146,7 +146,7 @@ RSpec.describe 'graphql querying', :bench do
 
   context 'with MemoryStore' do
     let(:store_builder) {
-      -> { WCC::Contentful::Sync::MemoryStore.new }
+      -> { WCC::Contentful::Store::MemoryStore.new }
     }
     include_examples 'graphql querying'
   end
@@ -162,7 +162,7 @@ RSpec.describe 'graphql querying', :bench do
           conn.close
         end
         WCC::Contentful::Model.store =
-          WCC::Contentful::Sync::PostgresStore.new(ENV['POSTGRES_CONNECTION'])
+          WCC::Contentful::Store::PostgresStore.new(ENV['POSTGRES_CONNECTION'])
       }
     }
 
