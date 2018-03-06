@@ -1,8 +1,24 @@
 Description:
-    Explain the generator
+    Generates the necessary migrations and initializers to add WCC Menus
+    to your contentful space.
 
 Example:
-    rails generate menu Thing
+    rails generate wcc:menu
+
+    This will install:
+      https://www.github.com/watermarkchurch/migration-cli
 
     This will create:
-        what/will/it/create
+      db/migrate/[date]_generated_add_menus.ts -
+        this migration is run by the migration CLI to create menus in your
+        contentful space
+      bin/release -
+        Adds a release command to your rails app which runs migrations.
+      bin/contentful -
+        This bash script is a wrapper around various Contentful CLI tools, and
+        is invoked by bin/release to run migrations
+      Procfile -
+        Adds a release command to be invoked by Heroku which runs the script
+        in bin/release
+      config/initializers/wcc_contentful.rb -
+        This file will initialize the wcc_contentful gem with default options

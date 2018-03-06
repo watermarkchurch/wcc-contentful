@@ -17,6 +17,7 @@ group :red_green_refactor, halt_on_fail: true do
     # Ruby files
     ruby = dsl.ruby
     watch(%r{lib/wcc/(.+)\.rb$}) { |m| rspec.spec.call("wcc/#{m[1]}") }
+    watch(%r{lib/generators/(.+)\.rb$}) { |m| rspec.spec.call("generators/#{m[1]}") }
   end
 
   guard :rubocop, cli: ['--display-cop-names'] do

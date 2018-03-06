@@ -74,6 +74,10 @@ Style/BracesAroundHashParameters:
 Lint/AssignmentInCondition:
   Enabled: false
 
+Lint/AmbiguousBlockAssociation:
+  Exclude:
+    - 'spec/generators/**/*.rb'
+
 Style/EmptyMethod:
   EnforcedStyle: expanded
 

@@ -1,5 +1,50 @@
 # frozen_string_literal: true
 
-class MenuGenerator < Rails::Generators::NamedBase
+class MenuGenerator < Rails::Generators::Base
   source_root File.expand_path('../templates', __FILE__)
+
+  def create_menus_migration
+    now = Time.now.strftime('%Y%m%d%H%M')
+    copy_file 'generated_add_menus.ts',
+      "db/migrate/#{now}01_generated_add_menus.ts"
+  end
+
+  def ensure_migration_tools_installed
+    in_root do
+      run 'npm init -y' unless File.exist?('package.json')
+      package = JSON.parse(File.read('package.json'))
+      deps = package['dependencies']
+
+      run 'npm install --save watermarkchurch/migration-cli' unless deps.try(:[], 'contentful-migration-cli').present?
+    end
+  end
+
+  def ensure_wrapper_script_in_bin_dir
+    copy_file 'contentful', 'bin/contentful' unless inside('bin') { File.exist?('contentful') }
+
+    if inside('bin') { File.exist?('release') }
+      release = inside('bin') { File.read('release') }
+      unless release.include?('contentful migrate')
+        insert_into_file('bin/release', after: 'bundle exec rake db:migrate') do
+          <<~HEREDOC
+            DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+            $DIR/contentful migrate -y
+          HEREDOC
+        end
+      end
+    else
+      copy_file 'release', 'bin/release'
+    end
+
+    if in_root { File.exist?('Procfile') }
+      procfile = in_root { File.read('Procfile') }
+      unless procfile.include?('release:')
+        insert_into_file('Procfile') do
+          'release: bin/release'
+        end
+      end
+    else
+      copy_file 'Procfile'
+    end
+  end
 end
