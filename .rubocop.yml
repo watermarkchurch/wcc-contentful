@@ -15,6 +15,10 @@ AllCops:
 
     # 3rd party
     - 'vendor/**/*'
+    
+    # generator templates
+    - '**/templates/**/*'
+    - 'tmp/**/*'
 
 Style/Documentation:
   Enabled: false

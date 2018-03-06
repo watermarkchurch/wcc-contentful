@@ -15,7 +15,9 @@ class MenuGenerator < Rails::Generators::Base
       package = JSON.parse(File.read('package.json'))
       deps = package['dependencies']
 
-      run 'npm install --save watermarkchurch/migration-cli' unless deps.try(:[], 'contentful-migration-cli').present?
+      unless deps.try(:[], 'contentful-migration-cli').present?
+        run 'npm install --save watermarkchurch/migration-cli'
+      end
     end
   end
 
@@ -46,5 +48,11 @@ class MenuGenerator < Rails::Generators::Base
     else
       copy_file 'Procfile'
     end
+  end
+
+  def ensure_initializer_exists
+    return if inside('config/initializers') { File.exist?('wcc_contentful.rb') }
+
+    copy_file 'wcc_contentful.rb', 'config/initializers/wcc_contentful.rb'
   end
 end

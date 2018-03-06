@@ -59,4 +59,17 @@ RSpec.describe MenuGenerator, type: :generator do
       end
     }
   end
+
+  it 'should ensure initializer exists' do
+    expect(destination_root).to have_structure {
+      directory 'config' do
+        directory 'initializers' do
+          file 'wcc_contentful.rb' do
+            contains 'WCC::Contentful.configure'
+            contains 'WCC::Contentful.init!'
+          end
+        end
+      end
+    }
+  end
 end
