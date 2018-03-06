@@ -76,6 +76,16 @@ module WCC::Contentful
 
             typedef[:fields].each_value do |f|
               raw_value = raw.dig('fields', f[:name], @locale)
+              if raw_value.present?
+                case f[:type]
+                when :DateTime
+                  raw_value = Time.zone.parse(raw_value)
+                when :Int
+                  raw_value = Integer(raw_value)
+                when :Float
+                  raw_value = Float(raw_value)
+                end
+              end
               instance_variable_set('@' + f[:name], raw_value)
             end
           end
@@ -107,11 +117,6 @@ module WCC::Contentful
 
                 instance_variable_set(var_name + '_resolved', val)
                 val
-              end
-            when :DateTime
-              define_method(name) do
-                val = instance_variable_get(var_name)
-                Time.zone.parse(val) if val.present?
               end
             when :Coordinates
               define_method(name) do

@@ -156,6 +156,18 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       expect(redirect[0].pageReference.title).to eq('Conferences')
     end
 
+    it 'resolves numeric fields' do
+      @schema = subject.build_models
+      WCC::ContentfulModel.store = store
+
+      # act
+      faq = WCC::ContentfulModel::Faq.find_all.first
+
+      # assert
+      expect(faq.num_faqs).to eq(2)
+      expect(faq.num_faqs_float).to eq(2.1)
+    end
+
     it 'resolves date times and json blobs' do
       @schema = subject.build_models
       WCC::ContentfulModel.store = store
@@ -314,6 +326,18 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       expect(menu_items.map(&:id).sort).to eq(
         %w[3bZRv5ISCkui6kguIwM2U0 4tMhra8IAwcEoKS6QSQYcc]
       )
+    end
+
+    it 'resolves numeric fields' do
+      @schema = subject.build_models
+      WCC::ContentfulModel.store = store
+
+      # act
+      faq = WCC::ContentfulModel::Faq.find_all.first
+
+      # assert
+      expect(faq.num_faqs).to eq(2)
+      expect(faq.num_faqs_float).to eq(2.1)
     end
 
     it 'resolves date times and json blobs' do
