@@ -46,6 +46,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'activesupport', '~> 5'
   spec.add_dependency 'contentful_model', '~> 0.2.0'
+  spec.add_dependency 'dry-validation', '~> 0.11.1'
   spec.add_dependency 'graphql', '~> 1.7'
   spec.add_dependency 'pg', '~> 1.0'
 end

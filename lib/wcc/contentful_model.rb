@@ -3,6 +3,7 @@
 
 class WCC::ContentfulModel
   extend WCC::Contentful::Helpers
+  extend WCC::Contentful::ModelValidators
 
   class << self
     attr_accessor :store

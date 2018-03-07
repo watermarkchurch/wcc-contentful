@@ -8,6 +8,7 @@ require 'wcc/contentful/helpers'
 require 'wcc/contentful/store'
 require 'wcc/contentful/sync'
 require 'wcc/contentful/content_type_indexer'
+require 'wcc/contentful/model_validators'
 require 'wcc/contentful_model'
 require 'wcc/contentful/model_builder'
 
