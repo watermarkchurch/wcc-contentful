@@ -18,26 +18,26 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
       expect(indexer.types.keys.sort).to eq(
         %w[
           Asset
-          Dog
-          Faq
-          Homepage
-          Menu
-          MenuItem
-          MigrationHistory
-          Ministry
-          MinistryCard
-          Page
-          Redirect2
-          Section_CardSearch
-          Section_Faq
-          Section_Testimonials
-          Section_VideoHighlight
-          Testimonial
-          Theme
+          dog
+          faq
+          homepage
+          menu
+          menuItem
+          migrationHistory
+          ministry
+          ministryCard
+          page
+          redirect2
+          section-CardSearch
+          section-Faq
+          section-Testimonials
+          section-VideoHighlight
+          testimonial
+          theme
         ]
       )
 
-      faq = subject.types['Faq']
+      faq = subject.types['faq']
       expect(faq.dig(:fields, 'question', :type)).to eq(:String)
       expect(faq.dig(:fields, 'answer', :type)).to eq(:String)
       expect(faq.dig(:fields, 'numFaqs', :type)).to eq(:Int)
@@ -57,19 +57,19 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
       end
 
       # assert
-      redirect = subject.types['Redirect2']
+      redirect = subject.types['redirect2']
       redirect_ref = redirect.dig(:fields, 'pageReference')
       expect(redirect_ref[:type]).to eq(:Link)
-      expect(redirect_ref[:link_types]).to include('Page')
+      expect(redirect_ref[:link_types]).to include('page')
 
-      homepage = subject.types['Homepage']
+      homepage = subject.types['homepage']
       sections_ref = homepage.dig(:fields, 'sections')
       expect(sections_ref[:link_types].sort).to eq(
         %w[
-          Section_CardSearch
-          Section_Faq
-          Section_Testimonials
-          Section_VideoHighlight
+          section-CardSearch
+          section-Faq
+          section-Testimonials
+          section-VideoHighlight
         ]
       )
     end
@@ -81,7 +81,7 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
       end
 
       # assert
-      history = subject.types['MigrationHistory']
+      history = subject.types['migrationHistory']
       started = history.dig(:fields, 'started')
       expect(started[:type]).to eq(:DateTime)
 
@@ -96,7 +96,7 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
       end
 
       # assert
-      homepage = subject.types['Homepage']
+      homepage = subject.types['homepage']
       favicons = homepage.dig(:fields, 'favicons')
       expect(favicons[:array]).to be(true)
     end
@@ -132,34 +132,34 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
       # includes non-published content types
       expect(indexer.types.keys.sort).to eq(
         %w[
-          Asdf
           Asset
-          Dog
-          Faq
-          Homepage
-          Menu
-          MenuItem
-          MigrationHistory
-          Ministry
-          MinistryCard
-          Page
-          Redirect
-          Section_CardSearch
-          Section_Faq
-          Section_Testimonials
-          Section_VideoHighlight
-          Testimonial
-          Theme
+          asdf
+          dog
+          faq
+          homepage
+          menu
+          menuItem
+          migrationHistory
+          ministry
+          ministryCard
+          page
+          redirect
+          section-CardSearch
+          section-Faq
+          section-Testimonials
+          section-VideoHighlight
+          testimonial
+          theme
         ]
       )
 
-      sections = indexer.types['Page'][:fields]['sections']
+      sections = indexer.types['page'][:fields]['sections']
       expect(sections[:link_types]).to eq(
         %w[
-          Section_CardSearch
-          Section_Faq
-          Section_Testimonials
-          Section_VideoHighlight
+          section-CardSearch
+          section-Faq
+          section-Testimonials
+          section-VideoHighlight
         ]
       )
     end
@@ -171,8 +171,8 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
       end
 
       # assert
-      sub_menu = indexer.types['Page'][:fields]['subMenu']
-      expect(sub_menu[:link_types]).to eq(['Menu'])
+      sub_menu = indexer.types['page'][:fields]['subMenu']
+      expect(sub_menu[:link_types]).to eq(['menu'])
     end
   end
 
@@ -202,32 +202,32 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
       expect(indexer.types.keys.sort).to eq(
         %w[
           Asset
-          Dog
-          Faq
-          Homepage
-          Menu
-          MenuItem
-          MigrationHistory
-          Ministry
-          MinistryCard
-          Page
-          Redirect
-          Section_CardSearch
-          Section_Faq
-          Section_Testimonials
-          Section_VideoHighlight
-          Testimonial
-          Theme
+          dog
+          faq
+          homepage
+          menu
+          menuItem
+          migrationHistory
+          ministry
+          ministryCard
+          page
+          redirect
+          section-CardSearch
+          section-Faq
+          section-Testimonials
+          section-VideoHighlight
+          testimonial
+          theme
         ]
       )
 
-      sections = indexer.types['Page'][:fields]['sections']
+      sections = indexer.types['page'][:fields]['sections']
       expect(sections[:link_types]).to eq(
         %w[
-          Section_CardSearch
-          Section_Faq
-          Section_Testimonials
-          Section_VideoHighlight
+          section-CardSearch
+          section-Faq
+          section-Testimonials
+          section-VideoHighlight
         ]
       )
     end
@@ -239,7 +239,7 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
       end
 
       # assert
-      sub_menu = indexer.types['Page'][:fields]['subMenu']
+      sub_menu = indexer.types['page'][:fields]['subMenu']
 
       # We would love for this to be present, but the contentful CDN
       # does not give us this info.

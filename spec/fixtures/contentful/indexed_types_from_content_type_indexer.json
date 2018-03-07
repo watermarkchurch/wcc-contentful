@@ -17,7 +17,7 @@
       }
     }
   },
-  "Testimonial": {
+  "testimonial": {
     "name": "Testimonial",
     "content_type": "testimonial",
     "fields": {
@@ -43,7 +43,7 @@
       }
     }
   },
-  "Menu": {
+  "menu": {
     "name": "Menu",
     "content_type": "menu",
     "fields": {
@@ -99,7 +99,7 @@
       }
     }
   },
-  "Section_VideoHighlight": {
+  "section-VideoHighlight": {
     "name": "Section_VideoHighlight",
     "content_type": "section-VideoHighlight",
     "fields": {
@@ -128,7 +128,7 @@
       }
     }
   },
-  "Faq": {
+  "faq": {
     "name": "Faq",
     "content_type": "faq",
     "fields": {
@@ -169,7 +169,7 @@
       }
     }
   },
-  "MigrationHistory": {
+  "migrationHistory": {
     "name": "MigrationHistory",
     "content_type": "migrationHistory",
     "fields": {
@@ -195,7 +195,7 @@
       }
     }
   },
-  "Homepage": {
+  "homepage": {
     "name": "Homepage",
     "content_type": "homepage",
     "fields": {
@@ -261,7 +261,7 @@
       }
     }
   },
-  "Theme": {
+  "theme": {
     "name": "Theme",
     "content_type": "theme",
     "fields": {
@@ -292,7 +292,7 @@
       }
     }
   },
-  "Section_CardSearch": {
+  "section-CardSearch": {
     "name": "Section_CardSearch",
     "content_type": "section-CardSearch",
     "fields": {
@@ -314,7 +314,7 @@
       }
     }
   },
-  "Ministry": {
+  "ministry": {
     "name": "Ministry",
     "content_type": "ministry",
     "fields": {
@@ -342,7 +342,7 @@
       }
     }
   },
-  "Page": {
+  "page": {
     "name": "Page",
     "content_type": "page",
     "fields": {
@@ -393,7 +393,7 @@
       }
     }
   },
-  "MinistryCard": {
+  "ministryCard": {
     "name": "MinistryCard",
     "content_type": "ministryCard",
     "fields": {
@@ -414,7 +414,7 @@
       }
     }
   },
-  "Section_Faq": {
+  "section-Faq": {
     "name": "Section_Faq",
     "content_type": "section-Faq",
     "fields": {
@@ -450,7 +450,7 @@
       }
     }
   },
-  "Section_Testimonials": {
+  "section-Testimonials": {
     "name": "Section_Testimonials",
     "content_type": "section-Testimonials",
     "fields": {
@@ -470,7 +470,7 @@
       }
     }
   },
-  "MenuItem": {
+  "menuItem": {
     "name": "MenuItem",
     "content_type": "menuItem",
     "fields": {
@@ -511,7 +511,7 @@
       }
     }
   },
-  "Redirect2": {
+  "redirect2": {
     "name": "Redirect2",
     "content_type": "redirect2",
     "fields": {
@@ -535,7 +535,7 @@
       }
     }
   },
-  "Dog": {
+  "dog": {
     "name": "Dog",
     "content_type": "dog",
     "fields": {

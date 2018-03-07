@@ -27,7 +27,7 @@ module WCC::Contentful::Sync
       content_type =
         @mutex.synchronize do
           @links_resolved = false
-          @types[content_type[:name]] = merge(content_type, @types[content_type[:name]])
+          @types[content_type_id] = merge(content_type, @types[content_type_id])
         end
 
       @store.index(id, value)
@@ -121,9 +121,7 @@ module WCC::Contentful::Sync
             field[:link_id].map do |id|
               linked = @store.find(id)
               next unless linked.present?
-              constant_from_content_type(
-                content_type_from_raw(linked)
-              )
+              content_type_from_raw(linked)
             end
 
           if field[:link_types].nil?

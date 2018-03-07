@@ -1,5 +1,5 @@
 {
-  "Homepage": {
+  "homepage": {
     "name": "Homepage",
     "content_type": "homepage",
     "fields": {
@@ -51,13 +51,13 @@
         ],
         "array": true,
         "link_types": [
-          "Section_Faq",
-          "Section_VideoHighlight"
+          "section-Faq",
+          "section-VideoHighlight"
         ]
       }
     }
   },
-  "Section_Faq": {
+  "section-Faq": {
     "name": "Section_Faq",
     "content_type": "section-Faq",
     "fields": {
@@ -79,7 +79,7 @@
       }
     }
   },
-  "Faq": {
+  "faq": {
     "name": "Faq",
     "content_type": "faq",
     "fields": {
@@ -113,7 +113,7 @@
       }
     }
   },
-  "Redirect2": {
+  "redirect2": {
     "name": "Redirect2",
     "content_type": "redirect2",
     "fields": {
@@ -139,7 +139,7 @@
       }
     }
   },
-  "MigrationHistory": {
+  "migrationHistory": {
     "name": "MigrationHistory",
     "content_type": "migrationHistory",
     "fields": {
@@ -162,7 +162,7 @@
       }
     }
   },
-  "MenuItem": {
+  "menuItem": {
     "name": "MenuItem",
     "content_type": "menuItem",
     "fields": {
@@ -217,7 +217,7 @@
       }
     }
   },
-  "Page": {
+  "page": {
     "name": "Page",
     "content_type": "page",
     "fields": {
@@ -239,7 +239,7 @@
       }
     }
   },
-  "Section_VideoHighlight": {
+  "section-VideoHighlight": {
     "name": "Section_VideoHighlight",
     "content_type": "section-VideoHighlight",
     "fields": {
@@ -253,7 +253,7 @@
       }
     }
   },
-  "Menu": {
+  "menu": {
     "name": "Menu",
     "content_type": "menu",
     "fields": {

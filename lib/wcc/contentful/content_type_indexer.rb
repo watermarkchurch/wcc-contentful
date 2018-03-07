@@ -21,7 +21,7 @@ module WCC::Contentful
           create_type(content_type.dig('sys', 'id'), content_type['fields'])
         end
 
-      @types[content_type[:name]] = content_type
+      @types[content_type[:content_type]] = content_type
     end
 
     def create_type(content_type_id, fields)
@@ -142,12 +142,12 @@ module WCC::Contentful
 
     def resolve_managed_link_types(validations)
       validation = validations.find { |v| v.link_content_type.present? }
-      validation.link_content_type.map { |ct| constant_from_content_type(ct) } if validation.present?
+      validation.link_content_type if validation.present?
     end
 
     def resolve_raw_link_types(validations)
       validation = validations.find { |v| v['linkContentType'].present? }
-      validation['linkContentType'].map { |ct| constant_from_content_type(ct) } if validation.present?
+      validation['linkContentType'] if validation.present?
     end
   end
 end

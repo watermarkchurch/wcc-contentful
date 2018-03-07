@@ -16,19 +16,19 @@ RSpec.describe WCC::Contentful::Sync::Indexer do
       expect(subject.types.keys.sort).to eq(
         %w[
           Asset
-          Faq
-          Homepage
-          Menu
-          MenuItem
-          MigrationHistory
-          Page
-          Redirect2
-          Section_Faq
-          Section_VideoHighlight
+          faq
+          homepage
+          menu
+          menuItem
+          migrationHistory
+          page
+          redirect2
+          section-Faq
+          section-VideoHighlight
         ]
       )
 
-      faq = subject.types['Faq']
+      faq = subject.types['faq']
       expect(faq.dig(:fields, 'question', :type)).to eq(:String)
       expect(faq.dig(:fields, 'answer', :type)).to eq(:String)
       expect(faq.dig(:fields, 'numFaqs', :type)).to eq(:Int)
@@ -50,17 +50,17 @@ RSpec.describe WCC::Contentful::Sync::Indexer do
       end
 
       # assert
-      redirect = subject.types['Redirect2']
+      redirect = subject.types['redirect2']
       redirect_ref = redirect.dig(:fields, 'pageReference')
       expect(redirect_ref[:type]).to eq(:Link)
-      expect(redirect_ref[:link_types]).to include('Page')
+      expect(redirect_ref[:link_types]).to include('page')
 
-      homepage = subject.types['Homepage']
+      homepage = subject.types['homepage']
       sections_ref = homepage.dig(:fields, 'sections')
       expect(sections_ref[:link_types].sort).to eq(
         %w[
-          Section_Faq
-          Section_VideoHighlight
+          section-Faq
+          section-VideoHighlight
         ]
       )
     end
@@ -74,7 +74,7 @@ RSpec.describe WCC::Contentful::Sync::Indexer do
       end
 
       # assert
-      history = subject.types['MigrationHistory']
+      history = subject.types['migrationHistory']
       started = history.dig(:fields, 'started')
       expect(started[:type]).to eq(:DateTime)
 
@@ -91,7 +91,7 @@ RSpec.describe WCC::Contentful::Sync::Indexer do
       end
 
       # assert
-      homepage = subject.types['Homepage']
+      homepage = subject.types['homepage']
       favicons = homepage.dig(:fields, 'favicons')
       expect(favicons[:array]).to be(true)
     end
