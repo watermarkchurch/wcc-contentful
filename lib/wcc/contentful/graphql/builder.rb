@@ -24,8 +24,7 @@ module WCC::Contentful::Graphql
 
         resolve_type ->(_type, obj, _ctx) {
           content_type = WCC::Contentful::Helpers.content_type_from_raw(obj)
-          const = WCC::Contentful::Helpers.constant_from_content_type(content_type)
-          builder.schema_types[const]
+          builder.schema_types[content_type]
         }
       end
     end
@@ -131,7 +130,7 @@ module WCC::Contentful::Graphql
                   builder.schema_types[f[:link_types].first]
                 else
                   from_types = builder.schema_types.select { |key| f[:link_types].include?(key) }
-                  name = WCC::Contentful::Helpers.shared_prefix(from_types.keys).chomp('_')
+                  name = "#{v[:name]}_#{f[:name]}"
                   builder.schema_types[name] ||= Types::BuildUnionType.call(from_types, name)
                 end
               type = type.to_list_type if f[:array]

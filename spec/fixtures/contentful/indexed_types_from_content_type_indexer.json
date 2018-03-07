@@ -63,8 +63,8 @@
         "required": false,
         "array": true,
         "link_types": [
-          "Menu",
-          "MenuItem"
+          "menu",
+          "menuItem"
         ]
       },
       "secondGroup": {
@@ -73,8 +73,8 @@
         "required": false,
         "array": true,
         "link_types": [
-          "Menu",
-          "MenuItem"
+          "menu",
+          "menuItem"
         ]
       },
       "thirdGroup": {
@@ -83,8 +83,8 @@
         "required": false,
         "array": true,
         "link_types": [
-          "Menu",
-          "MenuItem"
+          "menu",
+          "menuItem"
         ]
       },
       "hamburger": {
@@ -123,7 +123,7 @@
         "type": "Link",
         "required": false,
         "link_types": [
-          "Theme"
+          "theme"
         ]
       }
     }
@@ -215,7 +215,7 @@
         "type": "Link",
         "required": false,
         "link_types": [
-          "Menu"
+          "menu"
         ]
       },
       "heroImage": {
@@ -234,7 +234,7 @@
         "required": false,
         "array": true,
         "link_types": [
-          "MenuItem"
+          "menuItem"
         ]
       },
       "callToAction": {
@@ -248,10 +248,10 @@
         "required": false,
         "array": true,
         "link_types": [
-          "Section_CardSearch",
-          "Section_Faq",
-          "Section_Testimonials",
-          "Section_VideoHighlight"
+          "section-CardSearch",
+          "section-Faq",
+          "section-Testimonials",
+          "section-VideoHighlight"
         ]
       },
       "siteFooter": {
@@ -376,7 +376,7 @@
         "type": "Link",
         "required": false,
         "link_types": [
-          "Menu"
+          "menu"
         ]
       },
       "sections": {
@@ -385,10 +385,10 @@
         "required": false,
         "array": true,
         "link_types": [
-          "Section_CardSearch",
-          "Section_Faq",
-          "Section_Testimonials",
-          "Section_VideoHighlight"
+          "section-CardSearch",
+          "section-Faq",
+          "section-Testimonials",
+          "section-VideoHighlight"
         ]
       }
     }
@@ -428,7 +428,7 @@
         "type": "Link",
         "required": false,
         "link_types": [
-          "MenuItem"
+          "menuItem"
         ]
       },
       "faqs": {
@@ -437,7 +437,7 @@
         "required": false,
         "array": true,
         "link_types": [
-          "Faq"
+          "faq"
         ]
       },
       "theme": {
@@ -445,7 +445,7 @@
         "type": "Link",
         "required": false,
         "link_types": [
-          "Theme"
+          "theme"
         ]
       }
     }
@@ -465,7 +465,7 @@
         "required": false,
         "array": true,
         "link_types": [
-          "Testimonial"
+          "testimonial"
         ]
       }
     }
@@ -506,7 +506,7 @@
         "type": "Link",
         "required": false,
         "link_types": [
-          "Page"
+          "page"
         ]
       }
     }
@@ -530,7 +530,7 @@
         "type": "Link",
         "required": false,
         "link_types": [
-          "Page"
+          "page"
         ]
       }
     }

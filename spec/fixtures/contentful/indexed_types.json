@@ -19,7 +19,7 @@
           "FNlqULSV0sOy4IoGmyWOW"
         ],
         "link_types": [
-          "Menu"
+          "menu"
         ]
       },
       "heroImage": {
@@ -39,7 +39,7 @@
         ],
         "array": true,
         "link_types": [
-          "MenuItem"
+          "menuItem"
         ]
       },
       "sections": {
@@ -74,7 +74,7 @@
         ],
         "array": true,
         "link_types": [
-          "Faq"
+          "faq"
         ]
       }
     }
@@ -130,7 +130,7 @@
           "1UojJt7YoMiemCq2mGGUmQ"
         ],
         "link_types": [
-          "Page"
+          "page"
         ]
       },
       "url": {
@@ -201,7 +201,7 @@
           "47PsST8EicKgWIWwK2AsW6"
         ],
         "link_types": [
-          "Page"
+          "page"
         ]
       },
       "customButtonCss": {
@@ -288,7 +288,7 @@
         ],
         "array": true,
         "link_types": [
-          "MenuItem"
+          "menuItem"
         ]
       },
       "hamburger": {
@@ -298,7 +298,7 @@
           "6y9DftpiYoA4YiKg2CgoUU"
         ],
         "link_types": [
-          "Menu"
+          "menu"
         ]
       },
       "firstGroup": {
