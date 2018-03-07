@@ -20,6 +20,17 @@ RSpec.describe WCC::Contentful do
     end
   end
 
+  after(:each) do
+    consts = WCC::ContentfulModel.all_models.map(&:to_s).uniq
+    consts.each do |c|
+      begin
+        WCC::ContentfulModel.send(:remove_const, c.split(':').last)
+      rescue StandardError => e
+        warn e
+      end
+    end
+  end
+
   describe '.configure' do
     let(:invalid_contentful_access_token) { 'test5678' }
     let(:invalid_contentful_space_id) { 'testxxxx' }
@@ -72,15 +83,8 @@ RSpec.describe WCC::Contentful do
   end
 
   describe '.init' do
-    after(:each) do
-      consts = WCC::ContentfulModel.all_models.map(&:to_s).uniq
-      consts.each do |c|
-        begin
-          WCC::ContentfulModel.send(:remove_const, c.split(':').last)
-        rescue StandardError => e
-          warn e
-        end
-      end
+    before do
+      allow(WCC::Contentful).to receive(:validate_models!)
     end
 
     it 'raises argument error if not configured' do
@@ -178,6 +182,38 @@ RSpec.describe WCC::Contentful do
           end
         expect(page.title).to eq('Ministries')
       end
+    end
+  end
+
+  describe '.validate_models!' do
+    let(:indexed_types) {
+      load_indexed_types('contentful/indexed_types_from_content_type_indexer.json')
+    }
+    let(:models_dir) {
+      File.dirname(__FILE__) + '/../../lib/wcc/contentful_model'
+    }
+
+    it 'validates successfully if all types present' do
+      WCC::Contentful.instance_variable_set('@types', indexed_types)
+      Dir["#{models_dir}/*.rb"].each { |file| load file }
+
+      # act
+      expect {
+        WCC::Contentful.validate_models!
+      }.to_not raise_error
+    end
+
+    it 'fails validation if menus not present' do
+      types = indexed_types.except!('menu')
+      WCC::Contentful::ModelBuilder.new(types).build_models
+      WCC::Contentful.instance_variable_set('@types', types)
+
+      load "#{models_dir}/menu.rb"
+
+      # act
+      expect {
+        WCC::Contentful.validate_models!
+      }.to raise_error(WCC::Contentful::ValidationError)
     end
   end
 end

@@ -4,6 +4,7 @@ require 'wcc/contentful/version'
 require 'wcc/contentful/configuration'
 require 'contentful_model'
 
+require 'wcc/contentful/exceptions'
 require 'wcc/contentful/helpers'
 require 'wcc/contentful/store'
 require 'wcc/contentful/sync'
@@ -43,10 +44,11 @@ module WCC
             .values.map(&:content_type)
         end
 
-      types =
+      indexer =
         ContentTypeIndexer.new.tap do |ixr|
           content_types.each { |type| ixr.index(type) }
         end
+      @types = indexer.types
 
       case configuration.content_delivery
       when :eager_sync
@@ -62,7 +64,28 @@ module WCC
         WCC::ContentfulModel.store = store
       end
 
-      WCC::Contentful::ModelBuilder.new(types.types).build_models
+      WCC::Contentful::ModelBuilder.new(@types).build_models
+
+      # Extend all model types w/ validation & extra fields
+      @types.each_value do |t|
+        file = File.dirname(__FILE__) + "/contentful_model/#{t[:name].underscore}.rb"
+        require file if File.exist?(file)
+      end
+
+      validate_models!
+    end
+
+    def self.validate_models!
+      schema =
+        Dry::Validation.Schema do
+          WCC::ContentfulModel.all_models.each do |klass|
+            next unless klass.schema
+            ct = klass.try(:content_type) || klass.name.demodulize.underscore
+            required(ct).schema(klass.schema)
+          end
+        end
+      errors = schema.call(@types)
+      raise WCC::Contentful::ValidationError, errors.errors unless errors.success?
     end
   end
 end

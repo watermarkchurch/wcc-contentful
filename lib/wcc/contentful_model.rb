@@ -10,7 +10,7 @@ class WCC::ContentfulModel
   end
 
   def self.all_models
-    subclasses
+    WCC::ContentfulModel.constants(false).map { |k| WCC::ContentfulModel.const_get(k) }
   end
 
   def self.find(id, context = nil)
