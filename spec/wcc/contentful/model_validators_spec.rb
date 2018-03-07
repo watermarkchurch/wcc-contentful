@@ -7,15 +7,32 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
     load_indexed_types('contentful/indexed_types_from_content_type_indexer.json')
   }
 
+  def base_class(content_type)
+    typedef = indexed_types[content_type]
+    Class.new(WCC::ContentfulModel) do
+      define_singleton_method(:content_type_definition) do
+        typedef
+      end
+
+      define_singleton_method(:content_type) do
+        typedef[:content_type]
+      end
+    end
+  end
+
+  def run_validation(my_class)
+    schema =
+      Dry::Validation.Schema do
+        required(my_class.content_type).schema(my_class.schema)
+      end
+
+    schema.call(indexed_types)
+  end
+
   context 'validate_type' do
     it 'should allow raw validation' do
-      typedef = indexed_types['Homepage']
-      subject =
-        Class.new(WCC::ContentfulModel) do
-          define_singleton_method(:content_type_definition) do
-            typedef
-          end
-
+      my_class =
+        Class.new(base_class('homepage')) do
           validate_type do
             required(:fields).schema do
               required('mainMenu').schema do
@@ -26,36 +43,31 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
         end
 
       # act
-      errors = subject.validate_type!
+      result = run_validation(my_class)
 
       # assert
-      expect(errors).to be_success
+      expect(result).to be_success
     end
 
     it 'should error when validation fails' do
-      typedef = indexed_types['Faq']
-
-      subject =
-        Class.new(WCC::ContentfulModel) do
-          define_singleton_method(:content_type_definition) do
-            typedef
-          end
-
+      my_class =
+        Class.new(base_class('faq')) do
           validate_type do
             required(:fields).schema do
               required('numFaqs').schema do
                 required(:type).value(eql?: 'String')
               end
+              required('blah').filled
             end
           end
         end
 
       # act
-      errors = subject.validate_type!
+      result = run_validation(my_class)
 
       # assert
-      expect(errors).to_not be_success
-      expect(errors.errors[:fields]['numFaqs'][:type])
+      expect(result).to_not be_success
+      expect(result.errors['faq'][:fields]['numFaqs'][:type])
         .to eq(['must be equal to String'])
     end
   end
