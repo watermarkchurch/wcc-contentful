@@ -29,15 +29,13 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
     schema.call(indexed_types)
   end
 
-  context 'validate_type' do
+  context 'validate_fields' do
     it 'should allow raw validation' do
       my_class =
         Class.new(base_class('homepage')) do
-          validate_type do
-            required(:fields).schema do
-              required('mainMenu').schema do
-                required(:type).value(eql?: :Link)
-              end
+          validate_fields do
+            required('mainMenu').schema do
+              required(:type).value(eql?: :Link)
             end
           end
         end
@@ -52,13 +50,11 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
     it 'should error when validation fails' do
       my_class =
         Class.new(base_class('faq')) do
-          validate_type do
-            required(:fields).schema do
-              required('numFaqs').schema do
-                required(:type).value(eql?: 'String')
-              end
-              required('blah').filled
+          validate_fields do
+            required('numFaqs').schema do
+              required(:type).value(eql?: :String)
             end
+            required('blah').filled
           end
         end
 
@@ -69,6 +65,56 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
       expect(result).to_not be_success
       expect(result.errors['faq'][:fields]['numFaqs'][:type])
         .to eq(['must be equal to String'])
+    end
+
+    it 'should run multiple validations in sequence' do
+      my_class =
+        Class.new(base_class('faq')) do
+          validate_fields do
+            required('numFaqs').schema do
+              required(:type).value(eql?: :Float)
+            end
+          end
+
+          validate_fields do
+            required('answer').schema do
+              required(:type).value(eql?: :Boolean)
+            end
+          end
+        end
+
+      # act
+      result = run_validation(my_class)
+
+      # assert
+      expect(result).to_not be_success
+      expect(result.errors['faq'][:fields]['numFaqs'][:type])
+        .to eq(['must be equal to Float'])
+      expect(result.errors['faq'][:fields]['answer'][:type])
+        .to eq(['must be equal to Boolean'])
+    end
+
+    it 'overwrites earlier validations of a field' do
+      my_class =
+        Class.new(base_class('faq')) do
+          validate_fields do
+            required('numFaqs').schema do
+              required(:type).value(eql?: :Float)
+            end
+          end
+
+          validate_fields do
+            required('numFaqs').schema do
+              required(:type).value(eql?: :Int)
+            end
+          end
+        end
+
+      # act
+      result = run_validation(my_class)
+
+      # assert
+      expect(result).to be_success
     end
   end
 

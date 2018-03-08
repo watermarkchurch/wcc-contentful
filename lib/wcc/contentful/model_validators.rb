@@ -8,11 +8,24 @@ require_relative 'model_validators/base'
 require_relative 'model_validators/field_validator'
 
 module WCC::Contentful::ModelValidators
-  attr_reader :schema
+  def schema
+    return if @field_validations.nil? || @field_validations.empty?
+    field_validations = @field_validations
+    fields_schema =
+      Dry::Validation.Schema do
+        # Had to dig through the internals of Dry::Validation to find
+        # this magic incantation
+        field_validations.each { |b| instance_eval(&b) }
+      end
 
-  def validate_type(&block)
+    Dry::Validation.Schema do
+      required(:fields).schema(fields_schema)
+    end
+  end
+
+  def validate_fields(&block)
     raise ArgumentError, 'validate_type requires a block' unless block_given?
-    schema = @schema || Dry::Validation::Schema
-    @schema = Dry::Validation.Schema(schema, {}, &block)
+    @field_validations ||= []
+    @field_validations << block
   end
 end
