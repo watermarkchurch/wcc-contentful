@@ -271,5 +271,113 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
         ['must be equal to Int']
       )
     end
+
+    it 'should validate single link' do
+      my_class =
+        Class.new(base_class('section-CardSearch')) do
+          validate_field :theme, :Link
+        end
+
+      # act
+      result = run_validation(my_class)
+
+      # assert
+      expect(result).to be_success
+    end
+
+    it 'should fail when expected link is not a link' do
+      my_class =
+        Class.new(base_class('section-CardSearch')) do
+          validate_field :name, :Link
+        end
+
+      # act
+      result = run_validation(my_class)
+
+      # assert
+      expect(result).to_not be_success
+      expect(result.errors.dig('section-CardSearch', :fields, 'name', :type)).to_not be_empty
+    end
+
+    it 'should validate single link with expected content type' do
+      my_class =
+        Class.new(base_class('redirect2')) do
+          validate_field :page_reference, :Link, link_to: 'page'
+        end
+
+      # act
+      result = run_validation(my_class)
+
+      # assert
+      expect(result).to be_success
+    end
+
+    it 'should fail when link is not of expected content type' do
+      my_class =
+        Class.new(base_class('redirect2')) do
+          validate_field :page_reference, :Link, link_to: 'foo'
+        end
+
+      # act
+      result = run_validation(my_class)
+
+      # assert
+      expect(result).to_not be_success
+      expect(result.errors.dig('redirect2', :fields, 'pageReference', :link_types)).to_not be_empty
+    end
+
+    it 'should validate links to one of multiple content types' do
+      my_class =
+        Class.new(base_class('menu')) do
+          validate_field :first_group, :Link, :array, link_to: %w[menu menuItem]
+        end
+
+      # act
+      result = run_validation(my_class)
+
+      # assert
+      expect(result).to be_success
+    end
+
+    it 'should fail when link can link to additional unspecified content types' do
+      my_class =
+        Class.new(base_class('menu')) do
+          validate_field :first_group, :Link, :array, link_to: 'menuItem'
+        end
+
+      # act
+      result = run_validation(my_class)
+
+      # assert
+      expect(result).to_not be_success
+      expect(result.errors.dig('menu', :fields, 'firstGroup', :link_types)).to_not be_empty
+    end
+
+    it 'should validate links to content type by regexp' do
+      my_class =
+        Class.new(base_class('page')) do
+          validate_field :sections, :Link, :array, link_to: /^section/
+        end
+
+      # act
+      result = run_validation(my_class)
+
+      # assert
+      expect(result).to be_success
+    end
+
+    it 'should fail when linked content types do not match regexp' do
+      my_class =
+        Class.new(base_class('page')) do
+          validate_field :sections, :Link, :array, link_to: /^section\-F/
+        end
+
+      # act
+      result = run_validation(my_class)
+
+      # assert
+      expect(result).to_not be_success
+      expect(result.errors.dig('page', :fields, 'sections', :link_types)).to_not be_empty
+    end
   end
 end

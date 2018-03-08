@@ -1,15 +1,7 @@
 # frozen_string_literal: true
 
 class WCC::ContentfulModel::Menu < WCC::ContentfulModel
-  validate_type do
-    required(:fields).schema do
-      required('name').schema do
-        required(:type).value(eql?: :String)
-      end
-
-      optional('icon').schema do
-        required(:type).value(eql?: :Asset)
-      end
-    end
-  end
+  validate_field :name, :String
+  validate_field :icon, :Asset, :optional
+  validate_field :first_group, :Link, :array, link_to: %w[menu menuItem]
 end

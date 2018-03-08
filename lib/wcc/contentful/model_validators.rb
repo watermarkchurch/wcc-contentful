@@ -26,31 +26,52 @@ module WCC::Contentful::ModelValidators
     @field_validations << block
   end
 
-  def validate_field(field, type, *opts)
+  def validate_field(field, type, *options)
     field = field.to_s.camelize(:lower) unless field.is_a?(String)
 
-    array = false
+    procs =
+      options.map do |opt|
+        if opt.is_a?(Hash)
+          opt.map { |k, v| parse_option(k, v) }
+        else
+          parse_option(opt)
+        end
+      end
 
     field_schema =
       Dry::Validation.Schema do
         required(:type).value(eql?: type)
+        # overridden when :array is passed in above
+        optional(:array).value(eql?: false)
 
-        opts.each do |opt|
-          case opt
-          when :required
-            required(:required).value(eql?: true)
-          when :optional
-            required(:required).value(eql?: false)
-          when :array
-            array = true
-            required(:array).value(eql?: true)
-          else
-            raise ArgumentError, "unknown validation requirement: #{opt}"
-          end
-        end
-
-        optional(:array).value(eql?: false) unless array
+        procs.flatten.each { |p| instance_eval(&p) }
       end
     (@field_validations ||= []) << proc { required(field).schema(field_schema) }
+  end
+
+  private
+
+  def parse_option(option, option_arg = nil)
+    case option
+    when :required
+      proc { required(:required).value(eql?: true) }
+    when :optional
+      proc { required(:required).value(eql?: false) }
+    when :array
+      proc { required(:array).value(eql?: true) }
+    when :link_to
+      parse_field_link_to(option_arg)
+    else
+      raise ArgumentError, "unknown validation requirement: #{option}"
+    end
+  end
+
+  def parse_field_link_to(option_arg)
+    raise ArgumentError, 'validation link_to: requires an argument' unless option_arg
+
+    return proc { required(:link_types).each(format?: option_arg) } if option_arg.is_a?(Regexp)
+
+    option_arg = [option_arg] unless option_arg.is_a?(Array)
+    proc { required(:link_types).value(eql?: option_arg) }
   end
 end
