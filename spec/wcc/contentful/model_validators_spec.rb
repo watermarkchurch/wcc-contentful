@@ -119,7 +119,18 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
   end
 
   context 'validate_field' do
-    it 'should validate Symbol as string field'
+    it 'should validate Symbol as string field' do
+      my_class =
+        Class.new(base_class('page')) do
+          validate_field :title, :String, :required
+        end
+
+      # act
+      result = run_validation(my_class)
+
+      # assert
+      expect(result).to be_success
+    end
 
     it 'should validate Text as string field'
 
@@ -131,9 +142,37 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
 
     it 'should validate Boolean as bool'
 
-    it 'should error when field missing'
+    it 'should error when field missing' do
+      my_class =
+        Class.new(base_class('page')) do
+          validate_field :foo, :String
+        end
 
-    it 'should error when expected string is actually number'
+      # act
+      result = run_validation(my_class)
+
+      # assert
+      expect(result).to_not be_success
+      expect(result.errors.dig('page', :fields, 'foo')).to eq(
+        ['is missing']
+      )
+    end
+
+    it 'should error when expected string is actually number' do
+      my_class =
+        Class.new(base_class('faq')) do
+          validate_field :num_faqs_float, :String
+        end
+
+      # act
+      result = run_validation(my_class)
+
+      # assert
+      expect(result).to_not be_success
+      expect(result.errors.dig('faq', :fields, 'numFaqsFloat', :type)).to eq(
+        ['must be equal to String']
+      )
+    end
 
     it 'should error when expected int is actually Float'
 
