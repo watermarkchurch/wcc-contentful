@@ -132,15 +132,70 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
       expect(result).to be_success
     end
 
-    it 'should validate Text as string field'
+    it 'should validate Text as string field' do
+      my_class =
+        Class.new(base_class('homepage')) do
+          validate_field :hero_text, :String, :optional
+        end
 
-    it 'should validate Integer as int'
+      # act
+      result = run_validation(my_class)
 
-    it 'should validate Float as float'
+      # assert
+      expect(result).to be_success
+    end
 
-    it 'should validate Date as DateTime'
+    it 'should validate Integer as int' do
+      my_class =
+        Class.new(base_class('faq')) do
+          validate_field :num_faqs, :Int
+        end
 
-    it 'should validate Boolean as bool'
+      # act
+      result = run_validation(my_class)
+
+      # assert
+      expect(result).to be_success
+    end
+
+    it 'should validate Float as float' do
+      my_class =
+        Class.new(base_class('faq')) do
+          validate_field :num_faqs_float, :Float
+        end
+
+      # act
+      result = run_validation(my_class)
+
+      # assert
+      expect(result).to be_success
+    end
+
+    it 'should validate Date as DateTime' do
+      my_class =
+        Class.new(base_class('migrationHistory')) do
+          validate_field :started, :DateTime
+        end
+
+      # act
+      result = run_validation(my_class)
+
+      # assert
+      expect(result).to be_success
+    end
+
+    it 'should validate Boolean as bool' do
+      my_class =
+        Class.new(base_class('faq')) do
+          validate_field :truthy_or_falsy, :Boolean
+        end
+
+      # act
+      result = run_validation(my_class)
+
+      # assert
+      expect(result).to be_success
+    end
 
     it 'should error when field missing' do
       my_class =
@@ -158,7 +213,7 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
       )
     end
 
-    it 'should error when expected string is actually number' do
+    it 'should error when field is not of expected type' do
       my_class =
         Class.new(base_class('faq')) do
           validate_field :num_faqs_float, :String
@@ -174,12 +229,47 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
       )
     end
 
-    it 'should error when expected int is actually Float'
+    it 'should validate array of simple values' do
+      my_class =
+        Class.new(base_class('ministry')) do
+          validate_field :categories, :String, :array
+        end
 
-    it 'should error when expected float is actually Int'
+      # act
+      result = run_validation(my_class)
 
-    it 'should error when expected DateTime is actually Json'
+      # assert
+      expect(result).to be_success
+    end
 
-    it 'should error when expected bool is actually String'
+    it 'should fail when expected array is not an array' do
+      my_class =
+        Class.new(base_class('ministry')) do
+          validate_field :name, :String, :array
+        end
+
+      # act
+      result = run_validation(my_class)
+
+      # assert
+      expect(result).to_not be_success
+      expect(result.errors.dig('ministry', :fields, 'name', :array)).to_not be_empty
+    end
+
+    it 'should fail when array item is not of expected type' do
+      my_class =
+        Class.new(base_class('ministry')) do
+          validate_field :categories, :Int, :array
+        end
+
+      # act
+      result = run_validation(my_class)
+
+      # assert
+      expect(result).to_not be_success
+      expect(result.errors.dig('ministry', :fields, 'categories', :type)).to eq(
+        ['must be equal to Int']
+      )
+    end
   end
 end
