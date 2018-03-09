@@ -7,18 +7,14 @@ http_interactions:
       encoding: US-ASCII
       string: ''
     headers:
-      User-Agent:
-      - RubyContentfulGem/0.12.0
       Authorization:
       - Bearer <CONTENTFUL_ACCESS_TOKEN>
-      Content-Type:
-      - application/vnd.contentful.delivery.v1+json
-      Accept-Encoding:
-      - gzip
       Connection:
       - close
       Host:
       - cdn.contentful.com
+      User-Agent:
+      - http.rb/1.0.4
   response:
     status:
       code: 200
@@ -45,27 +41,27 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       X-Contentful-Request-Id:
-      - a7ad0c145661c6bff7eece83cb5b3dc2
+      - c135e07d9fd3ae8795b4f04b5b2165a0
       Content-Length:
       - '912'
       Accept-Ranges:
       - bytes
       Date:
-      - Mon, 05 Mar 2018 18:58:59 GMT
+      - Fri, 09 Mar 2018 22:10:37 GMT
       Via:
       - 1.1 varnish
       Age:
-      - '143'
+      - '134'
       Connection:
       - close
       X-Served-By:
-      - cache-dfw18644-DFW
+      - cache-dfw18639-DFW
       X-Cache:
       - HIT
       X-Cache-Hits:
       - '1'
       X-Timer:
-      - S1520276339.494316,VS0,VE1
+      - S1520633438.516030,VS0,VE1
       Vary:
       - Accept-Encoding
     body:
@@ -123,5 +119,5 @@ http_interactions:
           }
         }
     http_version: 
-  recorded_at: Mon, 05 Mar 2018 18:58:59 GMT
+  recorded_at: Fri, 09 Mar 2018 22:10:36 GMT
 recorded_with: VCR 4.0.0

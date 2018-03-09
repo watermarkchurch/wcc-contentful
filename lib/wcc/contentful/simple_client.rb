@@ -4,12 +4,9 @@ require 'http'
 
 module WCC::Contentful
   class SimpleClient
-    def self.cdn
-    end
-
-    def initialize(api_url:, space_id:, access_token:, **options)
-      @api_url = URI.join(api_url, "/spaces/#{space_id}/")
-      @space_id = space_id
+    def initialize(api_url:, space:, access_token:, **options)
+      @api_url = URI.join(api_url, "/spaces/#{space}/")
+      @space = space
       @access_token = access_token
 
       @get_http = options[:override_get_http] if options[:override_get_http].present?
@@ -17,7 +14,7 @@ module WCC::Contentful
       @options = options
     end
 
-    def get(path, query = nil)
+    def get(path, query = {})
       url = URI.join(@api_url, path)
 
       Response.new(self,
@@ -57,33 +54,38 @@ module WCC::Contentful
     end
 
     class Response
-      attr_reader :raw
+      attr_reader :raw_response
 
-      delegate :code, to: :raw
-      delegate :headers, to: :raw
+      delegate :code, to: :raw_response
+      delegate :headers, to: :raw_response
 
       def body
-        @body ||= raw.body.to_s
+        @body ||= raw_response.body.to_s
       end
 
-      def to_json
+      def raw
         @json ||= JSON.parse(body)
+      end
+      alias_method :to_json, :raw
+
+      def error_message
+        raw.dig('message') || "#{code}: #{raw_response.message}"
       end
 
       def initialize(client, request, raw_response)
         @client = client
         @request = request
-        @raw = raw_response
-        @body = raw.body.to_s
+        @raw_response = raw_response
+        @body = raw_response.body.to_s
       end
 
       def assert_ok!
-        return if code >= 200 && code < 300
-        raise ApiError, "Error response from API: #{code}: #{raw.reason}\n#{body}"
+        return self if code >= 200 && code < 300
+        raise Contentful::Error[code], self
       end
 
       def each_page
-        raise ArgumentError, 'Not a collection response' unless to_json['items']
+        raise ArgumentError, 'Not a collection response' unless raw['items']
 
         pages = []
         current_page = self
@@ -94,8 +96,8 @@ module WCC::Contentful
                      current_page
                    end
 
-          skip_amt = current_page.to_json['items'].length + current_page.to_json['skip']
-          break if current_page.to_json['items'].empty? || skip_amt >= current_page.to_json['total']
+          skip_amt = current_page.raw['items'].length + current_page.raw['skip']
+          break if current_page.raw['items'].empty? || skip_amt >= current_page.raw['total']
 
           current_page = @client.get(
             @request[:url],
@@ -110,7 +112,9 @@ module WCC::Contentful
 
         ret =
           each_page do |page|
-            page.to_json['items'].map { |i| yield(i) }
+            page.raw['items'].map do |i|
+              yield(OpenStruct.new({ raw: i }.merge(i)))
+            end
           end
         ret.flatten
       end
@@ -119,9 +123,45 @@ module WCC::Contentful
         map(&block)
         nil
       end
+
+      def count
+        raw['total']
+      end
+
+      def first
+        raise ArgumentError, 'Not a collection response' unless raw['items']
+        return unless item = raw['items'].first
+        OpenStruct.new({ raw: item }.merge(item))
+      end
     end
 
     class ApiError < StandardError
+    end
+
+    class Cdn < SimpleClient
+      def initialize(space:, access_token:, **options)
+        super(
+          api_url: options[:api_url] || 'https://cdn.contentful.com/',
+          space: space,
+          access_token: access_token,
+          options: options
+        )
+      end
+
+      def entry(key, query = {})
+        resp = get("entries/#{key}", query)
+        resp.assert_ok!
+      end
+
+      def entries(query = {})
+        resp = get('entries', query)
+        resp.assert_ok!
+      end
+
+      def asset(key, query = {})
+        resp = get("assets/#{key}", query)
+        resp.assert_ok!
+      end
     end
   end
 end

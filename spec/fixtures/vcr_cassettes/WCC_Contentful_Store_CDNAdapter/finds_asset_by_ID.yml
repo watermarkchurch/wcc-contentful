@@ -7,18 +7,14 @@ http_interactions:
       encoding: US-ASCII
       string: ''
     headers:
-      User-Agent:
-      - RubyContentfulGem/0.12.0
       Authorization:
       - Bearer <CONTENTFUL_ACCESS_TOKEN>
-      Content-Type:
-      - application/vnd.contentful.delivery.v1+json
-      Accept-Encoding:
-      - gzip
       Connection:
       - close
       Host:
       - cdn.contentful.com
+      User-Agent:
+      - http.rb/1.0.4
   response:
     status:
       code: 404
@@ -43,13 +39,13 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       X-Contentful-Request-Id:
-      - 0a3033da08ec1a53eca36e62815e8605
+      - 0dcf7098d58f5ae63af15dbff9dce2d3
       Content-Length:
       - '266'
       Accept-Ranges:
       - bytes
       Date:
-      - Mon, 05 Mar 2018 19:05:17 GMT
+      - Fri, 09 Mar 2018 22:10:37 GMT
       Via:
       - 1.1 varnish
       Age:
@@ -57,13 +53,13 @@ http_interactions:
       Connection:
       - close
       X-Served-By:
-      - cache-dfw18640-DFW
+      - cache-dfw18627-DFW
       X-Cache:
       - HIT
       X-Cache-Hits:
       - '1'
       X-Timer:
-      - S1520276718.505263,VS0,VE15
+      - S1520633438.572566,VS0,VE1
       Vary:
       - Accept-Encoding
     body:
@@ -80,10 +76,10 @@ http_interactions:
             "type": "Entry",
             "space": "<CONTENTFUL_SPACE_ID>"
           },
-          "requestId": "0a3033da08ec1a53eca36e62815e8605"
+          "requestId": "0dcf7098d58f5ae63af15dbff9dce2d3"
         }
     http_version: 
-  recorded_at: Mon, 05 Mar 2018 19:05:17 GMT
+  recorded_at: Fri, 09 Mar 2018 22:10:36 GMT
 - request:
     method: get
     uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/assets/4JV2MbQVoAeEUQGUmYGQGY?locale=*
@@ -91,18 +87,14 @@ http_interactions:
       encoding: US-ASCII
       string: ''
     headers:
-      User-Agent:
-      - RubyContentfulGem/0.12.0
       Authorization:
       - Bearer <CONTENTFUL_ACCESS_TOKEN>
-      Content-Type:
-      - application/vnd.contentful.delivery.v1+json
-      Accept-Encoding:
-      - gzip
       Connection:
       - close
       Host:
       - cdn.contentful.com
+      User-Agent:
+      - http.rb/1.0.4
   response:
     status:
       code: 200
@@ -123,33 +115,33 @@ http_interactions:
       Content-Type:
       - application/vnd.contentful.delivery.v1+json
       Etag:
-      - '"f96764be13033606480bc2bf468dc5b5"'
+      - '"ac8baa89f81e8eaf617004dfe4c3156d"'
       Server:
       - Contentful
       X-Content-Type-Options:
       - nosniff
       X-Contentful-Request-Id:
-      - 66bc0f822fae11bd8020be0809ce8a8c
+      - d3648b0d33d3aa071affc2e968f23661
       Content-Length:
-      - '775'
+      - '774'
       Accept-Ranges:
       - bytes
       Date:
-      - Mon, 05 Mar 2018 19:05:17 GMT
+      - Fri, 09 Mar 2018 22:10:37 GMT
       Via:
       - 1.1 varnish
       Age:
-      - '0'
+      - '133'
       Connection:
       - close
       X-Served-By:
-      - cache-dfw18650-DFW
+      - cache-dfw18643-DFW
       X-Cache:
-      - MISS
+      - HIT
       X-Cache-Hits:
-      - '0'
+      - '1'
       X-Timer:
-      - S1520276718.561833,VS0,VE175
+      - S1520633438.608946,VS0,VE1
       Vary:
       - Accept-Encoding
     body:
@@ -176,7 +168,7 @@ http_interactions:
             },
             "file": {
               "en-US": {
-                "url": "//images.contentful.com/<CONTENTFUL_SPACE_ID>/4JV2MbQVoAeEUQGUmYGQGY/1f0e377e665d2ab94fb86b0c88e75b06/goat-clip-art.png",
+                "url": "//images.ctfassets.net/<CONTENTFUL_SPACE_ID>/4JV2MbQVoAeEUQGUmYGQGY/1f0e377e665d2ab94fb86b0c88e75b06/goat-clip-art.png",
                 "details": {
                   "size": 62310,
                   "image": {
@@ -191,5 +183,5 @@ http_interactions:
           }
         }
     http_version: 
-  recorded_at: Mon, 05 Mar 2018 19:05:17 GMT
+  recorded_at: Fri, 09 Mar 2018 22:10:36 GMT
 recorded_with: VCR 4.0.0

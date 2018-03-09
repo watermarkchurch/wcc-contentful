@@ -3,7 +3,7 @@
 RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
   subject(:adapter) {
     WCC::Contentful::Store::CDNAdapter.new(
-      Contentful::Client.new(
+      WCC::Contentful::SimpleClient::Cdn.new(
         access_token: ENV['CONTENTFUL_ACCESS_TOKEN'] || 'test1234',
         space: ENV['CONTENTFUL_SPACE_ID'] || 'test1xab'
       )
@@ -65,7 +65,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       },
       'file' => {
         'en-US' => {
-          'url' => '//images.contentful.com/343qxys30lid/4JV2MbQVoAeEUQGUmYGQGY/'\
+          'url' => '//images.ctfassets.net/343qxys30lid/4JV2MbQVoAeEUQGUmYGQGY/'\
             '1f0e377e665d2ab94fb86b0c88e75b06/goat-clip-art.png',
           'details' => {
             'size' => 62_310,

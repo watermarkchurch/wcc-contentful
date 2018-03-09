@@ -7,7 +7,7 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
     WCC::Contentful::SimpleClient.new(
       api_url: 'https://cdn.contentful.com',
       access_token: ENV['CONTENTFUL_ACCESS_TOKEN'] || 'test1234',
-      space_id: ENV['CONTENTFUL_SPACE_ID'] || 'test1xab'
+      space: ENV['CONTENTFUL_SPACE_ID'] || 'test1xab'
     )
   }
 
@@ -44,7 +44,7 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
       client = WCC::Contentful::SimpleClient.new(
         api_url: 'http://jtj.watermark.org',
         access_token: ENV['CONTENTFUL_ACCESS_TOKEN'] || 'test1234',
-        space_id: ENV['CONTENTFUL_SPACE_ID'] || 'test1xab'
+        space: ENV['CONTENTFUL_SPACE_ID'] || 'test1xab'
       )
 
       # act
