@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=menuItem&fields.text=Ministries&locale=*
+    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=menuItem&fields.text=Ministries
     body:
       encoding: US-ASCII
       string: ''
@@ -35,19 +35,19 @@ http_interactions:
       Content-Type:
       - application/vnd.contentful.delivery.v1+json
       Etag:
-      - W/"1330075161b895f2d77fe71b79012c1b"
+      - W/"8c0ea20cb7fdab723eee2810efcd6d98"
       Server:
       - Contentful
       X-Content-Type-Options:
       - nosniff
       X-Contentful-Request-Id:
-      - 9e617a6f800e1a18290a36039989aa9b
+      - 38791cf7f1106077dffaf0c70629434e
       Content-Length:
-      - '2077'
+      - '1851'
       Accept-Ranges:
       - bytes
       Date:
-      - Fri, 09 Mar 2018 17:41:35 GMT
+      - Fri, 09 Mar 2018 22:48:07 GMT
       Via:
       - 1.1 varnish
       Age:
@@ -55,13 +55,13 @@ http_interactions:
       Connection:
       - close
       X-Served-By:
-      - cache-dfw18626-DFW
+      - cache-dfw18634-DFW
       X-Cache:
       - MISS
       X-Cache-Hits:
       - '0'
       X-Timer:
-      - S1520617296.659007,VS0,VE115
+      - S1520635686.335179,VS0,VE814
       Vary:
       - Accept-Encoding
     body:
@@ -95,33 +95,24 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "menuItem"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "text": {
-                  "en-US": "Ministries"
-                },
-                "iconFA": {
-                  "en-US": "fa-file-alt"
-                },
-                "buttonStyle": {
-                  "en-US": [
-                    "rounded",
-                    "custom"
-                  ]
-                },
-                "customButtonCss": {
-                  "en-US": [
-                    "border-color: green;"
-                  ]
-                },
+                "text": "Ministries",
+                "iconFA": "fa-file-alt",
+                "buttonStyle": [
+                  "rounded",
+                  "custom"
+                ],
+                "customButtonCss": [
+                  "border-color: green;"
+                ],
                 "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "JhYhSfZPAOMqsaK8cYOUK"
-                    }
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Entry",
+                    "id": "JhYhSfZPAOMqsaK8cYOUK"
                   }
                 }
               }
@@ -149,23 +140,18 @@ http_interactions:
                       "linkType": "ContentType",
                       "id": "page"
                     }
-                  }
+                  },
+                  "locale": "en-US"
                 },
                 "fields": {
-                  "title": {
-                    "en-US": "Ministries"
-                  },
-                  "slug": {
-                    "en-US": "/ministries"
-                  },
-                  "heroText": {
-                    "en-US": "Test Test 123"
-                  }
+                  "title": "Ministries",
+                  "slug": "/ministries",
+                  "heroText": "Test Test 123"
                 }
               }
             ]
           }
         }
     http_version: 
-  recorded_at: Fri, 09 Mar 2018 17:41:35 GMT
+  recorded_at: Fri, 09 Mar 2018 22:48:07 GMT
 recorded_with: VCR 4.0.0

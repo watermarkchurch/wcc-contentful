@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=page&limit=5&locale=*
+    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=page&limit=5
     body:
       encoding: US-ASCII
       string: ''
@@ -35,19 +35,19 @@ http_interactions:
       Content-Type:
       - application/vnd.contentful.delivery.v1+json
       Etag:
-      - W/"b1977350a109dc070ef8f5b93dabc7b3"
+      - W/"498403d842ef14827d8de86d22f16d2e"
       Server:
       - Contentful
       X-Content-Type-Options:
       - nosniff
       X-Contentful-Request-Id:
-      - 1da9e34b81e5aa22b6995644f703164d
+      - 5ab5587764e2115a03ba443238fcb778
       Content-Length:
-      - '3516'
+      - '3341'
       Accept-Ranges:
       - bytes
       Date:
-      - Fri, 09 Mar 2018 21:50:17 GMT
+      - Fri, 09 Mar 2018 22:48:09 GMT
       Via:
       - 1.1 varnish
       Age:
@@ -61,7 +61,7 @@ http_interactions:
       X-Cache-Hits:
       - '0'
       X-Timer:
-      - S1520632217.068669,VS0,VE81
+      - S1520635689.009362,VS0,VE68
       Vary:
       - Accept-Encoding
     body:
@@ -95,15 +95,12 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "page"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "title": {
-                  "en-US": "About"
-                },
-                "slug": {
-                  "en-US": "about"
-                }
+                "title": "About",
+                "slug": "about"
               }
             },
             {
@@ -126,15 +123,12 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "page"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "title": {
-                  "en-US": "Terms & Conditions"
-                },
-                "slug": {
-                  "en-US": "terms-and-conditions"
-                }
+                "title": "Terms & Conditions",
+                "slug": "terms-and-conditions"
               }
             },
             {
@@ -157,15 +151,12 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "page"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "title": {
-                  "en-US": "Conferences"
-                },
-                "slug": {
-                  "en-US": "/conferences"
-                }
+                "title": "Conferences",
+                "slug": "/conferences"
               }
             },
             {
@@ -188,15 +179,12 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "page"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "title": {
-                  "en-US": "My Cart"
-                },
-                "slug": {
-                  "en-US": "my-cart"
-                }
+                "title": "My Cart",
+                "slug": "my-cart"
               }
             },
             {
@@ -219,24 +207,21 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "page"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "title": {
-                  "en-US": "Mission"
-                },
-                "slug": {
-                  "en-US": "mission"
-                }
+                "title": "Mission",
+                "slug": "mission"
               }
             }
           ]
         }
     http_version: 
-  recorded_at: Fri, 09 Mar 2018 21:50:15 GMT
+  recorded_at: Fri, 09 Mar 2018 22:48:09 GMT
 - request:
     method: get
-    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=page&limit=5&locale=*&skip=5
+    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=page&limit=5&skip=5
     body:
       encoding: US-ASCII
       string: ''
@@ -269,19 +254,19 @@ http_interactions:
       Content-Type:
       - application/vnd.contentful.delivery.v1+json
       Etag:
-      - W/"226552cd121daf88aa81add943cc7eff"
+      - W/"e8e4ddd57782d72a5c84ea7ff2e2f069"
       Server:
       - Contentful
       X-Content-Type-Options:
       - nosniff
       X-Contentful-Request-Id:
-      - dd4299a9020a203eb00572dc61cf87d2
+      - 502f70f580d3395a60781f91e4246307
       Content-Length:
-      - '2215'
+      - '2079'
       Accept-Ranges:
       - bytes
       Date:
-      - Fri, 09 Mar 2018 21:50:17 GMT
+      - Fri, 09 Mar 2018 22:48:09 GMT
       Via:
       - 1.1 varnish
       Age:
@@ -289,13 +274,13 @@ http_interactions:
       Connection:
       - close
       X-Served-By:
-      - cache-dfw18650-DFW
+      - cache-dfw18639-DFW
       X-Cache:
       - MISS
       X-Cache-Hits:
       - '0'
       X-Timer:
-      - S1520632217.192330,VS0,VE110
+      - S1520635689.133709,VS0,VE99
       Vary:
       - Accept-Encoding
     body:
@@ -329,15 +314,12 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "page"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "title": {
-                  "en-US": "Privacy Policy"
-                },
-                "slug": {
-                  "en-US": "privacy-policy"
-                }
+                "title": "Privacy Policy",
+                "slug": "privacy-policy"
               }
             },
             {
@@ -360,15 +342,12 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "page"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "title": {
-                  "en-US": "Login"
-                },
-                "slug": {
-                  "en-US": "login"
-                }
+                "title": "Login",
+                "slug": "login"
               }
             },
             {
@@ -391,22 +370,17 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "page"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "title": {
-                  "en-US": "Ministries"
-                },
-                "slug": {
-                  "en-US": "/ministries"
-                },
-                "heroText": {
-                  "en-US": "Test Test 123"
-                }
+                "title": "Ministries",
+                "slug": "/ministries",
+                "heroText": "Test Test 123"
               }
             }
           ]
         }
     http_version: 
-  recorded_at: Fri, 09 Mar 2018 21:50:15 GMT
+  recorded_at: Fri, 09 Mar 2018 22:48:09 GMT
 recorded_with: VCR 4.0.0

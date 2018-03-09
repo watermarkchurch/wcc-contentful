@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/content_types?limit=5&locale=*
+    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/content_types?limit=5
     body:
       encoding: US-ASCII
       string: ''
@@ -41,13 +41,13 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       X-Contentful-Request-Id:
-      - 726d7e79815448617efa9761403af92f
+      - 0fee503c90cd80514a3eda99b8224aa0
       Content-Length:
       - '9889'
       Accept-Ranges:
       - bytes
       Date:
-      - Fri, 09 Mar 2018 21:42:45 GMT
+      - Fri, 09 Mar 2018 22:48:07 GMT
       Via:
       - 1.1 varnish
       Age:
@@ -55,13 +55,13 @@ http_interactions:
       Connection:
       - close
       X-Served-By:
-      - cache-dfw18624-DFW
+      - cache-dfw18641-DFW
       X-Cache:
       - MISS
       X-Cache-Hits:
       - '0'
       X-Timer:
-      - S1520631765.212296,VS0,VE171
+      - S1520635688.628072,VS0,VE182
       Vary:
       - Accept-Encoding
     body:
@@ -457,10 +457,10 @@ http_interactions:
           ]
         }
     http_version: 
-  recorded_at: Fri, 09 Mar 2018 21:42:43 GMT
+  recorded_at: Fri, 09 Mar 2018 22:48:07 GMT
 - request:
     method: get
-    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/content_types?limit=5&locale=*&skip=5
+    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/content_types?limit=5&skip=5
     body:
       encoding: US-ASCII
       string: ''
@@ -499,13 +499,13 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       X-Contentful-Request-Id:
-      - 6665caf76c4f1496e364d62149cf2491
+      - f3e003b179406c4ca5f8fc2ade36ba48
       Content-Length:
       - '9633'
       Accept-Ranges:
       - bytes
       Date:
-      - Fri, 09 Mar 2018 21:42:45 GMT
+      - Fri, 09 Mar 2018 22:48:08 GMT
       Via:
       - 1.1 varnish
       Age:
@@ -513,13 +513,13 @@ http_interactions:
       Connection:
       - close
       X-Served-By:
-      - cache-dfw18642-DFW
+      - cache-dfw18651-DFW
       X-Cache:
       - MISS
       X-Cache-Hits:
       - '0'
       X-Timer:
-      - S1520631765.426215,VS0,VE97
+      - S1520635688.005987,VS0,VE329
       Vary:
       - Accept-Encoding
     body:
@@ -911,10 +911,10 @@ http_interactions:
           ]
         }
     http_version: 
-  recorded_at: Fri, 09 Mar 2018 21:42:44 GMT
+  recorded_at: Fri, 09 Mar 2018 22:48:08 GMT
 - request:
     method: get
-    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/content_types?limit=5&locale=*&skip=10
+    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/content_types?limit=5&skip=10
     body:
       encoding: US-ASCII
       string: ''
@@ -953,13 +953,13 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       X-Contentful-Request-Id:
-      - 59ba7e0b38200d8c3eccf70933e16ded
+      - 2388d9f0b6e57f3189b9b0e2ade8fecf
       Content-Length:
       - '9563'
       Accept-Ranges:
       - bytes
       Date:
-      - Fri, 09 Mar 2018 21:42:45 GMT
+      - Fri, 09 Mar 2018 22:48:08 GMT
       Via:
       - 1.1 varnish
       Age:
@@ -967,13 +967,13 @@ http_interactions:
       Connection:
       - close
       X-Served-By:
-      - cache-dfw18633-DFW
+      - cache-dfw18644-DFW
       X-Cache:
       - MISS
       X-Cache-Hits:
       - '0'
       X-Timer:
-      - S1520631766.561418,VS0,VE143
+      - S1520635688.366127,VS0,VE355
       Vary:
       - Accept-Encoding
     body:
@@ -1354,10 +1354,10 @@ http_interactions:
           ]
         }
     http_version: 
-  recorded_at: Fri, 09 Mar 2018 21:42:44 GMT
+  recorded_at: Fri, 09 Mar 2018 22:48:08 GMT
 - request:
     method: get
-    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/content_types?limit=5&locale=*&skip=15
+    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/content_types?limit=5&skip=15
     body:
       encoding: US-ASCII
       string: ''
@@ -1396,13 +1396,13 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       X-Contentful-Request-Id:
-      - 7f407f4365caddd5039c716719a07887
+      - bf9a6a07c15bcade97e31c13426719c2
       Content-Length:
       - '1598'
       Accept-Ranges:
       - bytes
       Date:
-      - Fri, 09 Mar 2018 21:42:45 GMT
+      - Fri, 09 Mar 2018 22:48:08 GMT
       Via:
       - 1.1 varnish
       Age:
@@ -1410,13 +1410,13 @@ http_interactions:
       Connection:
       - close
       X-Served-By:
-      - cache-dfw18630-DFW
+      - cache-dfw18640-DFW
       X-Cache:
       - MISS
       X-Cache-Hits:
       - '0'
       X-Timer:
-      - S1520631766.738036,VS0,VE152
+      - S1520635689.780460,VS0,VE97
       Vary:
       - Accept-Encoding
     body:
@@ -1492,5 +1492,5 @@ http_interactions:
           ]
         }
     http_version: 
-  recorded_at: Fri, 09 Mar 2018 21:42:44 GMT
+  recorded_at: Fri, 09 Mar 2018 22:48:08 GMT
 recorded_with: VCR 4.0.0

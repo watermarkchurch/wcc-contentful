@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?limit=2&locale=*
+    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?limit=2
     body:
       encoding: US-ASCII
       string: ''
@@ -35,33 +35,33 @@ http_interactions:
       Content-Type:
       - application/vnd.contentful.delivery.v1+json
       Etag:
-      - W/"ceab757f9fb8d08aee65022a8680add7"
+      - W/"f500e01ead2e3e4a10a75e93a632ad75"
       Server:
       - Contentful
       X-Content-Type-Options:
       - nosniff
       X-Contentful-Request-Id:
-      - c99c3472c3b9b7bf5191c58e144a5c0b
+      - 9e837029604f249d83ca38a12852fe35
       Content-Length:
-      - '2395'
+      - '2272'
       Accept-Ranges:
       - bytes
       Date:
-      - Fri, 09 Mar 2018 17:41:28 GMT
+      - Fri, 09 Mar 2018 22:48:06 GMT
       Via:
       - 1.1 varnish
       Age:
-      - '115'
+      - '19334'
       Connection:
       - close
       X-Served-By:
-      - cache-dfw18647-DFW
+      - cache-dfw18642-DFW
       X-Cache:
       - HIT
       X-Cache-Hits:
       - '1'
       X-Timer:
-      - S1520617288.300848,VS0,VE0
+      - S1520635686.196133,VS0,VE1
       Vary:
       - Accept-Encoding
     body:
@@ -95,15 +95,12 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "page"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "title": {
-                  "en-US": "Privacy Policy"
-                },
-                "slug": {
-                  "en-US": "privacy-policy"
-                }
+                "title": "Privacy Policy",
+                "slug": "privacy-policy"
               }
             },
             {
@@ -126,19 +123,16 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "menuItem"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "text": {
-                  "en-US": "About"
-                },
+                "text": "About",
                 "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "47PsST8EicKgWIWwK2AsW6"
-                    }
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Entry",
+                    "id": "47PsST8EicKgWIWwK2AsW6"
                   }
                 }
               }
@@ -166,20 +160,17 @@ http_interactions:
                       "linkType": "ContentType",
                       "id": "page"
                     }
-                  }
+                  },
+                  "locale": "en-US"
                 },
                 "fields": {
-                  "title": {
-                    "en-US": "About"
-                  },
-                  "slug": {
-                    "en-US": "about"
-                  }
+                  "title": "About",
+                  "slug": "about"
                 }
               }
             ]
           }
         }
     http_version: 
-  recorded_at: Fri, 09 Mar 2018 17:41:28 GMT
+  recorded_at: Fri, 09 Mar 2018 22:48:06 GMT
 recorded_with: VCR 4.0.0

@@ -5,13 +5,15 @@ require 'http'
 module WCC::Contentful
   class SimpleClient
     def initialize(api_url:, space:, access_token:, **options)
-      @api_url = URI.join(api_url, "/spaces/#{space}/")
+      @api_url = URI.join(api_url, '/spaces/', space + '/')
       @space = space
       @access_token = access_token
 
       @get_http = options[:override_get_http] if options[:override_get_http].present?
 
       @options = options
+      @query_defaults = {}
+      @query_defaults[:locale] = @options[:default_locale] if @options[:default_locale]
     end
 
     def get(path, query = {})
@@ -28,15 +30,15 @@ module WCC::Contentful
       headers = {
         Authorization: "Bearer #{@access_token}"
       }.merge(headers || {})
-      query = {
-        locale: @options[:default_locale] || '*'
-      }.merge(query || {})
+
+      q = @query_defaults.dup
+      q = q.merge(query) if query
 
       resp =
         if @get_http
-          @get_http.call(url, query, headers, proxy)
+          @get_http.call(url, q, headers, proxy)
         else
-          default_get_http(url, query, headers, proxy)
+          default_get_http(url, q, headers, proxy)
         end
       if [301, 302, 307].include?(resp.code) && !@options[:no_follow_redirects]
         resp = get_http(resp.headers['location'], nil, headers, proxy)
@@ -151,7 +153,7 @@ module WCC::Contentful
           api_url: options[:api_url] || 'https://cdn.contentful.com/',
           space: space,
           access_token: access_token,
-          options: options
+          **options
         )
       end
 
@@ -167,6 +169,26 @@ module WCC::Contentful
 
       def asset(key, query = {})
         resp = get("assets/#{key}", query)
+        resp.assert_ok!
+      end
+    end
+
+    class Management < SimpleClient
+      def initialize(management_token:, **options)
+        super(
+          api_url: options[:api_url] || 'https://api.contentful.com',
+          space: options[:space] || '/',
+          access_token: management_token,
+          **options
+        )
+      end
+
+      def content_types(space: nil, **query)
+        puts "options: #{@options}"
+        space ||= @space
+        raise ArgumentError, 'please provide a space ID' if space.nil?
+
+        resp = get("/spaces/#{space}/content_types", query)
         resp.assert_ok!
       end
     end
