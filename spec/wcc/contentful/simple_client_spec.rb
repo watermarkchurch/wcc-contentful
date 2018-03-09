@@ -148,7 +148,6 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
 
         # assert
         resp.assert_ok!
-        items = resp.map { |i| i.dig('sys', 'id') }
         expect(resp.next_sync_token)
           .to eq(sync_token)
       end

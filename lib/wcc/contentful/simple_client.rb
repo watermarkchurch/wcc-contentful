@@ -91,13 +91,18 @@ module WCC::Contentful
         resp.assert_ok!
       end
 
+      def content_types(query = {})
+        resp = get('content_types', query)
+        resp.assert_ok!
+      end
+
       def sync(sync_token: nil, **query)
         sync_token =
           if sync_token
             { sync_token: sync_token }
           else
             { initial: true }
-                 end
+          end
         query = query.merge(sync_token)
         resp = SyncResponse.new(get('sync', query))
         resp.assert_ok!
@@ -115,7 +120,6 @@ module WCC::Contentful
       end
 
       def content_types(space: nil, **query)
-        puts "options: #{@options}"
         space ||= @space
         raise ArgumentError, 'please provide a space ID' if space.nil?
 

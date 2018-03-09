@@ -54,6 +54,7 @@ class WCC::Contentful::SimpleClient
           @request[:url],
           (@request[:query] || {}).merge({ skip: skip_amt })
         )
+        current_page.assert_ok!
       end
       pages
     end
@@ -64,7 +65,7 @@ class WCC::Contentful::SimpleClient
       ret =
         each_page do |page|
           page.raw['items'].map do |i|
-            yield(OpenStruct.new({ raw: i }.merge(i)))
+            yield(OpenStruct.new({ raw: i, id: i.dig('sys', 'id') }.merge(i)))
           end
         end
       ret.flatten
@@ -86,7 +87,7 @@ class WCC::Contentful::SimpleClient
     def first
       raise ArgumentError, 'Not a collection response' unless raw['items']
       return unless item = raw['items'].first
-      OpenStruct.new({ raw: item }.merge(item))
+      OpenStruct.new({ raw: item, id: item.dig('sys', 'id') }.merge(item))
     end
   end
 

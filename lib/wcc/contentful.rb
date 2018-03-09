@@ -6,6 +6,7 @@ require 'contentful_model'
 
 require 'wcc/contentful/exceptions'
 require 'wcc/contentful/helpers'
+require 'wcc/contentful/simple_client'
 require 'wcc/contentful/store'
 require 'wcc/contentful/sync'
 require 'wcc/contentful/content_type_indexer'
@@ -26,27 +27,30 @@ module WCC
     def self.configure
       @configuration ||= Configuration.new
       yield(configuration)
-      configuration.configure_contentful_model if defined?(::ContentfulModel)
+
+      configuration.configure_contentful
+
+      raise ArgumentError, 'Please provide "space" ID' unless configuration.space.present?
+      raise ArgumentError, 'Please provide "access_token"' unless configuration.access_token.present?
+
       configuration
     end
 
     def self.init!
       raise ArgumentError, 'Please first call WCC:Contentful.Configure!' if configuration.nil?
 
-      # TODO: figure out how to load these when ContentfulModel not present
-      content_types =
-        if configuration.management_token.present?
-          # prefer from mgmt API since it has richer data
-          ::ContentfulModel::Management.new.content_types
-            .all(::ContentfulModel.configuration.space).map { |t| t }
+      # we want as much as possible the raw JSON from the API
+      content_types_resp =
+        if configuration.management_client
+          configuration.management_client.content_types(limit: 1000)
         else
-          client.dynamic_entry_cache
-            .values.map(&:content_type)
+          configuration.client.content_types(limit: 1000)
         end
+      @content_types = content_types_resp.all
 
       indexer =
         ContentTypeIndexer.new.tap do |ixr|
-          content_types.each { |type| ixr.index(type) }
+          @content_types.each { |type| ixr.index(type) }
         end
       @types = indexer.types
 
@@ -56,7 +60,7 @@ module WCC
 
         client.sync(initial: true).each_item do |item|
           # TODO: enrich existing type data using Sync::Indexer
-          store.index(item.id, item.marshal_dump)
+          store.index(item.id, item.raw)
         end
         WCC::ContentfulModel.store = store
       when :direct

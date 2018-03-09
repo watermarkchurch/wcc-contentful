@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'http'
+
 class WCC::Contentful::Configuration
   ATTRIBUTES = %i[
     access_token
@@ -7,6 +9,7 @@ class WCC::Contentful::Configuration
     space
     default_locale
     content_delivery
+    override_get_http
   ].freeze
   attr_accessor(*ATTRIBUTES)
 
@@ -40,35 +43,45 @@ class WCC::Contentful::Configuration
     @sync_store ||= Store::MemoryStore.new
   end
 
-  def client
-    @client ||=
-      if defined?(ContentfulModel)
-        configuration.configure_contentful_model
-        @client = ContentfulModel::Base.client
-      else
-        @client = Contentful::Client.new(
-          space: configuration.space,
-          access_token: configuration.access_token
-        )
-      end
-  end
+  # A proc which overrides the "get_http" function in Contentful::Client.
+  # All interaction with Contentful will go through this function.
+  # Should be a lambda like: ->(url, query, headers = {}, proxy = {}) { ... }
+  attr_writer :override_get_http
 
   def initialize
     @access_token = ''
     @management_token = ''
     @space = ''
-    @default_locale = 'en-US'
+    @default_locale = nil
     @content_delivery = :direct
     @sync_store = :memory
   end
 
-  def configure_contentful_model
-    ContentfulModel.configure do |config|
-      config.access_token = access_token
-      config.management_token = management_token if management_token.present?
-      config.space = space
-      config.default_locale = default_locale
+  attr_reader :client
+  attr_reader :management_client
+
+  def configure_contentful
+    if defined?(::ContentfulModel)
+      ContentfulModel.configure do |config|
+        config.access_token = access_token
+        config.management_token = management_token if management_token.present?
+        config.space = space
+        config.default_locale = default_locale
+      end
     end
-    @client = ContentfulModel::Base.client
+
+    require_relative 'client_ext' if defined?(::Contentful)
+
+    @client = WCC::Contentful::SimpleClient::Cdn.new(
+      access_token: access_token,
+      space: space,
+      default_locale: default_locale
+    )
+    return unless management_token.present?
+    @management_client = WCC::Contentful::SimpleClient::Management.new(
+      management_token: management_token,
+      space: space,
+      default_locale: default_locale
+    )
   end
 end

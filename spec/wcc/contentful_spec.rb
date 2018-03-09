@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe WCC::Contentful do
+RSpec.describe WCC::Contentful, :vcr do
   it 'has a version number' do
     expect(WCC::Contentful::VERSION).not_to be nil
   end
@@ -10,13 +10,10 @@ RSpec.describe WCC::Contentful do
   let(:valid_contentful_default_locale) { 'en-US' }
 
   before do
-    VCR.use_cassette('models/wcc_contentful/content_types', record: :none) do
-      WCC::Contentful.configure do |config|
-        config.access_token = valid_contentful_access_token
-        config.space = valid_contentful_space_id
-        config.default_locale = valid_contentful_default_locale
-        config.content_delivery = :eager_sync
-      end
+    WCC::Contentful.configure do |config|
+      config.access_token = valid_contentful_access_token
+      config.space = valid_contentful_space_id
+      config.content_delivery = :eager_sync
     end
   end
 
@@ -37,6 +34,14 @@ RSpec.describe WCC::Contentful do
     let(:invalid_contentful_default_locale) { 'simmer-down-now-fella' }
 
     context 'when passed VALID configuration arguments' do
+      before do
+        WCC::Contentful.configure do |config|
+          config.access_token = valid_contentful_access_token
+          config.space = valid_contentful_space_id
+          config.default_locale = valid_contentful_default_locale
+        end
+      end
+
       it 'should return a Contentful config object populated with the valid values given' do
         config = WCC::Contentful.configuration
 
@@ -58,25 +63,21 @@ RSpec.describe WCC::Contentful do
       it 'should set the Contentful client on the WCC::Contentful module' do
         client = WCC::Contentful.client
 
-        expect(client).to be_a(Contentful::Client)
+        expect(client).to be_a(WCC::Contentful::SimpleClient)
       end
 
       it 'should allow you to fetch a Redirect object from Contentful' do
-        VCR.use_cassette('models/wcc_contentful/redirect/has_slug_and_url', record: :none) do
-          response = WCC::Contentful::Redirect.find_by_slug('redirect-with-slug-and-url')
-          expect(response.nil?).to eq(false)
-        end
+        response = WCC::Contentful::Redirect.find_by_slug('redirect-with-slug-and-url')
+        expect(response.nil?).to eq(false)
       end
     end
 
     context 'when passed INVALID configuration arguments' do
       it 'should error with a Contentful::Unauthorized' do
-        VCR.use_cassette('models/wcc_contentful/content_types/invalid_space', record: :none) do
-          WCC::Contentful.configure do |config|
-            config.access_token = invalid_contentful_access_token
-            config.space = invalid_contentful_space_id
-            config.default_locale = invalid_contentful_default_locale
-          end
+        WCC::Contentful.configure do |config|
+          config.access_token = invalid_contentful_access_token
+          config.space = invalid_contentful_space_id
+          config.default_locale = invalid_contentful_default_locale
         end
       end
     end
@@ -99,9 +100,7 @@ RSpec.describe WCC::Contentful do
     context 'without management token' do
       it 'should populate models via ContentfulModel cache' do
         # act
-        VCR.use_cassette('models/wcc_contentful/sync/initial', record: :none) do
-          WCC::Contentful.init!
-        end
+        WCC::Contentful.init!
 
         # assert
         content_type = WCC::ContentfulModel::MenuItem.content_type
@@ -110,9 +109,7 @@ RSpec.describe WCC::Contentful do
 
       it 'should populate store via sync API' do
         # act
-        VCR.use_cassette('models/wcc_contentful/sync/initial', record: :none) do
-          WCC::Contentful.init!
-        end
+        WCC::Contentful.init!
 
         # assert
         page = WCC::ContentfulModel.find('1UojJt7YoMiemCq2mGGUmQ')
@@ -128,16 +125,13 @@ RSpec.describe WCC::Contentful do
       before(:each) do
         WCC::Contentful.configure do |config|
           config.management_token = ENV['CONTENTFUL_MANAGEMENT_TOKEN'] || 'CFPAT-xxxx'
+          config.default_locale = nil
         end
       end
 
       it 'should populate models via Management API cache' do
         # act
-        VCR.use_cassette('models/wcc_contentful/content_types/mgmt_api', record: :none) do
-          VCR.use_cassette('models/wcc_contentful/sync/initial', record: :none) do
-            WCC::Contentful.init!
-          end
-        end
+        WCC::Contentful.init!
 
         # assert
         content_type = WCC::ContentfulModel::Page.content_type
@@ -146,11 +140,7 @@ RSpec.describe WCC::Contentful do
 
       it 'should populate store via sync API' do
         # act
-        VCR.use_cassette('models/wcc_contentful/content_types/mgmt_api', record: :none) do
-          VCR.use_cassette('models/wcc_contentful/sync/initial', record: :none) do
-            WCC::Contentful.init!
-          end
-        end
+        WCC::Contentful.init!
 
         # assert
         asset = WCC::ContentfulModel::Asset.find('2zKTmej544IakmIqoEu0y8')
@@ -169,17 +159,12 @@ RSpec.describe WCC::Contentful do
 
       it 'builds out store using CDNAdapter' do
         # act
-        VCR.use_cassette('models/wcc_contentful/content_types/mgmt_api', record: :none) do
-          WCC::Contentful.init!
-        end
+        WCC::Contentful.init!
 
         # assert
         expect(WCC::ContentfulModel.store).to be_a(WCC::Contentful::Store::CDNAdapter)
 
-        page =
-          VCR.use_cassette('models/wcc_contentful/entries/JhYhSfZPAOMqsaK8cYOUK') do
-            WCC::ContentfulModel::Page.find('JhYhSfZPAOMqsaK8cYOUK')
-          end
+        page = WCC::ContentfulModel::Page.find('JhYhSfZPAOMqsaK8cYOUK')
         expect(page.title).to eq('Ministries')
       end
     end
