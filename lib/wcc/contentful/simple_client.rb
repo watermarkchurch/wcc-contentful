@@ -81,7 +81,8 @@ module WCC::Contentful
 
       def assert_ok!
         return self if code >= 200 && code < 300
-        raise Contentful::Error[code], self
+        raise Contentful::Error[code], self if defined?(Contentful)
+        raise ApiError self
       end
 
       def each_page
@@ -136,6 +137,12 @@ module WCC::Contentful
     end
 
     class ApiError < StandardError
+      attr_reader :response
+
+      def initialize(response)
+        @response = response
+        super(response.error_message)
+      end
     end
 
     class Cdn < SimpleClient
