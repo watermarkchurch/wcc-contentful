@@ -2,6 +2,8 @@
 
 require 'http'
 
+require_relative 'simple_client_response'
+
 module WCC::Contentful
   class SimpleClient
     def initialize(api_url:, space:, access_token:, **options)
@@ -55,89 +57,6 @@ module WCC::Contentful
       end
     end
 
-    class Response
-      attr_reader :raw_response
-
-      delegate :code, to: :raw_response
-      delegate :headers, to: :raw_response
-
-      def body
-        @body ||= raw_response.body.to_s
-      end
-
-      def raw
-        @json ||= JSON.parse(body)
-      end
-      alias_method :to_json, :raw
-
-      def error_message
-        raw.dig('message') || "#{code}: #{raw_response.message}"
-      end
-
-      def initialize(client, request, raw_response)
-        @client = client
-        @request = request
-        @raw_response = raw_response
-        @body = raw_response.body.to_s
-      end
-
-      def assert_ok!
-        return self if code >= 200 && code < 300
-        raise Contentful::Error[code], self if defined?(Contentful)
-        raise ApiError self
-      end
-
-      def each_page
-        raise ArgumentError, 'Not a collection response' unless raw['items']
-
-        pages = []
-        current_page = self
-        loop do
-          pages << if block_given?
-                     yield(current_page)
-                   else
-                     current_page
-                   end
-
-          skip_amt = current_page.raw['items'].length + current_page.raw['skip']
-          break if current_page.raw['items'].empty? || skip_amt >= current_page.raw['total']
-
-          current_page = @client.get(
-            @request[:url],
-            (@request[:query] || {}).merge({ skip: skip_amt })
-          )
-        end
-        pages
-      end
-
-      def map
-        raise ArgumentError, 'No block given' unless block_given?
-
-        ret =
-          each_page do |page|
-            page.raw['items'].map do |i|
-              yield(OpenStruct.new({ raw: i }.merge(i)))
-            end
-          end
-        ret.flatten
-      end
-
-      def each(&block)
-        map(&block)
-        nil
-      end
-
-      def count
-        raw['total']
-      end
-
-      def first
-        raise ArgumentError, 'Not a collection response' unless raw['items']
-        return unless item = raw['items'].first
-        OpenStruct.new({ raw: item }.merge(item))
-      end
-    end
-
     class ApiError < StandardError
       attr_reader :response
 
@@ -169,6 +88,18 @@ module WCC::Contentful
 
       def asset(key, query = {})
         resp = get("assets/#{key}", query)
+        resp.assert_ok!
+      end
+
+      def sync(sync_token: nil, **query)
+        sync_token =
+          if sync_token
+            { sync_token: sync_token }
+          else
+            { initial: true }
+                 end
+        query = query.merge(sync_token)
+        resp = SyncResponse.new(get('sync', query))
         resp.assert_ok!
       end
     end

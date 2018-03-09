@@ -111,4 +111,58 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
                ])
     end
   end
+
+  describe 'Cdn' do
+    subject(:client) {
+      WCC::Contentful::SimpleClient::Cdn.new(
+        access_token: ENV['CONTENTFUL_ACCESS_TOKEN'] || 'test1234',
+        space: ENV['CONTENTFUL_SPACE_ID'] || 'test1xab'
+      )
+    }
+
+    describe 'sync' do
+      it 'gets all sync items' do
+        # act
+        resp = client.sync
+
+        # assert
+        resp.assert_ok!
+        items = resp.map { |i| i.dig('sys', 'id') }
+        expect(resp.count).to eq(34)
+        expect(items.sort.take(5))
+          .to eq(%w[
+                   1EjBdAgOOgAQKAggQoY2as 1IJEXB4AKEqQYEm4WuceG2 1MsOLBrDwEUAUIuMY8Ys6o
+                   1TikjmGeSIisEWoC4CwokQ 1UojJt7YoMiemCq2mGGUmQ
+                 ])
+      end
+
+      let(:sync_token) {
+        'w5ZGw6JFwqZmVcKsE8Kow4grw45QdybCpsOKdcK_ZjDCpMOFwpXDq8KRUE1F'\
+            'w613K8KyA8OIwqvCtDfChhbCpsO7CjfDssOKw7YtXMOnwobDjcKrw7XDjMKHw7jCq'\
+            '8K1wrRRwpHCqMKIwr_DoMKSwrnCqS0qw47DkShzZ8K3V8KR'
+      }
+
+      it 'returns next sync token' do
+        # act
+        resp = client.sync
+
+        # assert
+        resp.assert_ok!
+        items = resp.map { |i| i.dig('sys', 'id') }
+        expect(resp.next_sync_token)
+          .to eq(sync_token)
+      end
+
+      it 'accepts sync token' do
+        # act
+        resp = client.sync(sync_token: sync_token)
+
+        # assert
+        resp.assert_ok!
+        items = resp.map { |i| i.dig('sys', 'id') }
+        expect(resp.count).to eq(0)
+        expect(items).to eq([])
+      end
+    end
+  end
 end
