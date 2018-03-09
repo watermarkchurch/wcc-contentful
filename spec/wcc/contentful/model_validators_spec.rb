@@ -3,30 +3,27 @@
 # frozen_string_literal: true
 
 RSpec.describe(WCC::Contentful::ModelValidators) do
-  let(:indexed_types) {
-    load_indexed_types('contentful/indexed_types_from_content_type_indexer.json')
+  let(:content_types) {
+    JSON.parse(load_fixture('contentful/content_types_mgmt_api.json'))
   }
 
   def base_class(content_type)
-    typedef = indexed_types[content_type]
     Class.new(WCC::ContentfulModel) do
-      define_singleton_method(:content_type_definition) do
-        typedef
-      end
-
       define_singleton_method(:content_type) do
-        typedef[:content_type]
+        content_type
       end
     end
   end
 
   def run_validation(my_class)
+    transformed = described_class.transform_content_types_for_validation(content_types)
+
     schema =
       Dry::Validation.Schema do
         required(my_class.content_type).schema(my_class.schema)
       end
 
-    schema.call(indexed_types)
+    schema.call(transformed)
   end
 
   context 'validate_fields' do
@@ -35,7 +32,7 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
         Class.new(base_class('homepage')) do
           validate_fields do
             required('mainMenu').schema do
-              required(:type).value(eql?: :Link)
+              required('type').value(eql?: 'Link')
             end
           end
         end
@@ -52,7 +49,7 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
         Class.new(base_class('faq')) do
           validate_fields do
             required('numFaqs').schema do
-              required(:type).value(eql?: :String)
+              required('type').value(eql?: 'Symbol')
             end
             required('blah').filled
           end
@@ -63,8 +60,8 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
 
       # assert
       expect(result).to_not be_success
-      expect(result.errors['faq'][:fields]['numFaqs'][:type])
-        .to eq(['must be equal to String'])
+      expect(result.errors['faq']['fields']['numFaqs']['type'])
+        .to eq(['must be equal to Symbol'])
     end
 
     it 'should run multiple validations in sequence' do
@@ -72,13 +69,13 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
         Class.new(base_class('faq')) do
           validate_fields do
             required('numFaqs').schema do
-              required(:type).value(eql?: :Float)
+              required('type').value(eql?: 'Number')
             end
           end
 
           validate_fields do
             required('answer').schema do
-              required(:type).value(eql?: :Boolean)
+              required('type').value(eql?: 'Boolean')
             end
           end
         end
@@ -88,9 +85,9 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
 
       # assert
       expect(result).to_not be_success
-      expect(result.errors['faq'][:fields]['numFaqs'][:type])
-        .to eq(['must be equal to Float'])
-      expect(result.errors['faq'][:fields]['answer'][:type])
+      expect(result.errors.dig('faq', 'fields', 'numFaqs', 'type'))
+        .to eq(['must be equal to Number'])
+      expect(result.errors.dig('faq', 'fields', 'answer', 'type'))
         .to eq(['must be equal to Boolean'])
     end
 
@@ -99,13 +96,13 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
         Class.new(base_class('faq')) do
           validate_fields do
             required('numFaqs').schema do
-              required(:type).value(eql?: :Float)
+              required('type').value(eql?: 'Number')
             end
           end
 
           validate_fields do
             required('numFaqs').schema do
-              required(:type).value(eql?: :Int)
+              required('type').value(eql?: 'Integer')
             end
           end
         end
@@ -208,7 +205,7 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
 
       # assert
       expect(result).to_not be_success
-      expect(result.errors.dig('page', :fields, 'foo')).to eq(
+      expect(result.errors.dig('page', 'fields', 'foo')).to eq(
         ['is missing']
       )
     end
@@ -224,15 +221,15 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
 
       # assert
       expect(result).to_not be_success
-      expect(result.errors.dig('faq', :fields, 'numFaqsFloat', :type)).to eq(
-        ['must be equal to String']
+      expect(result.errors.dig('faq', 'fields', 'numFaqsFloat', 'type')).to eq(
+        ['must be one of: Symbol, Text']
       )
     end
 
     it 'should validate array of simple values' do
       my_class =
         Class.new(base_class('ministry')) do
-          validate_field :categories, :String, :array
+          validate_field :categories, :Array, items: :String
         end
 
       # act
@@ -245,7 +242,7 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
     it 'should fail when expected array is not an array' do
       my_class =
         Class.new(base_class('ministry')) do
-          validate_field :name, :String, :array
+          validate_field :name, :Array, items: :String
         end
 
       # act
@@ -253,13 +250,15 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
 
       # assert
       expect(result).to_not be_success
-      expect(result.errors.dig('ministry', :fields, 'name', :array)).to_not be_empty
+      expect(result.errors.dig('ministry', 'fields', 'name', 'type')).to eq(
+        ['must be equal to Array']
+      )
     end
 
     it 'should fail when array item is not of expected type' do
       my_class =
         Class.new(base_class('ministry')) do
-          validate_field :categories, :Int, :array
+          validate_field :categories, :Array, items: :Int
         end
 
       # act
@@ -267,8 +266,8 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
 
       # assert
       expect(result).to_not be_success
-      expect(result.errors.dig('ministry', :fields, 'categories', :type)).to eq(
-        ['must be equal to Int']
+      expect(result.errors.dig('ministry', 'fields', 'categories', 'items', 'type')).to eq(
+        ['must be equal to Integer']
       )
     end
 
@@ -296,7 +295,7 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
 
       # assert
       expect(result).to_not be_success
-      expect(result.errors.dig('section-CardSearch', :fields, 'name', :type)).to_not be_empty
+      expect(result.errors.dig('section-CardSearch', 'fields', 'name', 'type')).to_not be_empty
     end
 
     it 'should validate single link with expected content type' do
@@ -323,13 +322,14 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
 
       # assert
       expect(result).to_not be_success
-      expect(result.errors.dig('redirect2', :fields, 'pageReference', :link_types)).to_not be_empty
+      expect(result.errors.dig('redirect2', 'fields', 'pageReference',
+        'validations', 0, 'linkContentType')).to_not be_empty
     end
 
     it 'should validate links to one of multiple content types' do
       my_class =
         Class.new(base_class('menu')) do
-          validate_field :first_group, :Link, :array, link_to: %w[menu menuItem]
+          validate_field :first_group, :Array, link_to: %w[menu menuItem]
         end
 
       # act
@@ -342,7 +342,7 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
     it 'should fail when link can link to additional unspecified content types' do
       my_class =
         Class.new(base_class('menu')) do
-          validate_field :first_group, :Link, :array, link_to: 'menuItem'
+          validate_field :first_group, :Array, link_to: 'menuItem'
         end
 
       # act
@@ -350,13 +350,14 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
 
       # assert
       expect(result).to_not be_success
-      expect(result.errors.dig('menu', :fields, 'firstGroup', :link_types)).to_not be_empty
+      expect(result.errors.dig('menu', 'fields', 'firstGroup', 'items',
+        'validations', 0, 'linkContentType')).to_not be_empty
     end
 
     it 'should validate links to content type by regexp' do
       my_class =
         Class.new(base_class('page')) do
-          validate_field :sections, :Link, :array, link_to: /^section/
+          validate_field :sections, :Array, link_to: /^section/
         end
 
       # act
@@ -369,7 +370,7 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
     it 'should fail when linked content types do not match regexp' do
       my_class =
         Class.new(base_class('page')) do
-          validate_field :sections, :Link, :array, link_to: /^section\-F/
+          validate_field :sections, :Array, link_to: /^section\-F/
         end
 
       # act
@@ -377,7 +378,37 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
 
       # assert
       expect(result).to_not be_success
-      expect(result.errors.dig('page', :fields, 'sections', :link_types)).to_not be_empty
+      expect(result.errors.dig('page', 'fields', 'sections', 'items',
+        'validations', 0, 'linkContentType')).to_not be_empty
+    end
+
+    it 'should validate links to assets' do
+      my_class =
+        Class.new(base_class('homepage')) do
+          validate_field :favicons, :Array, items: :Asset
+        end
+
+      # act
+      result = run_validation(my_class)
+
+      # assert
+      expect(result).to be_success
+    end
+
+    it 'should fail when expected asset is not an asset' do
+      my_class =
+        Class.new(base_class('homepage')) do
+          validate_field :sections, :Array, items: :Asset
+        end
+
+      # act
+      result = run_validation(my_class)
+
+      # assert
+      expect(result).to_not be_success
+      expect(result.errors.dig('homepage', 'fields', 'sections', 'items', 'linkType')).to eq(
+        ['must be equal to Asset']
+      )
     end
   end
 end
