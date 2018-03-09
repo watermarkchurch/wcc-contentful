@@ -1,0 +1,199 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: http://jtj.watermark.org/api?locale=*
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Bearer <CONTENTFUL_ACCESS_TOKEN>
+      Connection:
+      - close
+      Host:
+      - jtj.watermark.org
+      User-Agent:
+      - http.rb/1.0.4
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      Server:
+      - Cowboy
+      Date:
+      - Fri, 09 Mar 2018 17:47:47 GMT
+      Connection:
+      - close
+      Content-Type:
+      - text/html
+      Location:
+      - https://jtj.watermark.org/api?locale=%2A
+      Transfer-Encoding:
+      - chunked
+      Via:
+      - 1.1 vegur
+    body:
+      encoding: ASCII-8BIT
+      string: ''
+    http_version: 
+  recorded_at: Fri, 09 Mar 2018 17:47:47 GMT
+- request:
+    method: get
+    uri: https://jtj.watermark.org/api?locale=*
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Bearer <CONTENTFUL_ACCESS_TOKEN>
+      Connection:
+      - close
+      Host:
+      - jtj.watermark.org
+      User-Agent:
+      - http.rb/1.0.4
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Cowboy
+      Date:
+      - Fri, 09 Mar 2018 17:47:47 GMT
+      Connection:
+      - close
+      Strict-Transport-Security:
+      - max-age=31536000
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      Content-Type:
+      - application/json; charset=utf-8
+      Etag:
+      - '"3cf7227c30222b996f1075f9cca92840"'
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      X-Request-Id:
+      - f1e9f829-1201-4cd3-9bc5-15b2b7281f79
+      X-Runtime:
+      - '0.084936'
+      Transfer-Encoding:
+      - chunked
+      Via:
+      - 1.1 vegur
+    body:
+      encoding: UTF-8
+      string: '{"curriculum":{"id":"3","title":"Join The Journey 2018","start_date":"2018-01-01","end_date":"2018-12-14","days_of_week":[1,2,3,4,5],"links":{"self":"https://jtj.watermark.org/api/curriculums/3","entries":"https://jtj.watermark.org/api/entries?curriculum_id=3"}},"latest_entry":{"id":"374","date":"2018-03-09","scripture":{"reference":"Romans
+        4:1–8","version":"esv","html":"\u003ch3 id=\"p45004001_01-1\"\u003eAbraham
+        Justified by Faith\u003c/h3\u003e\n\u003cp id=\"p45004001_05-1\" class=\"starts-chapter\"\u003e\u003cb
+        class=\"chapter-num\" id=\"v45004001-1\"\u003e1\u0026nbsp;\u003c/b\u003eWhat
+        then shall we say was gained by Abraham, our forefather according to the flesh?
+        \u003cb class=\"verse-num\" id=\"v45004002-1\"\u003e2\u0026nbsp;\u003c/b\u003eFor
+        if Abraham was justified by works, he has something to boast about, but not
+        before God. \u003cb class=\"verse-num\" id=\"v45004003-1\"\u003e3\u0026nbsp;\u003c/b\u003eFor
+        what does the Scripture say? “Abraham believed God, and it was counted to
+        him as righteousness.” \u003cb class=\"verse-num\" id=\"v45004004-1\"\u003e4\u0026nbsp;\u003c/b\u003eNow
+        to the one who works, his wages are not counted as a gift but as his due.
+        \u003cb class=\"verse-num\" id=\"v45004005-1\"\u003e5\u0026nbsp;\u003c/b\u003eAnd
+        to the one who does not work but believes in\u003csup class=\"footnote\"\u003e\u003ca
+        class=\"fn\" href=\"#f1-1\" id=\"fb1-1\" title=\"\u0026lt;note class=\u0026quot;alternative\u0026quot;\u0026gt;Or
+        \u0026lt;i\u0026gt;\u0026lt;span class=\u0026quot;catch-word\u0026quot;\u0026gt;but\u0026lt;/span\u0026gt;
+        trusts\u0026lt;/i\u0026gt;; compare verse 24\u0026lt;/note\u0026gt;\"\u003e1\u003c/a\u003e\u003c/sup\u003e
+        him who justifies the ungodly, his faith is counted as righteousness, \u003cb
+        class=\"verse-num\" id=\"v45004006-1\"\u003e6\u0026nbsp;\u003c/b\u003ejust
+        as David also speaks of the blessing of the one to whom God counts righteousness
+        apart from works:\u003c/p\u003e\n\u003cp class=\"block-indent\"\u003e\u003cspan
+        class=\"begin-line-group\"\u003e\u003c/span\u003e\n\u003cspan id=\"p45004007_05-1\"
+        class=\"line\"\u003e\u003cb class=\"verse-num inline\" id=\"v45004007-1\"\u003e7\u0026nbsp;\u003c/b\u003e\u0026nbsp;\u0026nbsp;“Blessed
+        are those whose lawless deeds are forgiven,\u003c/span\u003e\u003cbr /\u003e\u003cspan
+        id=\"p45004007_05-1\" class=\"indent line\"\u003e\u0026nbsp;\u0026nbsp;\u0026nbsp;\u0026nbsp;and
+        whose sins are covered;\u003c/span\u003e\u003cbr /\u003e\u003cspan id=\"p45004008_05-1\"
+        class=\"line\"\u003e\u003cb class=\"verse-num inline\" id=\"v45004008-1\"\u003e8\u0026nbsp;\u003c/b\u003e\u0026nbsp;\u0026nbsp;blessed
+        is the man against whom the Lord will not count his sin.”\u003c/span\u003e\u003cbr
+        /\u003e\u003c/p\u003e\u003cspan class=\"end-line-group\"\u003e\u003c/span\u003e\n\u003cdiv
+        class=\"footnotes extra_text\"\u003e\n\u003ch3\u003eFootnotes\u003c/h3\u003e\n\u003cp\u003e\u003cspan
+        class=\"footnote\"\u003e\u003ca href=\"#fb1-1\" id=\"f1-1\"\u003e[1]\u003c/a\u003e\u003c/span\u003e
+        \u003cspan class=\"footnote-ref\"\u003e4:5\u003c/span\u003e \u003cnote class=\"alternative\"\u003eOr
+        \u003ci\u003e\u003cspan class=\"catch-word\"\u003ebut\u003c/span\u003e trusts\u003c/i\u003e;
+        compare verse 24\u003c/note\u003e\n\u003c/p\u003e\n\u003c/div\u003e\n","links":{"self":"https://api.esv.org/v3/passage/html/?include-book-titles=false\u0026include-passage-references=false\u0026include-verse-anchors=false\u0026include-chapter-numbers=false\u0026include-first-verse-numbers=true\u0026include-verse-numbers=true\u0026include-footnotes=true\u0026include-footnote-body=true\u0026include-crossrefs=false\u0026include-headings=true\u0026include-subheadings=true\u0026include-surrounding-chapters=false\u0026include-surrounding-chapters-below=false\u0026include-short-copyright=false\u0026include-copyright=false\u0026q=Romans+4%3A1%E2%80%938","audio":"http://www.esvapi.org/v2/rest/passageQuery?key=IP\u0026passage=Romans+4%3A1%E2%80%938\u0026output-format=mp3"}},"title":"A
+        Spiritual Résumé","central_truth":"\u003cp\u003eWe will never\u0026nbsp;meet
+        God\u0026#39;s\u0026nbsp;standard\u0026nbsp;no matter how hard we try, but
+        Christ did so that we don\u0026#39;t have to. Find freedom in\u0026nbsp;faith
+        alone.\u0026nbsp;\u003c/p\u003e\r\n","memory_verse":{"id":"10","curriculum_id":"3","reference":"Romans
+        3:10–11","version":"esv","html":"\u003cp id=\"p45003010_01-1\" class=\"virtual\"\u003e\u003cb
+        class=\"verse-num\" id=\"v45003010-1\"\u003e10\u0026nbsp;\u003c/b\u003eas
+        it is written:\u003c/p\u003e\n\u003cp class=\"block-indent\"\u003e\u003cspan
+        class=\"begin-line-group\"\u003e\u003c/span\u003e\n\u003cspan id=\"p45003010_01-1\"
+        class=\"line\"\u003e\u0026nbsp;\u0026nbsp;“None is righteous, no, not one;\u003c/span\u003e\u003cbr
+        /\u003e\u003cspan id=\"p45003011_01-1\" class=\"indent line\"\u003e\u003cb
+        class=\"verse-num inline\" id=\"v45003011-1\"\u003e11\u0026nbsp;\u003c/b\u003e\u0026nbsp;\u0026nbsp;\u0026nbsp;\u0026nbsp;no
+        one understands;\u003c/span\u003e\u003cbr /\u003e\u003cspan id=\"p45003011_01-1\"
+        class=\"indent line\"\u003e\u0026nbsp;\u0026nbsp;\u0026nbsp;\u0026nbsp;no
+        one seeks for God.\u003c/span\u003e\u003cbr /\u003e\u003c/p\u003e\u003cspan
+        class=\"end-line-group\"\u003e\u003c/span\u003e\n","links":{"self":"https://jtj.watermark.org/api/memory_verses/10","audio":"http://www.esvapi.org/v2/rest/passageQuery?key=IP\u0026passage=Romans+3%3A10%E2%80%9311\u0026output-format=mp3","curriculum":"https://jtj.watermark.org/api/curriculums/3","esv_api":"https://api.esv.org/v3/passage/html/?include-book-titles=false\u0026include-passage-references=false\u0026include-verse-anchors=false\u0026include-chapter-numbers=false\u0026include-first-verse-numbers=true\u0026include-verse-numbers=true\u0026include-footnotes=false\u0026include-footnote-body=false\u0026include-crossrefs=false\u0026include-headings=true\u0026include-subheadings=true\u0026include-surrounding-chapters=false\u0026include-surrounding-chapters-below=false\u0026include-short-copyright=false\u0026include-copyright=false\u0026q=Romans+3%3A10%E2%80%9311"},"start_date":"2018-03-05","end_date":"2018-03-18"},"reflection":"\u003cp\u003eWhen
+        applying for a new\u0026nbsp;job,\u0026nbsp;what\u0026#39;s the one thing
+        that is almost\u0026nbsp;always\u0026nbsp;requested from\u0026nbsp;you?\u0026nbsp;That\u0026#39;s
+        right,\u0026nbsp;your r\u0026eacute;sum\u0026eacute;!\u0026nbsp;For some,
+        this\u0026nbsp;can be a boost of confidence in what they\u0026#39;ve\u0026nbsp;accomplished
+        that might\u0026nbsp;comfort them\u0026nbsp;in how\u0026nbsp;qualified they
+        are for the position. For others, this might\u0026nbsp;be\u0026nbsp;defeating
+        as they look at their r\u0026eacute;sum\u0026eacute; feeling\u0026nbsp;they
+        need to accomplish more and\u0026nbsp;just don\u0026#39;t measure up. Regardless
+        of which end of the spectrum you land\u0026nbsp;on, this\u0026nbsp;list of
+        qualifications can carry some weight in\u0026nbsp;how we view ourselves, as
+        well as how we might believe we are seen.\u003c/p\u003e\r\n\r\n\u003cp\u003eThinking
+        about my\u0026nbsp;\u003cem\u003espiritual\u0026nbsp;\u003c/em\u003er\u0026eacute;sum\u0026eacute;,\u0026nbsp;I
+        can be quick to view God as a CEO who is\u0026nbsp;pleased with me\u0026nbsp;based
+        on\u0026nbsp;what I have or haven\u0026#39;t accomplished. Man\u0026#39;s
+        works, however, have never been the means by which God is pleased, no matter
+        how much or how little we have done.\u0026nbsp;As stated in verse 3,\u0026nbsp;all
+        that Abraham did was \u003cem\u003ebelieve \u003c/em\u003eGod, and this alone
+        is what allowed him to stand\u0026nbsp;right with God.\u0026nbsp;\u003c/p\u003e\r\n\r\n\u003cp\u003eBecause
+        of our sin, it\u0026#39;s impossible for us to be good enough by our own merit,
+        but, luckily, God doesn\u0026#39;t expect us to. He doesn\u0026#39;t ask us
+        to do all the right things, but just to first acknowledge our inability to
+        meet the standard on our own, believe that Christ met it for us through his
+        death\u0026nbsp;on the cross, and\u0026nbsp;trust fully in who He is rather
+        than in ourselves. When I become prideful in relying on my own abilities,
+        I am living\u0026nbsp;in the selfish belief that what I do matters more than
+        what Christ has done. He is the only One who justifies the ungodly, and we
+        have the choice to find freedom living dependently through\u0026nbsp;faith
+        in Him rather than\u0026nbsp;in ourselves (verse 5). He doesn\u0026#39;t look
+        at our \u003cem\u003espiritual\u003c/em\u003e r\u0026eacute;sum\u0026eacute;,
+        but He instead\u0026nbsp;looks past our shortcomings and offers us forgiveness
+        for our sin (verses 7-8). Let\u0026#39;s rejoice and find freedom in this
+        today!\u003c/p\u003e\r\n","discussion_questions":"\u003cp\u003e1. In what
+        areas in your life do you tend to rely on your own works and accomplishments?\u003c/p\u003e\r\n\r\n\u003cp\u003e2.
+        How do you think God sees you? Is this answer based on\u0026nbsp;your own
+        doing or His?\u003c/p\u003e\r\n\r\n\u003cp\u003e3. What other Scripture can
+        you use to remind yourself of\u0026nbsp;salvation through faith in Jesus Christ\u0026nbsp;instead
+        of\u0026nbsp;by your good works\u0026nbsp;(Ephesians 2:8-9;\u0026nbsp;Titus
+        3:5;\u0026nbsp;Hebrews 11:6; and many others)?\u003c/p\u003e\r\n","writer":{"id":"79","name":"Cassy
+        Dahlsten","bio":"\u003cp\u003eHappy Friday, friends! My name is Cassy Dahlsten,
+        and I\u0026#39;ve been married for eight\u0026nbsp;months to my husband Dean!\u0026nbsp;I
+        serve in student ministries at Watermark getting to love, lead, and hang with
+        some of the best eighth graders around!\u0026nbsp;There are several things
+        I have to be reminded of regularly:\u003cbr /\u003e\r\n\u003cbr /\u003e\r\n1.
+        Ice cream is not an appropriate meal replacement.\u003cbr /\u003e\r\n2. Sometimes,
+        it is good for extroverts to have alone time.\u003cbr /\u003e\r\n3. Perfection
+        and faithfulness are not the same thing.\u003c/p\u003e\r\n\r\n\u003cp\u003eJump
+        into Romans 4 with me today as Paul reminds us that God sees our faith and
+        not our works.\u003c/p\u003e\r\n","links":{"picture":"https://jtj.watermark.org/images/entry/374/profile_picture"}},"links":{"self":"https://jtj.watermark.org/api/entries/374","lock_screen":"https://jtj.watermark.org/images/memory_verse/10/lock_screen","curriculum":"https://jtj.watermark.org/api/curriculums/3"}},"current_week":[{"id":"370","date":"2018-03-05","scripture":"Romans
+        3","topic":"Propitiation","title":"No, Not One. Wait, There Was One!","writer":{"id":"48","name":"Andy
+        Moon","links":{"picture":"https://jtj.watermark.org/images/entry/370/profile_picture"}},"links":{"self":"https://jtj.watermark.org/api/entries/370"}},{"id":"371","date":"2018-03-06","scripture":"Romans
+        4:1-3","title":"The Righteous Will Live by Faith from First to Last","writer":{"id":"11","name":"Holly
+        Lester ","links":{"picture":"https://jtj.watermark.org/images/entry/371/profile_picture"}},"links":{"self":"https://jtj.watermark.org/api/entries/371"}},{"id":"372","date":"2018-03-07","scripture":"Romans
+        4:4-5","title":"Righteousness for the Ungodly","writer":{"id":"69","name":"Elizabeth
+        Mark","links":{"picture":"https://jtj.watermark.org/images/entry/372/profile_picture"}},"links":{"self":"https://jtj.watermark.org/api/entries/372"}},{"id":"373","date":"2018-03-08","scripture":"Romans
+        4:6-8","title":"Blessed by God: A Matter of Life and Death—Yours!","writer":{"id":"262","name":"Cecelia
+        Barriere ","links":{"picture":"https://jtj.watermark.org/images/entry/373/profile_picture"}},"links":{"self":"https://jtj.watermark.org/api/entries/373"}},{"id":"374","date":"2018-03-09","scripture":"Romans
+        4:1-8","title":"A Spiritual Résumé","writer":{"id":"79","name":"Cassy Dahlsten","links":{"picture":"https://jtj.watermark.org/images/entry/374/profile_picture"}},"links":{"self":"https://jtj.watermark.org/api/entries/374"}}],"settings":{"display_twitter_handle":false,"display_tweet":false,"display_key_verse":false,"display_full_scripture":true},"links":{"documentation":"https://jtj.watermark.org/docs","curriculums":"https://jtj.watermark.org/api/curriculums","entries":"https://jtj.watermark.org/api/entries","memory_verse":"https://jtj.watermark.org/api/memory_verses/10","next_memory_verse":"https://jtj.watermark.org/api/memory_verses/11","previous_memory_verse":"https://jtj.watermark.org/api/memory_verses/8"}}'
+    http_version: 
+  recorded_at: Fri, 09 Mar 2018 17:47:48 GMT
+recorded_with: VCR 4.0.0

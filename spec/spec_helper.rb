@@ -4,6 +4,7 @@ require 'bundler/setup'
 require 'dotenv/load'
 require 'wcc/contentful'
 require 'vcr'
+require 'httplog'
 
 require 'fixtures_helper'
 require 'bench_helper'
@@ -39,4 +40,9 @@ VCR.configure do |c|
     ENV['CONTENTFUL_MANAGEMENT_TOKEN'] || 'CFPAT-test1234'
   }
   c.configure_rspec_metadata!
+end
+
+HttpLog.configure do |config|
+  config.compact_log = true
+  config.color = true
 end
