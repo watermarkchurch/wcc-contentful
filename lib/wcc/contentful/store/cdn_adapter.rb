@@ -30,12 +30,12 @@ module WCC::Contentful::Store
       delegate :count, to: :resolve
 
       def first
-        resolve.first&.raw
+        resolve.first
       end
 
       def map
         resolve.map do |entry|
-          yield entry.raw
+          yield entry
         end
       end
 
