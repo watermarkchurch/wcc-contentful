@@ -38,7 +38,6 @@ RSpec.describe WCC::Contentful::Sync::Indexer do
       expect(faq.dig(:fields, 'placeOfFaq', :type)).to eq(:Coordinates)
 
       json = subject.types.to_json
-      File.write('test.json', json)
     end
 
     it 'resolves potential linked types' do

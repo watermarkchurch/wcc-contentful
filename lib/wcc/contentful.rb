@@ -60,7 +60,7 @@ module WCC
 
         client.sync(initial: true).each_item do |item|
           # TODO: enrich existing type data using Sync::Indexer
-          store.index(item.id, item.raw)
+          store.index(item.dig('sys', 'id'), item)
         end
         WCC::ContentfulModel.store = store
       when :direct
@@ -88,7 +88,11 @@ module WCC
             required(ct).schema(klass.schema)
           end
         end
-      errors = schema.call(@types)
+
+      content_types = WCC::Contentful::ModelValidators.transform_content_types_for_validation(
+        @content_types
+      )
+      errors = schema.call(content_types)
       raise WCC::Contentful::ValidationError, errors.errors unless errors.success?
     end
   end

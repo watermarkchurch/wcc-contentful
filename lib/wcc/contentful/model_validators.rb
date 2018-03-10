@@ -36,9 +36,10 @@ module WCC::Contentful::ModelValidators
   # Accepts a content types response from the API and transforms it
   # to be acceptible for the validator.
   def self.transform_content_types_for_validation(content_types)
-    if items = content_types.try(:[], 'items')
+    if !content_types.is_a?(Array) && items = content_types.try(:[], 'items')
       content_types = items
     end
+
     # Transform the array into a hash keyed by content type ID
     content_types.each_with_object({}) do |ct, ct_hash|
       # Transform the fields into a hash keyed by field ID

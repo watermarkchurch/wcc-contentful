@@ -47,7 +47,6 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
       expect(faq.dig(:fields, 'placeOfFaq', :type)).to eq(:Coordinates)
 
       json = subject.types.to_json
-      File.write('test.json', json)
     end
 
     it 'resolves potential linked types' do
@@ -178,18 +177,18 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
 
   context 'index from contentful.rb CDN' do
     before do
-      VCR.use_cassette('models/wcc_contentful/content_types', record: :none) do
-        WCC::Contentful.configure do |config|
-          config.access_token = ENV['CONTENTFUL_ACCESS_TOKEN'] || 'test1234'
-          config.space = ENV['CONTENTFUL_SPACE_ID'] || 'test1xab'
-          config.management_token = ENV['CONTENTFUL_MANAGEMENT_TOKEN'] || 'CFPAT-xxxx'
-          config.default_locale = 'en-US'
-        end
+      WCC::Contentful.configure do |config|
+        config.access_token = ENV['CONTENTFUL_ACCESS_TOKEN'] || 'test1234'
+        config.space = ENV['CONTENTFUL_SPACE_ID'] || 'test1xab'
+        config.management_token = ENV['CONTENTFUL_MANAGEMENT_TOKEN'] || 'CFPAT-xxxx'
+        config.default_locale = 'en-US'
       end
     end
 
     let(:content_types) {
-      ContentfulModel::Base.client.dynamic_entry_cache.values.map(&:content_type)
+      VCR.use_cassette('models/wcc_contentful/content_types', record: :none) do
+        ContentfulModel::Base.client.dynamic_entry_cache.values.map(&:content_type)
+      end
     }
 
     it 'generates type data' do
