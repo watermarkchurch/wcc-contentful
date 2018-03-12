@@ -21,7 +21,10 @@ class WCC::Contentful::Configuration
 
   SYNC_STORES = {
     memory: ->(_config) { WCC::Contentful::Store::MemoryStore.new },
-    postgres: ->(_config) { WCC::Contentful::Store::PostgresStore.new }
+    postgres: ->(_config) {
+      require_relative 'store/postgres_store'
+      WCC::Contentful::Store::PostgresStore.new
+    }
   }.freeze
 
   def content_delivery=(symbol)

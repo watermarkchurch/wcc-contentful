@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'wcc/contentful/store/postgres_store'
+
 RSpec.describe WCC::Contentful::Store::PostgresStore do
   subject { WCC::Contentful::Store::PostgresStore.new(ENV['POSTGRES_CONNECTION']) }
 

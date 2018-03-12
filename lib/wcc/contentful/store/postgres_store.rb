@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+gem 'pg', '~> 1.0'
 require 'pg'
 
 module WCC::Contentful::Store

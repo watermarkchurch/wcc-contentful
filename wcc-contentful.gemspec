@@ -45,9 +45,12 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec-rails', '~> 3.7'
   spec.add_development_dependency 'timecop', '~> 0.9.1'
 
-  spec.add_dependency 'activesupport', '~> 5'
-  spec.add_dependency 'contentful_model', '~> 0.2.0'
+  # optional dependencies
+  spec.add_development_dependency 'contentful_model', '~> 0.2.0'
+  spec.add_development_dependency 'pg', '~> 1.0'
+
+  spec.add_dependency 'activesupport', '>= 5'
+  spec.add_dependency 'contentful', '>= 0.12.0'
   spec.add_dependency 'dry-validation', '~> 0.11.1'
   spec.add_dependency 'graphql', '~> 1.7'
-  spec.add_dependency 'pg', '~> 1.0'
 end
