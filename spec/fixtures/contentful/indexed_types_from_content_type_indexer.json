@@ -64,7 +64,7 @@
         "array": true,
         "link_types": [
           "menu",
-          "menuItem"
+          "menuButton"
         ]
       },
       "secondGroup": {
@@ -74,7 +74,7 @@
         "array": true,
         "link_types": [
           "menu",
-          "menuItem"
+          "menuButton"
         ]
       },
       "thirdGroup": {
@@ -84,7 +84,7 @@
         "array": true,
         "link_types": [
           "menu",
-          "menuItem"
+          "menuButton"
         ]
       },
       "hamburger": {
@@ -234,7 +234,7 @@
         "required": false,
         "array": true,
         "link_types": [
-          "menuItem"
+          "menuButton"
         ]
       },
       "callToAction": {
@@ -428,7 +428,7 @@
         "type": "Link",
         "required": false,
         "link_types": [
-          "menuItem"
+          "menuButton"
         ]
       },
       "faqs": {
@@ -470,9 +470,9 @@
       }
     }
   },
-  "menuItem": {
-    "name": "MenuItem",
-    "content_type": "menuItem",
+  "menuButton": {
+    "name": "MenuButton",
+    "content_type": "menuButton",
     "fields": {
       "text": {
         "name": "text",

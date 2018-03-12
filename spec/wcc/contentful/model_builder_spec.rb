@@ -28,7 +28,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
           WCC::ContentfulModel::Faq
           WCC::ContentfulModel::Homepage
           WCC::ContentfulModel::Menu
-          WCC::ContentfulModel::MenuItem
+          WCC::ContentfulModel::MenuButton
           WCC::ContentfulModel::MigrationHistory
           WCC::ContentfulModel::Page
           WCC::ContentfulModel::Redirect2
@@ -102,7 +102,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       WCC::ContentfulModel.store = store
 
       # act
-      menu_items = WCC::ContentfulModel::MenuItem.find_all
+      menu_items = WCC::ContentfulModel::MenuButton.find_all
 
       # assert
       expect(menu_items.length).to eq(11)
@@ -135,7 +135,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       WCC::ContentfulModel.store = store
 
       # act
-      menu_items = WCC::ContentfulModel::MenuItem.find_by(button_style: 'custom')
+      menu_items = WCC::ContentfulModel::MenuButton.find_by(button_style: 'custom')
 
       # assert
       expect(menu_items.length).to eq(2)
@@ -220,7 +220,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
       # assert
       expect(main_menu.hamburger).to be_instance_of(WCC::ContentfulModel::Menu)
-      expect(main_menu.hamburger.first_group[0]).to be_instance_of(WCC::ContentfulModel::MenuItem)
+      expect(main_menu.hamburger.first_group[0]).to be_instance_of(WCC::ContentfulModel::MenuButton)
       expect(main_menu.hamburger.first_group[0].link).to be_instance_of(WCC::ContentfulModel::Page)
       expect(main_menu.hamburger.first_group[0].link.title).to eq('About')
     end
@@ -278,7 +278,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
           WCC::ContentfulModel::Faq
           WCC::ContentfulModel::Homepage
           WCC::ContentfulModel::Menu
-          WCC::ContentfulModel::MenuItem
+          WCC::ContentfulModel::MenuButton
           WCC::ContentfulModel::MigrationHistory
           WCC::ContentfulModel::Ministry
           WCC::ContentfulModel::MinistryCard
@@ -319,7 +319,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       WCC::ContentfulModel.store = store
 
       # act
-      menu_items = WCC::ContentfulModel::MenuItem.find_by(button_style: 'custom')
+      menu_items = WCC::ContentfulModel::MenuButton.find_by(button_style: 'custom')
 
       # assert
       expect(menu_items.length).to eq(2)
@@ -392,7 +392,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
       # assert
       expect(main_menu.hamburger).to be_instance_of(WCC::ContentfulModel::Menu)
-      expect(main_menu.hamburger.first_group[0]).to be_instance_of(WCC::ContentfulModel::MenuItem)
+      expect(main_menu.hamburger.first_group[0]).to be_instance_of(WCC::ContentfulModel::MenuButton)
       expect(main_menu.hamburger.first_group[0].link).to be_instance_of(WCC::ContentfulModel::Page)
       expect(main_menu.hamburger.first_group[0].link.title).to eq('About')
     end

@@ -19,7 +19,7 @@ RSpec.describe WCC::Contentful::Sync::Indexer do
           faq
           homepage
           menu
-          menuItem
+          menuButton
           migrationHistory
           page
           redirect2
@@ -36,8 +36,6 @@ RSpec.describe WCC::Contentful::Sync::Indexer do
       expect(faq.dig(:fields, 'dateOfFaq', :type)).to eq(:DateTime)
       expect(faq.dig(:fields, 'truthyOrFalsy', :type)).to eq(:Boolean)
       expect(faq.dig(:fields, 'placeOfFaq', :type)).to eq(:Coordinates)
-
-      json = subject.types.to_json
     end
 
     it 'resolves potential linked types' do

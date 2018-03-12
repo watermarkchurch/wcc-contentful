@@ -39,15 +39,15 @@ RSpec.shared_examples 'model querying' do
 
     styles = ['custom', 'rounded', 'external', 'value doesnt exist']
 
-    run_bench(store_builder: store_builder, content_type: 'menuItem') do |_, i|
-      _ = WCC::Contentful::MenuItem.find_by(button_style: styles[i % styles.length])
+    run_bench(store_builder: store_builder, content_type: 'menuButton') do |_, i|
+      _ = WCC::Contentful::MenuButton.find_by(button_style: styles[i % styles.length])
     end
   end
 
   it 'bench find_by looking for single slug' do
     subject.build_models
 
-    run_bench(store_builder: store_builder, content_type: 'menuItem') do
+    run_bench(store_builder: store_builder, content_type: 'menuButton') do
       redirect = WCC::Contentful::Redirect2.find_by(slug: 'mister_roboto')
       expect(redirect.length).to eq(1)
       expect(redirect[0].pageReference.title).to eq('Conferences')

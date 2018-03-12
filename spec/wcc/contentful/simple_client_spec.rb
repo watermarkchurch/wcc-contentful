@@ -28,7 +28,7 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
       # act
       resp = client.get('entries',
         {
-          content_type: 'menuItem',
+          content_type: 'menuButton',
           'fields.text' => 'Ministries'
         })
 
@@ -73,7 +73,7 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
                  'faq',
                  'homepage',
                  'menu',
-                 'menuItem',
+                 'menuButton',
                  'migrationHistory',
                  'ministry',
                  'ministryCard',

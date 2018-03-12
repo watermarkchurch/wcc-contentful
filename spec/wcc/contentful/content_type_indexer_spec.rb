@@ -22,7 +22,7 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
           faq
           homepage
           menu
-          menuItem
+          menuButton
           migrationHistory
           ministry
           ministryCard
@@ -45,8 +45,6 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
       expect(faq.dig(:fields, 'dateOfFaq', :type)).to eq(:DateTime)
       expect(faq.dig(:fields, 'truthyOrFalsy', :type)).to eq(:Boolean)
       expect(faq.dig(:fields, 'placeOfFaq', :type)).to eq(:Coordinates)
-
-      json = subject.types.to_json
     end
 
     it 'resolves potential linked types' do
@@ -137,7 +135,7 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
           faq
           homepage
           menu
-          menuItem
+          menuButton
           migrationHistory
           ministry
           ministryCard
@@ -205,7 +203,7 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
           faq
           homepage
           menu
-          menuItem
+          menuButton
           migrationHistory
           ministry
           ministryCard

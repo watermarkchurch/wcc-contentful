@@ -23,7 +23,7 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
           Faq
           Homepage
           Menu
-          MenuItem
+          MenuButton
           MigrationHistory
           Page
           Redirect2
@@ -33,7 +33,7 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
           allFaq
           allHomepage
           allMenu
-          allMenuItem
+          allMenuButton
           allMigrationHistory
           allPage
           allRedirect2
@@ -117,7 +117,7 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
 
       # act
       query_string = '{
-        item: allMenuItem(filter: { field: "buttonStyle", eq: "rounded" }) {
+        item: allMenuButton(filter: { field: "buttonStyle", eq: "rounded" }) {
           id
           text
         }
@@ -265,7 +265,7 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
           Faq
           Homepage
           Menu
-          MenuItem
+          MenuButton
           MigrationHistory
           Ministry
           MinistryCard
@@ -282,7 +282,7 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
           allFaq
           allHomepage
           allMenu
-          allMenuItem
+          allMenuButton
           allMigrationHistory
           allMinistry
           allMinistryCard

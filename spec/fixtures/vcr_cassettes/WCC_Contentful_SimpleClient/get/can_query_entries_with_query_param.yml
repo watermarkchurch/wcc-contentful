@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=menuItem&fields.text=Ministries
+    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=menuButton&fields.text=Ministries
     body:
       encoding: US-ASCII
       string: ''
@@ -93,7 +93,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 },
                 "locale": "en-US"

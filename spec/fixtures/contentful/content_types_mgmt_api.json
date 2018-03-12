@@ -194,9 +194,9 @@
               {
                 "linkContentType": [
                   "menu",
-                  "menuItem"
+                  "menuButton"
                 ],
-                "message": "The Menu groups must contain only sub-Menus or MenuItems"
+                "message": "The Menu groups must contain only sub-Menus or MenuButtons"
               }
             ],
             "linkType": "Entry"
@@ -217,9 +217,9 @@
               {
                 "linkContentType": [
                   "menu",
-                  "menuItem"
+                  "menuButton"
                 ],
-                "message": "The Menu groups must contain only sub-Menus or MenuItems"
+                "message": "The Menu groups must contain only sub-Menus or MenuButtons"
               }
             ],
             "linkType": "Entry"
@@ -240,9 +240,9 @@
               {
                 "linkContentType": [
                   "menu",
-                  "menuItem"
+                  "menuButton"
                 ],
-                "message": "The Menu groups must contain only sub-Menus or MenuItems"
+                "message": "The Menu groups must contain only sub-Menus or MenuButtons"
               }
             ],
             "linkType": "Entry"
@@ -723,7 +723,7 @@
             "validations": [
               {
                 "linkContentType": [
-                  "menuItem"
+                  "menuButton"
                 ]
               }
             ],
@@ -1403,7 +1403,7 @@
           "validations": [
             {
               "linkContentType": [
-                "menuItem"
+                "menuButton"
               ]
             }
           ],
@@ -1537,7 +1537,7 @@
             "id": "343qxys30lid"
           }
         },
-        "id": "menuItem",
+        "id": "menuButton",
         "type": "ContentType",
         "createdAt": "2018-02-12T18:08:52.787Z",
         "updatedAt": "2018-02-14T18:33:02.426Z",
@@ -1583,7 +1583,7 @@
               "size": {
                 "max": 60
               },
-              "message": "a MenuItem's text field should be very short - ideally a single word.  Please limit the text to 60 characters or less."
+              "message": "a MenuButton's text field should be very short - ideally a single word.  Please limit the text to 60 characters or less."
             }
           ],
           "disabled": false,

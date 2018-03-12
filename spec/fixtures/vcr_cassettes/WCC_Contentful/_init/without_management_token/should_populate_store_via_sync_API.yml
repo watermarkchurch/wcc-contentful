@@ -142,7 +142,7 @@ http_interactions:
                     "id": "<CONTENTFUL_SPACE_ID>"
                   }
                 },
-                "id": "menuItem",
+                "id": "menuButton",
                 "type": "ContentType",
                 "createdAt": "2018-02-12T18:08:53.372Z",
                 "updatedAt": "2018-02-14T18:33:02.426Z",
@@ -473,7 +473,7 @@ http_interactions:
                     "validations": [
                       {
                         "linkContentType": [
-                          "menuItem"
+                          "menuButton"
                         ]
                       }
                     ],
@@ -1006,9 +1006,9 @@ http_interactions:
                       {
                         "linkContentType": [
                           "menu",
-                          "menuItem"
+                          "menuButton"
                         ],
-                        "message": "The Menu groups must contain only sub-Menus or MenuItems"
+                        "message": "The Menu groups must contain only sub-Menus or MenuButtons"
                       }
                     ],
                     "linkType": "Entry"
@@ -1028,9 +1028,9 @@ http_interactions:
                       {
                         "linkContentType": [
                           "menu",
-                          "menuItem"
+                          "menuButton"
                         ],
-                        "message": "The Menu groups must contain only sub-Menus or MenuItems"
+                        "message": "The Menu groups must contain only sub-Menus or MenuButtons"
                       }
                     ],
                     "linkType": "Entry"
@@ -1050,9 +1050,9 @@ http_interactions:
                       {
                         "linkContentType": [
                           "menu",
-                          "menuItem"
+                          "menuButton"
                         ],
-                        "message": "The Menu groups must contain only sub-Menus or MenuItems"
+                        "message": "The Menu groups must contain only sub-Menus or MenuButtons"
                       }
                     ],
                     "linkType": "Entry"
@@ -1798,7 +1798,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },
@@ -1908,7 +1908,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },
@@ -1959,7 +1959,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },
@@ -1999,7 +1999,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },
@@ -2161,7 +2161,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },
@@ -2239,7 +2239,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },
@@ -2276,7 +2276,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },
@@ -2375,7 +2375,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },
@@ -2443,7 +2443,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },
@@ -2582,7 +2582,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },
@@ -2681,7 +2681,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },

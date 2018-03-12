@@ -85,7 +85,7 @@ http_interactions:
               "sys": {
                 "type": "Link",
                 "linkType": "ContentType",
-                "id": "menuItem"
+                "id": "menuButton"
               }
             }
           },

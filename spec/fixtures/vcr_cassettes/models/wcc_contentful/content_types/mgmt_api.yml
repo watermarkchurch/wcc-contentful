@@ -495,7 +495,7 @@ http_interactions:
                     "id": "<CONTENTFUL_SPACE_ID>"
                   }
                 },
-                "id": "menuItem",
+                "id": "menuButton",
                 "type": "ContentType",
                 "createdAt": "2018-02-12T18:08:52.787Z",
                 "updatedAt": "2018-02-14T18:33:02.426Z",
@@ -541,7 +541,7 @@ http_interactions:
                       "size": {
                         "max": 60
                       },
-                      "message": "a MenuItem's text field should be very short - ideally a single word.  Please limit the text to 60 characters or less."
+                      "message": "a MenuButton's text field should be very short - ideally a single word.  Please limit the text to 60 characters or less."
                     }
                   ],
                   "disabled": false,
@@ -1070,7 +1070,7 @@ http_interactions:
                     "validations": [
                       {
                         "linkContentType": [
-                          "menuItem"
+                          "menuButton"
                         ]
                       }
                     ],
@@ -1188,7 +1188,7 @@ http_interactions:
                   "validations": [
                     {
                       "linkContentType": [
-                        "menuItem"
+                        "menuButton"
                       ]
                     }
                   ],
@@ -1621,9 +1621,9 @@ http_interactions:
                       {
                         "linkContentType": [
                           "menu",
-                          "menuItem"
+                          "menuButton"
                         ],
-                        "message": "The Menu groups must contain only sub-Menus or MenuItems"
+                        "message": "The Menu groups must contain only sub-Menus or MenuButtons"
                       }
                     ],
                     "linkType": "Entry"
@@ -1644,9 +1644,9 @@ http_interactions:
                       {
                         "linkContentType": [
                           "menu",
-                          "menuItem"
+                          "menuButton"
                         ],
-                        "message": "The Menu groups must contain only sub-Menus or MenuItems"
+                        "message": "The Menu groups must contain only sub-Menus or MenuButtons"
                       }
                     ],
                     "linkType": "Entry"
@@ -1667,9 +1667,9 @@ http_interactions:
                       {
                         "linkContentType": [
                           "menu",
-                          "menuItem"
+                          "menuButton"
                         ],
-                        "message": "The Menu groups must contain only sub-Menus or MenuItems"
+                        "message": "The Menu groups must contain only sub-Menus or MenuButtons"
                       }
                     ],
                     "linkType": "Entry"

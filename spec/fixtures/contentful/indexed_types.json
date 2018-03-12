@@ -39,7 +39,7 @@
         ],
         "array": true,
         "link_types": [
-          "menuItem"
+          "menuButton"
         ]
       },
       "sections": {
@@ -162,9 +162,9 @@
       }
     }
   },
-  "menuItem": {
-    "name": "MenuItem",
-    "content_type": "menuItem",
+  "menuButton": {
+    "name": "MenuButton",
+    "content_type": "menuButton",
     "fields": {
       "text": {
         "name": "text",
@@ -288,7 +288,7 @@
         ],
         "array": true,
         "link_types": [
-          "menuItem"
+          "menuButton"
         ]
       },
       "hamburger": {

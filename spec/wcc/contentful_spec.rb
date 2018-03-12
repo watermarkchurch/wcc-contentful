@@ -103,8 +103,8 @@ RSpec.describe WCC::Contentful, :vcr do
         WCC::Contentful.init!
 
         # assert
-        content_type = WCC::ContentfulModel::MenuItem.content_type
-        expect(content_type).to eq('menuItem')
+        content_type = WCC::ContentfulModel::MenuButton.content_type
+        expect(content_type).to eq('menuButton')
       end
 
       it 'should populate store via sync API' do

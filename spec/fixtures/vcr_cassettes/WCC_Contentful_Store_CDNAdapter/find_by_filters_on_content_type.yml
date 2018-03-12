@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=menuItem&locale=*
+    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=menuButton&locale=*
     body:
       encoding: US-ASCII
       string: ''
@@ -93,7 +93,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },
@@ -130,7 +130,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },
@@ -175,7 +175,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },
@@ -212,7 +212,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },
@@ -249,7 +249,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },
@@ -286,7 +286,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },
@@ -337,7 +337,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },
@@ -380,7 +380,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },
@@ -417,7 +417,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },
@@ -457,7 +457,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },
@@ -494,7 +494,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },
@@ -782,7 +782,7 @@ http_interactions:
   recorded_at: Fri, 09 Mar 2018 22:10:36 GMT
 - request:
     method: get
-    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=menuItem&locale=*
+    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=menuButton&locale=*
     body:
       encoding: US-ASCII
       string: ''
@@ -873,7 +873,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },
@@ -910,7 +910,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },
@@ -955,7 +955,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },
@@ -992,7 +992,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },
@@ -1029,7 +1029,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },
@@ -1066,7 +1066,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },
@@ -1117,7 +1117,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },
@@ -1160,7 +1160,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },
@@ -1197,7 +1197,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },
@@ -1237,7 +1237,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },
@@ -1274,7 +1274,7 @@ http_interactions:
                   "sys": {
                     "type": "Link",
                     "linkType": "ContentType",
-                    "id": "menuItem"
+                    "id": "menuButton"
                   }
                 }
               },

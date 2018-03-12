@@ -3,8 +3,8 @@
 RSpec.shared_examples 'graphql querying' do
   it 'bench find by id' do
     query_string = '
-    query getMenuItem($id: ID!) {
-      ContentfulMenuItem(id: $id) {
+    query getMenuButton($id: ID!) {
+      ContentfulMenuButton(id: $id) {
         id
         text
         iconFA
@@ -16,7 +16,7 @@ RSpec.shared_examples 'graphql querying' do
     '
 
     schema = nil
-    run_bench(content_type: 'menuItem',
+    run_bench(content_type: 'menuButton',
               store_builder: store_builder,
               before: ->(store) {
                         schema = WCC::Contentful::Graphql::Builder.new(
@@ -27,7 +27,7 @@ RSpec.shared_examples 'graphql querying' do
 
       result = schema.execute(query_string, variables: { 'id' => id })
       expect(result.to_h['errors']).to be_nil
-      expect(result.to_h.dig('data', 'ContentfulMenuItem', 'id')).to eq(id)
+      expect(result.to_h.dig('data', 'ContentfulMenuButton', 'id')).to eq(id)
     end
   end
 
@@ -78,8 +78,8 @@ RSpec.shared_examples 'graphql querying' do
   end
 
   it 'bench find with filter (find_by equivalend)' do
-    query_string = 'query menuItemQuery($style: Any) {
-      items: allContentfulMenuItem(filter: { field: "buttonStyle", eq: $style }) {
+    query_string = 'query menuButtonQuery($style: Any) {
+      items: allContentfulMenuButton(filter: { field: "buttonStyle", eq: $style }) {
         id
         text
         iconFA

@@ -83,7 +83,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
 
   it 'find_by filters on content type' do
     # act
-    found = adapter.find_by(content_type: 'menuItem')
+    found = adapter.find_by(content_type: 'menuButton')
 
     # assert
     expect(found.count).to eq(11)
