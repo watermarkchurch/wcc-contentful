@@ -62,7 +62,7 @@ export = function (migration: Migration) {
       }
     ])
   
-  menu.createField('externalLink')
+  menuButton.createField('externalLink')
     .name('External Link')
     .type('Symbol')
     .validations([
@@ -72,7 +72,7 @@ export = function (migration: Migration) {
       }
     ])
   
-  menu.createField('link')
+  menuButton.createField('link')
     .name('Page Link')
     .type('Link')
     .linkType('Entry')
