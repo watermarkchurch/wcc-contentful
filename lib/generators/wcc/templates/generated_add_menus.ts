@@ -17,6 +17,18 @@ export = function (migration: Migration) {
     .name('Icon')
     .type('Link')
     .linkType('Asset')
+
+  menu.createField('rootButton')
+    .name('Root Button')
+    .type('Link')
+    .linkType('Entry')
+    .validations([
+      { 
+        linkContentType: [ 'menuButton' ],
+        message: 'The Root Button must be a button linking to a URL or page.  ' +
+          'If the menu is a dropdown, this button is visible when it is collapsed.'
+      }
+    ])
   
   menu.createField('buttons')
     .name('Buttons')
