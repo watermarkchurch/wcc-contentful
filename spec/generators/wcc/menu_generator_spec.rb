@@ -7,7 +7,7 @@ require 'generators/wcc/menu_generator'
 require 'generator_spec'
 require 'timecop'
 
-RSpec.describe MenuGenerator, type: :generator do
+RSpec.describe Wcc::MenuGenerator, type: :generator do
   destination Rails.root.join('tmp/generators')
 
   before(:all) do
