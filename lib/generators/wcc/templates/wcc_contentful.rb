@@ -13,3 +13,6 @@ end
 
 # Download content types, build models, and sync content
 WCC::Contentful.init!
+
+# Validate that models conform to a defined specification
+WCC::Contentful.validate_models! unless defined?(Rails) && Rails.env.development?

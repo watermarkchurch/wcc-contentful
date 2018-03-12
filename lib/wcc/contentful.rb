@@ -74,8 +74,6 @@ module WCC
         file = File.dirname(__FILE__) + "/contentful_model/#{t.name.underscore}.rb"
         require file if File.exist?(file)
       end
-
-      validate_models!
     end
 
     def self.validate_models!
