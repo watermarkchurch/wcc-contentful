@@ -74,6 +74,10 @@ module WCC
         file = File.dirname(__FILE__) + "/contentful_model/#{t.name.underscore}.rb"
         require file if File.exist?(file)
       end
+
+      if defined?(Rails)
+        Dir[Rails.root.join('lib/wcc/contentful_model/**/*.rb')].each {|file| require file }
+      end
     end
 
     def self.validate_models!

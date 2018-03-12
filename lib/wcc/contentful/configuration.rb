@@ -69,7 +69,7 @@ class WCC::Contentful::Configuration
         config.access_token = access_token
         config.management_token = management_token if management_token.present?
         config.space = space
-        config.default_locale = default_locale
+        config.default_locale = default_locale || 'en-US'
       end
     end
 
