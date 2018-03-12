@@ -38,11 +38,7 @@ module WCC::Contentful::Graphql
         name 'Query'
         description 'The query root of this schema'
 
-        schema_types.each_value do |schema_type|
-          # HACK: don't know where else to get content_type from in here w/o
-          # major refactoring
-          content_type = schema_type.description
-
+        schema_types.each do |content_type, schema_type|
           field schema_type.name.to_sym do
             type schema_type
             argument :id, types.ID
@@ -80,13 +76,12 @@ module WCC::Contentful::Graphql
     def build_schema_type(v)
       store = @store
       builder = self
-      content_type = v[:content_type]
+      content_type = v.content_type
 
       GraphQL::ObjectType.define do
-        name(v[:name])
+        name(v.name)
 
-        # HACK: to hang on to content_type where we need it above
-        description(content_type)
+        description("Generated from content type #{content_type}")
 
         field :id, !types.ID do
           resolve ->(obj, _args, _ctx) {
@@ -101,16 +96,16 @@ module WCC::Contentful::Graphql
         end
 
         # Make a field for each column:
-        v[:fields].each_value do |f|
-          case f[:type]
+        v.fields.each_value do |f|
+          case f.type
           when :Asset
-            field(f[:name].to_sym, -> {
+            field(f.name.to_sym, -> {
               type = builder.schema_types['Asset']
-              type = type.to_list_type if f[:array]
+              type = type.to_list_type if f.array
               type
             }) do
               resolve ->(obj, _args, ctx) {
-                links = obj.dig('fields', f[:name], ctx[:locale] || 'en-US')
+                links = obj.dig('fields', f.name, ctx[:locale] || 'en-US')
                 return if links.nil?
 
                 if links.is_a? Array
@@ -121,23 +116,23 @@ module WCC::Contentful::Graphql
               }
             end
           when :Link
-            field(f[:name].to_sym, -> {
+            field(f.name.to_sym, -> {
               type =
-                if f[:link_types].nil? || f[:link_types].empty?
+                if f.link_types.nil? || f.link_types.empty?
                   builder.schema_types['AnyContentful'] ||=
                     Types::BuildUnionType.call(builder.schema_types, 'AnyContentful')
-                elsif f[:link_types].length == 1
-                  builder.schema_types[f[:link_types].first]
+                elsif f.link_types.length == 1
+                  builder.schema_types[f.link_types.first]
                 else
-                  from_types = builder.schema_types.select { |key| f[:link_types].include?(key) }
-                  name = "#{v[:name]}_#{f[:name]}"
+                  from_types = builder.schema_types.select { |key| f.link_types.include?(key) }
+                  name = "#{v.name}_#{f.name}"
                   builder.schema_types[name] ||= Types::BuildUnionType.call(from_types, name)
                 end
-              type = type.to_list_type if f[:array]
+              type = type.to_list_type if f.array
               type
             }) do
               resolve ->(obj, _args, ctx) {
-                links = obj.dig('fields', f[:name], ctx[:locale] || 'en-US')
+                links = obj.dig('fields', f.name, ctx[:locale] || 'en-US')
                 return if links.nil?
 
                 if links.is_a? Array
@@ -149,7 +144,7 @@ module WCC::Contentful::Graphql
             end
           else
             type =
-              case f[:type]
+              case f.type
               when :DateTime
                 Types::DateTimeType
               when :Coordinates
@@ -157,15 +152,15 @@ module WCC::Contentful::Graphql
               when :Json
                 Types::HashType
               else
-                types.public_send(f[:type])
+                types.public_send(f.type)
               end
-            type = type.to_list_type if f[:array]
-            field(f[:name].to_sym, type) do
+            type = type.to_list_type if f.array
+            field(f.name.to_sym, type) do
               resolve ->(obj, _args, ctx) {
                 if obj.is_a? Array
-                  obj.map { |o| o.dig('fields', f[:name], ctx[:locale] || 'en-US') }
+                  obj.map { |o| o.dig('fields', f.name, ctx[:locale] || 'en-US') }
                 else
-                  obj.dig('fields', f[:name], ctx[:locale] || 'en-US')
+                  obj.dig('fields', f.name, ctx[:locale] || 'en-US')
                 end
               }
             end

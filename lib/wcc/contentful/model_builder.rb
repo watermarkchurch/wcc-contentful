@@ -17,18 +17,18 @@ module WCC::Contentful
     private
 
     def build_model(t)
-      const = constant_from_content_type(t[:content_type])
+      const = t.name
       return WCC::ContentfulModel.const_get(const) if WCC::ContentfulModel.const_defined?(const)
 
       # TODO: https://github.com/dkubb/ice_nine ?
       typedef = t.deep_dup.freeze
-      fields = typedef[:fields].keys
+      fields = typedef.fields.keys
       WCC::ContentfulModel.const_set(const,
         Class.new(WCC::ContentfulModel) do
           include Helpers
 
           define_singleton_method(:content_type) do
-            typedef[:content_type]
+            typedef.content_type
           end
 
           define_singleton_method(:content_type_definition) do
@@ -59,9 +59,9 @@ module WCC::Contentful
 
           define_method(:initialize) do |raw, context = nil|
             ct = content_type_from_raw(raw)
-            if ct != typedef[:content_type]
+            if ct != typedef.content_type
               raise ArgumentError, 'Wrong Content Type - ' \
-                "'#{raw.dig('sys', 'id')}' is a #{ct}, expected #{typedef[:content_type]}"
+                "'#{raw.dig('sys', 'id')}' is a #{ct}, expected #{typedef.content_type}"
             end
 
             @locale = context[:locale] if context.present?
@@ -74,10 +74,10 @@ module WCC::Contentful
             @updated_at = Time.parse(@updated_at) if @updated_at.present?
             @revision = raw.dig('sys', 'revision')
 
-            typedef[:fields].each_value do |f|
-              raw_value = raw.dig('fields', f[:name], @locale)
+            typedef.fields.each_value do |f|
+              raw_value = raw.dig('fields', f.name, @locale)
               if raw_value.present?
-                case f[:type]
+                case f.type
                 when :DateTime
                   raw_value = Time.zone.parse(raw_value)
                 when :Int
@@ -86,7 +86,7 @@ module WCC::Contentful
                   raw_value = Float(raw_value)
                 end
               end
-              instance_variable_set('@' + f[:name], raw_value)
+              instance_variable_set('@' + f.name, raw_value)
             end
           end
 
@@ -97,10 +97,10 @@ module WCC::Contentful
           attr_reader :revision
 
           # Make a field for each column:
-          typedef[:fields].each_value do |f|
-            name = f[:name]
+          typedef.fields.each_value do |f|
+            name = f.name
             var_name = '@' + name
-            case f[:type]
+            case f.type
             when :Asset, :Link
               define_method(name) do
                 val = instance_variable_get(var_name + '_resolved')

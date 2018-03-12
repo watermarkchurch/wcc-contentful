@@ -20,25 +20,39 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
       expect(query['fields'].map { |f| f['name'] }.sort).to eq(
         %w[
           Asset
+          Dog
           Faq
           Homepage
           Menu
           MenuButton
           MigrationHistory
+          Ministry
+          MinistryCard
           Page
           Redirect2
+          Section_CardSearch
           Section_Faq
+          Section_Testimonials
           Section_VideoHighlight
+          Testimonial
+          Theme
           allAsset
+          allDog
           allFaq
           allHomepage
           allMenu
           allMenuButton
           allMigrationHistory
+          allMinistry
+          allMinistryCard
           allPage
           allRedirect2
+          allSection_CardSearch
           allSection_Faq
+          allSection_Testimonials
           allSection_VideoHighlight
+          allTestimonial
+          allTheme
         ]
       )
     end
@@ -194,12 +208,14 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
       home: Homepage {
         sections {
           ... on Section_Faq {
+            _content_type
             faqs {
               question
               answer
             }
           }
           ... on Section_VideoHighlight {
+            _content_type
             youtubeLink
           }
         }
@@ -211,8 +227,10 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
       expect(result.to_h['errors']).to be_nil
       expect(result.dig('data', 'home', 'sections').length).to eq(2)
       expect(result.dig('data', 'home', 'sections', 0, 'faqs').length).to eq(2)
+      expect(result.dig('data', 'home', 'sections', 0, '_content_type')).to eq('section-Faq')
       expect(result.dig('data', 'home', 'sections', 1, 'youtubeLink'))
         .to eq('https://youtu.be/pyrxj8gRRLo')
+      expect(result.dig('data', 'home', 'sections', 1, '_content_type')).to eq('section-VideoHighlight')
     end
 
     it 'resolves linked assets' do

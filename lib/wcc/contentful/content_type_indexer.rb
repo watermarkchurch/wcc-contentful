@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'indexed_representation'
+
 module WCC::Contentful
   class ContentTypeIndexer
     include WCC::Contentful::Helpers
@@ -7,9 +9,9 @@ module WCC::Contentful
     attr_reader :types
 
     def initialize
-      @types = {
+      @types = IndexedRepresentation.new({
         'Asset' => create_asset_type
-      }
+      })
     end
 
     def index(content_type)
@@ -21,19 +23,18 @@ module WCC::Contentful
           create_type(content_type.dig('sys', 'id'), content_type['fields'])
         end
 
-      @types[content_type[:content_type]] = content_type
+      @types[content_type.content_type] = content_type
     end
 
     def create_type(content_type_id, fields)
-      content_type = {
+      content_type = IndexedRepresentation::ContentType.new({
         name: constant_from_content_type(content_type_id),
-        content_type: content_type_id,
-        fields: {}
-      }
+        content_type: content_type_id
+      })
 
       fields.each do |f|
         field = create_field(f)
-        content_type[:fields][field[:name]] = field
+        content_type.fields[field.name] = field
       end
 
       content_type
@@ -41,7 +42,7 @@ module WCC::Contentful
 
     # hardcoded because the Asset type is a "magic type" in their system
     def create_asset_type
-      {
+      IndexedRepresentation::ContentType.new({
         name: 'Asset',
         content_type: 'Asset',
         fields: {
@@ -49,7 +50,7 @@ module WCC::Contentful
           'description' => { name: 'description', type: :String },
           'file' => { name: 'file', type: :Json }
         }
-      }
+      })
     end
 
     private
@@ -65,42 +66,42 @@ module WCC::Contentful
     end
 
     def create_field_from_managed(managed_field)
-      field = {
+      field = IndexedRepresentation::Field.new({
         name: managed_field.id,
         type: find_field_type(managed_field),
         required: managed_field.required
-      }
-      field[:array] = true if managed_field.type == 'Array'
+      })
+      field.array = true if managed_field.type == 'Array'
 
-      if field[:type] == :Link
+      if field.type == :Link
         validations =
-          if field[:array]
+          if field.array
             managed_field.items.validations
           else
             managed_field.validations
           end
-        field[:link_types] = resolve_managed_link_types(validations) if validations.present?
+        field.link_types = resolve_managed_link_types(validations) if validations.present?
       end
       field
     end
 
     def create_field_from_raw(raw_field)
       field_name = raw_field['id']
-      field = {
+      field = IndexedRepresentation::Field.new({
         name: field_name,
         type: find_field_type(raw_field),
         required: raw_field['required']
-      }
-      field[:array] = true if raw_field['type'] == 'Array'
+      })
+      field.array = true if raw_field['type'] == 'Array'
 
-      if field[:type] == :Link
+      if field.type == :Link
         validations =
-          if field[:array]
+          if field.array
             raw_field.dig('items', 'validations')
           else
             raw_field['validations']
           end
-        field[:link_types] = resolve_raw_link_types(validations) if validations.present?
+        field.link_types = resolve_raw_link_types(validations) if validations.present?
       end
       field
     end

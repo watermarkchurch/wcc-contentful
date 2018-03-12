@@ -38,13 +38,13 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
       )
 
       faq = subject.types['faq']
-      expect(faq.dig(:fields, 'question', :type)).to eq(:String)
-      expect(faq.dig(:fields, 'answer', :type)).to eq(:String)
-      expect(faq.dig(:fields, 'numFaqs', :type)).to eq(:Int)
-      expect(faq.dig(:fields, 'numFaqsFloat', :type)).to eq(:Float)
-      expect(faq.dig(:fields, 'dateOfFaq', :type)).to eq(:DateTime)
-      expect(faq.dig(:fields, 'truthyOrFalsy', :type)).to eq(:Boolean)
-      expect(faq.dig(:fields, 'placeOfFaq', :type)).to eq(:Coordinates)
+      expect(faq.fields['question'].type).to eq(:String)
+      expect(faq.fields['answer'].type).to eq(:String)
+      expect(faq.fields['numFaqs'].type).to eq(:Int)
+      expect(faq.fields['numFaqsFloat'].type).to eq(:Float)
+      expect(faq.fields['dateOfFaq'].type).to eq(:DateTime)
+      expect(faq.fields['truthyOrFalsy'].type).to eq(:Boolean)
+      expect(faq.fields['placeOfFaq'].type).to eq(:Coordinates)
     end
 
     it 'resolves potential linked types' do
@@ -55,13 +55,13 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
 
       # assert
       redirect = subject.types['redirect2']
-      redirect_ref = redirect.dig(:fields, 'pageReference')
-      expect(redirect_ref[:type]).to eq(:Link)
-      expect(redirect_ref[:link_types]).to include('page')
+      redirect_ref = redirect.fields['pageReference']
+      expect(redirect_ref.type).to eq(:Link)
+      expect(redirect_ref.link_types).to include('page')
 
       homepage = subject.types['homepage']
-      sections_ref = homepage.dig(:fields, 'sections')
-      expect(sections_ref[:link_types].sort).to eq(
+      sections_ref = homepage.fields['sections']
+      expect(sections_ref.link_types.sort).to eq(
         %w[
           section-CardSearch
           section-Faq
@@ -79,11 +79,11 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
 
       # assert
       history = subject.types['migrationHistory']
-      started = history.dig(:fields, 'started')
-      expect(started[:type]).to eq(:DateTime)
+      started = history.fields['started']
+      expect(started.type).to eq(:DateTime)
 
-      migration_name = history.dig(:fields, 'migrationName')
-      expect(migration_name[:type]).to eq(:String)
+      migration_name = history.fields['migrationName']
+      expect(migration_name.type).to eq(:String)
     end
 
     it 'sets array flag on array fields' do
@@ -94,8 +94,24 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
 
       # assert
       homepage = subject.types['homepage']
-      favicons = homepage.dig(:fields, 'favicons')
-      expect(favicons[:array]).to be(true)
+      favicons = homepage.fields['favicons']
+      expect(favicons.array).to be(true)
+    end
+
+    it 'generates phony Asset content type' do
+      # act
+      raw_data['items'].each do |raw_content_type|
+        indexer.index(raw_content_type)
+      end
+
+      # assert
+      asset = subject.types['Asset']
+      title = asset.fields['title']
+      expect(title.type).to eq(:String)
+      desc = asset.fields['description']
+      expect(desc.type).to eq(:String)
+      file = asset.fields['file']
+      expect(file.type).to eq(:Json)
     end
   end
 
@@ -150,8 +166,8 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
         ]
       )
 
-      sections = indexer.types['page'][:fields]['sections']
-      expect(sections[:link_types]).to eq(
+      sections = indexer.types['page'].fields['sections']
+      expect(sections.link_types).to eq(
         %w[
           section-CardSearch
           section-Faq
@@ -168,8 +184,8 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
       end
 
       # assert
-      sub_menu = indexer.types['page'][:fields]['subMenu']
-      expect(sub_menu[:link_types]).to eq(['menu'])
+      sub_menu = indexer.types['page'].fields['subMenu']
+      expect(sub_menu.link_types).to eq(['menu'])
     end
   end
 
@@ -218,8 +234,8 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
         ]
       )
 
-      sections = indexer.types['page'][:fields]['sections']
-      expect(sections[:link_types]).to eq(
+      sections = indexer.types['page'].fields['sections']
+      expect(sections.link_types).to eq(
         %w[
           section-CardSearch
           section-Faq
@@ -236,11 +252,11 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
       end
 
       # assert
-      sub_menu = indexer.types['page'][:fields]['subMenu']
+      sub_menu = indexer.types['page'].fields['subMenu']
 
       # We would love for this to be present, but the contentful CDN
       # does not give us this info.
-      expect(sub_menu[:link_types]).to_not be_present
+      expect(sub_menu.link_types).to_not be_present
     end
   end
 end

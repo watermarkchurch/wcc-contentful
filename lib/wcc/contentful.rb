@@ -71,7 +71,7 @@ module WCC
 
       # Extend all model types w/ validation & extra fields
       @types.each_value do |t|
-        file = File.dirname(__FILE__) + "/contentful_model/#{t[:name].underscore}.rb"
+        file = File.dirname(__FILE__) + "/contentful_model/#{t.name.underscore}.rb"
         require file if File.exist?(file)
       end
 

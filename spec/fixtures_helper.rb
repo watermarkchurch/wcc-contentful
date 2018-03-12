@@ -7,18 +7,9 @@ module FixturesHelper
     return File.read(file) if File.exist?(file)
   end
 
-  def load_indexed_types(file_name = 'contentful/indexed_types.json')
-    JSON.parse(load_fixture(file_name))
-      .each_with_object({}) do |(k, v), h|
-        v = v.symbolize_keys
-        v[:fields] =
-          v[:fields].each_with_object({}) do |(k2, v2), h2|
-            v2 = v2.symbolize_keys
-            v2[:type] = v2[:type].to_sym
-            h2[k2] = v2
-          end
-        h[k] = v
-      end
+  def load_indexed_types(file_name = 'contentful/indexed_types_from_content_type_indexer.json')
+    serialized = JSON.parse(load_fixture(file_name))
+    WCC::Contentful::IndexedRepresentation.from_json(serialized)
   end
 
   def load_store_from_sync(file_name: 'contentful/sync_initial.json', store: nil)
