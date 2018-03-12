@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 require 'rails/generators'
-require 'generators/wcc/menu/menu_generator'
+require 'generators/wcc/menu_generator'
 
 require 'generator_spec'
 require 'timecop'
