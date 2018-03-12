@@ -23,6 +23,7 @@ export = function (migration: Migration) {
     .type('Array')
     .items({
       type: 'Link',
+      linkType: 'Entry',
       validations: [
         { 
           linkContentType: [ 'menu', 'menuButton' ],
