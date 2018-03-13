@@ -35,9 +35,9 @@ http_interactions:
       Content-Type:
       - application/vnd.contentful.management.v1+json
       Date:
-      - Fri, 09 Mar 2018 23:37:17 GMT
+      - Tue, 13 Mar 2018 18:50:09 GMT
       Etag:
-      - '"d46a9fabd1f5c6caa2fe99646f3ebc20"'
+      - '"331b6b833ec355efa1de449b65cc5d69"'
       Server:
       - Contentful
       Strict-Transport-Security:
@@ -47,7 +47,7 @@ http_interactions:
       X-Contentful-Ratelimit-Hour-Limit:
       - '36000'
       X-Contentful-Ratelimit-Hour-Remaining:
-      - '35998'
+      - '35958'
       X-Contentful-Ratelimit-Reset:
       - '0'
       X-Contentful-Ratelimit-Second-Limit:
@@ -55,20 +55,20 @@ http_interactions:
       X-Contentful-Ratelimit-Second-Remaining:
       - '9'
       X-Contentful-Request-Id:
-      - 6d41fe53dd6b98a4608d0fea0e60d15a
+      - b66de644f8b955219a79a5f95541822c
       Content-Length:
-      - '50223'
+      - '50541'
       Connection:
       - Close
       Set-Cookie:
-      - incap_ses_208_673446=Sgn5KHDc1WbYSDAG5vfiAqwao1oAAAAAoAq4i7sURn4cUtk3qvsJ1Q==;
+      - incap_ses_208_673446=/fILf1f7CxqKL/Km6vfiAmAdqFoAAAAAv+CxNkAyoSx1LRCQQ8pJoA==;
         path=/; Domain=.contentful.com
-      - nlbi_673446=jx+SG7OPXHlQ8Bvk6lKYhQAAAACNe5tN2S3lKkUoMSpoJWaW; path=/; Domain=.contentful.com
-      - visid_incap_673446=3cCA4rNnRmin6llQ3eYXUKwao1oAAAAAQUIPAAAAAAC86zLKyXWRAAjBAKfy7ZaZ;
-        expires=Sat, 09 Mar 2019 12:14:30 GMT; path=/; Domain=.contentful.com
+      - nlbi_673446=qEvPGoP/E34GMhQo6lKYhQAAAABjNVTT2sgk3tzPXQ9OVQn1; path=/; Domain=.contentful.com
+      - visid_incap_673446=wJMJzL/YS/q11o+aDja4uWAdqFoAAAAAQUIPAAAAAAC44+NpIKSWtrUwMgDA+eq+;
+        expires=Wed, 13 Mar 2019 13:02:56 GMT; path=/; Domain=.contentful.com
       X-Iinfo:
-      - 5-35207864-35207865 NNNN CT(32 33 0) RT(1520638636611 21) q(0 0 0 -1) r(1
-        2) U5
+      - 9-2506074-2506075 NNNN CT(40 32 0) RT(1520967007908 18) q(0 0 1 -1) r(4 4)
+        U5
       X-Cdn:
       - Incapsula
     body:
@@ -91,10 +91,10 @@ http_interactions:
                     "id": "<CONTENTFUL_SPACE_ID>"
                   }
                 },
-                "id": "menuButton",
+                "id": "section-VideoHighlight",
                 "type": "ContentType",
-                "createdAt": "2018-02-12T18:08:52.787Z",
-                "updatedAt": "2018-02-14T18:33:02.426Z",
+                "createdAt": "2018-02-12T19:41:52.641Z",
+                "updatedAt": "2018-02-14T18:29:57.501Z",
                 "createdBy": {
                   "sys": {
                     "type": "Link",
@@ -109,8 +109,8 @@ http_interactions:
                     "id": "0SUbYs2vZlXjVR6bH6o83O"
                   }
                 },
-                "publishedCounter": 8,
-                "version": 16,
+                "publishedCounter": 4,
+                "version": 8,
                 "publishedBy": {
                   "sys": {
                     "type": "Link",
@@ -118,9 +118,109 @@ http_interactions:
                     "id": "0SUbYs2vZlXjVR6bH6o83O"
                   }
                 },
-                "publishedVersion": 15,
-                "firstPublishedAt": "2018-02-12T18:08:53.372Z",
-                "publishedAt": "2018-02-14T18:33:02.426Z"
+                "publishedVersion": 7,
+                "firstPublishedAt": "2018-02-12T19:41:52.801Z",
+                "publishedAt": "2018-02-14T18:29:57.500Z"
+              },
+              "displayField": "text",
+              "name": "Section: Video Highlight",
+              "description": "The Video Highlight section includes a player for Youtube videos.",
+              "fields": [
+                {
+                  "id": "text",
+                  "name": "Text",
+                  "type": "Text",
+                  "localized": false,
+                  "required": true,
+                  "validations": [],
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "youtubeLink",
+                  "name": "youtubeLink",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "validations": [],
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "video",
+                  "name": "Video",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "validations": [
+                    {
+                      "linkMimetypeGroup": [
+                        "video"
+                      ]
+                    }
+                  ],
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Asset"
+                },
+                {
+                  "id": "theme",
+                  "name": "Theme",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "validations": [
+                    {
+                      "linkContentType": [
+                        "theme"
+                      ]
+                    }
+                  ],
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Entry"
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "menuButton",
+                "type": "ContentType",
+                "createdAt": "2018-03-12T14:06:45.317Z",
+                "updatedAt": "2018-03-12T14:06:45.507Z",
+                "createdBy": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "User",
+                    "id": "0SUbYs2vZlXjVR6bH6o83O"
+                  }
+                },
+                "updatedBy": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "User",
+                    "id": "0SUbYs2vZlXjVR6bH6o83O"
+                  }
+                },
+                "publishedCounter": 1,
+                "version": 2,
+                "publishedBy": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "User",
+                    "id": "0SUbYs2vZlXjVR6bH6o83O"
+                  }
+                },
+                "publishedVersion": 1,
+                "firstPublishedAt": "2018-03-12T14:06:45.507Z",
+                "publishedAt": "2018-03-12T14:06:45.507Z"
               },
               "displayField": "text",
               "name": "Menu Button",
@@ -137,7 +237,7 @@ http_interactions:
                       "size": {
                         "max": 60
                       },
-                      "message": "a MenuButton's text field should be very short - ideally a single word.  Please limit the text to 60 characters or less."
+                      "message": "a MenuItem's text field should be very short - ideally a single word.  Please limit the text to 60 characters or less."
                     }
                   ],
                   "disabled": false,
@@ -237,476 +337,6 @@ http_interactions:
                       "message": "The Link must be a link to a Page which has a Slug.  Example: '/ministries'"
                     }
                   ],
-                  "disabled": false,
-                  "omitted": false,
-                  "linkType": "Entry"
-                }
-              ]
-            },
-            {
-              "sys": {
-                "space": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "Space",
-                    "id": "<CONTENTFUL_SPACE_ID>"
-                  }
-                },
-                "id": "testimonial",
-                "type": "ContentType",
-                "createdAt": "2018-02-12T19:47:57.690Z",
-                "updatedAt": "2018-02-12T19:47:57.856Z",
-                "createdBy": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "User",
-                    "id": "0SUbYs2vZlXjVR6bH6o83O"
-                  }
-                },
-                "updatedBy": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "User",
-                    "id": "0SUbYs2vZlXjVR6bH6o83O"
-                  }
-                },
-                "publishedCounter": 1,
-                "version": 2,
-                "publishedBy": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "User",
-                    "id": "0SUbYs2vZlXjVR6bH6o83O"
-                  }
-                },
-                "publishedVersion": 1,
-                "firstPublishedAt": "2018-02-12T19:47:57.856Z",
-                "publishedAt": "2018-02-12T19:47:57.856Z"
-              },
-              "displayField": "name",
-              "name": "Testimonial",
-              "description": "A Testimonial contains a user's photo, a short bio, and their testimonial about the service",
-              "fields": [
-                {
-                  "id": "name",
-                  "name": "Name",
-                  "type": "Symbol",
-                  "localized": false,
-                  "required": true,
-                  "validations": [],
-                  "disabled": false,
-                  "omitted": false
-                },
-                {
-                  "id": "photo",
-                  "name": "Photo",
-                  "type": "Link",
-                  "localized": false,
-                  "required": true,
-                  "validations": [
-                    {
-                      "linkMimetypeGroup": [
-                        "image"
-                      ]
-                    }
-                  ],
-                  "disabled": false,
-                  "omitted": false,
-                  "linkType": "Asset"
-                },
-                {
-                  "id": "shortBio",
-                  "name": "Short Bio",
-                  "type": "Text",
-                  "localized": false,
-                  "required": false,
-                  "validations": [
-                    {
-                      "size": {
-                        "min": null,
-                        "max": 100
-                      },
-                      "message": "The Short Bio is intended to be short.  Please keep it under 100 characters."
-                    }
-                  ],
-                  "disabled": false,
-                  "omitted": false
-                },
-                {
-                  "id": "testimonial",
-                  "name": "Testimonial",
-                  "type": "Text",
-                  "localized": false,
-                  "required": false,
-                  "validations": [
-                    {
-                      "size": {
-                        "max": 400
-                      },
-                      "message": "Please limit the Testimonial to no more than 400 characters"
-                    }
-                  ],
-                  "disabled": false,
-                  "omitted": false
-                }
-              ]
-            },
-            {
-              "sys": {
-                "space": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "Space",
-                    "id": "<CONTENTFUL_SPACE_ID>"
-                  }
-                },
-                "id": "menu",
-                "type": "ContentType",
-                "createdAt": "2018-02-12T17:39:58.461Z",
-                "updatedAt": "2018-02-14T18:33:19.888Z",
-                "createdBy": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "User",
-                    "id": "0SUbYs2vZlXjVR6bH6o83O"
-                  }
-                },
-                "updatedBy": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "User",
-                    "id": "0SUbYs2vZlXjVR6bH6o83O"
-                  }
-                },
-                "publishedCounter": 4,
-                "version": 8,
-                "publishedBy": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "User",
-                    "id": "0SUbYs2vZlXjVR6bH6o83O"
-                  }
-                },
-                "publishedVersion": 7,
-                "firstPublishedAt": "2018-02-12T17:39:58.717Z",
-                "publishedAt": "2018-02-14T18:33:19.888Z"
-              },
-              "displayField": "name",
-              "name": "Menu",
-              "description": "A Menu contains a number of Menu Buttons or other Menus, grouped together horizontally or vertically.\n\nIf a Menu contains another Menu, the contained menu will become a drop-down.\n\nThe optional 'Hamburger' field is rendered as the hamburger button on the right side of the menu, and opens as a drop-down.",
-              "fields": [
-                {
-                  "id": "name",
-                  "name": "Name",
-                  "type": "Symbol",
-                  "localized": false,
-                  "required": false,
-                  "validations": [],
-                  "disabled": false,
-                  "omitted": false
-                },
-                {
-                  "id": "icon",
-                  "name": "Icon",
-                  "type": "Link",
-                  "localized": false,
-                  "required": false,
-                  "validations": [],
-                  "disabled": false,
-                  "omitted": false,
-                  "linkType": "Asset"
-                },
-                {
-                  "id": "buttons",
-                  "name": "First Group",
-                  "type": "Array",
-                  "localized": false,
-                  "required": false,
-                  "validations": [],
-                  "disabled": false,
-                  "omitted": false,
-                  "items": {
-                    "type": "Link",
-                    "validations": [
-                      {
-                        "linkContentType": [
-                          "menu",
-                          "menuButton"
-                        ],
-                        "message": "The Menu groups must contain only sub-Menus or MenuButtons"
-                      }
-                    ],
-                    "linkType": "Entry"
-                  }
-                },
-                {
-                  "id": "secondGroup",
-                  "name": "Second Group",
-                  "type": "Array",
-                  "localized": false,
-                  "required": false,
-                  "validations": [],
-                  "disabled": false,
-                  "omitted": false,
-                  "items": {
-                    "type": "Link",
-                    "validations": [
-                      {
-                        "linkContentType": [
-                          "menu",
-                          "menuButton"
-                        ],
-                        "message": "The Menu groups must contain only sub-Menus or MenuButtons"
-                      }
-                    ],
-                    "linkType": "Entry"
-                  }
-                },
-                {
-                  "id": "thirdGroup",
-                  "name": "Third Group",
-                  "type": "Array",
-                  "localized": false,
-                  "required": false,
-                  "validations": [],
-                  "disabled": false,
-                  "omitted": false,
-                  "items": {
-                    "type": "Link",
-                    "validations": [
-                      {
-                        "linkContentType": [
-                          "menu",
-                          "menuButton"
-                        ],
-                        "message": "The Menu groups must contain only sub-Menus or MenuButtons"
-                      }
-                    ],
-                    "linkType": "Entry"
-                  }
-                },
-                {
-                  "id": "hamburger",
-                  "name": "Hamburger",
-                  "type": "Link",
-                  "localized": false,
-                  "required": false,
-                  "validations": [],
-                  "disabled": false,
-                  "omitted": false,
-                  "linkType": "Entry"
-                },
-                {
-                  "id": "search",
-                  "name": "Search",
-                  "type": "Symbol",
-                  "localized": false,
-                  "required": false,
-                  "validations": [
-                    {
-                      "in": [
-                        "wmresources-ministries-index",
-                        "wmresources-conferences-index",
-                        "wmresources-podcasts-index",
-                        "wmresources-blogposts-index",
-                        "wmresources-gatherings-index"
-                      ],
-                      "message": "You must choose a value that corresponds to an index name in Algolia."
-                    }
-                  ],
-                  "disabled": false,
-                  "omitted": false
-                }
-              ]
-            },
-            {
-              "sys": {
-                "space": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "Space",
-                    "id": "<CONTENTFUL_SPACE_ID>"
-                  }
-                },
-                "id": "homepage",
-                "type": "ContentType",
-                "createdAt": "2018-02-12T18:34:23.822Z",
-                "updatedAt": "2018-03-05T15:18:09.821Z",
-                "createdBy": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "User",
-                    "id": "0SUbYs2vZlXjVR6bH6o83O"
-                  }
-                },
-                "updatedBy": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "User",
-                    "id": "0SUbYs2vZlXjVR6bH6o83O"
-                  }
-                },
-                "publishedCounter": 8,
-                "version": 16,
-                "publishedBy": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "User",
-                    "id": "0SUbYs2vZlXjVR6bH6o83O"
-                  }
-                },
-                "publishedVersion": 15,
-                "firstPublishedAt": "2018-02-12T18:34:24.038Z",
-                "publishedAt": "2018-03-05T15:18:09.821Z"
-              },
-              "displayField": "siteTitle",
-              "name": "Homepage",
-              "description": "The Homepage is a special page - it contains some fields like the Top Menu and Site Footer which are set on all other Pages.  This page is visible at the root of watermarkresources.org",
-              "fields": [
-                {
-                  "id": "siteTitle",
-                  "name": "Site Title",
-                  "type": "Symbol",
-                  "localized": false,
-                  "required": false,
-                  "validations": [],
-                  "disabled": false,
-                  "omitted": false
-                },
-                {
-                  "id": "favicons",
-                  "name": "Favicons",
-                  "type": "Array",
-                  "localized": false,
-                  "required": true,
-                  "validations": [],
-                  "disabled": false,
-                  "omitted": false,
-                  "items": {
-                    "type": "Link",
-                    "validations": [
-                      {
-                        "linkMimetypeGroup": [
-                          "image"
-                        ]
-                      },
-                      {
-                        "assetFileSize": {
-                          "max": 1024
-                        },
-                        "message": "Favicons are supposed to be small.  Please use an image less than 100kb in size."
-                      }
-                    ],
-                    "linkType": "Asset"
-                  }
-                },
-                {
-                  "id": "mainMenu",
-                  "name": "Main Menu",
-                  "type": "Link",
-                  "localized": false,
-                  "required": false,
-                  "validations": [
-                    {
-                      "linkContentType": [
-                        "menu"
-                      ]
-                    }
-                  ],
-                  "disabled": false,
-                  "omitted": false,
-                  "linkType": "Entry"
-                },
-                {
-                  "id": "heroImage",
-                  "name": "Hero Image",
-                  "type": "Link",
-                  "localized": false,
-                  "required": false,
-                  "validations": [
-                    {
-                      "linkMimetypeGroup": [
-                        "image"
-                      ]
-                    }
-                  ],
-                  "disabled": false,
-                  "omitted": false,
-                  "linkType": "Asset"
-                },
-                {
-                  "id": "heroText",
-                  "name": "Hero Text",
-                  "type": "Text",
-                  "localized": false,
-                  "required": false,
-                  "validations": [],
-                  "disabled": false,
-                  "omitted": false
-                },
-                {
-                  "id": "heroButtons",
-                  "name": "Hero Buttons",
-                  "type": "Array",
-                  "localized": false,
-                  "required": false,
-                  "validations": [],
-                  "disabled": false,
-                  "omitted": false,
-                  "items": {
-                    "type": "Link",
-                    "validations": [
-                      {
-                        "linkContentType": [
-                          "menuButton"
-                        ]
-                      }
-                    ],
-                    "linkType": "Entry"
-                  }
-                },
-                {
-                  "id": "callToAction",
-                  "name": "Call To Action",
-                  "type": "Link",
-                  "localized": false,
-                  "required": false,
-                  "validations": [],
-                  "disabled": false,
-                  "omitted": false,
-                  "linkType": "Entry"
-                },
-                {
-                  "id": "sections",
-                  "name": "Sections",
-                  "type": "Array",
-                  "localized": false,
-                  "required": false,
-                  "validations": [],
-                  "disabled": false,
-                  "omitted": false,
-                  "items": {
-                    "type": "Link",
-                    "validations": [
-                      {
-                        "linkContentType": [
-                          "section-CardSearch",
-                          "section-Faq",
-                          "section-Testimonials",
-                          "section-VideoHighlight"
-                        ]
-                      }
-                    ],
-                    "linkType": "Entry"
-                  }
-                },
-                {
-                  "id": "siteFooter",
-                  "name": "Site Footer",
-                  "type": "Link",
-                  "localized": false,
-                  "required": false,
-                  "validations": [],
                   "disabled": false,
                   "omitted": false,
                   "linkType": "Entry"
@@ -824,6 +454,400 @@ http_interactions:
                   "localized": false,
                   "required": false,
                   "validations": [],
+                  "disabled": false,
+                  "omitted": false
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "theme",
+                "type": "ContentType",
+                "createdAt": "2018-02-14T18:23:43.051Z",
+                "updatedAt": "2018-02-14T18:28:37.615Z",
+                "createdBy": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "User",
+                    "id": "0SUbYs2vZlXjVR6bH6o83O"
+                  }
+                },
+                "updatedBy": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "User",
+                    "id": "0SUbYs2vZlXjVR6bH6o83O"
+                  }
+                },
+                "publishedCounter": 7,
+                "version": 14,
+                "publishedBy": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "User",
+                    "id": "0SUbYs2vZlXjVR6bH6o83O"
+                  }
+                },
+                "publishedVersion": 13,
+                "firstPublishedAt": "2018-02-14T18:23:43.243Z",
+                "publishedAt": "2018-02-14T18:28:37.615Z"
+              },
+              "displayField": "name",
+              "name": "Theme",
+              "description": "A Theme can be applied to a section to give it a certain style, for example by changing colors or positioning certain elements",
+              "fields": [
+                {
+                  "id": "name",
+                  "name": "Name",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "validations": [],
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "foregroundColor",
+                  "name": "Foreground Color",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "validations": [
+                    {
+                      "regexp": {
+                        "pattern": "^(\\w+|\\#[a-f0-9]+|(rgba?|hsla?)\\(\\s*\\d+,\\s*\\d+\\%?,\\s*\\d+\\%?(,\\s*[\\d\\.]+)?\\))$",
+                        "flags": null
+                      },
+                      "message": "This must be a valid CSS color.  Reference: https://developer.mozilla.org/en-US/docs/Web/CSS/color_value"
+                    }
+                  ],
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "backgroundColor",
+                  "name": "Background Color",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "validations": [
+                    {
+                      "regexp": {
+                        "pattern": "^(\\w+|\\#[a-f0-9]+|(rgba?|hsla?)\\(\\s*\\d+,\\s*\\d+\\%?,\\s*\\d+\\%?(,\\s*[\\d\\.]+)?\\))$",
+                        "flags": null
+                      },
+                      "message": "This must be a valid CSS color.  Reference: https://developer.mozilla.org/en-US/docs/Web/CSS/color_value"
+                    }
+                  ],
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "highlightColor",
+                  "name": "Highlight Color",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "validations": [
+                    {
+                      "regexp": {
+                        "pattern": "^(\\w+|\\#[a-f0-9]+|(rgba?|hsla?)\\(\\s*\\d+,\\s*\\d+\\%?,\\s*\\d+\\%?(,\\s*[\\d\\.]+)?\\))$",
+                        "flags": null
+                      },
+                      "message": "This must be a valid CSS color.  Reference: https://developer.mozilla.org/en-US/docs/Web/CSS/color_value"
+                    }
+                  ],
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "borderColor",
+                  "name": "Border Color",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "validations": [
+                    {
+                      "regexp": {
+                        "pattern": "^(\\w+|\\#[a-f0-9]+|(rgba?|hsla?)\\(\\s*\\d+,\\s*\\d+\\%?,\\s*\\d+\\%?(,\\s*[\\d\\.]+)?\\))$",
+                        "flags": null
+                      },
+                      "message": "This must be a valid CSS color.  Reference: https://developer.mozilla.org/en-US/docs/Web/CSS/color_value"
+                    }
+                  ],
+                  "disabled": false,
+                  "omitted": false
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "section-CardSearch",
+                "type": "ContentType",
+                "createdAt": "2018-02-13T22:17:50.228Z",
+                "updatedAt": "2018-02-14T18:30:14.695Z",
+                "createdBy": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "User",
+                    "id": "0SUbYs2vZlXjVR6bH6o83O"
+                  }
+                },
+                "updatedBy": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "User",
+                    "id": "0SUbYs2vZlXjVR6bH6o83O"
+                  }
+                },
+                "publishedCounter": 2,
+                "version": 4,
+                "publishedBy": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "User",
+                    "id": "0SUbYs2vZlXjVR6bH6o83O"
+                  }
+                },
+                "publishedVersion": 3,
+                "firstPublishedAt": "2018-02-13T22:17:50.643Z",
+                "publishedAt": "2018-02-14T18:30:14.695Z"
+              },
+              "displayField": "name",
+              "name": "Section: Card Search",
+              "description": "A group of cards & search functionality for those cards",
+              "fields": [
+                {
+                  "id": "name",
+                  "name": "name",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "validations": [],
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "cards",
+                  "name": "Cards",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "validations": [],
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Link",
+                    "validations": [],
+                    "linkType": "Entry"
+                  }
+                },
+                {
+                  "id": "theme",
+                  "name": "Theme",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "validations": [],
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Entry"
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "menu",
+                "type": "ContentType",
+                "createdAt": "2018-02-12T17:39:58.461Z",
+                "updatedAt": "2018-03-13T18:36:14.688Z",
+                "createdBy": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "User",
+                    "id": "0SUbYs2vZlXjVR6bH6o83O"
+                  }
+                },
+                "updatedBy": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "User",
+                    "id": "0SUbYs2vZlXjVR6bH6o83O"
+                  }
+                },
+                "publishedCounter": 8,
+                "version": 16,
+                "publishedBy": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "User",
+                    "id": "0SUbYs2vZlXjVR6bH6o83O"
+                  }
+                },
+                "publishedVersion": 15,
+                "firstPublishedAt": "2018-02-12T17:39:58.717Z",
+                "publishedAt": "2018-03-13T18:36:14.688Z"
+              },
+              "displayField": "name",
+              "name": "Menu",
+              "description": "A Menu contains a number of Menu Buttons or other Menus, grouped together horizontally or vertically.\n\nIf a Menu contains another Menu, the contained menu will become a drop-down.\n\nThe optional 'Hamburger' field is rendered as the hamburger button on the right side of the menu, and opens as a drop-down.",
+              "fields": [
+                {
+                  "id": "name",
+                  "name": "Name",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "validations": [],
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "icon",
+                  "name": "Icon",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "validations": [],
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Asset"
+                },
+                {
+                  "id": "rootButton",
+                  "name": "Root Button",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "validations": [
+                    {
+                      "linkContentType": [
+                        "menuButton"
+                      ]
+                    }
+                  ],
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Entry"
+                },
+                {
+                  "id": "buttons",
+                  "name": "Buttons",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "validations": [],
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Link",
+                    "validations": [
+                      {
+                        "linkContentType": [
+                          "menu",
+                          "menuButton"
+                        ]
+                      }
+                    ],
+                    "linkType": "Entry"
+                  }
+                },
+                {
+                  "id": "secondGroup",
+                  "name": "Second Group",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "validations": [],
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Link",
+                    "validations": [
+                      {
+                        "linkContentType": [
+                          "menu",
+                          "menuButton"
+                        ],
+                        "message": "The Menu groups must contain only sub-Menus or MenuItems"
+                      }
+                    ],
+                    "linkType": "Entry"
+                  }
+                },
+                {
+                  "id": "thirdGroup",
+                  "name": "Third Group",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "validations": [],
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Link",
+                    "validations": [
+                      {
+                        "linkContentType": [
+                          "menu",
+                          "menuButton"
+                        ],
+                        "message": "The Menu groups must contain only sub-Menus or MenuItems"
+                      }
+                    ],
+                    "linkType": "Entry"
+                  }
+                },
+                {
+                  "id": "hamburger",
+                  "name": "Hamburger",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "validations": [],
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Entry"
+                },
+                {
+                  "id": "search",
+                  "name": "Search",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "validations": [
+                    {
+                      "in": [
+                        "wmresources-ministries-index",
+                        "wmresources-conferences-index",
+                        "wmresources-podcasts-index",
+                        "wmresources-blogposts-index",
+                        "wmresources-gatherings-index"
+                      ],
+                      "message": "You must choose a value that corresponds to an index name in Algolia."
+                    }
+                  ],
                   "disabled": false,
                   "omitted": false
                 }
@@ -978,7 +1002,7 @@ http_interactions:
                   "validations": [
                     {
                       "linkContentType": [
-                        "menuButton"
+                        "menuItem"
                       ]
                     }
                   ],
@@ -1023,134 +1047,6 @@ http_interactions:
                   "disabled": false,
                   "omitted": false,
                   "linkType": "Entry"
-                }
-              ]
-            },
-            {
-              "sys": {
-                "space": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "Space",
-                    "id": "<CONTENTFUL_SPACE_ID>"
-                  }
-                },
-                "id": "theme",
-                "type": "ContentType",
-                "createdAt": "2018-02-14T18:23:43.051Z",
-                "updatedAt": "2018-02-14T18:28:37.615Z",
-                "createdBy": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "User",
-                    "id": "0SUbYs2vZlXjVR6bH6o83O"
-                  }
-                },
-                "updatedBy": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "User",
-                    "id": "0SUbYs2vZlXjVR6bH6o83O"
-                  }
-                },
-                "publishedCounter": 7,
-                "version": 14,
-                "publishedBy": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "User",
-                    "id": "0SUbYs2vZlXjVR6bH6o83O"
-                  }
-                },
-                "publishedVersion": 13,
-                "firstPublishedAt": "2018-02-14T18:23:43.243Z",
-                "publishedAt": "2018-02-14T18:28:37.615Z"
-              },
-              "displayField": "name",
-              "name": "Theme",
-              "description": "A Theme can be applied to a section to give it a certain style, for example by changing colors or positioning certain elements",
-              "fields": [
-                {
-                  "id": "name",
-                  "name": "Name",
-                  "type": "Symbol",
-                  "localized": false,
-                  "required": false,
-                  "validations": [],
-                  "disabled": false,
-                  "omitted": false
-                },
-                {
-                  "id": "foregroundColor",
-                  "name": "Foreground Color",
-                  "type": "Symbol",
-                  "localized": false,
-                  "required": false,
-                  "validations": [
-                    {
-                      "regexp": {
-                        "pattern": "^(\\w+|\\#[a-f0-9]+|(rgba?|hsla?)\\(\\s*\\d+,\\s*\\d+\\%?,\\s*\\d+\\%?(,\\s*[\\d\\.]+)?\\))$",
-                        "flags": null
-                      },
-                      "message": "This must be a valid CSS color.  Reference: https://developer.mozilla.org/en-US/docs/Web/CSS/color_value"
-                    }
-                  ],
-                  "disabled": false,
-                  "omitted": false
-                },
-                {
-                  "id": "backgroundColor",
-                  "name": "Background Color",
-                  "type": "Symbol",
-                  "localized": false,
-                  "required": false,
-                  "validations": [
-                    {
-                      "regexp": {
-                        "pattern": "^(\\w+|\\#[a-f0-9]+|(rgba?|hsla?)\\(\\s*\\d+,\\s*\\d+\\%?,\\s*\\d+\\%?(,\\s*[\\d\\.]+)?\\))$",
-                        "flags": null
-                      },
-                      "message": "This must be a valid CSS color.  Reference: https://developer.mozilla.org/en-US/docs/Web/CSS/color_value"
-                    }
-                  ],
-                  "disabled": false,
-                  "omitted": false
-                },
-                {
-                  "id": "highlightColor",
-                  "name": "Highlight Color",
-                  "type": "Symbol",
-                  "localized": false,
-                  "required": false,
-                  "validations": [
-                    {
-                      "regexp": {
-                        "pattern": "^(\\w+|\\#[a-f0-9]+|(rgba?|hsla?)\\(\\s*\\d+,\\s*\\d+\\%?,\\s*\\d+\\%?(,\\s*[\\d\\.]+)?\\))$",
-                        "flags": null
-                      },
-                      "message": "This must be a valid CSS color.  Reference: https://developer.mozilla.org/en-US/docs/Web/CSS/color_value"
-                    }
-                  ],
-                  "disabled": false,
-                  "omitted": false
-                },
-                {
-                  "id": "borderColor",
-                  "name": "Border Color",
-                  "type": "Symbol",
-                  "localized": false,
-                  "required": false,
-                  "validations": [
-                    {
-                      "regexp": {
-                        "pattern": "^(\\w+|\\#[a-f0-9]+|(rgba?|hsla?)\\(\\s*\\d+,\\s*\\d+\\%?,\\s*\\d+\\%?(,\\s*[\\d\\.]+)?\\))$",
-                        "flags": null
-                      },
-                      "message": "This must be a valid CSS color.  Reference: https://developer.mozilla.org/en-US/docs/Web/CSS/color_value"
-                    }
-                  ],
-                  "disabled": false,
-                  "omitted": false
                 }
               ]
             },
@@ -1217,193 +1113,6 @@ http_interactions:
                   "validations": [],
                   "disabled": false,
                   "omitted": false
-                }
-              ]
-            },
-            {
-              "sys": {
-                "space": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "Space",
-                    "id": "<CONTENTFUL_SPACE_ID>"
-                  }
-                },
-                "id": "section-CardSearch",
-                "type": "ContentType",
-                "createdAt": "2018-02-13T22:17:50.228Z",
-                "updatedAt": "2018-02-14T18:30:14.695Z",
-                "createdBy": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "User",
-                    "id": "0SUbYs2vZlXjVR6bH6o83O"
-                  }
-                },
-                "updatedBy": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "User",
-                    "id": "0SUbYs2vZlXjVR6bH6o83O"
-                  }
-                },
-                "publishedCounter": 2,
-                "version": 4,
-                "publishedBy": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "User",
-                    "id": "0SUbYs2vZlXjVR6bH6o83O"
-                  }
-                },
-                "publishedVersion": 3,
-                "firstPublishedAt": "2018-02-13T22:17:50.643Z",
-                "publishedAt": "2018-02-14T18:30:14.695Z"
-              },
-              "displayField": "name",
-              "name": "Section: Card Search",
-              "description": "A group of cards & search functionality for those cards",
-              "fields": [
-                {
-                  "id": "name",
-                  "name": "name",
-                  "type": "Symbol",
-                  "localized": false,
-                  "required": true,
-                  "validations": [],
-                  "disabled": false,
-                  "omitted": false
-                },
-                {
-                  "id": "cards",
-                  "name": "Cards",
-                  "type": "Array",
-                  "localized": false,
-                  "required": false,
-                  "validations": [],
-                  "disabled": false,
-                  "omitted": false,
-                  "items": {
-                    "type": "Link",
-                    "validations": [],
-                    "linkType": "Entry"
-                  }
-                },
-                {
-                  "id": "theme",
-                  "name": "Theme",
-                  "type": "Link",
-                  "localized": false,
-                  "required": false,
-                  "validations": [],
-                  "disabled": false,
-                  "omitted": false,
-                  "linkType": "Entry"
-                }
-              ]
-            },
-            {
-              "sys": {
-                "space": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "Space",
-                    "id": "<CONTENTFUL_SPACE_ID>"
-                  }
-                },
-                "id": "ministry",
-                "type": "ContentType",
-                "createdAt": "2018-02-12T17:23:03.793Z",
-                "updatedAt": "2018-02-12T17:23:03.968Z",
-                "createdBy": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "User",
-                    "id": "0SUbYs2vZlXjVR6bH6o83O"
-                  }
-                },
-                "updatedBy": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "User",
-                    "id": "0SUbYs2vZlXjVR6bH6o83O"
-                  }
-                },
-                "publishedCounter": 1,
-                "version": 2,
-                "publishedBy": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "User",
-                    "id": "0SUbYs2vZlXjVR6bH6o83O"
-                  }
-                },
-                "publishedVersion": 1,
-                "firstPublishedAt": "2018-02-12T17:23:03.968Z",
-                "publishedAt": "2018-02-12T17:23:03.968Z"
-              },
-              "displayField": "name",
-              "name": "Ministry",
-              "description": "Represents a ministry shown on the Ministry Gallery page.",
-              "fields": [
-                {
-                  "id": "name",
-                  "name": "Name",
-                  "type": "Symbol",
-                  "localized": false,
-                  "required": true,
-                  "validations": [
-                    {
-                      "unique": true
-                    }
-                  ],
-                  "disabled": false,
-                  "omitted": false
-                },
-                {
-                  "id": "cardImage",
-                  "name": "Card Image",
-                  "type": "Link",
-                  "localized": false,
-                  "required": true,
-                  "validations": [
-                    {
-                      "linkMimetypeGroup": [
-                        "image"
-                      ]
-                    }
-                  ],
-                  "disabled": false,
-                  "omitted": false,
-                  "linkType": "Asset"
-                },
-                {
-                  "id": "audiences",
-                  "name": "audiences",
-                  "type": "Array",
-                  "localized": false,
-                  "required": false,
-                  "validations": [],
-                  "disabled": false,
-                  "omitted": false,
-                  "items": {
-                    "type": "Symbol",
-                    "validations": []
-                  }
-                },
-                {
-                  "id": "categories",
-                  "name": "Categories",
-                  "type": "Array",
-                  "localized": false,
-                  "required": false,
-                  "validations": [],
-                  "disabled": false,
-                  "omitted": false,
-                  "items": {
-                    "type": "Symbol",
-                    "validations": []
-                  }
                 }
               ]
             },
@@ -1562,6 +1271,111 @@ http_interactions:
                       }
                     ],
                     "linkType": "Entry"
+                  }
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "ministry",
+                "type": "ContentType",
+                "createdAt": "2018-02-12T17:23:03.793Z",
+                "updatedAt": "2018-02-12T17:23:03.968Z",
+                "createdBy": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "User",
+                    "id": "0SUbYs2vZlXjVR6bH6o83O"
+                  }
+                },
+                "updatedBy": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "User",
+                    "id": "0SUbYs2vZlXjVR6bH6o83O"
+                  }
+                },
+                "publishedCounter": 1,
+                "version": 2,
+                "publishedBy": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "User",
+                    "id": "0SUbYs2vZlXjVR6bH6o83O"
+                  }
+                },
+                "publishedVersion": 1,
+                "firstPublishedAt": "2018-02-12T17:23:03.968Z",
+                "publishedAt": "2018-02-12T17:23:03.968Z"
+              },
+              "displayField": "name",
+              "name": "Ministry",
+              "description": "Represents a ministry shown on the Ministry Gallery page.",
+              "fields": [
+                {
+                  "id": "name",
+                  "name": "Name",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "validations": [
+                    {
+                      "unique": true
+                    }
+                  ],
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "cardImage",
+                  "name": "Card Image",
+                  "type": "Link",
+                  "localized": false,
+                  "required": true,
+                  "validations": [
+                    {
+                      "linkMimetypeGroup": [
+                        "image"
+                      ]
+                    }
+                  ],
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Asset"
+                },
+                {
+                  "id": "audiences",
+                  "name": "audiences",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "validations": [],
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Symbol",
+                    "validations": []
+                  }
+                },
+                {
+                  "id": "categories",
+                  "name": "Categories",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "validations": [],
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Symbol",
+                    "validations": []
                   }
                 }
               ]
@@ -1806,6 +1620,114 @@ http_interactions:
                     "id": "<CONTENTFUL_SPACE_ID>"
                   }
                 },
+                "id": "testimonial",
+                "type": "ContentType",
+                "createdAt": "2018-02-12T19:47:57.690Z",
+                "updatedAt": "2018-02-12T19:47:57.856Z",
+                "createdBy": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "User",
+                    "id": "0SUbYs2vZlXjVR6bH6o83O"
+                  }
+                },
+                "updatedBy": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "User",
+                    "id": "0SUbYs2vZlXjVR6bH6o83O"
+                  }
+                },
+                "publishedCounter": 1,
+                "version": 2,
+                "publishedBy": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "User",
+                    "id": "0SUbYs2vZlXjVR6bH6o83O"
+                  }
+                },
+                "publishedVersion": 1,
+                "firstPublishedAt": "2018-02-12T19:47:57.856Z",
+                "publishedAt": "2018-02-12T19:47:57.856Z"
+              },
+              "displayField": "name",
+              "name": "Testimonial",
+              "description": "A Testimonial contains a user's photo, a short bio, and their testimonial about the service",
+              "fields": [
+                {
+                  "id": "name",
+                  "name": "Name",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "validations": [],
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "photo",
+                  "name": "Photo",
+                  "type": "Link",
+                  "localized": false,
+                  "required": true,
+                  "validations": [
+                    {
+                      "linkMimetypeGroup": [
+                        "image"
+                      ]
+                    }
+                  ],
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Asset"
+                },
+                {
+                  "id": "shortBio",
+                  "name": "Short Bio",
+                  "type": "Text",
+                  "localized": false,
+                  "required": false,
+                  "validations": [
+                    {
+                      "size": {
+                        "min": null,
+                        "max": 100
+                      },
+                      "message": "The Short Bio is intended to be short.  Please keep it under 100 characters."
+                    }
+                  ],
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "testimonial",
+                  "name": "Testimonial",
+                  "type": "Text",
+                  "localized": false,
+                  "required": false,
+                  "validations": [
+                    {
+                      "size": {
+                        "max": 400
+                      },
+                      "message": "Please limit the Testimonial to no more than 400 characters"
+                    }
+                  ],
+                  "disabled": false,
+                  "omitted": false
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
                 "id": "section-Testimonials",
                 "type": "ContentType",
                 "createdAt": "2018-02-12T19:17:55.075Z",
@@ -1883,10 +1805,10 @@ http_interactions:
                     "id": "<CONTENTFUL_SPACE_ID>"
                   }
                 },
-                "id": "section-VideoHighlight",
+                "id": "homepage",
                 "type": "ContentType",
-                "createdAt": "2018-02-12T19:41:52.641Z",
-                "updatedAt": "2018-02-14T18:29:57.501Z",
+                "createdAt": "2018-02-12T18:34:23.822Z",
+                "updatedAt": "2018-03-05T15:18:09.821Z",
                 "createdBy": {
                   "sys": {
                     "type": "Link",
@@ -1901,8 +1823,8 @@ http_interactions:
                     "id": "0SUbYs2vZlXjVR6bH6o83O"
                   }
                 },
-                "publishedCounter": 4,
-                "version": 8,
+                "publishedCounter": 8,
+                "version": 16,
                 "publishedBy": {
                   "sys": {
                     "type": "Link",
@@ -1910,27 +1832,17 @@ http_interactions:
                     "id": "0SUbYs2vZlXjVR6bH6o83O"
                   }
                 },
-                "publishedVersion": 7,
-                "firstPublishedAt": "2018-02-12T19:41:52.801Z",
-                "publishedAt": "2018-02-14T18:29:57.500Z"
+                "publishedVersion": 15,
+                "firstPublishedAt": "2018-02-12T18:34:24.038Z",
+                "publishedAt": "2018-03-05T15:18:09.821Z"
               },
-              "displayField": "text",
-              "name": "Section: Video Highlight",
-              "description": "The Video Highlight section includes a player for Youtube videos.",
+              "displayField": "siteTitle",
+              "name": "Homepage",
+              "description": "The Homepage is a special page - it contains some fields like the Top Menu and Site Footer which are set on all other Pages.  This page is visible at the root of watermarkresources.org",
               "fields": [
                 {
-                  "id": "text",
-                  "name": "Text",
-                  "type": "Text",
-                  "localized": false,
-                  "required": true,
-                  "validations": [],
-                  "disabled": false,
-                  "omitted": false
-                },
-                {
-                  "id": "youtubeLink",
-                  "name": "youtubeLink",
+                  "id": "siteTitle",
+                  "name": "Site Title",
                   "type": "Symbol",
                   "localized": false,
                   "required": false,
@@ -1939,15 +1851,59 @@ http_interactions:
                   "omitted": false
                 },
                 {
-                  "id": "video",
-                  "name": "Video",
+                  "id": "favicons",
+                  "name": "Favicons",
+                  "type": "Array",
+                  "localized": false,
+                  "required": true,
+                  "validations": [],
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Link",
+                    "validations": [
+                      {
+                        "linkMimetypeGroup": [
+                          "image"
+                        ]
+                      },
+                      {
+                        "assetFileSize": {
+                          "max": 1024
+                        },
+                        "message": "Favicons are supposed to be small.  Please use an image less than 100kb in size."
+                      }
+                    ],
+                    "linkType": "Asset"
+                  }
+                },
+                {
+                  "id": "mainMenu",
+                  "name": "Main Menu",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "validations": [
+                    {
+                      "linkContentType": [
+                        "menu"
+                      ]
+                    }
+                  ],
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Entry"
+                },
+                {
+                  "id": "heroImage",
+                  "name": "Hero Image",
                   "type": "Link",
                   "localized": false,
                   "required": false,
                   "validations": [
                     {
                       "linkMimetypeGroup": [
-                        "video"
+                        "image"
                       ]
                     }
                   ],
@@ -1956,18 +1912,78 @@ http_interactions:
                   "linkType": "Asset"
                 },
                 {
-                  "id": "theme",
-                  "name": "Theme",
+                  "id": "heroText",
+                  "name": "Hero Text",
+                  "type": "Text",
+                  "localized": false,
+                  "required": false,
+                  "validations": [],
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "heroButtons",
+                  "name": "Hero Buttons",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "validations": [],
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Link",
+                    "validations": [
+                      {
+                        "linkContentType": [
+                          "menuItem"
+                        ]
+                      }
+                    ],
+                    "linkType": "Entry"
+                  }
+                },
+                {
+                  "id": "callToAction",
+                  "name": "Call To Action",
                   "type": "Link",
                   "localized": false,
                   "required": false,
-                  "validations": [
-                    {
-                      "linkContentType": [
-                        "theme"
-                      ]
-                    }
-                  ],
+                  "validations": [],
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Entry"
+                },
+                {
+                  "id": "sections",
+                  "name": "Sections",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "validations": [],
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Link",
+                    "validations": [
+                      {
+                        "linkContentType": [
+                          "section-CardSearch",
+                          "section-Faq",
+                          "section-Testimonials",
+                          "section-VideoHighlight"
+                        ]
+                      }
+                    ],
+                    "linkType": "Entry"
+                  }
+                },
+                {
+                  "id": "siteFooter",
+                  "name": "Site Footer",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "validations": [],
                   "disabled": false,
                   "omitted": false,
                   "linkType": "Entry"
@@ -1977,7 +1993,7 @@ http_interactions:
           ]
         }
     http_version: 
-  recorded_at: Fri, 09 Mar 2018 23:37:17 GMT
+  recorded_at: Tue, 13 Mar 2018 18:50:09 GMT
 - request:
     method: get
     uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/sync?initial=true
@@ -2013,33 +2029,33 @@ http_interactions:
       Content-Type:
       - application/vnd.contentful.delivery.v1+json
       Etag:
-      - W/"0c60e2937eb92ca6f92e3f5371ce97d5"
+      - W/"4729e453e337ee84e9ece162d1534114"
       Server:
       - Contentful
       X-Content-Type-Options:
       - nosniff
       X-Contentful-Request-Id:
-      - d31ac9a9f6b55bf702b9f1b82cb102c7
+      - dffbece987fca4b48184248993df293e
       Content-Length:
-      - '38002'
+      - '29074'
       Accept-Ranges:
       - bytes
       Date:
-      - Fri, 09 Mar 2018 23:37:17 GMT
+      - Tue, 13 Mar 2018 18:50:09 GMT
       Via:
       - 1.1 varnish
       Age:
-      - '1747'
+      - '1'
       Connection:
       - close
       X-Served-By:
-      - cache-dfw18648-DFW
+      - cache-dfw18640-DFW
       X-Cache:
       - HIT
       X-Cache-Hits:
       - '1'
       X-Timer:
-      - S1520638637.312559,VS0,VE1
+      - S1520967009.217824,VS0,VE1
       Vary:
       - Accept-Encoding
     body:
@@ -2050,6 +2066,82 @@ http_interactions:
             "type": "Array"
           },
           "items": [
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "6HQsABhZDiWmi0ekCouUuy",
+                "type": "Entry",
+                "createdAt": "2018-03-12T14:08:39.991Z",
+                "updatedAt": "2018-03-12T14:08:39.991Z",
+                "revision": 1,
+                "contentType": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "ContentType",
+                    "id": "menuButton"
+                  }
+                }
+              },
+              "fields": {
+                "text": {
+                  "en-US": "Ministries"
+                },
+                "iconFA": {
+                  "en-US": "fa-hat"
+                },
+                "buttonStyle": {
+                  "en-US": [
+                    "rounded"
+                  ]
+                },
+                "link": {
+                  "en-US": {
+                    "sys": {
+                      "type": "Link",
+                      "linkType": "Entry",
+                      "id": "JhYhSfZPAOMqsaK8cYOUK"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "1qLdW7i7g4Ycq6i4Cckg44",
+                "type": "Entry",
+                "createdAt": "2018-03-09T23:39:27.737Z",
+                "updatedAt": "2018-03-09T23:39:27.737Z",
+                "revision": 1,
+                "contentType": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "ContentType",
+                    "id": "redirect"
+                  }
+                }
+              },
+              "fields": {
+                "slug": {
+                  "en-US": "redirect-with-slug-and-url"
+                },
+                "url": {
+                  "en-US": "http://www.google.com"
+                }
+              }
+            },
             {
               "sys": {
                 "space": {
@@ -2511,51 +2603,6 @@ http_interactions:
                     "id": "<CONTENTFUL_SPACE_ID>"
                   }
                 },
-                "id": "3Jmk4yOwhOY0yKsI6mAQ2a",
-                "type": "Entry",
-                "createdAt": "2018-02-12T20:07:31.067Z",
-                "updatedAt": "2018-02-14T19:28:02.051Z",
-                "revision": 2,
-                "contentType": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "ContentType",
-                    "id": "menuButton"
-                  }
-                }
-              },
-              "fields": {
-                "text": {
-                  "en-US": "Find A Ministry for Your Church"
-                },
-                "iconFA": {
-                  "en-US": "fa-list-alt"
-                },
-                "buttonStyle": {
-                  "en-US": [
-                    "rounded"
-                  ]
-                },
-                "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "JhYhSfZPAOMqsaK8cYOUK"
-                    }
-                  }
-                }
-              }
-            },
-            {
-              "sys": {
-                "space": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "Space",
-                    "id": "<CONTENTFUL_SPACE_ID>"
-                  }
-                },
                 "id": "JhYhSfZPAOMqsaK8cYOUK",
                 "type": "Entry",
                 "createdAt": "2018-02-12T20:07:25.782Z",
@@ -2609,142 +2656,6 @@ http_interactions:
                 },
                 "youtubeLink": {
                   "en-US": "https://youtu.be/pyrxj8gRRLo"
-                }
-              }
-            },
-            {
-              "sys": {
-                "space": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "Space",
-                    "id": "<CONTENTFUL_SPACE_ID>"
-                  }
-                },
-                "id": "3bZRv5ISCkui6kguIwM2U0",
-                "type": "Entry",
-                "createdAt": "2018-02-12T20:07:44.618Z",
-                "updatedAt": "2018-02-13T20:36:25.341Z",
-                "revision": 3,
-                "contentType": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "ContentType",
-                    "id": "menuButton"
-                  }
-                }
-              },
-              "fields": {
-                "text": {
-                  "en-US": "Ministries"
-                },
-                "iconFA": {
-                  "en-US": "fa-file-alt"
-                },
-                "buttonStyle": {
-                  "en-US": [
-                    "rounded",
-                    "custom"
-                  ]
-                },
-                "customButtonCss": {
-                  "en-US": [
-                    "border-color: green;"
-                  ]
-                },
-                "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "JhYhSfZPAOMqsaK8cYOUK"
-                    }
-                  }
-                }
-              }
-            },
-            {
-              "sys": {
-                "space": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "Space",
-                    "id": "<CONTENTFUL_SPACE_ID>"
-                  }
-                },
-                "id": "1EjBdAgOOgAQKAggQoY2as",
-                "type": "Entry",
-                "createdAt": "2018-02-12T20:07:57.403Z",
-                "updatedAt": "2018-02-12T23:13:02.070Z",
-                "revision": 2,
-                "contentType": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "ContentType",
-                    "id": "menuButton"
-                  }
-                }
-              },
-              "fields": {
-                "text": {
-                  "en-US": "Conferences"
-                },
-                "iconFA": {
-                  "en-US": "fa-calendar-alt"
-                },
-                "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "1UojJt7YoMiemCq2mGGUmQ"
-                    }
-                  }
-                }
-              }
-            },
-            {
-              "sys": {
-                "space": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "Space",
-                    "id": "<CONTENTFUL_SPACE_ID>"
-                  }
-                },
-                "id": "4Gye0ybf2EiWCgSyEg0cyE",
-                "type": "Entry",
-                "createdAt": "2018-02-12T20:08:26.617Z",
-                "updatedAt": "2018-02-12T22:01:56.925Z",
-                "revision": 3,
-                "contentType": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "ContentType",
-                    "id": "menuButton"
-                  }
-                }
-              },
-              "fields": {
-                "text": {
-                  "en-US": "Cart"
-                },
-                "iconFA": {
-                  "en-US": "fa-shopping-cart"
-                },
-                "buttonStyle": {
-                  "en-US": [
-                    "rounded"
-                  ]
-                },
-                "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "3Azc4SjWSsYIuYO8m8qqQE"
-                    }
-                  }
                 }
               }
             },
@@ -2874,49 +2785,6 @@ http_interactions:
                     "id": "<CONTENTFUL_SPACE_ID>"
                   }
                 },
-                "id": "4tMhra8IAwcEoKS6QSQYcc",
-                "type": "Entry",
-                "createdAt": "2018-02-12T20:09:02.258Z",
-                "updatedAt": "2018-02-12T21:53:10.616Z",
-                "revision": 3,
-                "contentType": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "ContentType",
-                    "id": "menuButton"
-                  }
-                }
-              },
-              "fields": {
-                "text": {
-                  "en-US": "Watermark.org"
-                },
-                "buttonStyle": {
-                  "en-US": [
-                    "external",
-                    "custom"
-                  ]
-                },
-                "customButtonCss": {
-                  "en-US": [
-                    "text-decoration: underline;",
-                    "color: brown;"
-                  ]
-                },
-                "externalLink": {
-                  "en-US": "https://www.watermark.org"
-                }
-              }
-            },
-            {
-              "sys": {
-                "space": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "Space",
-                    "id": "<CONTENTFUL_SPACE_ID>"
-                  }
-                },
                 "id": "572YrsdGZGo0sw2Www2Si8",
                 "type": "Asset",
                 "createdAt": "2018-02-12T20:14:23.896Z",
@@ -2939,80 +2807,6 @@ http_interactions:
                     },
                     "fileName": "worship.jpg",
                     "contentType": "image/jpeg"
-                  }
-                }
-              }
-            },
-            {
-              "sys": {
-                "space": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "Space",
-                    "id": "<CONTENTFUL_SPACE_ID>"
-                  }
-                },
-                "id": "ZosJIuGfgkky0cA2GsymW",
-                "type": "Entry",
-                "createdAt": "2018-02-12T20:09:29.073Z",
-                "updatedAt": "2018-02-12T20:09:29.073Z",
-                "revision": 1,
-                "contentType": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "ContentType",
-                    "id": "menuButton"
-                  }
-                }
-              },
-              "fields": {
-                "text": {
-                  "en-US": "Terms & Conditions"
-                },
-                "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "1loILDsvKYkmGWoiKOOgkE"
-                    }
-                  }
-                }
-              }
-            },
-            {
-              "sys": {
-                "space": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "Space",
-                    "id": "<CONTENTFUL_SPACE_ID>"
-                  }
-                },
-                "id": "1TikjmGeSIisEWoC4CwokQ",
-                "type": "Entry",
-                "createdAt": "2018-02-12T20:09:27.879Z",
-                "updatedAt": "2018-02-12T20:09:27.879Z",
-                "revision": 1,
-                "contentType": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "ContentType",
-                    "id": "menuButton"
-                  }
-                }
-              },
-              "fields": {
-                "text": {
-                  "en-US": "Privacy Policy"
-                },
-                "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "1tPGouM76soIsM2e0uikgw"
-                    }
                   }
                 }
               }
@@ -3088,43 +2882,6 @@ http_interactions:
                     "id": "<CONTENTFUL_SPACE_ID>"
                   }
                 },
-                "id": "5NBhDw3i2kUqSwqYok4YQO",
-                "type": "Entry",
-                "createdAt": "2018-02-12T20:08:55.860Z",
-                "updatedAt": "2018-02-12T20:08:55.860Z",
-                "revision": 1,
-                "contentType": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "ContentType",
-                    "id": "menuButton"
-                  }
-                }
-              },
-              "fields": {
-                "text": {
-                  "en-US": "Mission"
-                },
-                "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "4lD8cHrr0QSAcY0sguqmss"
-                    }
-                  }
-                }
-              }
-            },
-            {
-              "sys": {
-                "space": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "Space",
-                    "id": "<CONTENTFUL_SPACE_ID>"
-                  }
-                },
                 "id": "4lD8cHrr0QSAcY0sguqmss",
                 "type": "Entry",
                 "createdAt": "2018-02-12T20:08:46.100Z",
@@ -3156,43 +2913,6 @@ http_interactions:
                     "id": "<CONTENTFUL_SPACE_ID>"
                   }
                 },
-                "id": "1IJEXB4AKEqQYEm4WuceG2",
-                "type": "Entry",
-                "createdAt": "2018-02-12T20:08:38.625Z",
-                "updatedAt": "2018-02-12T20:08:38.625Z",
-                "revision": 1,
-                "contentType": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "ContentType",
-                    "id": "menuButton"
-                  }
-                }
-              },
-              "fields": {
-                "text": {
-                  "en-US": "About"
-                },
-                "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "47PsST8EicKgWIWwK2AsW6"
-                    }
-                  }
-                }
-              }
-            },
-            {
-              "sys": {
-                "space": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "Space",
-                    "id": "<CONTENTFUL_SPACE_ID>"
-                  }
-                },
                 "id": "6y9DftpiYoA4YiKg2CgoUU",
                 "type": "Entry",
                 "createdAt": "2018-02-12T20:08:32.729Z",
@@ -3209,31 +2929,6 @@ http_interactions:
               "fields": {
                 "name": {
                   "en-US": "Side Menu"
-                },
-                "buttons": {
-                  "en-US": [
-                    {
-                      "sys": {
-                        "type": "Link",
-                        "linkType": "Entry",
-                        "id": "1IJEXB4AKEqQYEm4WuceG2"
-                      }
-                    },
-                    {
-                      "sys": {
-                        "type": "Link",
-                        "linkType": "Entry",
-                        "id": "5NBhDw3i2kUqSwqYok4YQO"
-                      }
-                    },
-                    {
-                      "sys": {
-                        "type": "Link",
-                        "linkType": "Entry",
-                        "id": "4tMhra8IAwcEoKS6QSQYcc"
-                      }
-                    }
-                  ]
                 },
                 "secondGroup": {
                   "en-US": [
@@ -3283,43 +2978,6 @@ http_interactions:
                 },
                 "slug": {
                   "en-US": "my-cart"
-                }
-              }
-            },
-            {
-              "sys": {
-                "space": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "Space",
-                    "id": "<CONTENTFUL_SPACE_ID>"
-                  }
-                },
-                "id": "2X7Pm2VQmQyAWK0y2wy8me",
-                "type": "Entry",
-                "createdAt": "2018-02-12T20:08:14.049Z",
-                "updatedAt": "2018-02-12T20:08:14.049Z",
-                "revision": 1,
-                "contentType": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "ContentType",
-                    "id": "menuButton"
-                  }
-                }
-              },
-              "fields": {
-                "text": {
-                  "en-US": "Login"
-                },
-                "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "32EYWhG184SgoiYo2e6iOo"
-                    }
-                  }
                 }
               }
             },
@@ -3382,43 +3040,6 @@ http_interactions:
                 },
                 "slug": {
                   "en-US": "/conferences"
-                }
-              }
-            },
-            {
-              "sys": {
-                "space": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "Space",
-                    "id": "<CONTENTFUL_SPACE_ID>"
-                  }
-                },
-                "id": "4W3ADPamKsMOg6Gu8aGwOu",
-                "type": "Entry",
-                "createdAt": "2018-02-12T20:07:17.451Z",
-                "updatedAt": "2018-02-12T20:07:17.451Z",
-                "revision": 1,
-                "contentType": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "ContentType",
-                    "id": "menuButton"
-                  }
-                }
-              },
-              "fields": {
-                "text": {
-                  "en-US": "About Watermark Resources"
-                },
-                "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "47PsST8EicKgWIWwK2AsW6"
-                    }
-                  }
                 }
               }
             },
@@ -3590,13 +3211,13 @@ http_interactions:
               }
             }
           ],
-          "nextSyncUrl": "https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/sync?sync_token=w5ZGw6JFwqZmVcKsE8Kow4grw45QdybCpsOKdcK_ZjDCpMOFwpXDq8KRUE1Fw613K8KyA8OIwqvCtDfChhbCpsO7CjfDssOKw7YtXMOnwobDjcKrw7XDjMKHw7jCq8K1wrRRwpHCqMKIwr_DoMKSwrnCqS0qw47DkShzZ8K3V8KR"
+          "nextSyncUrl": "https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/sync?sync_token=w5ZGw6JFwqZmVcKsE8Kow4grw45QdybCr8OFOjZEw7h8w6tgw6cvVcKYw6sCwoXDlh5tG3XDu8KLdsOfMgAfw6jCqMKhw68WCg3CncOQwrbDtsKzHnrDjChDwoLDhMOue3YpwqjDp8KnIsOhw6fDvMOhMz_Ck2LCmg"
         }
     http_version: 
-  recorded_at: Fri, 09 Mar 2018 23:37:17 GMT
+  recorded_at: Tue, 13 Mar 2018 18:50:09 GMT
 - request:
     method: get
-    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/sync?sync_token=w5ZGw6JFwqZmVcKsE8Kow4grw45QdybCpsOKdcK_ZjDCpMOFwpXDq8KRUE1Fw613K8KyA8OIwqvCtDfChhbCpsO7CjfDssOKw7YtXMOnwobDjcKrw7XDjMKHw7jCq8K1wrRRwpHCqMKIwr_DoMKSwrnCqS0qw47DkShzZ8K3V8KR
+    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/sync?sync_token=w5ZGw6JFwqZmVcKsE8Kow4grw45QdybCr8OFOjZEw7h8w6tgw6cvVcKYw6sCwoXDlh5tG3XDu8KLdsOfMgAfw6jCqMKhw68WCg3CncOQwrbDtsKzHnrDjChDwoLDhMOue3YpwqjDp8KnIsOhw6fDvMOhMz_Ck2LCmg
     body:
       encoding: US-ASCII
       string: ''
@@ -3629,33 +3250,33 @@ http_interactions:
       Content-Type:
       - application/vnd.contentful.delivery.v1+json
       Etag:
-      - '"53ddcbc5d520c75ff72893ec74d8711b"'
+      - '"af289ea26db7157ad62646679662b3e3"'
       Server:
       - Contentful
       X-Content-Type-Options:
       - nosniff
       X-Contentful-Request-Id:
-      - 20d05b8dedf807581d8b3f0e46ac56d0
+      - 9b3e183423489e59b0e224426f74e440
       Content-Length:
-      - '310'
+      - '300'
       Accept-Ranges:
       - bytes
       Date:
-      - Fri, 09 Mar 2018 23:37:17 GMT
+      - Tue, 13 Mar 2018 18:50:09 GMT
       Via:
       - 1.1 varnish
       Age:
-      - '1632'
+      - '1'
       Connection:
       - close
       X-Served-By:
-      - cache-dfw18651-DFW
+      - cache-dfw18637-DFW
       X-Cache:
       - HIT
       X-Cache-Hits:
       - '1'
       X-Timer:
-      - S1520638637.353453,VS0,VE1
+      - S1520967009.259531,VS0,VE1
       Vary:
       - Accept-Encoding
     body:
@@ -3666,8 +3287,8 @@ http_interactions:
             "type": "Array"
           },
           "items": [],
-          "nextSyncUrl": "https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/sync?sync_token=w5ZGw6JFwqZmVcKsE8Kow4grw45QdybCpsOKdcK_ZjDCpMOFwpXDq8KRUE1Fw613K8KyA8OIwqvCtDfChhbCpsO7CjfDssOKw7YtXMOnwobDjcKrw7XDjMKHw7jCq8K1wrRRwpHCqMKIwr_DoMKSwrnCqS0qw47DkShzZ8K3V8KR"
+          "nextSyncUrl": "https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/sync?sync_token=w5ZGw6JFwqZmVcKsE8Kow4grw45QdybCr8OFOjZEw7h8w6tgw6cvVcKYw6sCwoXDlh5tG3XDu8KLdsOfMgAfw6jCqMKhw68WCg3CncOQwrbDtsKzHnrDjChDwoLDhMOue3YpwqjDp8KnIsOhw6fDvMOhMz_Ck2LCmg"
         }
     http_version: 
-  recorded_at: Fri, 09 Mar 2018 23:37:17 GMT
+  recorded_at: Tue, 13 Mar 2018 18:50:09 GMT
 recorded_with: VCR 4.0.0

@@ -48,17 +48,17 @@ export = function (migration: Migration) {
     .name('Menu Button')
     .description('A Menu Button is a clickable button that goes on a Menu.  ' +
       'It has a link to a Page or a URL.')
-    .displayField('title')
+    .displayField('text')
 
-  menuButton.createField('title')
-    .name('Title')
+  menuButton.createField('text')
+    .name('Text')
     .type('Symbol')
     .required(true)
     .validations([
       { 
         size: { min: 1, max: 60 },
-        message: 'A Menu Button should have a very short title - ideally a ' +
-          'single word.  Please limit the title to 60 characters.'
+        message: 'A Menu Button should have a very short text field - ideally a ' +
+          'single word.  Please limit the text to 60 characters.'
       }
     ])
   

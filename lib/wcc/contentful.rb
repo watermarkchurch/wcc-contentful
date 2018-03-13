@@ -75,9 +75,8 @@ module WCC
         require file if File.exist?(file)
       end
 
-      if defined?(Rails)
-        Dir[Rails.root.join('lib/wcc/contentful_model/**/*.rb')].each { |file| require file }
-      end
+      return unless defined?(Rails)
+      Dir[Rails.root.join('lib/wcc/contentful/model/**/*.rb')].each { |file| require file }
     end
 
     def self.validate_models!
@@ -85,7 +84,7 @@ module WCC
         Dry::Validation.Schema do
           WCC::Contentful::Model.all_models.each do |klass|
             next unless klass.schema
-            ct = klass.try(:content_type) || klass.name.demodulize.underscore
+            ct = klass.try(:content_type) || klass.name.demodulize
             required(ct).schema(klass.schema)
           end
         end

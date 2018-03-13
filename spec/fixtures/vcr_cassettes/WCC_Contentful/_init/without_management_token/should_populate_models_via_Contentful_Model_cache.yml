@@ -114,7 +114,7 @@ http_interactions:
                   "linkType": "Asset"
                 },
                 {
-                  "id": "firstGroup",
+                  "id": "buttons",
                   "name": "First Group",
                   "type": "Array",
                   "localized": false,
@@ -2192,7 +2192,7 @@ http_interactions:
                 "name": {
                   "en-US": "Side Menu"
                 },
-                "firstGroup": {
+                "buttons": {
                   "en-US": [
                     {
                       "sys": {

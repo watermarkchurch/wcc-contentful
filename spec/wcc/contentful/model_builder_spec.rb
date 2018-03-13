@@ -225,9 +225,9 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
     # assert
     expect(main_menu.hamburger).to be_instance_of(WCC::Contentful::Model::Menu)
-    expect(main_menu.hamburger.first_group[0]).to be_instance_of(WCC::Contentful::Model::MenuButton)
-    expect(main_menu.hamburger.first_group[0].link).to be_instance_of(WCC::Contentful::Model::Page)
-    expect(main_menu.hamburger.first_group[0].link.title).to eq('About')
+    expect(main_menu.hamburger.buttons[0]).to be_instance_of(WCC::Contentful::Model::MenuButton)
+    expect(main_menu.hamburger.buttons[0].link).to be_instance_of(WCC::Contentful::Model::Page)
+    expect(main_menu.hamburger.buttons[0].link.title).to eq('About')
   end
 
   it 'handles nil linked types' do

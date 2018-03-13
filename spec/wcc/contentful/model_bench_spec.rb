@@ -27,7 +27,7 @@ RSpec.shared_examples 'model querying' do
       main_menu.icon.file[:url]
       main_menu.second_group.each { |item| item.link&.title }
       main_menu.third_group.each { |item| item.link&.title }
-      main_menu.hamburger.first_group[0].link.title
+      main_menu.hamburger.buttons[0].link.title
 
       # 2 more links via sections
       homepage.sections.each(&:id)

@@ -180,6 +180,12 @@ RSpec.describe WCC::Contentful, :vcr do
     }
 
     it 'validates successfully if all types present' do
+      indexer =
+        WCC::Contentful::ContentTypeIndexer.new.tap do |ixr|
+          content_types.each { |type| ixr.index(type) }
+        end
+      types = indexer.types
+      WCC::Contentful::ModelBuilder.new(types).build_models
       WCC::Contentful.instance_variable_set('@content_types', content_types)
       Dir["#{models_dir}/*.rb"].each { |file| load file }
 

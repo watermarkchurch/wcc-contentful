@@ -1159,7 +1159,7 @@
       "name": {
         "en-US": "Side Menu"
       },
-      "firstGroup": {
+      "buttons": {
         "en-US": [
           {
             "sys": {

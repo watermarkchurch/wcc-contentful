@@ -180,7 +180,24 @@
           "linkType": "Asset"
         },
         {
-          "id": "firstGroup",
+          "id": "rootButton",
+          "name": "Root Button",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "linkContentType": [
+                "menuButton"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        },
+        {
+          "id": "buttons",
           "name": "First Group",
           "type": "Array",
           "localized": false,

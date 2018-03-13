@@ -417,7 +417,7 @@ http_interactions:
                   "linkType": "Asset"
                 },
                 {
-                  "id": "firstGroup",
+                  "id": "buttons",
                   "name": "First Group",
                   "type": "Array",
                   "localized": false,

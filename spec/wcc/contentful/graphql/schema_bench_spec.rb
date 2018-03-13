@@ -50,7 +50,7 @@ RSpec.shared_examples 'graphql querying' do
             }
           }
           hamburger {
-            firstGroup {
+            buttons {
               link {
                 title
               }
