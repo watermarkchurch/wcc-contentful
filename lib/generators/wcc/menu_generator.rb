@@ -56,5 +56,10 @@ module Wcc
 
       copy_file 'wcc_contentful.rb', 'config/initializers/wcc_contentful.rb'
     end
+
+    def drop_model_overrides_in_lib_dir
+      copy_file 'menu.rb', 'lib/wcc/contentful/model/menu.rb'
+      copy_file 'menu_button.rb', 'lib/wcc/contentful/model/menu_button.rb'
+    end
   end
 end

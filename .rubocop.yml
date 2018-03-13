@@ -30,6 +30,10 @@ Style/BlockDelimiters:
 
 Style/ClassAndModuleChildren:
   EnforcedStyle: compact
+  Exclude:
+    - 'lib/wcc/contentful/version.rb'
+    # Generators need to define the "Wcc" module so it doesnt get underscored.
+    - 'lib/generators/**/*.rb'
 
 Style/FormatStringToken:
   EnforcedStyle: template
