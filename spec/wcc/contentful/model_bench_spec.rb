@@ -55,7 +55,7 @@ RSpec.shared_examples 'model querying' do
   end
 end
 
-RSpec.describe WCC::ContentfulModel, :bench do
+RSpec.describe WCC::Contentful::Model, :bench do
   include BenchHelper
 
   let(:types) { load_indexed_types }

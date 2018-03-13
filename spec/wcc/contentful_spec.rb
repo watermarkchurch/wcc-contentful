@@ -18,10 +18,10 @@ RSpec.describe WCC::Contentful, :vcr do
   end
 
   after(:each) do
-    consts = WCC::ContentfulModel.all_models.map(&:to_s).uniq
+    consts = WCC::Contentful::Model.all_models.map(&:to_s).uniq
     consts.each do |c|
       begin
-        WCC::ContentfulModel.send(:remove_const, c.split(':').last)
+        WCC::Contentful::Model.send(:remove_const, c.split(':').last)
       rescue StandardError => e
         warn e
       end
@@ -98,12 +98,12 @@ RSpec.describe WCC::Contentful, :vcr do
     end
 
     context 'without management token' do
-      it 'should populate models via ContentfulModel cache' do
+      it 'should populate models via Contentful::Model cache' do
         # act
         WCC::Contentful.init!
 
         # assert
-        content_type = WCC::ContentfulModel::MenuButton.content_type
+        content_type = WCC::Contentful::Model::MenuButton.content_type
         expect(content_type).to eq('menuButton')
       end
 
@@ -112,9 +112,9 @@ RSpec.describe WCC::Contentful, :vcr do
         WCC::Contentful.init!
 
         # assert
-        page = WCC::ContentfulModel.find('1UojJt7YoMiemCq2mGGUmQ')
+        page = WCC::Contentful::Model.find('1UojJt7YoMiemCq2mGGUmQ')
         expect(page).to_not be_nil
-        expect(page).to be_a(WCC::ContentfulModel::Page)
+        expect(page).to be_a(WCC::Contentful::Model::Page)
         expect(page.slug).to eq('/conferences')
 
         expect(page.sections).to be_nil
@@ -134,7 +134,7 @@ RSpec.describe WCC::Contentful, :vcr do
         WCC::Contentful.init!
 
         # assert
-        content_type = WCC::ContentfulModel::Page.content_type
+        content_type = WCC::Contentful::Model::Page.content_type
         expect(content_type).to eq('page')
       end
 
@@ -143,9 +143,9 @@ RSpec.describe WCC::Contentful, :vcr do
         WCC::Contentful.init!
 
         # assert
-        asset = WCC::ContentfulModel::Asset.find('2zKTmej544IakmIqoEu0y8')
+        asset = WCC::Contentful::Model::Asset.find('2zKTmej544IakmIqoEu0y8')
         expect(asset).to_not be_nil
-        expect(asset).to be_a(WCC::ContentfulModel::Asset)
+        expect(asset).to be_a(WCC::Contentful::Model::Asset)
         expect(asset.file.fileName).to eq('favicon.ico')
       end
     end
@@ -162,9 +162,9 @@ RSpec.describe WCC::Contentful, :vcr do
         WCC::Contentful.init!
 
         # assert
-        expect(WCC::ContentfulModel.store).to be_a(WCC::Contentful::Store::CDNAdapter)
+        expect(WCC::Contentful::Model.store).to be_a(WCC::Contentful::Store::CDNAdapter)
 
-        page = WCC::ContentfulModel::Page.find('JhYhSfZPAOMqsaK8cYOUK')
+        page = WCC::Contentful::Model::Page.find('JhYhSfZPAOMqsaK8cYOUK')
         expect(page.title).to eq('Ministries')
       end
     end
@@ -176,7 +176,7 @@ RSpec.describe WCC::Contentful, :vcr do
       raw['items']
     }
     let(:models_dir) {
-      File.dirname(__FILE__) + '/../../lib/wcc/contentful_model'
+      File.dirname(__FILE__) + '/../../lib/wcc/contentful/model'
     }
 
     it 'validates successfully if all types present' do

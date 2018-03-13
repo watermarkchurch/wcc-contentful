@@ -10,7 +10,7 @@ require 'wcc/contentful/simple_client'
 require 'wcc/contentful/store'
 require 'wcc/contentful/content_type_indexer'
 require 'wcc/contentful/model_validators'
-require 'wcc/contentful_model'
+require 'wcc/contentful/model'
 require 'wcc/contentful/model_builder'
 
 module WCC
@@ -61,10 +61,10 @@ module WCC
           # TODO: enrich existing type data using Sync::Indexer
           store.index(item.dig('sys', 'id'), item)
         end
-        WCC::ContentfulModel.store = store
+        WCC::Contentful::Model.store = store
       when :direct
         store = Store::CDNAdapter.new(client)
-        WCC::ContentfulModel.store = store
+        WCC::Contentful::Model.store = store
       end
 
       WCC::Contentful::ModelBuilder.new(@types).build_models
@@ -76,14 +76,14 @@ module WCC
       end
 
       if defined?(Rails)
-        Dir[Rails.root.join('lib/wcc/contentful_model/**/*.rb')].each {|file| require file }
+        Dir[Rails.root.join('lib/wcc/contentful_model/**/*.rb')].each { |file| require file }
       end
     end
 
     def self.validate_models!
       schema =
         Dry::Validation.Schema do
-          WCC::ContentfulModel.all_models.each do |klass|
+          WCC::Contentful::Model.all_models.each do |klass|
             next unless klass.schema
             ct = klass.try(:content_type) || klass.name.demodulize.underscore
             required(ct).schema(klass.schema)

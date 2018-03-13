@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class WCC::ContentfulModel::MenuButton < WCC::ContentfulModel
+class WCC::Contentful::Model::MenuButton < WCC::Contentful::Model
   validate_field :title, :String, :required
   validate_field :external_link, :String, :optional
   validate_field :link, :optional, link_to: 'page'

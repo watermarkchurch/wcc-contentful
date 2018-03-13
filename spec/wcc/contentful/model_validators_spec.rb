@@ -6,7 +6,7 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
   }
 
   def base_class(content_type)
-    Class.new(WCC::ContentfulModel) do
+    Class.new(WCC::Contentful::Model) do
       define_singleton_method(:content_type) do
         content_type
       end
