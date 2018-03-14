@@ -64,6 +64,9 @@ class WCC::Contentful::Configuration
   attr_reader :management_client
 
   def configure_contentful
+    @client = nil
+    @management_client = nil
+    
     if defined?(::ContentfulModel)
       ContentfulModel.configure do |config|
         config.access_token = access_token

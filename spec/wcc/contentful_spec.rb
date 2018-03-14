@@ -148,6 +148,7 @@ RSpec.describe WCC::Contentful, :vcr do
     context 'content_delivery = direct' do
       before(:each) do
         WCC::Contentful.configure do |config|
+          config.management_token = contentful_management_token
           config.content_delivery = :direct
         end
       end
