@@ -13,7 +13,7 @@ module FixturesHelper
   end
 
   def load_store_from_sync(file_name: 'contentful/sync_initial.json', store: nil)
-    sync_initial = JSON.parse(load_fixture(file_name))
+    sync_initial = JSON.parse(load_fixture(file_name).gsub(/343qxys30lid/, contentful_space_id))
 
     store ||= WCC::Contentful::Store::MemoryStore.new
     sync_initial.each do |k, v|

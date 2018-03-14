@@ -254,7 +254,7 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
       expect(result.to_h['errors']).to be_nil
       expect(result.dig('data', 'homepage', 'heroImage', 'title')).to eq('worship')
       expect(result.dig('data', 'homepage', 'heroImage', 'file', 'url')).to eq(
-        '//images.contentful.com/343qxys30lid/' \
+        "//images.contentful.com/#{contentful_space_id}/" \
         '572YrsdGZGo0sw2Www2Si8/545f53511e362a78a8f34e1837868256/worship.jpg'
       )
       expect(result.dig('data', 'homepage', 'heroImage', 'file', 'contentType')).to eq('image/jpeg')
@@ -477,7 +477,7 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
       expect(result.to_h['errors']).to be_nil
       expect(result.dig('data', 'homepage', 'heroImage', 'title')).to eq('worship')
       expect(result.dig('data', 'homepage', 'heroImage', 'file', 'url')).to eq(
-        '//images.contentful.com/343qxys30lid/' \
+        "//images.contentful.com/#{contentful_space_id}/" \
         '572YrsdGZGo0sw2Www2Si8/545f53511e362a78a8f34e1837868256/worship.jpg'
       )
       expect(result.dig('data', 'homepage', 'heroImage', 'file', 'contentType')).to eq('image/jpeg')

@@ -5,8 +5,8 @@ RSpec.describe WCC::Contentful::Redirect, type: :model do
     before do
       VCR.use_cassette('models/wcc_contentful/content_types', record: :none) do
         WCC::Contentful.configure do |config|
-          config.access_token = ENV['CONTENTFUL_ACCESS_TOKEN'] || 'test1234'
-          config.space = ENV['CONTENTFUL_SPACE_ID'] || 'test1xab'
+          config.access_token = contentful_access_token
+          config.space = contentful_space_id
           config.default_locale = 'en-US'
         end
       end

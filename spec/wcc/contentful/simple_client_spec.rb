@@ -6,8 +6,8 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
   subject(:client) {
     WCC::Contentful::SimpleClient.new(
       api_url: 'https://cdn.contentful.com',
-      access_token: ENV['CONTENTFUL_ACCESS_TOKEN'] || 'test1234',
-      space: ENV['CONTENTFUL_SPACE_ID'] || 'test1xab'
+      access_token: contentful_access_token,
+      space: contentful_space_id
     )
   }
 
@@ -43,8 +43,8 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
     it 'follows redirects' do
       client = WCC::Contentful::SimpleClient.new(
         api_url: 'http://jtj.watermark.org',
-        access_token: ENV['CONTENTFUL_ACCESS_TOKEN'] || 'test1234',
-        space: ENV['CONTENTFUL_SPACE_ID'] || 'test1xab'
+        access_token: contentful_access_token,
+        space: contentful_space_id
       )
 
       # act
@@ -186,8 +186,8 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
   describe 'Cdn' do
     subject(:client) {
       WCC::Contentful::SimpleClient::Cdn.new(
-        access_token: ENV['CONTENTFUL_ACCESS_TOKEN'] || 'test1234',
-        space: ENV['CONTENTFUL_SPACE_ID'] || 'test1xab'
+        access_token: contentful_access_token,
+        space: contentful_space_id
       )
     }
 

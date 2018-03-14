@@ -58,7 +58,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     expect(main_menu.created_at).to eq(Time.parse('2018-02-12T20:09:38.819Z'))
     expect(main_menu.updated_at).to eq(Time.parse('2018-02-12T21:59:43.653Z'))
     expect(main_menu.revision).to eq(2)
-    expect(main_menu.space).to eq('343qxys30lid')
+    expect(main_menu.space).to eq(contentful_space_id)
 
     expect(main_menu.name).to eq('Main Menu')
   end
@@ -76,7 +76,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     expect(main_menu.created_at).to eq(Time.parse('2018-02-12T20:09:38.819Z'))
     expect(main_menu.updated_at).to eq(Time.parse('2018-02-12T21:59:43.653Z'))
     expect(main_menu.revision).to eq(2)
-    expect(main_menu.space).to eq('343qxys30lid')
+    expect(main_menu.space).to eq(contentful_space_id)
 
     expect(main_menu.name).to eq('Main Menu')
   end
@@ -252,7 +252,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     expect(homepage.hero_image).to be_instance_of(WCC::Contentful::Model::Asset)
     expect(homepage.hero_image.file).to be_a(OpenStruct)
     expect(homepage.hero_image.title).to eq('worship')
-    expect(homepage.hero_image.file['url']).to eq('//images.contentful.com/343qxys30lid/' \
+    expect(homepage.hero_image.file['url']).to eq("//images.contentful.com/#{contentful_space_id}/" \
       '572YrsdGZGo0sw2Www2Si8/545f53511e362a78a8f34e1837868256/worship.jpg')
     expect(homepage.hero_image.file['contentType']).to eq('image/jpeg')
 

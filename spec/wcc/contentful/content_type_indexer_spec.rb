@@ -119,9 +119,9 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
     before do
       VCR.use_cassette('models/wcc_contentful/content_types', record: :none) do
         WCC::Contentful.configure do |config|
-          config.access_token = ENV['CONTENTFUL_ACCESS_TOKEN'] || 'test1234'
-          config.space = ENV['CONTENTFUL_SPACE_ID'] || 'test1xab'
-          config.management_token = ENV['CONTENTFUL_MANAGEMENT_TOKEN'] || 'CFPAT-xxxx'
+          config.access_token = contentful_access_token
+          config.space = contentful_space_id
+          config.management_token = contentful_management_token
           config.default_locale = 'en-US'
         end
       end
@@ -192,9 +192,9 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
   context 'index from contentful.rb CDN' do
     before do
       WCC::Contentful.configure do |config|
-        config.access_token = ENV['CONTENTFUL_ACCESS_TOKEN'] || 'test1234'
-        config.space = ENV['CONTENTFUL_SPACE_ID'] || 'test1xab'
-        config.management_token = ENV['CONTENTFUL_MANAGEMENT_TOKEN'] || 'CFPAT-xxxx'
+        config.access_token = contentful_access_token
+        config.space = contentful_space_id
+        config.management_token = contentful_management_token
         config.default_locale = 'en-US'
       end
     end

@@ -5,8 +5,8 @@ RSpec.describe WCC::Contentful, :vcr do
     expect(WCC::Contentful::VERSION).not_to be nil
   end
 
-  let(:valid_contentful_access_token) { ENV['CONTENTFUL_ACCESS_TOKEN'] || 'test1234' }
-  let(:valid_contentful_space_id) { ENV['CONTENTFUL_SPACE_ID'] || 'test1xab' }
+  let(:valid_contentful_access_token) { contentful_access_token }
+  let(:valid_contentful_space_id) { contentful_space_id }
   let(:valid_contentful_default_locale) { 'en-US' }
 
   before do
