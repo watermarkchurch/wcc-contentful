@@ -66,7 +66,7 @@ class WCC::Contentful::Configuration
   def configure_contentful
     @client = nil
     @management_client = nil
-    
+
     if defined?(::ContentfulModel)
       ContentfulModel.configure do |config|
         config.access_token = access_token
