@@ -91,6 +91,11 @@ module WCC::Contentful
         resp.assert_ok!
       end
 
+      def assets(query = {})
+        resp = get('assets', query)
+        resp.assert_ok!
+      end
+
       def content_types(query = {})
         resp = get('content_types', query)
         resp.assert_ok!

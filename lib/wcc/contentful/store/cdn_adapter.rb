@@ -30,13 +30,11 @@ module WCC::Contentful::Store
       delegate :count, to: :resolve
 
       def first
-        resolve.first
+        resolve.items.first
       end
 
-      def map
-        resolve.map do |entry|
-          yield entry
-        end
+      def map(&block)
+        resolve.items.map(&block)
       end
 
       def result
@@ -67,7 +65,14 @@ module WCC::Contentful::Store
 
       def resolve
         return @resolved if @resolved
-        @client.entries({ locale: '*' }.merge!(@relation))
+        @resolved ||=
+          if @relation[:content_type] == 'Asset'
+            @client.assets(
+              { locale: '*' }.merge!(@relation.reject { |k| k == :content_type })
+            )
+          else
+            @client.entries({ locale: '*' }.merge!(@relation))
+          end
       end
     end
   end

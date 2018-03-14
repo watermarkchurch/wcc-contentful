@@ -104,6 +104,24 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
     )
   end
 
+  it 'find_by finds assets' do
+    # act
+    found = adapter.find_by(content_type: 'Asset')
+
+    # assert
+    expect(found.count).to eq(6)
+    expect(found.map { |i| i.dig('fields', 'title', 'en-US') }.sort).to eq(
+      [
+        'apple-touch-icon',
+        'favicon',
+        'favicon-16x16',
+        'favicon-32x32',
+        'goat-clip-art',
+        'worship'
+      ]
+    )
+  end
+
   it 'filter query eq can find value' do
     # act
     found = adapter.find_by(content_type: 'page')

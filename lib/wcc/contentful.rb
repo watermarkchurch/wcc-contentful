@@ -44,7 +44,7 @@ module WCC::Contentful
       else
         configuration.client.content_types(limit: 1000)
       end
-    @content_types = content_types_resp.all
+    @content_types = content_types_resp.items
 
     indexer =
       ContentTypeIndexer.new.tap do |ixr|
@@ -56,7 +56,7 @@ module WCC::Contentful
     when :eager_sync
       store = configuration.sync_store
 
-      client.sync(initial: true).each_item do |item|
+      client.sync(initial: true).items.each do |item|
         # TODO: enrich existing type data using Sync::Indexer
         store.index(item.dig('sys', 'id'), item)
       end

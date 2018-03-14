@@ -35,49 +35,45 @@ class WCC::Contentful::SimpleClient
       raise ApiError self
     end
 
-    def each_page
+    def each_page(&block)
       raise ArgumentError, 'Not a collection response' unless raw['items']
 
-      pages = []
-      current_page = self
-      loop do
-        pages << if block_given?
-                   yield(current_page)
-                 else
-                   current_page
-                 end
-
-        skip_amt = current_page.raw['items'].length + current_page.raw['skip']
-        break if current_page.raw['items'].empty? || skip_amt >= current_page.raw['total']
-
-        current_page = @client.get(
-          @request[:url],
-          (@request[:query] || {}).merge({ skip: skip_amt })
-        )
-        current_page.assert_ok!
-      end
-      pages
-    end
-
-    def map
-      raise ArgumentError, 'No block given' unless block_given?
-
+      memoized_pages = (@memoized_pages ||= [self])
       ret =
-        each_page do |page|
-          page.raw['items'].map do |i|
-            yield(i)
+        Enumerator.new do |y|
+          page_index = 0
+          current_page = self
+          loop do
+            y << current_page
+
+            skip_amt = current_page.raw['items'].length + current_page.raw['skip']
+            break if current_page.raw['items'].empty? || skip_amt >= current_page.raw['total']
+
+            page_index += 1
+            if page_index < memoized_pages.length
+              current_page = memoized_pages[page_index]
+            else
+              current_page = @client.get(
+                @request[:url],
+                (@request[:query] || {}).merge({ skip: skip_amt })
+              )
+              current_page.assert_ok!
+              memoized_pages.push(current_page)
+            end
           end
         end
-      ret.flatten
+
+      if block_given?
+        ret.map(&block)
+      else
+        ret.lazy
+      end
     end
 
-    def each_item(&block)
-      map(&block)
-      nil
-    end
-
-    def all
-      map { |i| i }
+    def items
+      each_page.flat_map do |page|
+        page.raw['items']
+      end
     end
 
     def count
@@ -102,22 +98,33 @@ class WCC::Contentful::SimpleClient
     def each_page
       raise ArgumentError, 'Not a collection response' unless raw['items']
 
-      pages = []
-      current_page = self
-      loop do
-        pages << if block_given?
-                   yield(current_page)
-                 else
-                   current_page
-                 end
+      memoized_pages = (@memoized_pages ||= [self])
+      ret =
+        Enumerator.new do |y|
+          page_index = 0
+          current_page = self
+          loop do
+            y << current_page
 
-        break if current_page.raw['items'].empty?
+            break if current_page.raw['items'].empty?
 
-        current_page = @client.get(raw['nextSyncUrl'])
-        current_page.assert_ok!
-        @next_sync_token = SyncResponse.parse_sync_token(current_page.raw['nextSyncUrl'])
+            page_index += 1
+            if page_index < memoized_pages.length
+              current_page = memoized_pages[page_index]
+            else
+              current_page = @client.get(raw['nextSyncUrl'])
+              current_page.assert_ok!
+              @next_sync_token = SyncResponse.parse_sync_token(current_page.raw['nextSyncUrl'])
+              memoized_pages.push(current_page)
+            end
+          end
+        end
+
+      if block_given?
+        ret.map(&block)
+      else
+        ret.lazy
       end
-      pages
     end
 
     def count

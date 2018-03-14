@@ -3,6 +3,7 @@
 require 'bundler/setup'
 require 'dotenv/load'
 require 'wcc/contentful'
+require 'webmock/rspec'
 require 'vcr'
 require 'httplog'
 

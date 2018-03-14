@@ -1,0 +1,436 @@
+{
+  "sys": {
+    "type": "Array"
+  },
+  "total": 16,
+  "skip": 0,
+  "limit": 5,
+  "items": [
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "<CONTENTFUL_SPACE_ID>"
+          }
+        },
+        "id": "homepage",
+        "type": "ContentType",
+        "createdAt": "2018-02-12T18:34:24.038Z",
+        "updatedAt": "2018-03-05T15:18:09.821Z",
+        "revision": 8
+      },
+      "displayField": "siteTitle",
+      "name": "Homepage",
+      "description": "The Homepage is a special page - it contains some fields like the Top Menu and Site Footer which are set on all other Pages.  This page is visible at the root of watermarkresources.org",
+      "fields": [
+        {
+          "id": "siteTitle",
+          "name": "Site Title",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "favicons",
+          "name": "Favicons",
+          "type": "Array",
+          "localized": false,
+          "required": true,
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Link",
+            "validations": [
+              {
+                "linkMimetypeGroup": [
+                  "image"
+                ]
+              },
+              {
+                "assetFileSize": {
+                  "max": 1024
+                },
+                "message": "Favicons are supposed to be small.  Please use an image less than 100kb in size."
+              }
+            ],
+            "linkType": "Asset"
+          }
+        },
+        {
+          "id": "mainMenu",
+          "name": "Main Menu",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        },
+        {
+          "id": "heroImage",
+          "name": "Hero Image",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Asset"
+        },
+        {
+          "id": "heroText",
+          "name": "Hero Text",
+          "type": "Text",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "heroButtons",
+          "name": "Hero Buttons",
+          "type": "Array",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Link",
+            "validations": [
+              {
+                "linkContentType": [
+                  "menuItem"
+                ]
+              }
+            ],
+            "linkType": "Entry"
+          }
+        },
+        {
+          "id": "callToAction",
+          "name": "Call To Action",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        },
+        {
+          "id": "sections",
+          "name": "Sections",
+          "type": "Array",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Link",
+            "validations": [
+              {
+                "linkContentType": [
+                  "section-CardSearch",
+                  "section-Faq",
+                  "section-Testimonials",
+                  "section-VideoHighlight"
+                ]
+              }
+            ],
+            "linkType": "Entry"
+          }
+        },
+        {
+          "id": "siteFooter",
+          "name": "Site Footer",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "<CONTENTFUL_SPACE_ID>"
+          }
+        },
+        "id": "migrationHistory",
+        "type": "ContentType",
+        "createdAt": "2018-02-22T21:12:45.149Z",
+        "updatedAt": "2018-02-22T21:12:45.149Z",
+        "revision": 1
+      },
+      "displayField": "migrationName",
+      "name": "Migration History",
+      "description": "System Type - Do Not Modify",
+      "fields": [
+        {
+          "id": "migrationName",
+          "name": "Migration Name",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "started",
+          "name": "Started",
+          "type": "Date",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "completed",
+          "name": "Completed",
+          "type": "Date",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "detail",
+          "name": "Detail",
+          "type": "Object",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "<CONTENTFUL_SPACE_ID>"
+          }
+        },
+        "id": "page",
+        "type": "ContentType",
+        "createdAt": "2018-02-12T17:30:48.889Z",
+        "updatedAt": "2018-03-01T22:08:21.619Z",
+        "revision": 4
+      },
+      "displayField": "title",
+      "name": "Page",
+      "description": "Represents one page on the site.  \n\nThere is a Homepage, a Ministry Gallery, one page per ministry, and a variety of other pages.",
+      "fields": [
+        {
+          "id": "title",
+          "name": "Title",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "slug",
+          "name": "Slug",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "heroImage",
+          "name": "Hero Image",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Asset"
+        },
+        {
+          "id": "heroText",
+          "name": "Hero Text",
+          "type": "Text",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "callToAction",
+          "name": "Call To Action",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        },
+        {
+          "id": "subMenu",
+          "name": "SubMenu",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        },
+        {
+          "id": "sections",
+          "name": "Sections",
+          "type": "Array",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Link",
+            "validations": [
+              {
+                "linkContentType": [
+                  "section-CardSearch",
+                  "section-Faq",
+                  "section-Testimonials",
+                  "section-VideoHighlight"
+                ]
+              }
+            ],
+            "linkType": "Entry"
+          }
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "<CONTENTFUL_SPACE_ID>"
+          }
+        },
+        "id": "section-CardSearch",
+        "type": "ContentType",
+        "createdAt": "2018-02-13T22:17:50.643Z",
+        "updatedAt": "2018-02-14T18:30:14.695Z",
+        "revision": 2
+      },
+      "displayField": "name",
+      "name": "Section: Card Search",
+      "description": "A group of cards & search functionality for those cards",
+      "fields": [
+        {
+          "id": "name",
+          "name": "name",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "cards",
+          "name": "Cards",
+          "type": "Array",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Link",
+            "validations": [],
+            "linkType": "Entry"
+          }
+        },
+        {
+          "id": "theme",
+          "name": "Theme",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "<CONTENTFUL_SPACE_ID>"
+          }
+        },
+        "id": "ministry",
+        "type": "ContentType",
+        "createdAt": "2018-02-12T17:23:03.968Z",
+        "updatedAt": "2018-02-12T17:23:03.968Z",
+        "revision": 1
+      },
+      "displayField": "name",
+      "name": "Ministry",
+      "description": "Represents a ministry shown on the Ministry Gallery page.",
+      "fields": [
+        {
+          "id": "name",
+          "name": "Name",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "cardImage",
+          "name": "Card Image",
+          "type": "Link",
+          "localized": false,
+          "required": true,
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Asset"
+        },
+        {
+          "id": "audiences",
+          "name": "audiences",
+          "type": "Array",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Symbol",
+            "validations": []
+          }
+        },
+        {
+          "id": "categories",
+          "name": "Categories",
+          "type": "Array",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Symbol",
+            "validations": []
+          }
+        }
+      ]
+    }
+  ]
+}
