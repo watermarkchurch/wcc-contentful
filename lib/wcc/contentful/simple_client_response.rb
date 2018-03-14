@@ -14,7 +14,7 @@ class WCC::Contentful::SimpleClient
     end
 
     def raw
-      @json ||= JSON.parse(body)
+      @raw ||= JSON.parse(body)
     end
     alias_method :to_json, :raw
 
@@ -31,8 +31,7 @@ class WCC::Contentful::SimpleClient
 
     def assert_ok!
       return self if code >= 200 && code < 300
-      raise Contentful::Error[code], self if defined?(Contentful)
-      raise ApiError self
+      raise ApiError[code], self
     end
 
     def each_page(&block)
@@ -136,5 +135,26 @@ class WCC::Contentful::SimpleClient
       q = CGI.parse(url.query)
       q['sync_token']&.first
     end
+  end
+
+  class ApiError < StandardError
+    attr_reader :response
+
+    def self.[](code)
+      case code
+      when 404
+        NotFoundError
+      else
+        ApiError
+      end
+    end
+
+    def initialize(response)
+      @response = response
+      super(response.error_message)
+    end
+  end
+
+  class NotFoundError < ApiError
   end
 end

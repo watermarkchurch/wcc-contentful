@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-lib = File.expand_path('../lib', __FILE__)
+lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'wcc/contentful/version'
 
@@ -45,11 +45,11 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'timecop', '~> 0.9.1'
 
   # optional dependencies
-  spec.add_development_dependency 'contentful_model', '~> 0.2.0'
+  spec.add_development_dependency 'contentful', '>= 0.12.0'
+  spec.add_development_dependency 'contentful-management', '>= 1.10.0'
   spec.add_development_dependency 'pg', '~> 1.0'
 
   spec.add_dependency 'activesupport', '>= 5'
-  spec.add_dependency 'contentful', '>= 0.12.0'
   spec.add_dependency 'dry-validation', '~> 0.11.1'
   spec.add_dependency 'graphql', '~> 1.7'
 end

@@ -7,7 +7,8 @@ RSpec.describe WCC::Contentful::Store::PostgresStore do
 
   before :each do
     begin
-      conn = PG.connect(ENV['POSTGRES_CONNECTION'] || { dbname: 'contentful' })
+      puts "postgres connection: #{ENV['POSTGRES_CONNECTION']}"
+      conn = PG.connect(ENV['POSTGRES_CONNECTION'] || { dbname: 'postgres' })
 
       conn.exec('DROP TABLE IF EXISTS contentful_raw')
     ensure

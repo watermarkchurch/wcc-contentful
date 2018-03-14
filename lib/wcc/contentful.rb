@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 require 'wcc/contentful/version'
-require 'wcc/contentful/configuration'
-require 'contentful_model'
 
+require 'active_support'
+require 'active_support/core_ext/object'
+
+require 'wcc/contentful/configuration'
 require 'wcc/contentful/exceptions'
 require 'wcc/contentful/helpers'
 require 'wcc/contentful/simple_client'
@@ -70,7 +72,7 @@ module WCC::Contentful
 
     # Extend all model types w/ validation & extra fields
     @types.each_value do |t|
-      file = File.dirname(__FILE__) + "/contentful_model/#{t.name.underscore}.rb"
+      file = File.dirname(__FILE__) + "/contentful/model/#{t.name.underscore}.rb"
       require file if File.exist?(file)
     end
 
@@ -95,7 +97,5 @@ module WCC::Contentful
     raise WCC::Contentful::ValidationError, errors.errors unless errors.success?
   end
 end
-
-require 'wcc/contentful/redirect'
 
 require 'wcc/contentful/graphql'

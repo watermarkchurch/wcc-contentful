@@ -16,12 +16,12 @@ module WCC::Contentful
 
     private
 
-    def build_model(t)
-      const = t.name
+    def build_model(typedef)
+      const = typedef.name
       return WCC::Contentful::Model.const_get(const) if WCC::Contentful::Model.const_defined?(const)
 
       # TODO: https://github.com/dkubb/ice_nine ?
-      typedef = t.deep_dup.freeze
+      typedef = typedef.deep_dup.freeze
       fields = typedef.fields.keys
       WCC::Contentful::Model.const_set(const,
         Class.new(WCC::Contentful::Model) do

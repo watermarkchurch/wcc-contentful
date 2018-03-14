@@ -16,8 +16,7 @@ module WCC::Contentful
 
     def index(content_type)
       content_type =
-        if content_type.is_a?(Contentful::ContentType) ||
-            content_type.is_a?(Contentful::Management::ContentType)
+        if content_type.respond_to?(:fields)
           create_type(content_type.id, content_type.fields)
         else
           create_type(content_type.dig('sys', 'id'), content_type['fields'])

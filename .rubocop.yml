@@ -68,10 +68,6 @@ Metrics/ModuleLength:
   Exclude:
    - 'spec/**/*.rb'
 
-Performance/HashEachMethods:
-  Exclude:
-    - 'spec/**/*.rb'
-
 Performance/UnfreezeString:
   Exclude:
     - 'spec/**/*.rb'
@@ -152,10 +148,6 @@ Layout/MultilineAssignmentLayout:
   Description: 'Check for a newline after the assignment operator in multi-line assignments.'
   StyleGuide: '#indent-conditional-assignment'
   Enabled: true
-
-Lint/UnneededDisable:
-  Exclude:
-    - 'spec/fixtures/**/*'
 
 Lint/MissingCopEnableDirective:
   Exclude:

@@ -73,13 +73,13 @@ module WCC::Contentful::Graphql
       end
     end
 
-    def build_schema_type(v)
+    def build_schema_type(typedef)
       store = @store
       builder = self
-      content_type = v.content_type
+      content_type = typedef.content_type
 
       GraphQL::ObjectType.define do
-        name(v.name)
+        name(typedef.name)
 
         description("Generated from content type #{content_type}")
 
@@ -96,7 +96,7 @@ module WCC::Contentful::Graphql
         end
 
         # Make a field for each column:
-        v.fields.each_value do |f|
+        typedef.fields.each_value do |f|
           case f.type
           when :Asset
             field(f.name.to_sym, -> {
@@ -125,7 +125,7 @@ module WCC::Contentful::Graphql
                   builder.schema_types[f.link_types.first]
                 else
                   from_types = builder.schema_types.select { |key| f.link_types.include?(key) }
-                  name = "#{v.name}_#{f.name}"
+                  name = "#{typedef.name}_#{f.name}"
                   builder.schema_types[name] ||= Types::BuildUnionType.call(from_types, name)
                 end
               type = type.to_list_type if f.array

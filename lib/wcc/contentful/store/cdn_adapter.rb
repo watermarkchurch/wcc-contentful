@@ -12,7 +12,7 @@ module WCC::Contentful::Store
       entry =
         begin
           client.entry(key, locale: '*')
-        rescue Contentful::NotFound
+        rescue WCC::Contentful::SimpleClient::NotFoundError
           client.asset(key, locale: '*')
         end
       entry&.raw
@@ -64,8 +64,8 @@ module WCC::Contentful::Store
       private
 
       def resolve
-        return @resolved if @resolved
-        @resolved ||=
+        return @resolve if @resolve
+        @resolve ||=
           if @relation[:content_type] == 'Asset'
             @client.assets(
               { locale: '*' }.merge!(@relation.reject { |k| k == :content_type })

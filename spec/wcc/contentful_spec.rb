@@ -51,24 +51,10 @@ RSpec.describe WCC::Contentful, :vcr do
         expect(config.nil?).to eq(false)
       end
 
-      it 'should return a ContentfulModel config object populated with the valid values given' do
-        contentful_model_config = ContentfulModel.configuration
-
-        expect(contentful_model_config.access_token).to eq(valid_contentful_access_token)
-        expect(contentful_model_config.space).to eq(valid_contentful_space_id)
-        expect(contentful_model_config.default_locale).to eq(valid_contentful_default_locale)
-        expect(contentful_model_config.nil?).to eq(false)
-      end
-
       it 'should set the Contentful client on the WCC::Contentful module' do
         client = WCC::Contentful.client
 
         expect(client).to be_a(WCC::Contentful::SimpleClient)
-      end
-
-      it 'should allow you to fetch a Redirect object from Contentful' do
-        response = WCC::Contentful::Redirect.find_by_slug('redirect-with-slug-and-url')
-        expect(response.nil?).to eq(false)
       end
     end
 
@@ -98,7 +84,16 @@ RSpec.describe WCC::Contentful, :vcr do
     end
 
     context 'without management token' do
-      it 'should populate models via Contentful::Model cache' do
+      before(:each) do
+        WCC::Contentful.configure do |config|
+          config.access_token = valid_contentful_access_token
+          config.space = valid_contentful_space_id
+          config.management_token = nil
+          config.default_locale = nil
+        end
+      end
+
+      it 'should populate models via CDN client' do
         # act
         WCC::Contentful.init!
 
@@ -124,7 +119,7 @@ RSpec.describe WCC::Contentful, :vcr do
     context 'with management token' do
       before(:each) do
         WCC::Contentful.configure do |config|
-          config.management_token = ENV['CONTENTFUL_MANAGEMENT_TOKEN'] || 'CFPAT-xxxx'
+          config.management_token = contentful_management_token
           config.default_locale = nil
         end
       end

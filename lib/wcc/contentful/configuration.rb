@@ -23,7 +23,7 @@ class WCC::Contentful::Configuration
     memory: ->(_config) { WCC::Contentful::Store::MemoryStore.new },
     postgres: ->(_config) {
       require_relative 'store/postgres_store'
-      WCC::Contentful::Store::PostgresStore.new
+      WCC::Contentful::Store::PostgresStore.new(ENV['POSTGRES_CONNECTION'])
     }
   }.freeze
 
