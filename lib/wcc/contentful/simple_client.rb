@@ -2,7 +2,7 @@
 
 require 'http'
 
-require_relative 'simple_client_response'
+require_relative 'simple_client/response'
 
 module WCC::Contentful
   class SimpleClient
