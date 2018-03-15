@@ -37,7 +37,7 @@ module WCC::Contentful
   end
 
   def self.init!
-    raise ArgumentError, 'Please first call WCC:Contentful.Configure!' if configuration.nil?
+    raise ArgumentError, 'Please first call WCC:Contentful.configure' if configuration.nil?
 
     # we want as much as possible the raw JSON from the API
     content_types_resp =
