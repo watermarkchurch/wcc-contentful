@@ -10,6 +10,8 @@ class WCC::Contentful::Configuration
     default_locale
     content_delivery
     override_get_http
+    webhook_username
+    webhook_password
   ].freeze
   attr_accessor(*ATTRIBUTES)
 

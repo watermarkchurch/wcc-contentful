@@ -78,6 +78,9 @@ module WCC::Contentful
 
     return unless defined?(Rails)
     Dir[Rails.root.join('lib/wcc/contentful/model/**/*.rb')].each { |file| require file }
+
+    # load up the engine so it gets automatically mounted
+    require 'wcc/contentful/engine'
   end
 
   def self.validate_models!
