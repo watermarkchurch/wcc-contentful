@@ -14,11 +14,35 @@ module WCC::Contentful::ModelValidators
   class FieldDsl
     attr_reader :field
 
+    # "sections": {
+    #   "id": "sections",
+    #   "name": "Sections",
+    #   "type": "Array",
+    #   "localized": false,
+    #   "required": false,
+    #   "validations": [],
+    #   "disabled": false,
+    #   "omitted": false,
+    #   "items": {
+    #     "type": "Link",
+    #     "validations": [
+    #       {
+    #         "linkContentType": [
+    #           "Section"
+    #         ]
+    #       }
+    #     ],
+    #     "linkType": "Entry"
+    #   }
+    # }
+
     def schema
       return @field_schema if @field_schema
 
+      # example: required('type').value(...)
       type_pred = parse_type_predicate(@type)
 
+      # example: [required('required').value(eq?: true), ...]
       procs =
         @options.map do |opt|
           if opt.is_a?(Hash)
@@ -101,11 +125,26 @@ module WCC::Contentful::ModelValidators
       raise ArgumentError, 'validation link_to: requires an argument' unless option_arg
 
       # this works because a Link can only have one validation in its "validations" array -
-      # this will fail if Contentful ever changes that
+      # this will fail if Contentful ever changes that.
+
+      # the 'validations' schema needs to be optional because if we get the content
+      # types from the CDN instead of the management API, sometimes the validations
+      # don't get sent back.
+
+      # "validations": [
+      #   {
+      #     "linkContentType": [
+      #       "section-CardSearch",
+      #       "section-Faq",
+      #       "section-Testimonials",
+      #       "section-VideoHighlight"
+      #     ]
+      #   }
+      # ]
 
       if option_arg.is_a?(Regexp)
         return proc {
-          required('validations').each do
+          optional('validations').each do
             schema do
               required('linkContentType').each(format?: option_arg)
             end
@@ -115,7 +154,7 @@ module WCC::Contentful::ModelValidators
 
       option_arg = [option_arg] unless option_arg.is_a?(Array)
       proc {
-        required('validations').each do
+        optional('validations').each do
           schema do
             required('linkContentType').value(eql?: option_arg)
           end

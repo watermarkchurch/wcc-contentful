@@ -409,4 +409,38 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
       )
     end
   end
+
+  context 'when schema is from CDN not management API' do
+    let(:content_types) {
+      JSON.parse(load_fixture('contentful/content_types_cdn.json'))
+    }
+
+    it 'does not fail for single element link type validation because we dont have the info' do
+      my_class =
+        Class.new(base_class('menuButton')) do
+          validate_field :link, :Link, :optional, link_to: 'wakka wakka'
+        end
+
+      # act
+      result = run_validation(my_class)
+
+      # assert
+      expect(result).to be_success
+    end
+
+    it 'fails for mismatched array link content type because we have that info' do
+      my_class =
+        Class.new(base_class('section-Testimonials')) do
+          validate_field :testimonials, :Array, link_to: 'asdf'
+        end
+
+      # act
+      result = run_validation(my_class)
+
+      # assert
+      expect(result).to_not be_success
+      expect(result.errors.dig('section-Testimonials', 'fields', 'testimonials'))
+        .to_not be_empty
+    end
+  end
 end

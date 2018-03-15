@@ -8,6 +8,16 @@ module WCC::Contentful::ModelValidators
   def schema
     return if @field_validations.nil? || @field_validations.empty?
     field_validations = @field_validations
+
+    # "page": {
+    #   "sys": { ... }
+    #   "fields": {
+    #     "title": { ... },
+    #     "sections": { ... },
+    #     ...
+    #   }
+    # }
+
     fields_schema =
       Dry::Validation.Schema do
         # Had to dig through the internals of Dry::Validation to find
@@ -21,7 +31,7 @@ module WCC::Contentful::ModelValidators
   end
 
   def validate_fields(&block)
-    raise ArgumentError, 'validate_type requires a block' unless block_given?
+    raise ArgumentError, 'validate_fields requires a block' unless block_given?
     dsl = ProcDsl.new(Proc.new(&block))
 
     (@field_validations ||= []) << dsl
