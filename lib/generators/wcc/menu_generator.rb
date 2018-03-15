@@ -6,7 +6,7 @@ module Wcc
 
     def create_menus_migration
       now = Time.now.strftime('%Y%m%d%H%M')
-      copy_file 'generated_add_menus.ts',
+      copy_file 'menu/generated_add_menus.ts',
         "db/migrate/#{now}01_generated_add_menus.ts"
     end
 
@@ -23,7 +23,9 @@ module Wcc
     end
 
     def ensure_wrapper_script_in_bin_dir
-      copy_file 'contentful', 'bin/contentful' unless inside('bin') { File.exist?('contentful') }
+      unless inside('bin') { File.exist?('contentful') }
+        copy_file 'contentful_shell_wrapper', 'bin/contentful'
+      end
 
       if inside('bin') { File.exist?('release') }
         release = inside('bin') { File.read('release') }
@@ -58,8 +60,8 @@ module Wcc
     end
 
     def drop_model_overrides_in_lib_dir
-      copy_file 'menu.rb', 'lib/wcc/contentful/model/menu.rb'
-      copy_file 'menu_button.rb', 'lib/wcc/contentful/model/menu_button.rb'
+      copy_file 'menu/menu.rb', 'lib/wcc/contentful/model/menu.rb'
+      copy_file 'menu/menu_button.rb', 'lib/wcc/contentful/model/menu_button.rb'
     end
   end
 end

@@ -3,6 +3,6 @@
 class WCC::Contentful::Model::Menu < WCC::Contentful::Model
   validate_field :name, :String
   validate_field :icon, :Asset, :optional
-  validate_field :rootButton, :Link, :optional, link_to: 'menuButton'
+  validate_field :root_button, :Link, :optional, link_to: 'menuButton'
   validate_field :buttons, :Array, link_to: %w[menu menuButton]
 end
