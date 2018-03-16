@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'wcc/contentful/graphql'
+
 RSpec.describe WCC::Contentful::Graphql::Builder do
   subject {
     WCC::Contentful::Graphql::Builder.new(types, store)

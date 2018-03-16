@@ -96,6 +96,10 @@ module WCC::Contentful
     errors = schema.call(content_types)
     raise WCC::Contentful::ValidationError, errors.errors unless errors.success?
   end
-end
 
-require 'wcc/contentful/graphql'
+  # TODO: https://zube.io/watermarkchurch/development/c/2234 init graphql
+  # def self.init_graphql!
+  #   require 'wcc/contentful/graphql'
+  #   etc...
+  # end
+end
