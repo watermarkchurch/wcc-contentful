@@ -1,0 +1,163 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/content_types?limit=1000
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - RubyContentfulGem/0.12.0
+      Authorization:
+      - Bearer <CONTENTFUL_ACCESS_TOKEN>
+      Content-Type:
+      - application/vnd.contentful.delivery.v1+json
+      Accept-Encoding:
+      - gzip
+      Connection:
+      - close
+      Host:
+      - cdn.contentful.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Access-Control-Allow-Headers:
+      - Accept,Accept-Language,Authorization,Cache-Control,Content-Length,Content-Range,Content-Type,DNT,Destination,Expires,If-Match,If-Modified-Since,If-None-Match,Keep-Alive,Last-Modified,Origin,Pragma,Range,User-Agent,X-Http-Method-Override,X-Mx-ReqToken,X-Requested-With,X-Contentful-Version,X-Contentful-Content-Type,X-Contentful-Organization,X-Contentful-Skip-Transformation,X-Contentful-User-Agent,X-Contentful-Enable-Alpha-Feature
+      Access-Control-Allow-Methods:
+      - GET,HEAD,OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Etag
+      Access-Control-Max-Age:
+      - '86400'
+      Cache-Control:
+      - max-age=0
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/vnd.contentful.delivery.v1+json
+      Etag:
+      - W/"42959fd41e67f6794a9d862ad1e03b8a"
+      Server:
+      - Contentful
+      X-Content-Type-Options:
+      - nosniff
+      X-Contentful-Request-Id:
+      - 317a6626f5b2b1c8a8ae56d4a4a6c629
+      Content-Length:
+      - '3819'
+      Accept-Ranges:
+      - bytes
+      Date:
+      - Mon, 12 Mar 2018 14:09:45 GMT
+      Via:
+      - 1.1 varnish
+      Age:
+      - '0'
+      Connection:
+      - close
+      X-Served-By:
+      - cache-dfw18642-DFW
+      X-Cache:
+      - MISS
+      X-Cache-Hits:
+      - '0'
+      X-Timer:
+      - S1520863786.656042,VS0,VE177
+      Vary:
+      - Accept-Encoding
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        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
+    http_version: 
+  recorded_at: Mon, 12 Mar 2018 14:09:42 GMT
+recorded_with: VCR 4.0.0

@@ -1,0 +1,122 @@
+Run options: include {:bench=>true}
+
+graphql querying
+  with MemoryStore
+                                          user     system      total        real
+340 entries - 1000 iterations         1.130000   0.020000   1.150000 (  1.153603)
+340 entries - 10000 iterations       12.400000   0.130000  12.530000 ( 12.668827)
+340 entries - 100000 iterations     110.250000   0.810000 111.060000 (111.136773)
+3400 entries - 1000 iterations        1.050000   0.010000   1.060000 (  1.053825)
+3400 entries - 10000 iterations      10.530000   0.070000  10.600000 ( 10.604549)
+3400 entries - 100000 iterations    104.940000   0.700000 105.640000 (105.671796)
+34000 entries - 1000 iterations       1.330000   0.000000   1.330000 (  1.336823)
+34000 entries - 10000 iterations     10.740000   0.050000  10.790000 ( 10.789361)
+34000 entries - 100000 iterations   108.200000   0.470000 108.670000 (108.688345)
+>avg:                                 0.001123   0.000008   0.001132 (  0.001134)
+    bench find by id
+                                          user     system      total        real
+340 entries - 1000 iterations         2.240000   0.010000   2.250000 (  2.252122)
+340 entries - 10000 iterations       22.080000   0.090000  22.170000 ( 22.174086)
+340 entries - 100000 iterations     220.670000   0.890000 221.560000 (221.614678)
+3400 entries - 1000 iterations        5.390000   0.030000   5.420000 (  5.431906)
+3400 entries - 10000 iterations      51.850000   0.200000  52.050000 ( 52.062824)
+3400 entries - 100000 iterations    501.180000   1.870000 503.050000 (503.188627)
+34000 entries - 1000 iterations      46.900000   0.150000  47.050000 ( 47.064425)
+34000 entries - 10000 iterations    458.990000   0.920000 459.910000 (460.061651)
+>avg:                                 0.014380   0.000042   0.014422 (  0.014428)
+    bench Homepage expand 15 links
+                                          user     system      total        real
+340 entries - 1000 iterations         2.620000   0.020000   2.640000 (  2.641710)
+340 entries - 10000 iterations       26.140000   0.170000  26.310000 ( 26.324913)
+340 entries - 100000 iterations     256.250000   1.950000 258.200000 (258.280081)
+3400 entries - 1000 iterations       19.250000   0.140000  19.390000 ( 19.388946)
+3400 entries - 10000 iterations     187.330000   1.060000 188.390000 (188.448429)
+34000 entries - 1000 iterations     190.100000   0.800000 190.900000 (190.972041)
+>avg:                                 0.039313   0.000184   0.039497 (  0.039510)
+    bench find with filter (find_by equivalend)
+  with postgres store
+                                          user     system      total        real
+340 entries - 1000 iterations         1.110000   0.010000   1.120000 (  1.196909)
+340 entries - 10000 iterations       11.710000   0.160000  11.870000 ( 12.596949)
+340 entries - 100000 iterations     115.330000   1.460000 116.790000 (123.867412)
+3400 entries - 1000 iterations        1.130000   0.020000   1.150000 (  1.224775)
+3400 entries - 10000 iterations      11.620000   0.140000  11.760000 ( 12.491821)
+3400 entries - 100000 iterations    132.710000   2.010000 134.720000 (143.518028)
+34000 entries - 1000 iterations       1.140000   0.010000   1.150000 (  1.225332)
+34000 entries - 10000 iterations     11.630000   0.140000  11.770000 ( 12.571447)
+34000 entries - 100000 iterations   116.970000   1.420000 118.390000 (126.322866)
+>avg:                                 0.001170   0.000015   0.001184 (  0.001261)
+    bench find by id
+                                          user     system      total        real
+340 entries - 1000 iterations         3.170000   0.200000   3.370000 (  4.310582)
+340 entries - 10000 iterations       31.550000   1.870000  33.420000 ( 42.984085)
+340 entries - 100000 iterations     313.980000  18.720000 332.700000 (427.243185)
+3400 entries - 1000 iterations        3.110000   0.190000   3.300000 (  4.319348)
+3400 entries - 10000 iterations      31.720000   1.870000  33.590000 ( 43.911017)
+3400 entries - 100000 iterations    318.310000  18.650000 336.960000 (440.521360)
+34000 entries - 1000 iterations       3.080000   0.180000   3.260000 (  4.367823)
+34000 entries - 10000 iterations     31.910000   1.870000  33.780000 ( 44.995760)
+34000 entries - 100000 iterations   317.750000  18.570000 336.320000 (447.802926)
+>avg:                                 0.003153   0.000188   0.003341 (  0.004371)
+    bench Homepage expand 15 links
+                                          user     system      total        real
+340 entries - 1000 iterations         2.980000   0.030000   3.010000 (  3.331193)
+340 entries - 10000 iterations       29.420000   0.410000  29.830000 ( 33.457619)
+340 entries - 100000 iterations     306.820000   4.010000 310.830000 (348.164327)
+3400 entries - 1000 iterations       19.090000   0.230000  19.320000 ( 20.772717)
+3400 entries - 10000 iterations     190.820000   2.410000 193.230000 (207.819188)
+34000 entries - 1000 iterations     194.140000   1.950000 196.090000 (209.236957)
+>avg:                                 0.040217   0.000422   0.040639 (  0.043492)
+    bench find with filter (find_by equivalend)
+
+WCC::Contentful::Model
+  with postgres store
+                                          user     system      total        real
+340 entries - 1000 iterations         0.160000   0.010000   0.170000 (  0.216106)
+340 entries - 10000 iterations        1.390000   0.110000   1.500000 (  1.926165)
+340 entries - 100000 iterations      13.640000   1.090000  14.730000 ( 18.924534)
+3400 entries - 1000 iterations        0.130000   0.010000   0.140000 (  0.183724)
+3400 entries - 10000 iterations       1.360000   0.120000   1.480000 (  1.938788)
+3400 entries - 100000 iterations     13.530000   1.080000  14.610000 ( 19.195614)
+34000 entries - 1000 iterations       0.120000   0.010000   0.130000 (  0.182441)
+34000 entries - 10000 iterations      1.340000   0.110000   1.450000 (  1.968194)
+34000 entries - 100000 iterations    13.580000   1.080000  14.660000 ( 19.743160)
+>avg:                                 0.000136   0.000011   0.000147 (  0.000194)
+    bench Model.find by id
+                                          user     system      total        real
+340 entries - 1000 iterations         0.210000   0.010000   0.220000 (  0.296754)
+340 entries - 10000 iterations        1.660000   0.110000   1.770000 (  2.311195)
+340 entries - 100000 iterations      16.460000   1.090000  17.550000 ( 22.703849)
+3400 entries - 1000 iterations        0.150000   0.010000   0.160000 (  0.224852)
+3400 entries - 10000 iterations       1.580000   0.110000   1.690000 (  2.220112)
+3400 entries - 100000 iterations     16.360000   1.090000  17.450000 ( 22.891374)
+34000 entries - 1000 iterations       0.180000   0.010000   0.190000 (  0.255240)
+34000 entries - 10000 iterations      1.570000   0.110000   1.680000 (  2.279673)
+34000 entries - 100000 iterations    16.530000   1.090000  17.620000 ( 23.712787)
+>avg:                                 0.000168   0.000011   0.000179 (  0.000239)
+    bench Homepage.find by id
+                                          user     system      total        real
+340 entries - 1000 iterations         2.350000   0.190000   2.540000 (  3.285007)
+340 entries - 10000 iterations       23.780000   1.890000  25.670000 ( 33.113446)
+340 entries - 100000 iterations     237.210000  18.870000 256.080000 (330.522473)
+3400 entries - 1000 iterations        2.280000   0.190000   2.470000 (  3.256643)
+3400 entries - 10000 iterations      23.660000   1.890000  25.550000 ( 33.526905)
+3400 entries - 100000 iterations    237.150000  18.800000 255.950000 (336.234013)
+34000 entries - 1000 iterations       2.350000   0.190000   2.540000 (  3.447888)
+34000 entries - 10000 iterations     23.710000   1.880000  25.590000 ( 34.359352)
+34000 entries - 100000 iterations   237.510000  18.820000 256.330000 (344.325934)
+>avg:                                 0.002357   0.000189   0.002546 (  0.003356)
+    bench Homepage expand 15 links
+                                          user     system      total        real
+340 entries - 1000 iterations         1.550000   0.020000   1.570000 (  1.836744)
+340 entries - 10000 iterations       15.770000   0.260000  16.030000 ( 18.641142)
+340 entries - 100000 iterations     156.730000   2.970000 159.700000 (192.659460)
+3400 entries - 1000 iterations       14.960000   0.200000  15.160000 ( 16.630949)
+3400 entries - 10000 iterations     149.950000   1.910000 151.860000 (166.672989)
+34000 entries - 1000 iterations     152.400000   1.550000 153.950000 (166.470837)
+>avg:                                 0.031175   0.000336   0.031511 (  0.034233)
+    bench find_by (filter)
+
+Finished in 118 minutes 21 seconds (files took 0.86805 seconds to load)
+10 examples, 0 failures
+

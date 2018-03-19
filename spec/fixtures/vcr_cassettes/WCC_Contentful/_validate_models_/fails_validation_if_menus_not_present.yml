@@ -1,0 +1,78 @@
+---
+http_interactions:
+    method: get
+    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/sync?sync_token=w5ZGw6JFwqZmVcKsE8Kow4grw45QdybCr8OFOjZEw7h8w6tgw6cvVcKYw6sCwoXDlh5tG3XDu8KLdsOfMgAfw6jCqMKhw68WCg3CncOQwrbDtsKzHnrDjChDwoLDhMOue3YpwqjDp8KnIsOhw6fDvMOhMz_Ck2LCmg
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Bearer <CONTENTFUL_ACCESS_TOKEN>
+      Connection:
+      - close
+      Host:
+      - cdn.contentful.com
+      User-Agent:
+      - http.rb/1.0.4
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Access-Control-Allow-Headers:
+      - Accept,Accept-Language,Authorization,Cache-Control,Content-Length,Content-Range,Content-Type,DNT,Destination,Expires,If-Match,If-Modified-Since,If-None-Match,Keep-Alive,Last-Modified,Origin,Pragma,Range,User-Agent,X-Http-Method-Override,X-Mx-ReqToken,X-Requested-With,X-Contentful-Version,X-Contentful-Content-Type,X-Contentful-Organization,X-Contentful-Skip-Transformation,X-Contentful-User-Agent,X-Contentful-Enable-Alpha-Feature
+      Access-Control-Allow-Methods:
+      - GET,HEAD,OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Etag
+      Access-Control-Max-Age:
+      - '86400'
+      Cache-Control:
+      - max-age=0
+      Content-Type:
+      - application/vnd.contentful.delivery.v1+json
+      Etag:
+      - '"af289ea26db7157ad62646679662b3e3"'
+      Server:
+      - Contentful
+      X-Content-Type-Options:
+      - nosniff
+      X-Contentful-Request-Id:
+      - 9b3e183423489e59b0e224426f74e440
+      Content-Length:
+      - '300'
+      Accept-Ranges:
+      - bytes
+      Date:
+      - Tue, 13 Mar 2018 18:50:09 GMT
+      Via:
+      - 1.1 varnish
+      Age:
+      - '1'
+      Connection:
+      - close
+      X-Served-By:
+      - cache-dfw18637-DFW
+      X-Cache:
+      - HIT
+      X-Cache-Hits:
+      - '1'
+      X-Timer:
+      - S1520967009.259531,VS0,VE1
+      Vary:
+      - Accept-Encoding
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "sys": {
+            "type": "Array"
+          },
+          "items": [],
+          "nextSyncUrl": "https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/sync?sync_token=w5ZGw6JFwqZmVcKsE8Kow4grw45QdybCr8OFOjZEw7h8w6tgw6cvVcKYw6sCwoXDlh5tG3XDu8KLdsOfMgAfw6jCqMKhw68WCg3CncOQwrbDtsKzHnrDjChDwoLDhMOue3YpwqjDp8KnIsOhw6fDvMOhMz_Ck2LCmg"
+        }
+    http_version: 
+  recorded_at: Tue, 13 Mar 2018 18:50:09 GMT
+recorded_with: VCR 4.0.0

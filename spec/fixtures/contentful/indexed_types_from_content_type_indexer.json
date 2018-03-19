@@ -1,0 +1,557 @@
+{
+  "Asset": {
+    "name": "Asset",
+    "content_type": "Asset",
+    "fields": {
+      "title": {
+        "name": "title",
+        "type": "String"
+      },
+      "description": {
+        "name": "description",
+        "type": "String"
+      },
+      "file": {
+        "name": "file",
+        "type": "Json"
+      }
+    }
+  },
+  "testimonial": {
+    "name": "Testimonial",
+    "content_type": "testimonial",
+    "fields": {
+      "name": {
+        "name": "name",
+        "type": "String",
+        "required": true
+      },
+      "photo": {
+        "name": "photo",
+        "type": "Asset",
+        "required": true
+      },
+      "shortBio": {
+        "name": "shortBio",
+        "type": "String",
+        "required": false
+      },
+      "testimonial": {
+        "name": "testimonial",
+        "type": "String",
+        "required": false
+      }
+    }
+  },
+  "menu": {
+    "name": "Menu",
+    "content_type": "menu",
+    "fields": {
+      "name": {
+        "name": "name",
+        "type": "String",
+        "required": false
+      },
+      "rootButton": {
+        "name": "rootButton",
+        "type": "Link",
+        "required": false,
+        "link_types": [
+          "menuButton"
+        ]
+      },
+      "items": {
+        "name": "items",
+        "type": "Link",
+        "required": false,
+        "array": true,
+        "link_types": [
+          "menu",
+          "menuButton"
+        ]
+      },
+      "secondGroup": {
+        "name": "secondGroup",
+        "type": "Link",
+        "required": false,
+        "array": true,
+        "link_types": [
+          "menu",
+          "menuButton"
+        ]
+      },
+      "thirdGroup": {
+        "name": "thirdGroup",
+        "type": "Link",
+        "required": false,
+        "array": true,
+        "link_types": [
+          "menu",
+          "menuButton"
+        ]
+      },
+      "hamburger": {
+        "name": "hamburger",
+        "type": "Link",
+        "required": false
+      },
+      "search": {
+        "name": "search",
+        "type": "String",
+        "required": false
+      }
+    }
+  },
+  "section-VideoHighlight": {
+    "name": "Section_VideoHighlight",
+    "content_type": "section-VideoHighlight",
+    "fields": {
+      "text": {
+        "name": "text",
+        "type": "String",
+        "required": true
+      },
+      "youtubeLink": {
+        "name": "youtubeLink",
+        "type": "String",
+        "required": false
+      },
+      "video": {
+        "name": "video",
+        "type": "Asset",
+        "required": false
+      },
+      "theme": {
+        "name": "theme",
+        "type": "Link",
+        "required": false,
+        "link_types": [
+          "theme"
+        ]
+      }
+    }
+  },
+  "faq": {
+    "name": "Faq",
+    "content_type": "faq",
+    "fields": {
+      "question": {
+        "name": "question",
+        "type": "String",
+        "required": true
+      },
+      "answer": {
+        "name": "answer",
+        "type": "String",
+        "required": true
+      },
+      "numFaqs": {
+        "name": "numFaqs",
+        "type": "Int",
+        "required": false
+      },
+      "numFaqsFloat": {
+        "name": "numFaqsFloat",
+        "type": "Float",
+        "required": false
+      },
+      "dateOfFaq": {
+        "name": "dateOfFaq",
+        "type": "DateTime",
+        "required": false
+      },
+      "truthyOrFalsy": {
+        "name": "truthyOrFalsy",
+        "type": "Boolean",
+        "required": false
+      },
+      "placeOfFaq": {
+        "name": "placeOfFaq",
+        "type": "Coordinates",
+        "required": false
+      }
+    }
+  },
+  "migrationHistory": {
+    "name": "MigrationHistory",
+    "content_type": "migrationHistory",
+    "fields": {
+      "migrationName": {
+        "name": "migrationName",
+        "type": "String",
+        "required": true
+      },
+      "started": {
+        "name": "started",
+        "type": "DateTime",
+        "required": false
+      },
+      "completed": {
+        "name": "completed",
+        "type": "DateTime",
+        "required": false
+      },
+      "detail": {
+        "name": "detail",
+        "type": "Json",
+        "required": false
+      }
+    }
+  },
+  "homepage": {
+    "name": "Homepage",
+    "content_type": "homepage",
+    "fields": {
+      "siteTitle": {
+        "name": "siteTitle",
+        "type": "String",
+        "required": false
+      },
+      "favicons": {
+        "name": "favicons",
+        "type": "Asset",
+        "required": true,
+        "array": true
+      },
+      "mainMenu": {
+        "name": "mainMenu",
+        "type": "Link",
+        "required": false,
+        "link_types": [
+          "menu"
+        ]
+      },
+      "heroImage": {
+        "name": "heroImage",
+        "type": "Asset",
+        "required": false
+      },
+      "heroText": {
+        "name": "heroText",
+        "type": "String",
+        "required": false
+      },
+      "heroButtons": {
+        "name": "heroButtons",
+        "type": "Link",
+        "required": false,
+        "array": true,
+        "link_types": [
+          "menuButton"
+        ]
+      },
+      "callToAction": {
+        "name": "callToAction",
+        "type": "Link",
+        "required": false
+      },
+      "sections": {
+        "name": "sections",
+        "type": "Link",
+        "required": false,
+        "array": true,
+        "link_types": [
+          "section-CardSearch",
+          "section-Faq",
+          "section-Testimonials",
+          "section-VideoHighlight"
+        ]
+      },
+      "siteFooter": {
+        "name": "siteFooter",
+        "type": "Link",
+        "required": false
+      }
+    }
+  },
+  "theme": {
+    "name": "Theme",
+    "content_type": "theme",
+    "fields": {
+      "name": {
+        "name": "name",
+        "type": "String",
+        "required": false
+      },
+      "foregroundColor": {
+        "name": "foregroundColor",
+        "type": "String",
+        "required": false
+      },
+      "backgroundColor": {
+        "name": "backgroundColor",
+        "type": "String",
+        "required": false
+      },
+      "highlightColor": {
+        "name": "highlightColor",
+        "type": "String",
+        "required": false
+      },
+      "borderColor": {
+        "name": "borderColor",
+        "type": "String",
+        "required": false
+      }
+    }
+  },
+  "section-CardSearch": {
+    "name": "Section_CardSearch",
+    "content_type": "section-CardSearch",
+    "fields": {
+      "name": {
+        "name": "name",
+        "type": "String",
+        "required": true
+      },
+      "cards": {
+        "name": "cards",
+        "type": "Link",
+        "required": false,
+        "array": true
+      },
+      "theme": {
+        "name": "theme",
+        "type": "Link",
+        "required": false
+      }
+    }
+  },
+  "ministry": {
+    "name": "Ministry",
+    "content_type": "ministry",
+    "fields": {
+      "name": {
+        "name": "name",
+        "type": "String",
+        "required": true
+      },
+      "cardImage": {
+        "name": "cardImage",
+        "type": "Asset",
+        "required": true
+      },
+      "audiences": {
+        "name": "audiences",
+        "type": "String",
+        "required": false,
+        "array": true
+      },
+      "categories": {
+        "name": "categories",
+        "type": "String",
+        "required": false,
+        "array": true
+      }
+    }
+  },
+  "page": {
+    "name": "Page",
+    "content_type": "page",
+    "fields": {
+      "title": {
+        "name": "title",
+        "type": "String",
+        "required": true
+      },
+      "slug": {
+        "name": "slug",
+        "type": "String",
+        "required": true
+      },
+      "heroImage": {
+        "name": "heroImage",
+        "type": "Asset",
+        "required": false
+      },
+      "heroText": {
+        "name": "heroText",
+        "type": "String",
+        "required": false
+      },
+      "callToAction": {
+        "name": "callToAction",
+        "type": "Link",
+        "required": false
+      },
+      "subMenu": {
+        "name": "subMenu",
+        "type": "Link",
+        "required": false,
+        "link_types": [
+          "menu"
+        ]
+      },
+      "sections": {
+        "name": "sections",
+        "type": "Link",
+        "required": false,
+        "array": true,
+        "link_types": [
+          "section-CardSearch",
+          "section-Faq",
+          "section-Testimonials",
+          "section-VideoHighlight"
+        ]
+      }
+    }
+  },
+  "ministryCard": {
+    "name": "MinistryCard",
+    "content_type": "ministryCard",
+    "fields": {
+      "name": {
+        "name": "name",
+        "type": "String",
+        "required": true
+      },
+      "cardImage": {
+        "name": "cardImage",
+        "type": "Asset",
+        "required": true
+      },
+      "page": {
+        "name": "page",
+        "type": "Link",
+        "required": false
+      }
+    }
+  },
+  "section-Faq": {
+    "name": "Section_Faq",
+    "content_type": "section-Faq",
+    "fields": {
+      "helpText": {
+        "name": "helpText",
+        "type": "String",
+        "required": false
+      },
+      "contactButton": {
+        "name": "contactButton",
+        "type": "Link",
+        "required": false,
+        "link_types": [
+          "menuButton"
+        ]
+      },
+      "faqs": {
+        "name": "faqs",
+        "type": "Link",
+        "required": false,
+        "array": true,
+        "link_types": [
+          "faq"
+        ]
+      },
+      "theme": {
+        "name": "theme",
+        "type": "Link",
+        "required": false,
+        "link_types": [
+          "theme"
+        ]
+      }
+    }
+  },
+  "section-Testimonials": {
+    "name": "Section_Testimonials",
+    "content_type": "section-Testimonials",
+    "fields": {
+      "title": {
+        "name": "title",
+        "type": "String",
+        "required": false
+      },
+      "testimonials": {
+        "name": "testimonials",
+        "type": "Link",
+        "required": false,
+        "array": true,
+        "link_types": [
+          "testimonial"
+        ]
+      }
+    }
+  },
+  "menuButton": {
+    "name": "MenuButton",
+    "content_type": "menuButton",
+    "fields": {
+      "text": {
+        "name": "text",
+        "type": "String",
+        "required": true
+      },
+      "icon": {
+        "name": "icon",
+        "type": "Asset",
+        "required": false
+      },
+      "iconFA": {
+        "name": "iconFA",
+        "type": "String",
+        "required": false
+      },
+      "buttonStyle": {
+        "name": "buttonStyle",
+        "type": "String",
+        "required": false,
+        "array": true
+      },
+      "customButtonCss": {
+        "name": "customButtonCss",
+        "type": "String",
+        "required": false,
+        "array": true
+      },
+      "externalLink": {
+        "name": "externalLink",
+        "type": "String",
+        "required": false
+      },
+      "link": {
+        "name": "link",
+        "type": "Link",
+        "required": false,
+        "link_types": [
+          "page"
+        ]
+      }
+    }
+  },
+  "redirect2": {
+    "name": "Redirect2",
+    "content_type": "redirect2",
+    "fields": {
+      "slug": {
+        "name": "slug",
+        "type": "String",
+        "required": true
+      },
+      "url": {
+        "name": "url",
+        "type": "String",
+        "required": false
+      },
+      "pageReference": {
+        "name": "pageReference",
+        "type": "Link",
+        "required": false,
+        "link_types": [
+          "page"
+        ]
+      }
+    }
+  },
+  "dog": {
+    "name": "Dog",
+    "content_type": "dog",
+    "fields": {
+      "name": {
+        "name": "name",
+        "type": "String",
+        "required": true
+      }
+    }
+  }
+}

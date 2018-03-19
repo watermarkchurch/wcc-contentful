@@ -1,0 +1,1505 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/content_types?limit=5
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Bearer <CONTENTFUL_ACCESS_TOKEN>
+      Connection:
+      - close
+      Host:
+      - cdn.contentful.com
+      User-Agent:
+      - http.rb/1.0.4
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Access-Control-Allow-Headers:
+      - Accept,Accept-Language,Authorization,Cache-Control,Content-Length,Content-Range,Content-Type,DNT,Destination,Expires,If-Match,If-Modified-Since,If-None-Match,Keep-Alive,Last-Modified,Origin,Pragma,Range,User-Agent,X-Http-Method-Override,X-Mx-ReqToken,X-Requested-With,X-Contentful-Version,X-Contentful-Content-Type,X-Contentful-Organization,X-Contentful-Skip-Transformation,X-Contentful-User-Agent,X-Contentful-Enable-Alpha-Feature
+      Access-Control-Allow-Methods:
+      - GET,HEAD,OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Etag
+      Access-Control-Max-Age:
+      - '86400'
+      Cache-Control:
+      - max-age=0
+      Content-Type:
+      - application/vnd.contentful.delivery.v1+json
+      Etag:
+      - W/"97b443d462a4a7d19ae3fa1472558370"
+      Server:
+      - Contentful
+      X-Content-Type-Options:
+      - nosniff
+      X-Contentful-Request-Id:
+      - '0892e76f2bde4709ff24ef5e35694057'
+      Content-Length:
+      - '11035'
+      Accept-Ranges:
+      - bytes
+      Date:
+      - Wed, 14 Mar 2018 15:30:27 GMT
+      Via:
+      - 1.1 varnish
+      Age:
+      - '4330'
+      Connection:
+      - close
+      X-Served-By:
+      - cache-dfw18645-DFW
+      X-Cache:
+      - HIT
+      X-Cache-Hits:
+      - '1'
+      X-Timer:
+      - S1521041428.614529,VS0,VE0
+      Vary:
+      - Accept-Encoding
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "sys": {
+            "type": "Array"
+          },
+          "total": 16,
+          "skip": 0,
+          "limit": 5,
+          "items": [
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "homepage",
+                "type": "ContentType",
+                "createdAt": "2018-02-12T18:34:24.038Z",
+                "updatedAt": "2018-03-05T15:18:09.821Z",
+                "revision": 8
+              },
+              "displayField": "siteTitle",
+              "name": "Homepage",
+              "description": "The Homepage is a special page - it contains some fields like the Top Menu and Site Footer which are set on all other Pages.  This page is visible at the root of watermarkresources.org",
+              "fields": [
+                {
+                  "id": "siteTitle",
+                  "name": "Site Title",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "favicons",
+                  "name": "Favicons",
+                  "type": "Array",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Link",
+                    "validations": [
+                      {
+                        "linkMimetypeGroup": [
+                          "image"
+                        ]
+                      },
+                      {
+                        "assetFileSize": {
+                          "max": 1024
+                        },
+                        "message": "Favicons are supposed to be small.  Please use an image less than 100kb in size."
+                      }
+                    ],
+                    "linkType": "Asset"
+                  }
+                },
+                {
+                  "id": "mainMenu",
+                  "name": "Main Menu",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Entry"
+                },
+                {
+                  "id": "heroImage",
+                  "name": "Hero Image",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Asset"
+                },
+                {
+                  "id": "heroText",
+                  "name": "Hero Text",
+                  "type": "Text",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "heroButtons",
+                  "name": "Hero Buttons",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Link",
+                    "validations": [
+                      {
+                        "linkContentType": [
+                          "menuItem"
+                        ]
+                      }
+                    ],
+                    "linkType": "Entry"
+                  }
+                },
+                {
+                  "id": "callToAction",
+                  "name": "Call To Action",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Entry"
+                },
+                {
+                  "id": "sections",
+                  "name": "Sections",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Link",
+                    "validations": [
+                      {
+                        "linkContentType": [
+                          "section-CardSearch",
+                          "section-Faq",
+                          "section-Testimonials",
+                          "section-VideoHighlight"
+                        ]
+                      }
+                    ],
+                    "linkType": "Entry"
+                  }
+                },
+                {
+                  "id": "siteFooter",
+                  "name": "Site Footer",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Entry"
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "migrationHistory",
+                "type": "ContentType",
+                "createdAt": "2018-02-22T21:12:45.149Z",
+                "updatedAt": "2018-02-22T21:12:45.149Z",
+                "revision": 1
+              },
+              "displayField": "migrationName",
+              "name": "Migration History",
+              "description": "System Type - Do Not Modify",
+              "fields": [
+                {
+                  "id": "migrationName",
+                  "name": "Migration Name",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "started",
+                  "name": "Started",
+                  "type": "Date",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "completed",
+                  "name": "Completed",
+                  "type": "Date",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "detail",
+                  "name": "Detail",
+                  "type": "Object",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "page",
+                "type": "ContentType",
+                "createdAt": "2018-02-12T17:30:48.889Z",
+                "updatedAt": "2018-03-01T22:08:21.619Z",
+                "revision": 4
+              },
+              "displayField": "title",
+              "name": "Page",
+              "description": "Represents one page on the site.  \n\nThere is a Homepage, a Ministry Gallery, one page per ministry, and a variety of other pages.",
+              "fields": [
+                {
+                  "id": "title",
+                  "name": "Title",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "slug",
+                  "name": "Slug",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "heroImage",
+                  "name": "Hero Image",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Asset"
+                },
+                {
+                  "id": "heroText",
+                  "name": "Hero Text",
+                  "type": "Text",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "callToAction",
+                  "name": "Call To Action",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Entry"
+                },
+                {
+                  "id": "subMenu",
+                  "name": "SubMenu",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Entry"
+                },
+                {
+                  "id": "sections",
+                  "name": "Sections",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Link",
+                    "validations": [
+                      {
+                        "linkContentType": [
+                          "section-CardSearch",
+                          "section-Faq",
+                          "section-Testimonials",
+                          "section-VideoHighlight"
+                        ]
+                      }
+                    ],
+                    "linkType": "Entry"
+                  }
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "section-CardSearch",
+                "type": "ContentType",
+                "createdAt": "2018-02-13T22:17:50.643Z",
+                "updatedAt": "2018-02-14T18:30:14.695Z",
+                "revision": 2
+              },
+              "displayField": "name",
+              "name": "Section: Card Search",
+              "description": "A group of cards & search functionality for those cards",
+              "fields": [
+                {
+                  "id": "name",
+                  "name": "name",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "cards",
+                  "name": "Cards",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Link",
+                    "validations": [],
+                    "linkType": "Entry"
+                  }
+                },
+                {
+                  "id": "theme",
+                  "name": "Theme",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Entry"
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "ministry",
+                "type": "ContentType",
+                "createdAt": "2018-02-12T17:23:03.968Z",
+                "updatedAt": "2018-02-12T17:23:03.968Z",
+                "revision": 1
+              },
+              "displayField": "name",
+              "name": "Ministry",
+              "description": "Represents a ministry shown on the Ministry Gallery page.",
+              "fields": [
+                {
+                  "id": "name",
+                  "name": "Name",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "cardImage",
+                  "name": "Card Image",
+                  "type": "Link",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Asset"
+                },
+                {
+                  "id": "audiences",
+                  "name": "audiences",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Symbol",
+                    "validations": []
+                  }
+                },
+                {
+                  "id": "categories",
+                  "name": "Categories",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Symbol",
+                    "validations": []
+                  }
+                }
+              ]
+            }
+          ]
+        }
+    http_version: 
+  recorded_at: Wed, 14 Mar 2018 15:30:27 GMT
+- request:
+    method: get
+    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/content_types?limit=5&skip=5
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Bearer <CONTENTFUL_ACCESS_TOKEN>
+      Connection:
+      - close
+      Host:
+      - cdn.contentful.com
+      User-Agent:
+      - http.rb/1.0.4
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Access-Control-Allow-Headers:
+      - Accept,Accept-Language,Authorization,Cache-Control,Content-Length,Content-Range,Content-Type,DNT,Destination,Expires,If-Match,If-Modified-Since,If-None-Match,Keep-Alive,Last-Modified,Origin,Pragma,Range,User-Agent,X-Http-Method-Override,X-Mx-ReqToken,X-Requested-With,X-Contentful-Version,X-Contentful-Content-Type,X-Contentful-Organization,X-Contentful-Skip-Transformation,X-Contentful-User-Agent,X-Contentful-Enable-Alpha-Feature
+      Access-Control-Allow-Methods:
+      - GET,HEAD,OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Etag
+      Access-Control-Max-Age:
+      - '86400'
+      Cache-Control:
+      - max-age=0
+      Content-Type:
+      - application/vnd.contentful.delivery.v1+json
+      Etag:
+      - W/"6c9b327cee4e17c0acc044552c993fdd"
+      Server:
+      - Contentful
+      X-Content-Type-Options:
+      - nosniff
+      X-Contentful-Request-Id:
+      - f9ef94aa431f2f284aac7ff72143e3ce
+      Content-Length:
+      - '10978'
+      Accept-Ranges:
+      - bytes
+      Date:
+      - Wed, 14 Mar 2018 15:30:27 GMT
+      Via:
+      - 1.1 varnish
+      Age:
+      - '4329'
+      Connection:
+      - close
+      X-Served-By:
+      - cache-dfw18636-DFW
+      X-Cache:
+      - HIT
+      X-Cache-Hits:
+      - '1'
+      X-Timer:
+      - S1521041428.650262,VS0,VE1
+      Vary:
+      - Accept-Encoding
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "sys": {
+            "type": "Array"
+          },
+          "total": 16,
+          "skip": 5,
+          "limit": 5,
+          "items": [
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "ministryCard",
+                "type": "ContentType",
+                "createdAt": "2018-02-13T22:19:20.868Z",
+                "updatedAt": "2018-02-13T22:19:20.868Z",
+                "revision": 1
+              },
+              "displayField": "name",
+              "name": "Ministry/Conference Card",
+              "description": "A card displaying a Ministry or Conference.  Links to a page.",
+              "fields": [
+                {
+                  "id": "name",
+                  "name": "Name",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "cardImage",
+                  "name": "Card Image",
+                  "type": "Link",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Asset"
+                },
+                {
+                  "id": "page",
+                  "name": "Page",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Entry"
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "section-Faq",
+                "type": "ContentType",
+                "createdAt": "2018-02-12T19:13:59.422Z",
+                "updatedAt": "2018-02-14T18:32:40.782Z",
+                "revision": 8
+              },
+              "displayField": "helpText",
+              "name": "Section: FAQ",
+              "description": "The Content Type for the FAQ section",
+              "fields": [
+                {
+                  "id": "helpText",
+                  "name": "Help Text",
+                  "type": "Text",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "contactButton",
+                  "name": "Contact Button",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Entry"
+                },
+                {
+                  "id": "faqs",
+                  "name": "FAQs",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Link",
+                    "validations": [
+                      {
+                        "linkContentType": [
+                          "faq"
+                        ]
+                      }
+                    ],
+                    "linkType": "Entry"
+                  }
+                },
+                {
+                  "id": "theme",
+                  "name": "Theme",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Entry"
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "testimonial",
+                "type": "ContentType",
+                "createdAt": "2018-02-12T19:47:57.856Z",
+                "updatedAt": "2018-02-12T19:47:57.856Z",
+                "revision": 1
+              },
+              "displayField": "name",
+              "name": "Testimonial",
+              "description": "A Testimonial contains a user's photo, a short bio, and their testimonial about the service",
+              "fields": [
+                {
+                  "id": "name",
+                  "name": "Name",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "photo",
+                  "name": "Photo",
+                  "type": "Link",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Asset"
+                },
+                {
+                  "id": "shortBio",
+                  "name": "Short Bio",
+                  "type": "Text",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "testimonial",
+                  "name": "Testimonial",
+                  "type": "Text",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "menu",
+                "type": "ContentType",
+                "createdAt": "2018-02-12T17:39:58.717Z",
+                "updatedAt": "2018-03-13T18:36:14.688Z",
+                "revision": 8
+              },
+              "displayField": "name",
+              "name": "Menu",
+              "description": "A Menu contains a number of Menu Buttons or other Menus, grouped together horizontally or vertically.\n\nIf a Menu contains another Menu, the contained menu will become a drop-down.\n\nThe optional 'Hamburger' field is rendered as the hamburger button on the right side of the menu, and opens as a drop-down.",
+              "fields": [
+                {
+                  "id": "name",
+                  "name": "Name",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "icon",
+                  "name": "Icon",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Asset"
+                },
+                {
+                  "id": "rootButton",
+                  "name": "Root Button",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Entry"
+                },
+                {
+                  "id": "buttons",
+                  "name": "Buttons",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Link",
+                    "validations": [
+                      {
+                        "linkContentType": [
+                          "menu",
+                          "menuButton"
+                        ]
+                      }
+                    ],
+                    "linkType": "Entry"
+                  }
+                },
+                {
+                  "id": "secondGroup",
+                  "name": "Second Group",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Link",
+                    "validations": [
+                      {
+                        "linkContentType": [
+                          "menu",
+                          "menuButton"
+                        ],
+                        "message": "The Menu groups must contain only sub-Menus or MenuItems"
+                      }
+                    ],
+                    "linkType": "Entry"
+                  }
+                },
+                {
+                  "id": "thirdGroup",
+                  "name": "Third Group",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Link",
+                    "validations": [
+                      {
+                        "linkContentType": [
+                          "menu",
+                          "menuButton"
+                        ],
+                        "message": "The Menu groups must contain only sub-Menus or MenuItems"
+                      }
+                    ],
+                    "linkType": "Entry"
+                  }
+                },
+                {
+                  "id": "hamburger",
+                  "name": "Hamburger",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Entry"
+                },
+                {
+                  "id": "search",
+                  "name": "Search",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "menuButton",
+                "type": "ContentType",
+                "createdAt": "2018-03-12T14:06:45.507Z",
+                "updatedAt": "2018-03-12T14:06:45.507Z",
+                "revision": 1
+              },
+              "displayField": "text",
+              "name": "Menu Button",
+              "description": "A Menu Button is a clickable button that goes on a Menu.  It has a link to a path or a URL.",
+              "fields": [
+                {
+                  "id": "text",
+                  "name": "Text",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "iconFA",
+                  "name": "Icon from Font Awesome",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "buttonStyle",
+                  "name": "Button Style",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Symbol",
+                    "validations": [
+                      {
+                        "in": [
+                          "rounded",
+                          "faded when not active",
+                          "external",
+                          "custom"
+                        ]
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "customButtonCss",
+                  "name": "Custom button CSS",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Symbol",
+                    "validations": [
+                      {
+                        "regexp": {
+                          "pattern": "^\\s*([\\w\\-\\_]+):\\s+[^;]+;$",
+                          "flags": null
+                        },
+                        "message": "Each line must be a CSS rule, like 'background-color: blue;' 'width: 50% !important;' or 'border-color: rgba(91, 120, 05, .8);'.  Did you forget a semilcolon at the end?  Or a colon in the middle?"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "externalLink",
+                  "name": "External Link",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "link",
+                  "name": "Link",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Entry"
+                }
+              ]
+            }
+          ]
+        }
+    http_version: 
+  recorded_at: Wed, 14 Mar 2018 15:30:27 GMT
+- request:
+    method: get
+    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/content_types?limit=5&skip=10
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Bearer <CONTENTFUL_ACCESS_TOKEN>
+      Connection:
+      - close
+      Host:
+      - cdn.contentful.com
+      User-Agent:
+      - http.rb/1.0.4
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Access-Control-Allow-Headers:
+      - Accept,Accept-Language,Authorization,Cache-Control,Content-Length,Content-Range,Content-Type,DNT,Destination,Expires,If-Match,If-Modified-Since,If-None-Match,Keep-Alive,Last-Modified,Origin,Pragma,Range,User-Agent,X-Http-Method-Override,X-Mx-ReqToken,X-Requested-With,X-Contentful-Version,X-Contentful-Content-Type,X-Contentful-Organization,X-Contentful-Skip-Transformation,X-Contentful-User-Agent,X-Contentful-Enable-Alpha-Feature
+      Access-Control-Allow-Methods:
+      - GET,HEAD,OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Etag
+      Access-Control-Max-Age:
+      - '86400'
+      Cache-Control:
+      - max-age=0
+      Content-Type:
+      - application/vnd.contentful.delivery.v1+json
+      Etag:
+      - W/"64f9d43c079a52ed99162953a7daadbe"
+      Server:
+      - Contentful
+      X-Content-Type-Options:
+      - nosniff
+      X-Contentful-Request-Id:
+      - 5bef9fd6f8160e753e875e738624cd22
+      Content-Length:
+      - '7242'
+      Accept-Ranges:
+      - bytes
+      Date:
+      - Wed, 14 Mar 2018 15:30:27 GMT
+      Via:
+      - 1.1 varnish
+      Age:
+      - '4329'
+      Connection:
+      - close
+      X-Served-By:
+      - cache-dfw18637-DFW
+      X-Cache:
+      - HIT
+      X-Cache-Hits:
+      - '1'
+      X-Timer:
+      - S1521041428.687150,VS0,VE1
+      Vary:
+      - Accept-Encoding
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "sys": {
+            "type": "Array"
+          },
+          "total": 16,
+          "skip": 10,
+          "limit": 5,
+          "items": [
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "theme",
+                "type": "ContentType",
+                "createdAt": "2018-02-14T18:23:43.243Z",
+                "updatedAt": "2018-02-14T18:28:37.615Z",
+                "revision": 7
+              },
+              "displayField": "name",
+              "name": "Theme",
+              "description": "A Theme can be applied to a section to give it a certain style, for example by changing colors or positioning certain elements",
+              "fields": [
+                {
+                  "id": "name",
+                  "name": "Name",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "foregroundColor",
+                  "name": "Foreground Color",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "backgroundColor",
+                  "name": "Background Color",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "highlightColor",
+                  "name": "Highlight Color",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "borderColor",
+                  "name": "Border Color",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "redirect",
+                "type": "ContentType",
+                "createdAt": "2018-02-23T14:44:32.240Z",
+                "updatedAt": "2018-03-09T00:31:20.136Z",
+                "revision": 3
+              },
+              "displayField": "slug",
+              "name": "Redirect2",
+              "description": "",
+              "fields": [
+                {
+                  "id": "slug",
+                  "name": "Slug",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "url",
+                  "name": "Url",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "pageReference",
+                  "name": "Page Reference",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Entry"
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "faq",
+                "type": "ContentType",
+                "createdAt": "2018-02-14T18:32:16.249Z",
+                "updatedAt": "2018-02-23T16:36:13.245Z",
+                "revision": 2
+              },
+              "displayField": "question",
+              "name": "FAQ",
+              "description": "",
+              "fields": [
+                {
+                  "id": "question",
+                  "name": "Question",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "answer",
+                  "name": "Answer",
+                  "type": "Text",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "numFaqs",
+                  "name": "numFaqs",
+                  "type": "Integer",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "numFaqsFloat",
+                  "name": "numFaqsFloat",
+                  "type": "Number",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "dateOfFaq",
+                  "name": "DateOfFaq",
+                  "type": "Date",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "truthyOrFalsy",
+                  "name": "TruthyOrFalsy",
+                  "type": "Boolean",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "placeOfFaq",
+                  "name": "PlaceOfFaq",
+                  "type": "Location",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "dog",
+                "type": "ContentType",
+                "createdAt": "2018-02-22T21:12:46.484Z",
+                "updatedAt": "2018-03-05T14:45:22.954Z",
+                "revision": 2
+              },
+              "displayField": "name",
+              "name": "Dog",
+              "description": null,
+              "fields": [
+                {
+                  "id": "name",
+                  "name": "Name",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "woofs",
+                  "name": "Number Of Woofs",
+                  "type": "Integer",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "section-Testimonials",
+                "type": "ContentType",
+                "createdAt": "2018-02-12T19:17:55.556Z",
+                "updatedAt": "2018-02-12T19:48:08.620Z",
+                "revision": 6
+              },
+              "displayField": "title",
+              "name": "Section: Testimonials",
+              "description": "The Testimonials section shows a set of testimonials with associated photo and text.",
+              "fields": [
+                {
+                  "id": "title",
+                  "name": "Title",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "testimonials",
+                  "name": "Testimonials",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Link",
+                    "validations": [
+                      {
+                        "linkContentType": [
+                          "testimonial"
+                        ]
+                      }
+                    ],
+                    "linkType": "Entry"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+    http_version: 
+  recorded_at: Wed, 14 Mar 2018 15:30:27 GMT
+- request:
+    method: get
+    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/content_types?limit=5&skip=15
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Bearer <CONTENTFUL_ACCESS_TOKEN>
+      Connection:
+      - close
+      Host:
+      - cdn.contentful.com
+      User-Agent:
+      - http.rb/1.0.4
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Access-Control-Allow-Headers:
+      - Accept,Accept-Language,Authorization,Cache-Control,Content-Length,Content-Range,Content-Type,DNT,Destination,Expires,If-Match,If-Modified-Since,If-None-Match,Keep-Alive,Last-Modified,Origin,Pragma,Range,User-Agent,X-Http-Method-Override,X-Mx-ReqToken,X-Requested-With,X-Contentful-Version,X-Contentful-Content-Type,X-Contentful-Organization,X-Contentful-Skip-Transformation,X-Contentful-User-Agent,X-Contentful-Enable-Alpha-Feature
+      Access-Control-Allow-Methods:
+      - GET,HEAD,OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Etag
+      Access-Control-Max-Age:
+      - '86400'
+      Cache-Control:
+      - max-age=0
+      Content-Type:
+      - application/vnd.contentful.delivery.v1+json
+      Etag:
+      - W/"1d2dadc3cbcf527376f04be87b66bf51"
+      Server:
+      - Contentful
+      X-Content-Type-Options:
+      - nosniff
+      X-Contentful-Request-Id:
+      - 7ce542323bc45fd898c950423c5e2bc2
+      Content-Length:
+      - '1598'
+      Accept-Ranges:
+      - bytes
+      Date:
+      - Wed, 14 Mar 2018 15:30:27 GMT
+      Via:
+      - 1.1 varnish
+      Age:
+      - '4329'
+      Connection:
+      - close
+      X-Served-By:
+      - cache-dfw18625-DFW
+      X-Cache:
+      - HIT
+      X-Cache-Hits:
+      - '1'
+      X-Timer:
+      - S1521041428.722265,VS0,VE1
+      Vary:
+      - Accept-Encoding
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "sys": {
+            "type": "Array"
+          },
+          "total": 16,
+          "skip": 15,
+          "limit": 5,
+          "items": [
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "section-VideoHighlight",
+                "type": "ContentType",
+                "createdAt": "2018-02-12T19:41:52.801Z",
+                "updatedAt": "2018-02-14T18:29:57.500Z",
+                "revision": 4
+              },
+              "displayField": "text",
+              "name": "Section: Video Highlight",
+              "description": "The Video Highlight section includes a player for Youtube videos.",
+              "fields": [
+                {
+                  "id": "text",
+                  "name": "Text",
+                  "type": "Text",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "youtubeLink",
+                  "name": "youtubeLink",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "video",
+                  "name": "Video",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Asset"
+                },
+                {
+                  "id": "theme",
+                  "name": "Theme",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Entry"
+                }
+              ]
+            }
+          ]
+        }
+    http_version: 
+  recorded_at: Wed, 14 Mar 2018 15:30:27 GMT
+recorded_with: VCR 4.0.0
