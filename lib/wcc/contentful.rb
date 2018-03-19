@@ -18,14 +18,20 @@ require 'wcc/contentful/model_builder'
 module WCC::Contentful
   class << self
     attr_reader :configuration
+    attr_reader :next_sync_token
   end
 
   def self.client
     configuration&.client
   end
 
+  def self.store
+    WCC::Contentful::Model.store
+  end
+
   def self.configure
     @configuration ||= Configuration.new
+    @next_sync_token = nil
     yield(configuration)
 
     configuration.configure_contentful
@@ -58,11 +64,10 @@ module WCC::Contentful
     when :eager_sync
       store = configuration.sync_store
 
-      client.sync(initial: true).items.each do |item|
-        # TODO: enrich existing type data using Sync::Indexer
-        store.index(item.dig('sys', 'id'), item)
-      end
       WCC::Contentful::Model.store = store
+
+      @next_sync_token = store.find("sync:#{configuration.space}:token")
+      sync!
     when :direct
       store = Store::CDNAdapter.new(client)
       WCC::Contentful::Model.store = store
@@ -100,7 +105,17 @@ module WCC::Contentful
     raise WCC::Contentful::ValidationError, errors.errors unless errors.success?
   end
 
-  def self.sync!(up_to_id = nil)
+  def self.sync!(_up_to_id = nil)
+    return unless %i[eager_sync lazy_sync].include?(configuration.content_delivery)
+
+    sync_resp = client.sync(sync_token: next_sync_token)
+
+    sync_resp.items.each do |item|
+      store.index(item.dig('sys', 'id'), item)
+    end
+    @next_sync_token = sync_resp.next_sync_token
+    store.index("sync:#{configuration.space}:token", next_sync_token)
+    next_sync_token
   end
 
   # TODO: https://zube.io/watermarkchurch/development/c/2234 init graphql

@@ -90,6 +90,7 @@ RSpec.describe WCC::Contentful, :vcr do
           config.space = valid_contentful_space_id
           config.management_token = nil
           config.default_locale = nil
+          config.sync_store = :memory
         end
       end
 
@@ -207,6 +208,59 @@ RSpec.describe WCC::Contentful, :vcr do
       expect {
         WCC::Contentful.validate_models!
       }.to raise_error(WCC::Contentful::ValidationError)
+    end
+  end
+
+  describe '.sync!' do
+    let(:empty) { JSON.parse(load_fixture('contentful/sync_empty.json')) }
+
+    before do
+      stub_request(:get,
+        "https://cdn.contentful.com/spaces/#{contentful_space_id}/content_types?limit=1000")
+        .to_return(body: load_fixture('contentful/content_types_cdn.json'))
+
+      # initial sync
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
+        .with(query: hash_including('initial' => 'true'))
+        .to_return(body: load_fixture('contentful/sync.json'))
+
+      # first empty sync
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
+        .with(query: hash_including('sync_token' => 'w5ZGw...'))
+        .to_return(body: load_fixture('contentful/sync_empty.json'))
+
+      WCC::Contentful.configure do |config|
+        config.access_token = valid_contentful_access_token
+        config.space = valid_contentful_space_id
+        config.management_token = nil
+        config.default_locale = nil
+        config.sync_store = :memory
+      end
+
+      WCC::Contentful.init!
+    end
+
+    context 'when no ID given' do
+      it 'does nothing if no sync data available' do
+        stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
+          .with(query: hash_including('sync_token' => 'FwqZm...'))
+          .to_return(body: empty.merge({ 'nextSyncUrl' =>
+            'https://cdn.contentful.com/spaces/343qxys30lid/sync?sync_token=test' }).to_json)
+
+        expect(WCC::Contentful.store).to receive(:index)
+          .with("sync:#{contentful_space_id}:token", 'test')
+        expect(WCC::Contentful.store).to_not receive(:index)
+
+        # act
+        synced = WCC::Contentful.sync!
+
+        # assert
+        expect(synced).to eq('test')
+      end
+
+      it 'updates the store with the latest data' do
+        # TODO: tomorrow
+      end
     end
   end
 end
