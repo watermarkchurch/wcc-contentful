@@ -244,6 +244,17 @@ http_interactions:
                   "omitted": false
                 },
                 {
+                  "id": "icon",
+                  "name": "Icon",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "validations": [],
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Asset"
+                },
+                {
                   "id": "iconFA",
                   "name": "Icon from Font Awesome",
                   "type": "Symbol",
@@ -724,18 +735,7 @@ http_interactions:
                   "omitted": false
                 },
                 {
-                  "id": "icon",
-                  "name": "Icon",
-                  "type": "Link",
-                  "localized": false,
-                  "required": false,
-                  "validations": [],
-                  "disabled": false,
-                  "omitted": false,
-                  "linkType": "Asset"
-                },
-                {
-                  "id": "rootButton",
+                  "id": "topButton",
                   "name": "Root Button",
                   "type": "Link",
                   "localized": false,
@@ -752,7 +752,7 @@ http_interactions:
                   "linkType": "Entry"
                 },
                 {
-                  "id": "buttons",
+                  "id": "items",
                   "name": "Buttons",
                   "type": "Array",
                   "localized": false,
