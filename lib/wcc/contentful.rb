@@ -100,6 +100,9 @@ module WCC::Contentful
     raise WCC::Contentful::ValidationError, errors.errors unless errors.success?
   end
 
+  def self.sync!(up_to_id = nil)
+  end
+
   # TODO: https://zube.io/watermarkchurch/development/c/2234 init graphql
   # def self.init_graphql!
   #   require 'wcc/contentful/graphql'

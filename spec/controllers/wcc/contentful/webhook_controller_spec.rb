@@ -55,26 +55,27 @@ RSpec.describe WCC::Contentful::WebhookController, type: :controller do
       expect(response).to have_http_status(:no_content)
     end
 
-    it 'schedules rails cache to be cleared on success' do
+    it 'runs a sync on success' do
       request.headers.merge!(
         'Authorization': basic_auth('tester1', 'password1'),
         'Content-Type': 'application/vnd.contentful.management.v1+json',
         'x-contentful-topic': 'ContentManagement.Entry.unpublish'
       )
-      body = load_fixture('contentful/contentful_published_blog')
+      body = load_fixture('contentful/contentful_published_blog.json')
 
-      Timecop.freeze(t = Time.zone.now) do
-        # act
-        post :receive,
-          body: body
+      expect(WCC::Contentful).to receive(:sync!)
+        .with('rYhUgNF6k8iU2mI84gQOQ')
 
-        # assert
-        expect(response).to have_http_status(:no_content)
-      end
+      # act
+      post :receive,
+        body: body
+
+      # assert
+      expect(response).to have_http_status(:no_content)
     end
 
-    def basic_auth(user, pw)
-      ActionController::HttpAuthentication::Basic.encode_credentials(user, pw)
+    def basic_auth(user, password)
+      ActionController::HttpAuthentication::Basic.encode_credentials(user, password)
     end
   end
 end
