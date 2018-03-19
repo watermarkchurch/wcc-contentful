@@ -327,7 +327,7 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
     it 'should validate links to one of multiple content types' do
       my_class =
         Class.new(base_class('menu')) do
-          validate_field :buttons, :Array, link_to: %w[menu menuButton]
+          validate_field :items, :Array, link_to: %w[menu menuButton]
         end
 
       # act
@@ -340,7 +340,7 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
     it 'should fail when link can link to additional unspecified content types' do
       my_class =
         Class.new(base_class('menu')) do
-          validate_field :buttons, :Array, link_to: 'menuButton'
+          validate_field :items, :Array, link_to: 'menuButton'
         end
 
       # act
@@ -348,7 +348,7 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
 
       # assert
       expect(result).to_not be_success
-      expect(result.errors.dig('menu', 'fields', 'buttons', 'items',
+      expect(result.errors.dig('menu', 'fields', 'items', 'items',
         'validations', 0, 'linkContentType')).to_not be_empty
     end
 

@@ -2,6 +2,7 @@
 
 class WCC::Contentful::Model::MenuButton < WCC::Contentful::Model
   validate_field :text, :String, :required
+  validate_field :icon, :Asset, :optional
   validate_field :external_link, :String, :optional
   validate_field :link, :Link, :optional, link_to: 'page'
 

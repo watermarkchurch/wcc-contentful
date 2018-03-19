@@ -609,18 +609,8 @@
           "omitted": false
         },
         {
-          "id": "icon",
-          "name": "Icon",
-          "type": "Link",
-          "localized": false,
-          "required": false,
-          "disabled": false,
-          "omitted": false,
-          "linkType": "Asset"
-        },
-        {
-          "id": "rootButton",
-          "name": "Root Button",
+          "id": "topButton",
+          "name": "Top Button",
           "type": "Link",
           "localized": false,
           "required": false,
@@ -629,8 +619,8 @@
           "linkType": "Entry"
         },
         {
-          "id": "buttons",
-          "name": "Buttons",
+          "id": "items",
+          "name": "Items",
           "type": "Array",
           "localized": false,
           "required": false,
@@ -810,7 +800,7 @@
             "validations": [
               {
                 "linkContentType": [
-                  "menuItem"
+                  "menuButton"
                 ]
               }
             ],
@@ -1048,6 +1038,16 @@
           "required": true,
           "disabled": false,
           "omitted": false
+        },
+        {
+          "id": "icon",
+          "name": "Icon",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Asset"
         },
         {
           "id": "iconFA",

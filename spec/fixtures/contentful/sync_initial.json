@@ -1159,7 +1159,7 @@
       "name": {
         "en-US": "Side Menu"
       },
-      "buttons": {
+      "items": {
         "en-US": [
           {
             "sys": {

@@ -12,26 +12,21 @@ export = function (migration: Migration) {
     .name('Menu Name')
     .type('Symbol')
     .required(true)
-  
-  menu.createField('icon')
-    .name('Icon')
-    .type('Link')
-    .linkType('Asset')
 
-  menu.createField('rootButton')
-    .name('Root Button')
+  menu.createField('topButton')
+    .name('Top Button')
     .type('Link')
     .linkType('Entry')
     .validations([
       { 
         linkContentType: [ 'menuButton' ],
-        message: 'The Root Button must be a button linking to a URL or page.  ' +
+        message: 'The Top Button must be a button linking to a URL or page.  ' +
           'If the menu is a dropdown, this button is visible when it is collapsed.'
       }
     ])
   
-  menu.createField('buttons')
-    .name('Buttons')
+  menu.createField('items')
+    .name('Items')
     .type('Array')
     .items({
       type: 'Link',
@@ -39,7 +34,7 @@ export = function (migration: Migration) {
       validations: [
         { 
           linkContentType: [ 'menu', 'menuButton' ],
-          message: 'The menu buttons must be either buttons or drop-down menus'
+          message: 'The items must be either buttons or drop-down menus'
         }
       ]
     })
@@ -61,6 +56,11 @@ export = function (migration: Migration) {
           'single word.  Please limit the text to 60 characters.'
       }
     ])
+
+  menuButton.createField('icon')
+    .name('Icon')
+    .type('Link')
+    .linkType('Asset')
   
   menuButton.createField('externalLink')
     .name('External Link')

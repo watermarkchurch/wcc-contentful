@@ -52,13 +52,16 @@
         "type": "String",
         "required": false
       },
-      "icon": {
-        "name": "icon",
-        "type": "Asset",
-        "required": false
+      "rootButton": {
+        "name": "rootButton",
+        "type": "Link",
+        "required": false,
+        "link_types": [
+          "menuButton"
+        ]
       },
-      "buttons": {
-        "name": "buttons",
+      "items": {
+        "name": "items",
         "type": "Link",
         "required": false,
         "array": true,
@@ -478,6 +481,11 @@
         "name": "text",
         "type": "String",
         "required": true
+      },
+      "icon": {
+        "name": "icon",
+        "type": "Asset",
+        "required": false
       },
       "iconFA": {
         "name": "iconFA",
