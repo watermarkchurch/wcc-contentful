@@ -122,6 +122,7 @@ RSpec.describe WCC::Contentful, :vcr do
         WCC::Contentful.configure do |config|
           config.management_token = contentful_management_token
           config.default_locale = nil
+          config.sync_store = :memory
         end
       end
 
@@ -143,6 +144,38 @@ RSpec.describe WCC::Contentful, :vcr do
         expect(asset).to_not be_nil
         expect(asset).to be_a(WCC::Contentful::Model::Asset)
         expect(asset.file.fileName).to eq('favicon.ico')
+      end
+    end
+
+    context 'with stored sync_token' do
+      let(:empty) { JSON.parse(load_fixture('contentful/sync_empty.json')) }
+      let(:store) { WCC::Contentful::Store::MemoryStore.new }
+
+      before(:each) do
+        store.index("sync:#{contentful_space_id}:token", 'testX')
+
+        WCC::Contentful.configure do |config|
+          config.management_token = contentful_management_token
+          config.default_locale = nil
+          config.sync_store = store
+        end
+      end
+
+      it 'continues from stored sync ID' do
+        stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
+          .with(query: hash_including('sync_token' => 'testX'))
+          .to_return(body: empty.merge({ 'nextSyncUrl' =>
+            'https://cdn.contentful.com/spaces/343qxys30lid/sync?sync_token=testY' }).to_json)
+
+        stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
+          .with(query: hash_including('initial' => 'true'))
+          .to_raise('Should not call sync with initial=true when a stored sync token exists')
+
+        # act
+        WCC::Contentful.init!
+
+        # assert
+        expect(WCC::Contentful.next_sync_token).to eq('testY')
       end
     end
 
@@ -213,6 +246,7 @@ RSpec.describe WCC::Contentful, :vcr do
 
   describe '.sync!' do
     let(:empty) { JSON.parse(load_fixture('contentful/sync_empty.json')) }
+    let(:next_sync) { JSON.parse(load_fixture('contentful/sync_continue.json')) }
 
     before do
       stub_request(:get,
@@ -256,10 +290,32 @@ RSpec.describe WCC::Contentful, :vcr do
 
         # assert
         expect(synced).to eq('test')
+        expect(WCC::Contentful.next_sync_token).to eq('test')
       end
 
       it 'updates the store with the latest data' do
-        # TODO: tomorrow
+        stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
+          .with(query: hash_including('sync_token' => 'FwqZm...'))
+          .to_return(body: next_sync.merge({ 'nextSyncUrl' =>
+            'https://cdn.contentful.com/spaces/343qxys30lid/sync?sync_token=test1' }).to_json)
+
+        stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
+          .with(query: hash_including('sync_token' => 'test1'))
+          .to_return(body: empty.merge({ 'nextSyncUrl' =>
+          'https://cdn.contentful.com/spaces/343qxys30lid/sync?sync_token=test2' }).to_json)
+
+        items = next_sync['items']
+
+        expect(WCC::Contentful.store).to receive(:index)
+          .with("sync:#{contentful_space_id}:token", 'test2')
+        expect(WCC::Contentful.store).to receive(:index)
+          .exactly(items.count).times
+
+        # act
+        WCC::Contentful.sync!
+
+        # assert
+        expect(WCC::Contentful.next_sync_token).to eq('test2')
       end
     end
   end

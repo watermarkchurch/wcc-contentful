@@ -113,9 +113,8 @@ module WCC::Contentful
     sync_resp.items.each do |item|
       store.index(item.dig('sys', 'id'), item)
     end
+    store.index("sync:#{configuration.space}:token", sync_resp.next_sync_token)
     @next_sync_token = sync_resp.next_sync_token
-    store.index("sync:#{configuration.space}:token", next_sync_token)
-    next_sync_token
   end
 
   # TODO: https://zube.io/watermarkchurch/development/c/2234 init graphql
