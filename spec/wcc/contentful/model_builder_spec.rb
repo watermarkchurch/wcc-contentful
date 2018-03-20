@@ -154,11 +154,11 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     WCC::Contentful::Model.store = store
 
     # act
-    redirect = WCC::Contentful::Model::Redirect2.find_all(slug: 'mister_roboto')
+    redirect = WCC::Contentful::Model::Redirect2.find_by(slug: 'mister_roboto')
 
     # assert
-    expect(redirect.length).to eq(1)
-    expect(redirect[0].pageReference.title).to eq('Conferences')
+    expect(redirect).to_not be_nil
+    expect(redirect.pageReference.title).to eq('Conferences')
   end
 
   it 'resolves numeric fields' do

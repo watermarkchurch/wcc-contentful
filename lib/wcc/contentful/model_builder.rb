@@ -40,9 +40,16 @@ module WCC::Contentful
             new(raw, context) if raw.present?
           end
 
-          define_singleton_method(:find_all) do |context = nil|
-            raw = WCC::Contentful::Model.store.find_all(content_type: content_type)
-            raw.map { |r| new(r, context) }
+          define_singleton_method(:find_all) do |filter = nil, context = nil|
+            if filter
+              filter.transform_keys! { |k| k.to_s.camelize(:lower) }
+              bad_fields = filter.keys.reject { |k| fields.include?(k) }
+              raise ArgumentError, "These fields do not exist: #{bad_fields}" unless bad_fields.empty?
+            end
+
+            query = WCC::Contentful::Model.store.find_all(content_type: content_type)
+            query = query.apply(filter) if filter
+            query.map { |r| new(r, context) }
           end
 
           define_singleton_method(:find_by) do |filter, context = nil|
@@ -50,7 +57,7 @@ module WCC::Contentful
             bad_fields = filter.keys.reject { |k| fields.include?(k) }
             raise ArgumentError, "These fields do not exist: #{bad_fields}" unless bad_fields.empty?
 
-            result = WCC::Contentful::Model.store.find_by(content_type: content_type, **filter)
+            result = WCC::Contentful::Model.store.find_by(content_type: content_type, filter: filter)
             new(result, context)
           end
 

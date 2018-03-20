@@ -11,7 +11,7 @@ module WCC::Contentful::Store
       PostgresStore.ensure_schema(@conn)
     end
 
-    def index(key, value)
+    def set(key, value)
       @conn.exec_prepared('index_entry', [key, value.to_json])
       true
     end
@@ -38,18 +38,12 @@ module WCC::Contentful::Store
       )
     end
 
-    class Query
+    class Query < Base::Query
       def initialize(conn, statement = nil, params = nil)
         @conn = conn
         @statement = statement ||
           "WHERE data->'sys'->>'id' IS NOT NULL"
         @params = params || []
-      end
-
-      def apply(filter, context = nil)
-        return eq(filter[:field], filter[:eq], context) if filter[:eq]
-
-        raise ArgumentError, "Filter not implemented: #{filter}"
       end
 
       def eq(field, expected, context = nil)

@@ -7,7 +7,7 @@ module WCC::Contentful::Store
       @mutex = Mutex.new
     end
 
-    def index(key, value)
+    def set(key, value)
       value = value.deep_dup.freeze
       @mutex.synchronize do
         @hash[key] = value
@@ -35,23 +35,13 @@ module WCC::Contentful::Store
       Query.new(relation)
     end
 
-    class Query
-      delegate :first, to: :@relation
-      delegate :map, to: :@relation
-      delegate :count, to: :@relation
-
+    class Query < Base::Query
       def result
         @relation.dup
       end
 
       def initialize(relation)
         @relation = relation
-      end
-
-      def apply(filter, context = nil)
-        return eq(filter[:field], filter[:eq], context) if filter[:eq]
-
-        raise ArgumentError, "Filter not implemented: #{filter}"
       end
 
       def eq(field, expected, context = nil)

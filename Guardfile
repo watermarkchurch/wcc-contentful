@@ -11,7 +11,7 @@ group :red_green_refactor, halt_on_fail: true do
     # RSpec files
     rspec = dsl.rspec
     watch(rspec.spec_helper) { rspec.spec_dir }
-    watch(rspec.spec_support) { rspec.spec_dir }
+    # watch(rspec.spec_support) { rspec.spec_dir }
     watch(rspec.spec_files)
 
     # Ruby files
