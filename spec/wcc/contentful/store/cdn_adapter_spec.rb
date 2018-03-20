@@ -81,9 +81,9 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
     })
   end
 
-  it 'find_by filters on content type' do
+  it 'find_all filters on content type' do
     # act
-    found = adapter.find_by(content_type: 'menuButton')
+    found = adapter.find_all(content_type: 'menuButton')
 
     # assert
     expect(found.count).to eq(11)
@@ -104,9 +104,9 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
     )
   end
 
-  it 'find_by finds assets' do
+  it 'find_all finds assets' do
     # act
-    found = adapter.find_by(content_type: 'Asset')
+    found = adapter.find_all(content_type: 'Asset')
 
     # assert
     expect(found.count).to eq(6)
@@ -124,7 +124,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
 
   it 'filter query eq can find value' do
     # act
-    found = adapter.find_by(content_type: 'page')
+    found = adapter.find_all(content_type: 'page')
       .apply({ field: 'slug', eq: '/conferences' })
 
     # assert

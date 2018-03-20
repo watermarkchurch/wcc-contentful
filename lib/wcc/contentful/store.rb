@@ -1,6 +1,7 @@
 
 # frozen_string_literal: true
 
+require_relative 'store/base'
 require_relative 'store/memory_store'
 require_relative 'store/lazy_cache_store'
 require_relative 'store/cdn_adapter'

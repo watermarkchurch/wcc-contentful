@@ -4,7 +4,7 @@ gem 'pg', '~> 1.0'
 require 'pg'
 
 module WCC::Contentful::Store
-  class PostgresStore
+  class PostgresStore < Base
     def initialize(connection_options = nil)
       connection_options ||= { dbname: 'postgres' }
       @conn = PG.connect(connection_options)
@@ -29,11 +29,7 @@ module WCC::Contentful::Store
       JSON.parse(result.getvalue(0, 1))
     end
 
-    def find_all
-      Query.new(@conn)
-    end
-
-    def find_by(content_type:)
+    def find_all(content_type:)
       statement = "WHERE data->'sys'->'contentType'->'sys'->>'id' = $1"
       Query.new(
         @conn,

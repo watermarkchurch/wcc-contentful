@@ -4,7 +4,7 @@ module WCC::Contentful::Store
   class LazyCacheStore
     attr_reader :cache
 
-    delegate :find_by, to: :@store
+    delegate :find_all, to: :@store
 
     def initialize(client:, cache: nil)
       @store = CDNAdapter.new(client)

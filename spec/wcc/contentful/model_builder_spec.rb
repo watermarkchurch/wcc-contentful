@@ -140,7 +140,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     WCC::Contentful::Model.store = store
 
     # act
-    menu_items = WCC::Contentful::Model::MenuButton.find_by(button_style: 'custom')
+    menu_items = WCC::Contentful::Model::MenuButton.find_all(button_style: 'custom')
 
     # assert
     expect(menu_items.length).to eq(2)
@@ -154,7 +154,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     WCC::Contentful::Model.store = store
 
     # act
-    redirect = WCC::Contentful::Model::Redirect2.find_by(slug: 'mister_roboto')
+    redirect = WCC::Contentful::Model::Redirect2.find_all(slug: 'mister_roboto')
 
     # assert
     expect(redirect.length).to eq(1)

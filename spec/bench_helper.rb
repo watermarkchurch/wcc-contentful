@@ -35,7 +35,7 @@ module BenchHelper
           if content_type.nil?
             store.keys.shuffle
           else
-            store.find_by(content_type: content_type).map { |i| i.dig('sys', 'id') }
+            store.find_all(content_type: content_type).map { |i| i.dig('sys', 'id') }
           end
         before.call(store) if before.present?
 

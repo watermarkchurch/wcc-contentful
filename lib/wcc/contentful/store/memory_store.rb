@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module WCC::Contentful::Store
-  class MemoryStore
+  class MemoryStore < Base
     def initialize
       @hash = {}
       @mutex = Mutex.new
@@ -24,11 +24,7 @@ module WCC::Contentful::Store
       end
     end
 
-    def find_all
-      Query.new(@mutex.synchronize { @hash.values })
-    end
-
-    def find_by(content_type:)
+    def find_all(content_type:)
       relation = @mutex.synchronize { @hash.values }
 
       relation =

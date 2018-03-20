@@ -18,11 +18,7 @@ module WCC::Contentful::Store
       entry&.raw
     end
 
-    def find_all
-      raise ArgumentError, 'use find_by content type instead'
-    end
-
-    def find_by(content_type:)
+    def find_all(content_type:)
       Query.new(@client, content_type: content_type)
     end
 
