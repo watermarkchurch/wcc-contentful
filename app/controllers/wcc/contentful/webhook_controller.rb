@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'active_support/dependencies'
 require_dependency WCC::Contentful::Engine.root.join('app/controllers/application_controller')
 
 module WCC::Contentful
