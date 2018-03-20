@@ -31,4 +31,7 @@ module WCC::Contentful
       ret.flatten(1)
     end
   end
+
+  class SyncError < StandardError
+  end
 end

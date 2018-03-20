@@ -44,6 +44,7 @@ module WCC::Contentful
 
   def self.init!
     raise ArgumentError, 'Please first call WCC:Contentful.configure' if configuration.nil?
+    @mutex ||= Mutex.new
 
     # we want as much as possible the raw JSON from the API
     content_types_resp =
@@ -105,16 +106,34 @@ module WCC::Contentful
     raise WCC::Contentful::ValidationError, errors.errors unless errors.success?
   end
 
-  def self.sync!(_up_to_id = nil)
+  def self.sync!(up_to_id: nil)
     return unless %i[eager_sync lazy_sync].include?(configuration.content_delivery)
 
-    sync_resp = client.sync(sync_token: next_sync_token)
+    @mutex.synchronize do
+      sync_resp = client.sync(sync_token: next_sync_token)
 
-    sync_resp.items.each do |item|
-      store.index(item.dig('sys', 'id'), item)
+      id_found = up_to_id.nil?
+
+      sync_resp.items.each do |item|
+        id = item.dig('sys', 'id')
+        id_found ||= id == up_to_id
+        store.index(id, item)
+      end
+      store.index("sync:#{configuration.space}:token", sync_resp.next_sync_token)
+      @next_sync_token = sync_resp.next_sync_token
+
+      unless  id_found
+        raise SyncError, "ID '#{up_to_id}' did not come back via sync." unless defined?(Rails)
+        sync_later!(up_to_id: up_to_id)
+      end
+      next_sync_token
     end
-    store.index("sync:#{configuration.space}:token", sync_resp.next_sync_token)
-    @next_sync_token = sync_resp.next_sync_token
+  end
+
+  def self.sync_later!(up_to_id: nil, wait: 10.minutes)
+    raise NotImplementedError, 'Cannot sync_later! outside of a Rails app' unless defined?(Rails)
+
+    WCC::Contentful::DelayedSyncJob.set(wait: wait).perform_later(up_to_id)
   end
 
   # TODO: https://zube.io/watermarkchurch/development/c/2234 init graphql

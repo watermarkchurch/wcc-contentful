@@ -318,5 +318,44 @@ RSpec.describe WCC::Contentful, :vcr do
         expect(WCC::Contentful.next_sync_token).to eq('test2')
       end
     end
+
+    context 'when ID given' do
+      it 'raises a sync error if the ID does not come back' do
+        stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
+          .with(query: hash_including('sync_token' => 'FwqZm...'))
+          .to_return(body: next_sync.merge({ 'nextSyncUrl' =>
+            'https://cdn.contentful.com/spaces/343qxys30lid/sync?sync_token=test1' }).to_json)
+
+        stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
+          .with(query: hash_including('sync_token' => 'test1'))
+          .to_return(body: empty.merge({ 'nextSyncUrl' =>
+          'https://cdn.contentful.com/spaces/343qxys30lid/sync?sync_token=test2' }).to_json)
+
+        # act
+        expect {
+          WCC::Contentful.sync!(up_to_id: 'foobar')
+        }.to raise_error(WCC::Contentful::SyncError)
+      end
+
+      it 'does not drop a job if the ID comes back in the sync' do
+        require 'active_job'
+
+        stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
+          .with(query: hash_including('sync_token' => 'FwqZm...'))
+          .to_return(body: next_sync.merge({ 'nextSyncUrl' =>
+            'https://cdn.contentful.com/spaces/343qxys30lid/sync?sync_token=test1' }).to_json)
+
+        stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
+          .with(query: hash_including('sync_token' => 'test1'))
+          .to_return(body: empty.merge({ 'nextSyncUrl' =>
+          'https://cdn.contentful.com/spaces/343qxys30lid/sync?sync_token=test2' }).to_json)
+
+        expect(ActiveJob::Base.queue_adapter).to_not receive(:enqueue)
+        expect(ActiveJob::Base.queue_adapter).to_not receive(:enqueue_at)
+
+        # act
+        WCC::Contentful.sync!(up_to_id: '1EjBdAgOOgAQKAggQoY2as')
+      end
+    end
   end
 end
