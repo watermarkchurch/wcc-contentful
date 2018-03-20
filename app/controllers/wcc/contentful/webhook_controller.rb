@@ -8,7 +8,7 @@ module WCC::Contentful
     before_action :authorize_contentful
 
     def receive
-      WCC::Contentful.sync!(params.dig('sys', 'id'))
+      WCC::Contentful.sync!(up_to_id: params.dig('sys', 'id'))
     end
 
     def authorize_contentful

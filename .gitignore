@@ -21,3 +21,6 @@ contentful-*-error-log-*
 .env*
 
 node_modules
+
+log/
+tmp/

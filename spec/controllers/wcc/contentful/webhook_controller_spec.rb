@@ -9,8 +9,6 @@ RSpec.describe WCC::Contentful::WebhookController, type: :controller do
 
   describe 'receive' do
     let!(:good_headers) {
-      ENV['CONTENTFUL_BLOG_WEBHOOK_USERNAME'] = 'tester1'
-      ENV['CONTENTFUL_BLOG_WEBHOOK_PASSWORD'] = 'password1'
       {
         'Authorization': basic_auth('tester1', 'password1'),
         'Content-Type': 'application/vnd.contentful.management.v1+json',
@@ -18,7 +16,16 @@ RSpec.describe WCC::Contentful::WebhookController, type: :controller do
       }
     }
 
+    before do
+      WCC::Contentful.configure do |config|
+        config.webhook_username = 'tester1'
+        config.webhook_password = 'password1'
+      end
+      allow(WCC::Contentful).to receive(:sync!)
+    end
+
     it 'denies requests without HTTP BASIC auth' do
+      request.headers[:'Content-Type'] = 'application/vnd.contentful.management.v1+json'
       post :receive,
         body: '{}',
         format: :json
@@ -28,7 +35,10 @@ RSpec.describe WCC::Contentful::WebhookController, type: :controller do
     end
 
     it 'denies requests with bad HTTP BASIC auth' do
-      request.headers['Authorization'] = basic_auth('tester1', 'badpasswd')
+      request.headers.merge!(
+        'Authorization': basic_auth('tester1', 'badpasswd'),
+        'Content-Type': 'application/vnd.contentful.management.v1+json'
+      )
       post :receive, body: '{}'
 
       # assert
@@ -64,7 +74,7 @@ RSpec.describe WCC::Contentful::WebhookController, type: :controller do
       body = load_fixture('contentful/contentful_published_blog.json')
 
       expect(WCC::Contentful).to receive(:sync!)
-        .with('rYhUgNF6k8iU2mI84gQOQ')
+        .with(up_to_id: 'rYhUgNF6k8iU2mI84gQOQ')
 
       # act
       post :receive,
