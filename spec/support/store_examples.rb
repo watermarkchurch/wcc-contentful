@@ -221,7 +221,21 @@ RSpec.shared_examples 'contentful store' do
       expect(subject.find('1qLdW7i7g4Ycq6i4Cckg44')).to eq(entry)
     end
 
-    it 'TODO: does not overwrite an entry if revision is lower'
+    it 'does not overwrite an entry if revision is lower' do
+      initial = entry
+      updated = entry.deep_dup
+      updated['sys']['revision'] = 2
+      updated['fields']['slug']['en-US'] = 'test slug'
+
+      subject.index(updated)
+
+      # act
+      latest = subject.index(initial)
+
+      # assert
+      expect(latest).to eq(updated)
+      expect(subject.find('1qLdW7i7g4Ycq6i4Cckg44')).to eq(updated)
+    end
 
     it 'stores an "Asset"' do
       # act
@@ -234,7 +248,7 @@ RSpec.shared_examples 'contentful store' do
 
     it 'updates an "Asset" when exists' do
       existing = { 'test' => { 'data' => 'asdf' } }
-      subject.set('1qLdW7i7g4Ycq6i4Cckg44', existing)
+      subject.set('3pWma8spR62aegAWAWacyA', existing)
 
       # act
       latest = subject.index(asset)
@@ -244,7 +258,21 @@ RSpec.shared_examples 'contentful store' do
       expect(subject.find('3pWma8spR62aegAWAWacyA')).to eq(asset)
     end
 
-    it 'TODO: does not overwrite an asset if revision is lower'
+    it 'TODO: does not overwrite an asset if revision is lower' do
+      initial = asset
+      updated = asset.deep_dup
+      updated['sys']['revision'] = 2
+      updated['fields']['title']['en-US'] = 'test title'
+
+      subject.index(updated)
+
+      # act
+      latest = subject.index(initial)
+
+      # assert
+      expect(latest).to eq(updated)
+      expect(subject.find('3pWma8spR62aegAWAWacyA')).to eq(updated)
+    end
 
     it 'removes a "DeletedEntry"' do
       existing = { 'test' => { 'data' => 'asdf' } }
@@ -258,6 +286,20 @@ RSpec.shared_examples 'contentful store' do
       expect(subject.find('6HQsABhZDiWmi0ekCouUuy')).to be_nil
     end
 
+    it 'does not remove if "DeletedEntry" revision is lower' do
+      existing = entry
+      existing['sys']['id'] = deleted_entry.dig('sys', 'id')
+      existing['sys']['revision'] = deleted_entry.dig('sys', 'revision') + 1
+      subject.index(existing)
+
+      # act
+      latest = subject.index(deleted_entry)
+
+      # assert
+      expect(latest).to eq(existing)
+      expect(subject.find(deleted_entry.dig('sys', 'id'))).to eq(existing)
+    end
+
     it 'removes a "DeletedAsset"' do
       existing = { 'test' => { 'data' => 'asdf' } }
       subject.set('3pWma8spR62aegAWAWacyA', existing)
@@ -268,6 +310,20 @@ RSpec.shared_examples 'contentful store' do
       # assert
       expect(latest).to be_nil
       expect(subject.find('3pWma8spR62aegAWAWacyA')).to be_nil
+    end
+
+    it 'does not remove if "DeletedAsset" revision is lower' do
+      existing = asset
+      existing['sys']['id'] = deleted_asset.dig('sys', 'id')
+      existing['sys']['revision'] = deleted_asset.dig('sys', 'revision') + 1
+      subject.index(existing)
+
+      # act
+      latest = subject.index(deleted_asset)
+
+      # assert
+      expect(latest).to eq(existing)
+      expect(subject.find(deleted_asset.dig('sys', 'id'))).to eq(existing)
     end
   end
 

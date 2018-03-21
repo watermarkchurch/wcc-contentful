@@ -16,12 +16,25 @@ module WCC::Contentful::Store
     end
 
     def index(json)
-      case json.dig('sys', 'type')
+      prev =
+        case type = json.dig('sys', 'type')
+        when 'DeletedEntry', 'DeletedAsset'
+          delete(json.dig('sys', 'id'))
+        else
+          set(json.dig('sys', 'id'), json)
+        end
+
+      if (prev_rev = prev&.dig('sys', 'revision')) && (next_rev = json.dig('sys', 'revision'))
+        if next_rev < prev_rev
+          # Uh oh! we overwrote an entry with a prior revision.  Put the previous back.
+          return index(prev)
+        end
+      end
+
+      case type
       when 'DeletedEntry', 'DeletedAsset'
-        delete(json.dig('sys', 'id'))
         nil
       else
-        set(json.dig('sys', 'id'), json)
         json
       end
     end
