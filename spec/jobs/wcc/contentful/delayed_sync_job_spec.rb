@@ -41,12 +41,12 @@ module WCC::Contentful
         stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
           .with(query: hash_including('sync_token' => 'FwqZm...'))
           .to_return(body: next_sync.merge({ 'nextSyncUrl' =>
-            'https://cdn.contentful.com/spaces/343qxys30lid/sync?sync_token=test1' }).to_json)
+            "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync?sync_token=test1" }).to_json)
 
         stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
           .with(query: hash_including('sync_token' => 'test1'))
           .to_return(body: empty.merge({ 'nextSyncUrl' =>
-          'https://cdn.contentful.com/spaces/343qxys30lid/sync?sync_token=test2' }).to_json)
+            "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync?sync_token=test2" }).to_json)
 
         # act
         expect {

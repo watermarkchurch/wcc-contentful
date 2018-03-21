@@ -4,7 +4,7 @@
 WCC::Contentful.configure do |config|
   # Required
   config.access_token = ENV['CONTENTFUL_ACCESS_TOKEN'] || 'test1234'
-  config.space = ENV['CONTENTFUL_SPACE_ID'] || 'CFPAT-test1234'
+  config.space = ENV['CONTENTFUL_SPACE_ID'] || 'test1xab'
   config.management_token = ENV['CONTENTFUL_MANAGEMENT_TOKEN'] || 'CFPAT-test1234'
   config.default_locale = 'en-US'
 
