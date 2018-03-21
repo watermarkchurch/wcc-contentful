@@ -3,13 +3,13 @@
 module WCC::Contentful::Store
   class MemoryStore < Base
     def initialize
+      super
       @hash = {}
-      @mutex = Mutex.new
     end
 
     def set(key, value)
       value = value.deep_dup.freeze
-      @mutex.synchronize do
+      mutex.with_write_lock do
         old = @hash[key]
         @hash[key] = value
         old
@@ -17,23 +17,23 @@ module WCC::Contentful::Store
     end
 
     def delete(key)
-      @mutex.synchronize do
+      mutex.with_write_lock do
         @hash.delete(key)
       end
     end
 
     def keys
-      @mutex.synchronize { @hash.keys }
+      mutex.with_read_lock { @hash.keys }
     end
 
     def find(key)
-      @mutex.synchronize do
+      mutex.with_read_lock do
         @hash[key]
       end
     end
 
     def find_all(content_type:)
-      relation = @mutex.synchronize { @hash.values }
+      relation = mutex.with_read_lock { @hash.values }
 
       relation =
         relation.reject do |v|

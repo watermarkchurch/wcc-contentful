@@ -6,6 +6,7 @@ require 'pg'
 module WCC::Contentful::Store
   class PostgresStore < Base
     def initialize(connection_options = nil)
+      super()
       connection_options ||= { dbname: 'postgres' }
       @conn = PG.connect(connection_options)
       PostgresStore.ensure_schema(@conn)

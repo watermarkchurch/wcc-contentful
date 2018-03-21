@@ -16,26 +16,30 @@ module WCC::Contentful::Store
     end
 
     def index(json)
-      prev =
-        case type = json.dig('sys', 'type')
+      # Subclasses can override to do this in a more performant thread-safe way.
+      # Example: postgres_store could do this in a stored procedure for speed
+      mutex.with_write_lock do
+        prev =
+          case type = json.dig('sys', 'type')
+          when 'DeletedEntry', 'DeletedAsset'
+            delete(json.dig('sys', 'id'))
+          else
+            set(json.dig('sys', 'id'), json)
+          end
+
+        if (prev_rev = prev&.dig('sys', 'revision')) && (next_rev = json.dig('sys', 'revision'))
+          if next_rev < prev_rev
+            # Uh oh! we overwrote an entry with a prior revision.  Put the previous back.
+            return index(prev)
+          end
+        end
+
+        case type
         when 'DeletedEntry', 'DeletedAsset'
-          delete(json.dig('sys', 'id'))
+          nil
         else
-          set(json.dig('sys', 'id'), json)
+          json
         end
-
-      if (prev_rev = prev&.dig('sys', 'revision')) && (next_rev = json.dig('sys', 'revision'))
-        if next_rev < prev_rev
-          # Uh oh! we overwrote an entry with a prior revision.  Put the previous back.
-          return index(prev)
-        end
-      end
-
-      case type
-      when 'DeletedEntry', 'DeletedAsset'
-        nil
-      else
-        json
       end
     end
 
@@ -51,6 +55,14 @@ module WCC::Contentful::Store
       raise NotImplementedError
     end
     # rubocop:enable Lint/UnusedMethodArgument
+
+    def initialize
+      @mutex = Concurrent::ReentrantReadWriteLock.new
+    end
+
+    protected
+
+    attr_reader :mutex
 
     class Query
       delegate :first, to: :result
