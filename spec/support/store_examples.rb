@@ -258,7 +258,7 @@ RSpec.shared_examples 'contentful store' do
       expect(subject.find('3pWma8spR62aegAWAWacyA')).to eq(asset)
     end
 
-    it 'TODO: does not overwrite an asset if revision is lower' do
+    it 'does not overwrite an asset if revision is lower' do
       initial = asset
       updated = asset.deep_dup
       updated['sys']['revision'] = 2
