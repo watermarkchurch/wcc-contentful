@@ -368,7 +368,27 @@ RSpec.shared_examples 'contentful store' do
       expect(found['sys']['id']).to eq('k4')
     end
 
-    it 'filter object can find value in array'
+    it 'filter object can find value in array' do
+      content_types = %w[test1 test2 test3 test4]
+      data =
+        1.upto(10).map do |i|
+          {
+            'sys' => {
+              'id' => "k#{i}",
+              'contentType' => { 'sys' => { 'id' => content_types[i % content_types.length] } }
+            },
+            'fields' => { 'name' => { 'en-US' => ["test#{i}", "test_2_#{i}"] } }
+          }
+        end
+      data.each { |d| subject.set(d.dig('sys', 'id'), d) }
+
+      # act
+      found = subject.find_by(content_type: 'test2', filter: { 'name' => { eq: 'test_2_5' } })
+
+      # assert
+      expect(found).to_not be_nil
+      expect(found.dig('sys', 'id')).to eq('k5')
+    end
   end
 
   describe '#find_all' do
