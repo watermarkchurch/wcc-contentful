@@ -12,8 +12,10 @@ module WCC::Contentful::Store
     end
 
     def set(key, value)
-      @conn.exec_prepared('index_entry', [key, value.to_json])
-      true
+      result = @conn.exec_prepared('upsert_entry', [key, value.to_json])
+      return if result.num_tuples == 0
+      val = result.getvalue(0, 0)
+      JSON.parse(val) if val
     end
 
     def keys
@@ -116,11 +118,24 @@ module WCC::Contentful::Store
         );
         CREATE INDEX IF NOT EXISTS contentful_raw_value_type ON contentful_raw ((data->'sys'->>'type'));
         CREATE INDEX IF NOT EXISTS contentful_raw_value_content_type ON contentful_raw ((data->'sys'->'contentType'->'sys'->>'id'));
+
+        DROP FUNCTION IF EXISTS "upsert_entry";
+        CREATE FUNCTION "upsert_entry"(_id char(22), _data jsonb) RETURNS jsonb AS $$
+        DECLARE
+          prev jsonb;
+        BEGIN
+          SELECT data FROM contentful_raw WHERE id = _id INTO prev;
+          INSERT INTO contentful_raw (id, data) values (_id, _data)
+            ON CONFLICT (id) DO
+              UPDATE
+              SET data = _data;
+           RETURN prev;
+        END;
+        $$ LANGUAGE 'plpgsql';
 HEREDOC
       )
 
-      conn.prepare('index_entry', 'INSERT INTO contentful_raw (id, data) values ($1, $2) ' \
-        'ON CONFLICT (id) DO UPDATE SET data = $2')
+      conn.prepare('upsert_entry', 'SELECT * FROM upsert_entry($1,$2)')
       conn.prepare('select_entry', 'SELECT * FROM contentful_raw WHERE id = $1')
       conn.prepare('select_ids', 'SELECT id FROM contentful_raw')
       conn.prepare('delete_by_id', 'DELETE FROM contentful_raw WHERE id = $1 RETURNING *')

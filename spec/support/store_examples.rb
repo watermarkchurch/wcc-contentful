@@ -23,6 +23,20 @@ RSpec.shared_examples 'contentful store' do
       # assert
       expect(found).to be_nil
     end
+
+    it 'set returns prior value if exists' do
+      data = { 'key' => 'val', '1' => { 'deep' => 9 } }
+      data2 = { 'key' => 'val', '2' => { 'deep' => 11 } }
+
+      # act
+      prior1 = subject.set('1234', data)
+      prior2 = subject.set('1234', data2)
+
+      # assert
+      expect(prior1).to be_nil
+      expect(prior2).to eq(data)
+      expect(subject.find('1234')).to eq(data2)
+    end
   end
 
   describe '#delete' do

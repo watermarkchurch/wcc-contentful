@@ -10,7 +10,9 @@ module WCC::Contentful::Store
     def set(key, value)
       value = value.deep_dup.freeze
       @mutex.synchronize do
+        old = @hash[key]
         @hash[key] = value
+        old
       end
     end
 
