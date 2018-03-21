@@ -320,6 +320,19 @@ RSpec.describe WCC::Contentful, :vcr do
     end
 
     context 'when ID given' do
+      before do
+        # ensure rails doesn't exist - because if it does, `sync!` drops a job
+        # instead of raising a sync error
+        if defined?(Rails)
+          @tmp_rails = Rails
+          Object.send(:remove_const, 'Rails')
+        end
+      end
+
+      after do
+        Object.const_set('Rails', @tmp_rails) if @tmp_rails
+      end
+
       it 'raises a sync error if the ID does not come back' do
         stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
           .with(query: hash_including('sync_token' => 'FwqZm...'))
