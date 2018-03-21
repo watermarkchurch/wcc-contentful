@@ -152,7 +152,7 @@ RSpec.describe WCC::Contentful, :vcr do
       let(:store) { WCC::Contentful::Store::MemoryStore.new }
 
       before(:each) do
-        store.index("sync:#{contentful_space_id}:token", 'testX')
+        store.set("sync:#{contentful_space_id}:token", 'testX')
 
         WCC::Contentful.configure do |config|
           config.management_token = contentful_management_token
@@ -281,7 +281,7 @@ RSpec.describe WCC::Contentful, :vcr do
           .to_return(body: empty.merge({ 'nextSyncUrl' =>
             'https://cdn.contentful.com/spaces/343qxys30lid/sync?sync_token=test' }).to_json)
 
-        expect(WCC::Contentful.store).to receive(:index)
+        expect(WCC::Contentful.store).to receive(:set)
           .with("sync:#{contentful_space_id}:token", 'test')
         expect(WCC::Contentful.store).to_not receive(:index)
 
@@ -306,7 +306,7 @@ RSpec.describe WCC::Contentful, :vcr do
 
         items = next_sync['items']
 
-        expect(WCC::Contentful.store).to receive(:index)
+        expect(WCC::Contentful.store).to receive(:set)
           .with("sync:#{contentful_space_id}:token", 'test2')
         expect(WCC::Contentful.store).to receive(:index)
           .exactly(items.count).times

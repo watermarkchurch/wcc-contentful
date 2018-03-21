@@ -15,9 +15,9 @@ module WCC::Contentful::Store
       raise NotImplementedError
     end
 
-    def index(id, sync_value)
+    def index(json)
       # TODO: implement all of sync
-      set(id, sync_value)
+      set(json.dig('sys', 'id'), json)
     end
 
     def find_by(content_type:, filter: nil)

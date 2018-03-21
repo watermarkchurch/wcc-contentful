@@ -16,8 +16,8 @@ module FixturesHelper
     sync_initial = JSON.parse(load_fixture(file_name).gsub(/343qxys30lid/, contentful_space_id))
 
     store ||= WCC::Contentful::Store::MemoryStore.new
-    sync_initial.each do |k, v|
-      store.index(k, v)
+    sync_initial.each do |_k, v|
+      store.index(v)
     end
     store
   end

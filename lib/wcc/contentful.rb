@@ -117,9 +117,9 @@ module WCC::Contentful
       sync_resp.items.each do |item|
         id = item.dig('sys', 'id')
         id_found ||= id == up_to_id
-        store.index(id, item)
+        store.index(item)
       end
-      store.index("sync:#{configuration.space}:token", sync_resp.next_sync_token)
+      store.set("sync:#{configuration.space}:token", sync_resp.next_sync_token)
       @next_sync_token = sync_resp.next_sync_token
 
       unless  id_found
