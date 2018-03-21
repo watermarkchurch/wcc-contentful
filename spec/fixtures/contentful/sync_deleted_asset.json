@@ -1,0 +1,32 @@
+{
+  "sys": {
+    "type": "Array"
+  },
+  "items": [
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "343qxys30lid"
+          }
+        },
+        "id": "3pWma8spR62aegAWAWacyA",
+        "type": "DeletedAsset",
+        "createdAt": "2018-03-20T18:44:58.270Z",
+        "updatedAt": "2018-03-20T18:44:58.270Z",
+        "deletedAt": "2018-03-20T18:44:58.270Z",
+        "environment": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Environment",
+            "id": "98322ee2-6dee-4651-b3a5-743be50fb107"
+          }
+        },
+        "revision": 1
+      }
+    }
+  ],
+  "nextSyncUrl": "https://cdn.contentful.com/spaces/343qxys30lid/sync?sync_token=w5ZGw6JFwqZmVcKsE8Kow4grw45QdybCgSB1EhPClMOcwpHCqhXCqsK5KsKZwoDCvMOMwrLDj8OLFX1cHkVkG8OcwpUbSwtEb3PDgcO8wp_DqAPDkArDvSsew4N7bgp7w5pGw4M-w5Zjw6vDs8OqwqvDu8KpW8KL"
+}

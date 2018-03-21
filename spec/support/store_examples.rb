@@ -66,21 +66,209 @@ RSpec.shared_examples 'contentful store' do
   end
 
   describe '#index' do
-    it 'stores an "Entry"'
+    let(:entry) {
+      JSON.parse(<<~JSON)
+        {
+          "sys": {
+            "space": {
+              "sys": {
+                "type": "Link",
+                "linkType": "Space",
+                "id": "343qxys30lid"
+              }
+            },
+            "id": "1qLdW7i7g4Ycq6i4Cckg44",
+            "type": "Entry",
+            "createdAt": "2018-03-09T23:39:27.737Z",
+            "updatedAt": "2018-03-09T23:39:27.737Z",
+            "revision": 1,
+            "contentType": {
+              "sys": {
+                "type": "Link",
+                "linkType": "ContentType",
+                "id": "redirect"
+              }
+            }
+          },
+          "fields": {
+            "slug": {
+              "en-US": "redirect-with-slug-and-url"
+            },
+            "url": {
+              "en-US": "http://www.google.com"
+            }
+          }
+        }
+      JSON
+    }
 
-    it 'updates an "Entry" when exists'
+    let(:asset) {
+      JSON.parse(<<~JSON)
+        {
+          "sys": {
+            "space": {
+              "sys": {
+                "type": "Link",
+                "linkType": "Space",
+                "id": "343qxys30lid"
+              }
+            },
+            "id": "3pWma8spR62aegAWAWacyA",
+            "type": "Asset",
+            "createdAt": "2018-02-12T19:53:39.309Z",
+            "updatedAt": "2018-02-12T19:53:39.309Z",
+            "revision": 1
+          },
+          "fields": {
+            "title": {
+              "en-US": "apple-touch-icon"
+            },
+            "file": {
+              "en-US": {
+                "url": "//images.contentful.com/343qxys30lid/3pWma8spR62aegAWAWacyA/1beaebf5b66d2405ff9c9769a74db709/apple-touch-icon.png",
+                "details": {
+                  "size": 40832,
+                  "image": {
+                    "width": 180,
+                    "height": 180
+                  }
+                },
+                "fileName": "apple-touch-icon.png",
+                "contentType": "image/png"
+              }
+            }
+          }
+        }
+      JSON
+    }
+
+    let(:deleted_entry) {
+      JSON.parse(<<~JSON)
+        {
+          "sys": {
+            "space": {
+              "sys": {
+                "type": "Link",
+                "linkType": "Space",
+                "id": "343qxys30lid"
+              }
+            },
+            "id": "6HQsABhZDiWmi0ekCouUuy",
+            "type": "DeletedEntry",
+            "createdAt": "2018-03-13T19:45:44.454Z",
+            "updatedAt": "2018-03-13T19:45:44.454Z",
+            "deletedAt": "2018-03-13T19:45:44.454Z",
+            "environment": {
+              "sys": {
+                "type": "Link",
+                "linkType": "Environment",
+                "id": "98322ee2-6dee-4651-b3a5-743be50fb107"
+              }
+            },
+            "revision": 1
+          }
+        }
+      JSON
+    }
+
+    let(:deleted_asset) {
+      JSON.parse(<<~JSON)
+        {
+          "sys": {
+            "space": {
+              "sys": {
+                "type": "Link",
+                "linkType": "Space",
+                "id": "343qxys30lid"
+              }
+            },
+            "id": "3pWma8spR62aegAWAWacyA",
+            "type": "DeletedAsset",
+            "createdAt": "2018-03-20T18:44:58.270Z",
+            "updatedAt": "2018-03-20T18:44:58.270Z",
+            "deletedAt": "2018-03-20T18:44:58.270Z",
+            "environment": {
+              "sys": {
+                "type": "Link",
+                "linkType": "Environment",
+                "id": "98322ee2-6dee-4651-b3a5-743be50fb107"
+              }
+            },
+            "revision": 1
+          }
+        }
+      JSON
+    }
+
+    it 'stores an "Entry"' do
+      # act
+      prev = subject.index(entry)
+
+      # assert
+      expect(prev).to eq(entry)
+      expect(subject.find('1qLdW7i7g4Ycq6i4Cckg44')).to eq(entry)
+    end
+
+    it 'updates an "Entry" when exists' do
+      existing = { 'test' => { 'data' => 'asdf' } }
+      subject.set('1qLdW7i7g4Ycq6i4Cckg44', existing)
+
+      # act
+      latest = subject.index(entry)
+
+      # assert
+      expect(latest).to eq(entry)
+      expect(subject.find('1qLdW7i7g4Ycq6i4Cckg44')).to eq(entry)
+    end
 
     it 'TODO: does not overwrite an entry if revision is lower'
 
-    it 'stores an "Asset"'
+    it 'stores an "Asset"' do
+      # act
+      latest = subject.index(asset)
 
-    it 'updates an "Asset" when exists'
+      # assert
+      expect(latest).to eq(asset)
+      expect(subject.find('3pWma8spR62aegAWAWacyA')).to eq(asset)
+    end
+
+    it 'updates an "Asset" when exists' do
+      existing = { 'test' => { 'data' => 'asdf' } }
+      subject.set('1qLdW7i7g4Ycq6i4Cckg44', existing)
+
+      # act
+      latest = subject.index(asset)
+
+      # assert
+      expect(latest).to eq(asset)
+      expect(subject.find('3pWma8spR62aegAWAWacyA')).to eq(asset)
+    end
 
     it 'TODO: does not overwrite an asset if revision is lower'
 
-    it 'removes a "DeletedEntry"'
+    it 'removes a "DeletedEntry"' do
+      existing = { 'test' => { 'data' => 'asdf' } }
+      subject.set('6HQsABhZDiWmi0ekCouUuy', existing)
 
-    it 'removes a "DeletedAsset"'
+      # act
+      latest = subject.index(deleted_entry)
+
+      # assert
+      expect(latest).to be_nil
+      expect(subject.find('6HQsABhZDiWmi0ekCouUuy')).to be_nil
+    end
+
+    it 'removes a "DeletedAsset"' do
+      existing = { 'test' => { 'data' => 'asdf' } }
+      subject.set('3pWma8spR62aegAWAWacyA', existing)
+
+      # act
+      latest = subject.index(deleted_asset)
+
+      # assert
+      expect(latest).to be_nil
+      expect(subject.find('3pWma8spR62aegAWAWacyA')).to be_nil
+    end
   end
 
   describe '#find_by' do

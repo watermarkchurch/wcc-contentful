@@ -16,8 +16,14 @@ module WCC::Contentful::Store
     end
 
     def index(json)
-      # TODO: implement all of sync
-      set(json.dig('sys', 'id'), json)
+      case json.dig('sys', 'type')
+      when 'DeletedEntry', 'DeletedAsset'
+        delete(json.dig('sys', 'id'))
+        nil
+      else
+        set(json.dig('sys', 'id'), json)
+        json
+      end
     end
 
     def find_by(content_type:, filter: nil)
