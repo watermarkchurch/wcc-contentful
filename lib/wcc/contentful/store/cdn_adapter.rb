@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
 module WCC::Contentful::Store
-  class CDNAdapter
+  class CDNAdapter < Base
     attr_reader :client
 
+    # Intentionally not implementing write methods
+
     def initialize(client)
+      super()
       @client = client
     end
 
@@ -22,19 +25,11 @@ module WCC::Contentful::Store
       Query.new(@client, content_type: content_type)
     end
 
-    class Query
+    class Query < Base::Query
       delegate :count, to: :resolve
 
-      def first
-        resolve.items.first
-      end
-
-      def map(&block)
-        resolve.items.map(&block)
-      end
-
       def result
-        raise ArgumentError, 'Not Implemented'
+        resolve.items
       end
 
       def initialize(client, relation)
@@ -42,12 +37,6 @@ module WCC::Contentful::Store
         raise ArgumentError, 'content_type must be provided' unless relation[:content_type].present?
         @client = client
         @relation = relation
-      end
-
-      def apply(filter, context = nil)
-        return eq(filter[:field], filter[:eq], context) if filter[:eq]
-
-        raise ArgumentError, "Filter not implemented: #{filter}"
       end
 
       def eq(field, expected, context = nil)
