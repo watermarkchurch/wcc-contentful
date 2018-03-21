@@ -4,15 +4,15 @@
 module WCC::Contentful::Store
   class Base
     def find(_id)
-      raise NotImplementedError
+      raise NotImplementedError, "#{self.class} does not implement #find"
     end
 
     def set(_id, _value)
-      raise NotImplementedError
+      raise NotImplementedError, "#{self.class} does not implement #set"
     end
 
     def delete(_id)
-      raise NotImplementedError
+      raise NotImplementedError, "#{self.class} does not implement #delete"
     end
 
     def index(json)

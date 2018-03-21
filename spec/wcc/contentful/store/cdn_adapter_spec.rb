@@ -165,4 +165,22 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       expect(page.dig('fields', 'title', 'en-US')).to eq('Conferences')
     end
   end
+
+  it 'CDN Adapter does not implement #set' do
+    expect {
+      subject.set('id', { 'test' => 'data' })
+    }.to raise_error(NotImplementedError)
+  end
+
+  it 'CDN Adapter does not implement #delete' do
+    expect {
+      subject.delete('id')
+    }.to raise_error(NotImplementedError)
+  end
+
+  it 'CDN Adapter does not implement #index' do
+    expect {
+      subject.index({ 'sys' => { 'id' => 'asdf' } })
+    }.to raise_error(NotImplementedError)
+  end
 end
