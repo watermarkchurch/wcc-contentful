@@ -23,6 +23,12 @@ module WCC::Contentful::Store
       arr
     end
 
+    def delete(key)
+      result = @conn.exec_prepared('delete_by_id', [key])
+      return if result.num_tuples == 0
+      JSON.parse(result.getvalue(0, 1))
+    end
+
     def find(key)
       result = @conn.exec_prepared('select_entry', [key])
       return if result.num_tuples == 0
@@ -117,6 +123,7 @@ HEREDOC
         'ON CONFLICT (id) DO UPDATE SET data = $2')
       conn.prepare('select_entry', 'SELECT * FROM contentful_raw WHERE id = $1')
       conn.prepare('select_ids', 'SELECT id FROM contentful_raw')
+      conn.prepare('delete_by_id', 'DELETE FROM contentful_raw WHERE id = $1 RETURNING *')
     end
   end
 end

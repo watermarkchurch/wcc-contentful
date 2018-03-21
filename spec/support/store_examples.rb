@@ -12,6 +12,17 @@ RSpec.shared_examples 'contentful store' do
       # assert
       expect(found).to eq(data)
     end
+
+    it 'find returns nil if key doesnt exist' do
+      data = { 'key' => 'val', '1' => { 'deep' => 9 } }
+      subject.set('1234', data)
+
+      # act
+      found = subject.find('asdf')
+
+      # assert
+      expect(found).to be_nil
+    end
   end
 
   describe '#delete' do
@@ -25,6 +36,18 @@ RSpec.shared_examples 'contentful store' do
       # assert
       expect(deleted).to eq(data)
       expect(subject.find('9999')).to be_nil
+    end
+
+    it "returns nil if item doesn't exist" do
+      data = { 'key' => 'val', '1' => { 'deep' => 9 } }
+      subject.set('9999', data)
+
+      # act
+      deleted = subject.delete('asdf')
+
+      # assert
+      expect(deleted).to be_nil
+      expect(subject.find('9999')).to eq(data)
     end
   end
 

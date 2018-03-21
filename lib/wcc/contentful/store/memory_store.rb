@@ -14,6 +14,12 @@ module WCC::Contentful::Store
       end
     end
 
+    def delete(key)
+      @mutex.synchronize do
+        @hash.delete(key)
+      end
+    end
+
     def keys
       @mutex.synchronize { @hash.keys }
     end
