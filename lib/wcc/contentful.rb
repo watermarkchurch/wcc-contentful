@@ -15,20 +15,54 @@ require 'wcc/contentful/model_validators'
 require 'wcc/contentful/model'
 require 'wcc/contentful/model_builder'
 
+##
+# The root namespace of the wcc-contentful gem
+#
+# Initialize the gem with the `configure` and `init` methods inside your
+# initializer.
 module WCC::Contentful
   class << self
+    ##
+    # Gets the current configuration, after calling WCC::Contentful.configure
     attr_reader :configuration
+
+    ##
+    # Gets the sync token that was returned by the Contentful CDN after the most
+    # recent invocation of WCC::Contentful.sync!
     attr_reader :next_sync_token
   end
 
+  ##
+  # Gets a {CDN Client}[rdoc-ref:WCC::Contentful::SimpleClient::Cdn] which provides
+  # methods for getting and paging raw JSON data from the Contentful CDN.
   def self.client
     configuration&.client
   end
 
+  ##
+  # Gets the data-store which executes the queries run against the dynamic
+  # models in the WCC::Contentful::Model namespace.
+  # This is one of the following based on the configured content_delivery method:
+  #
+  # [:direct] an instance of WCC::Contentful::Store::CDNAdapter with a
+  #           {CDN Client}[rdoc-ref:WCC::Contentful::SimpleClient::Cdn] to access the CDN.
+  #
+  # [:lazy_sync] an instance of WCC::Contentful::Store::LazyCacheStore
+  #              with the configured ActiveSupport::Cache implementation and a
+  #              {CDN Client}[rdoc-ref:WCC::Contentful::SimpleClient::Cdn] for when data
+  #              cannot be found in the cache.
+  #
+  # [:eager_sync] an instance of the configured Store type, defined by
+  #               WCC::Contentful::Configuration.sync_store
+  #
   def self.store
     WCC::Contentful::Model.store
   end
 
+  ##
+  # Configures the WCC::Contentful gem to talk to a Contentful space.
+  # This must be called first in your initializer, before #init! or accessing the
+  # client.
   def self.configure
     @configuration ||= Configuration.new
     @next_sync_token = nil
@@ -42,6 +76,16 @@ module WCC::Contentful
     configuration
   end
 
+  ##
+  # Initializes the WCC::Contentful model-space and backing store.
+  # This populates the WCC::Contentful::Model namespace with Ruby classes
+  # that represent content types in the configured Contentful space.
+  #
+  # These content types can be queried directly:
+  #   WCC::Contentful::Model::Page.find('1xab...')
+  # Or you can inherit from them in your own app:
+  #   class Page < WCC::Contentful::Model.page; end
+  #   Page.find_by(slug: 'about-us')
   def self.init!
     raise ArgumentError, 'Please first call WCC:Contentful.configure' if configuration.nil?
     @mutex ||= Mutex.new
@@ -89,6 +133,13 @@ module WCC::Contentful
     require 'wcc/contentful/engine'
   end
 
+  ##
+  # Runs validations over the content types returned from the Contentful API.
+  # Validations are configured on predefined model classes using the
+  # `validate_field` directive.  Example:
+  #    validate_field :top_button, :Link, :optional, link_to: 'menuButton'
+  # This results in a WCC::Contentful::ValidationError
+  # if the 'topButton' field in the 'menu' content type is not a link.
   def self.validate_models!
     schema =
       Dry::Validation.Schema do
@@ -106,6 +157,14 @@ module WCC::Contentful
     raise WCC::Contentful::ValidationError, errors.errors unless errors.success?
   end
 
+  ##
+  # Calls the Contentful Sync API and updates the configured store with the returned
+  # data.
+  #
+  # up_to_id: An ID that we know has changed and should come back from the sync.
+  #           If we don't find this ID in the sync data, then drop a job to try
+  #           the sync again after a few minutes.
+  #
   def self.sync!(up_to_id: nil)
     return unless %i[eager_sync lazy_sync].include?(configuration.content_delivery)
 
@@ -122,7 +181,7 @@ module WCC::Contentful
       store.set("sync:#{configuration.space}:token", sync_resp.next_sync_token)
       @next_sync_token = sync_resp.next_sync_token
 
-      unless  id_found
+      unless id_found
         raise SyncError, "ID '#{up_to_id}' did not come back via sync." unless defined?(Rails)
         sync_later!(up_to_id: up_to_id)
       end
@@ -130,6 +189,9 @@ module WCC::Contentful
     end
   end
 
+  ##
+  # Drops an ActiveJob job to invoke WCC::Contentful.sync! after a given amount
+  # of time.
   def self.sync_later!(up_to_id: nil, wait: 10.minutes)
     raise NotImplementedError, 'Cannot sync_later! outside of a Rails app' unless defined?(Rails)
 

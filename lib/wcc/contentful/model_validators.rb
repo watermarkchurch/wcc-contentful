@@ -30,6 +30,9 @@ module WCC::Contentful::ModelValidators
     end
   end
 
+  ##
+  # Accepts a block which uses the {dry-validation DSL}[http://dry-rb.org/gems/dry-validation/]
+  # to validate the 'fields' object of a content type.
   def validate_fields(&block)
     raise ArgumentError, 'validate_fields requires a block' unless block_given?
     dsl = ProcDsl.new(Proc.new(&block))
@@ -37,12 +40,43 @@ module WCC::Contentful::ModelValidators
     (@field_validations ||= []) << dsl
   end
 
+  ##
+  # Validates a single field is of the expected type.
+  # Type expectations are one of:
+  #
+  # [:String]   the field type must be `Symbol` or `Text`
+  # [:Int]      the field type must be `Integer`
+  # [:Float]    the field type must be `Number`
+  # [:DateTime] the field type must be 'Date'
+  # [:Asset]    the field must be a link and the `linkType` must be `Asset`
+  # [:Link]     the field must be a link and the `linkType` must be `Entry`.
+  # [:Location] the field type must be `Location`
+  # [:Boolean]  the field type must be `Boolean`
+  # [:Json]     the field type must be `Json` - a json blob.
+  # [:Array]    the field must be a List.
+  #
+  # Additional validation options can be enforced:
+  #
+  # [:required] the 'Required Field' checkbox must be checked
+  # [:optional] the 'Required Field' checkbox must not be checked
+  # [:link_to]  (only `:Link` or `:Array` type) the given content type(s) must be
+  #             checked in the 'Accept only specified entry type' validations
+  #             Example:
+  #               validate_field :button, :Link, link_to: ['button', 'altButton']
+  #
+  # [:items]    (only `:Array` type) the items of the list must be of the given type.
+  #             Example:
+  #               validate_field :my_strings, :Array, items: :String
+  #
+  # Examples:
+  # see WCC::Contentful::Model::Menu and WCC::Contentful::Model::MenuButton
   def validate_field(field, type, *options)
     dsl = FieldDsl.new(field, type, options)
 
     (@field_validations ||= []) << dsl
   end
 
+  ##
   # Accepts a content types response from the API and transforms it
   # to be acceptible for the validator.
   def self.transform_content_types_for_validation(content_types)
