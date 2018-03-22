@@ -265,15 +265,67 @@ RSpec.describe WCC::Contentful::ModelBuilder do
   describe 'model subclasses' do
     before do
       subject.build_models
+      WCC::Contentful::Model.store = store
     end
 
-    it 'can execute .find'
+    after do
+      Object.send(:remove_const, :SUB_MENU) if defined?(SUB_MENU)
+      Object.send(:remove_const, :SUB_PAGE) if defined?(SUB_PAGE)
+      Object.send(:remove_const, :SUB_MENU_BUTTON) if defined?(SUB_MENU_BUTTON)
+    end
 
-    it 'can execute .find_by'
+    it 'can execute .find' do
+      SUB_PAGE =
+        Class.new(WCC::Contentful::Model::Page) do
+        end
 
-    it 'can execute .find_all'
+      # act
+      page = SUB_PAGE.find('1tPGouM76soIsM2e0uikgw')
 
-    it 'responds to .content_type'
+      # assert
+      expect(page).to_not be_nil
+      expect(page).to be_a(SUB_PAGE)
+    end
+
+    it 'can execute .find_by' do
+      SUB_MENU =
+        Class.new(WCC::Contentful::Model::Menu) do
+        end
+
+      # act
+      button = SUB_MENU.find_by('name' => 'Main Menu')
+
+      # assert
+      expect(button).to_not be_nil
+      expect(button).to be_a(SUB_MENU)
+    end
+
+    it 'can execute .find_all' do
+      SUB_MENU_BUTTON =
+        Class.new(WCC::Contentful::Model::MenuButton) do
+        end
+
+      # act
+      buttons = SUB_MENU_BUTTON.find_all
+
+      # assert
+      expect(buttons.count).to eq(11)
+      buttons.each do |button|
+        expect(button).to be_a(SUB_MENU_BUTTON)
+      end
+    end
+
+    it 'responds to .content_type' do
+      SUB_PAGE =
+        Class.new(WCC::Contentful::Model::Page) do
+        end
+
+      # act
+      ct = SUB_PAGE.content_type
+
+      # assert
+      expect(ct).to eq('page')
+    end
 
     it 'responds to .content_type_definition' do
       SUB_PAGE =
@@ -284,9 +336,11 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       ctd = SUB_PAGE.content_type_definition
 
       # assert
-      expect(ctd).to deep_equal(types['page'])
+      expect(ctd).to eq(types['page'])
+      # has been duplicated to avoid unexpected modification
+      expect(ctd).to_not equal(types['page'])
     end
 
-    it 'can register itself to be instantiated when linked to'
+    it 'is returned when a link is expanded'
   end
 end
