@@ -52,7 +52,7 @@ module WCC::Contentful::Store
 
     # rubocop:disable Lint/UnusedMethodArgument
     def find_all(content_type:)
-      raise NotImplementedError
+      raise NotImplementedError, "#{self.class} does not implement find_all"
     end
     # rubocop:enable Lint/UnusedMethodArgument
 
