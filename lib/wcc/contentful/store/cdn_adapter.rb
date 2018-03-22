@@ -19,6 +19,8 @@ module WCC::Contentful::Store
           client.asset(key, locale: '*')
         end
       entry&.raw
+    rescue WCC::Contentful::SimpleClient::NotFoundError
+      nil
     end
 
     def find_all(content_type:)
