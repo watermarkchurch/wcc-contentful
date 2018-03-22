@@ -3,7 +3,7 @@
 RSpec.describe WCC::Contentful::Store::LazyCacheStore do
   subject(:store) {
     WCC::Contentful::Store::LazyCacheStore.new(
-      client: WCC::Contentful::SimpleClient::Cdn.new(
+      WCC::Contentful::SimpleClient::Cdn.new(
         access_token: contentful_access_token,
         space: contentful_space_id
       )
@@ -50,27 +50,45 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
 
     it 'finds and caches nils from the backing API' do
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
-        '/entries/asdf')
+        '/entries/xxxxxxxxxxxxxxxxxxasdf')
         .with(query: hash_including({ locale: '*' }))
         .to_return(status: 404, body: not_found)
         .times(1)
         .then.to_raise('Should not hit the API a second time!')
 
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
-        '/assets/asdf')
+        '/assets/xxxxxxxxxxxxxxxxxxasdf')
         .with(query: hash_including({ locale: '*' }))
         .to_return(status: 404, body: not_found)
         .times(1)
 
       # act
-      page = store.find('asdf')
+      page = store.find('xxxxxxxxxxxxxxxxxxasdf')
 
       # assert
       expect(page).to be_nil
 
       # should not hit the API again
-      page2 = store.find('asdf')
+      page2 = store.find('xxxxxxxxxxxxxxxxxxasdf')
       expect(page2).to be_nil
+    end
+
+    it 'does not hit the backing API for sync token' do
+      # act
+      token = store.find('sync:343qxys30lid:token')
+
+      # assert
+      expect(token).to be_nil
+    end
+
+    it 'returns stored token if it exists in the cache' do
+      store.set('sync:343qxys30lid:token', 'asdf')
+
+      # act
+      token = store.find('sync:343qxys30lid:token')
+
+      # assert
+      expect(token).to eq('asdf')
     end
   end
 

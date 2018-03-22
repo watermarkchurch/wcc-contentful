@@ -105,17 +105,24 @@ module WCC::Contentful
       end
     @types = indexer.types
 
+    store =
+      case configuration.content_delivery
+      when :eager_sync
+        configuration.sync_store
+      when :lazy_sync
+        Store::LazyCacheStore.new(
+          client,
+          cache: configuration.sync_cache_store
+        )
+      when :direct
+        Store::CDNAdapter.new(client)
+      end
+    WCC::Contentful::Model.store = store
+
     case configuration.content_delivery
-    when :eager_sync
-      store = configuration.sync_store
-
-      WCC::Contentful::Model.store = store
-
+    when :eager_sync, :lazy_sync
       @next_sync_token = store.find("sync:#{configuration.space}:token")
       sync!
-    when :direct
-      store = Store::CDNAdapter.new(client)
-      WCC::Contentful::Model.store = store
     end
 
     WCC::Contentful::ModelBuilder.new(@types).build_models

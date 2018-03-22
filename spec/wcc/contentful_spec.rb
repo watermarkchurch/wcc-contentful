@@ -199,6 +199,160 @@ RSpec.describe WCC::Contentful, :vcr do
         expect(page.title).to eq('Ministries')
       end
     end
+
+    context 'content_delivery = lazy_sync' do
+      before(:each) do
+        WCC::Contentful.configure do |config|
+          config.management_token = contentful_management_token
+          config.content_delivery = :lazy_sync
+        end
+      end
+
+      let(:side_menu) {
+        <<~JSON
+          {
+            "sys": {
+              "space": {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Space",
+                  "id": "#{contentful_space_id}"
+                }
+              },
+              "id": "6y9DftpiYoA4YiKg2CgoUU",
+              "type": "Entry",
+              "createdAt": "2018-02-12T20:08:32.729Z",
+              "updatedAt": "2018-02-12T20:08:32.729Z",
+              "revision": 1,
+              "contentType": {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "ContentType",
+                  "id": "menu"
+                }
+              }
+            },
+            "fields": {
+              "name": {
+                "en-US": "Side Menu"
+              },
+              "items": {
+                "en-US": [
+                  {
+                    "sys": {
+                      "type": "Link",
+                      "linkType": "Entry",
+                      "id": "1IJEXB4AKEqQYEm4WuceG2"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        JSON
+      }
+
+      let(:about_button) {
+        <<~JSON
+          {
+            "sys": {
+              "space": {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Space",
+                  "id": "#{contentful_space_id}"
+                }
+              },
+              "id": "1IJEXB4AKEqQYEm4WuceG2",
+              "type": "Entry",
+              "createdAt": "2018-02-12T20:08:38.625Z",
+              "updatedAt": "2018-02-12T20:08:38.625Z",
+              "revision": 1,
+              "contentType": {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "ContentType",
+                  "id": "menuButton"
+                }
+              }
+            },
+            "fields": {
+              "text": {
+                "en-US": "About"
+              },
+              "link": {
+                "en-US": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Entry",
+                    "id": "47PsST8EicKgWIWwK2AsW6"
+                  }
+                }
+              }
+            }
+          }
+        JSON
+      }
+
+      it 'should call out to CDN for first calls only' do
+        stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
+          '/entries/6y9DftpiYoA4YiKg2CgoUU')
+          .with(query: hash_including({ locale: '*' }))
+          .to_return(body: side_menu)
+          .times(1)
+          .then.to_raise('Should not hit the API a second time!')
+        stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
+          '/entries/1IJEXB4AKEqQYEm4WuceG2')
+          .with(query: hash_including({ locale: '*' }))
+          .to_return(body: about_button)
+          .times(1)
+          .then.to_raise('Should not hit the API a second time!')
+
+        # act
+        WCC::Contentful.init!
+        menu = WCC::Contentful::Model::Menu.find('6y9DftpiYoA4YiKg2CgoUU')
+        button = menu.items.first
+
+        # assert
+        expect(menu.name).to eq('Side Menu')
+        expect(button.text).to eq('About')
+        button2 = WCC::Contentful::Model::Menu.find('6y9DftpiYoA4YiKg2CgoUU').items.first
+        expect(button2.text).to eq('About')
+      end
+
+      context 'with stored sync_token' do
+        let(:empty) { JSON.parse(load_fixture('contentful/sync_empty.json')) }
+        let(:store) { ActiveSupport::Cache::MemoryStore.new }
+
+        before(:each) do
+          store.write("sync:#{contentful_space_id}:token", 'testX')
+
+          WCC::Contentful.configure do |config|
+            config.management_token = contentful_management_token
+            config.default_locale = nil
+            config.sync_cache_store = store
+          end
+        end
+
+        it 'continues from stored sync ID' do
+          stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
+            .with(query: hash_including('sync_token' => 'testX'))
+            .to_return(body: empty.merge({ 'nextSyncUrl' =>
+              "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync?sync_token=testY" })
+              .to_json)
+
+          stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
+            .with(query: hash_including('initial' => 'true'))
+            .to_raise('Should not call sync with initial=true when a stored sync token exists')
+
+          # act
+          WCC::Contentful.init!
+
+          # assert
+          expect(WCC::Contentful.next_sync_token).to eq('testY')
+        end
+      end
+    end
   end
 
   describe '.validate_models!' do

@@ -10,15 +10,16 @@ class WCC::Contentful::Configuration
     default_locale
     content_delivery
     override_get_http
+    sync_cache_store
     webhook_username
     webhook_password
   ].freeze
   attr_accessor(*ATTRIBUTES)
 
-  CDN_METHODS = [
-    :eager_sync,
-    # TODO: :lazy_sync
-    :direct
+  CDN_METHODS = %i[
+    eager_sync
+    lazy_sync
+    direct
   ].freeze
 
   SYNC_STORES = {
@@ -77,6 +78,10 @@ class WCC::Contentful::Configuration
   def sync_store
     @sync_store = SYNC_STORES[@sync_store].call(self) if @sync_store.is_a? Symbol
     @sync_store ||= Store::MemoryStore.new
+  end
+
+  def sync_cache_store
+    ActiveSupport::Cache.lookup_store(@sync_cache_store)
   end
 
   # A proc which overrides the "get_http" function in Contentful::Client.

@@ -3,8 +3,9 @@
 module WCC::Contentful::Store
   class LazyCacheStore
     delegate :find_all, to: :@cdn
+    delegate :find_by, to: :@cdn
 
-    def initialize(client:, cache: nil)
+    def initialize(client, cache: nil)
       @cdn = CDNAdapter.new(client)
       @cache = cache || ActiveSupport::Cache::MemoryStore.new
     end
@@ -12,10 +13,12 @@ module WCC::Contentful::Store
     def find(key)
       found =
         @cache.fetch(key) do
-          @cdn.find(key) || nil_obj(key)
+          # if it's not a contentful ID don't hit the API.
+          # Store a nil object if we can't find the object on the CDN.
+          (@cdn.find(key) || nil_obj(key)) if key =~ /^\w{22}$/
         end
 
-      case found.dig('sys', 'type')
+      case found.try(:dig, 'sys', 'type')
       when 'Nil', 'DeletedEntry', 'DeletedAsset'
         nil
       else
