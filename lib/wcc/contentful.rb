@@ -141,19 +141,10 @@ module WCC::Contentful
   # This results in a WCC::Contentful::ValidationError
   # if the 'topButton' field in the 'menu' content type is not a link.
   def self.validate_models!
-    schema =
-      Dry::Validation.Schema do
-        WCC::Contentful::Model.all_models.each do |klass|
-          next unless klass.schema
-          ct = klass.try(:content_type) || klass.name.demodulize
-          required(ct).schema(klass.schema)
-        end
-      end
-
     content_types = WCC::Contentful::ModelValidators.transform_content_types_for_validation(
       @content_types
     )
-    errors = schema.call(content_types)
+    errors = WCC::Contentful::Model.schema.call(content_types)
     raise WCC::Contentful::ValidationError, errors.errors unless errors.success?
   end
 
