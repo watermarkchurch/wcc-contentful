@@ -261,4 +261,32 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     expect(homepage.favicons[0]).to be_instance_of(WCC::Contentful::Model::Asset)
     expect(homepage.favicons[0].file.fileName).to eq('favicon.ico')
   end
+
+  describe 'model subclasses' do
+    before do
+      subject.build_models
+    end
+
+    it 'can execute .find'
+
+    it 'can execute .find_by'
+
+    it 'can execute .find_all'
+
+    it 'responds to .content_type'
+
+    it 'responds to .content_type_definition' do
+      SUB_PAGE =
+        Class.new(WCC::Contentful::Model::Page) do
+        end
+
+      # act
+      ctd = SUB_PAGE.content_type_definition
+
+      # assert
+      expect(ctd).to deep_equal(types['page'])
+    end
+
+    it 'can register itself to be instantiated when linked to'
+  end
 end

@@ -32,6 +32,16 @@ module WCC::Contentful
       @types.to_json
     end
 
+    def deep_dup
+      self.class.new(@types.deep_dup)
+    end
+
+    def ==(other)
+      my_keys = keys
+      return false unless my_keys == other.keys
+      my_keys.all? { |k| self[k] == other[k] }
+    end
+
     class ContentType
       ATTRIBUTES = %i[
         name
@@ -56,6 +66,18 @@ module WCC::Contentful
         end
 
         hash_or_id.each { |k, v| public_send("#{k}=", v) }
+      end
+
+      def deep_dup
+        dup_hash =
+          ATTRIBUTES.each_with_object({}) do |att, h|
+            h[att] = public_send(att)
+          end
+        self.class.new(dup_hash)
+      end
+
+      def ==(other)
+        ATTRIBUTES.all? { |att| public_send(att) == other.public_send(att) }
       end
     end
 
@@ -96,6 +118,11 @@ module WCC::Contentful
           return
         end
 
+        unless hash_or_id.is_a?(Hash)
+          ATTRIBUTES.each { |att| public_send("#{att}=", hash_or_id.public_send(att)) }
+          return
+        end
+
         if raw_type = hash_or_id.delete('type')
           raw_type = raw_type.to_sym
           unless TYPES.include?(raw_type)
@@ -105,6 +132,10 @@ module WCC::Contentful
         end
 
         hash_or_id.each { |k, v| public_send("#{k}=", v) }
+      end
+
+      def ==(other)
+        ATTRIBUTES.all? { |att| public_send(att) == other.public_send(att) }
       end
     end
   end
