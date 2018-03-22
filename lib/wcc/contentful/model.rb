@@ -22,6 +22,8 @@ class WCC::Contentful::Model
   @@registry = {}
 
   def self.all_models
+    # TODO: this needs to use the registry but it's OK for now cause we only
+    # use it in specs
     WCC::Contentful::Model.constants(false).map { |k| WCC::Contentful::Model.const_get(k) }
   end
 
@@ -42,41 +44,46 @@ class WCC::Contentful::Model
     const.new(raw, context)
   end
 
-  def self.register_mapping(content_type_mapping)
-    content_type_mapping.each do |name, const|
-      raise ArgumentError, "#{name} must be a string!" unless name.is_a?(String)
-      unless const.respond_to?(:new)
-        raise ArgumentError, "#{content_type_mapping} must be a class constant!"
-      end
-    end
-    @@registry.merge!(content_type_mapping)
-  end
-
+  ##
+  # Registers a class constant to be instantiated when resolving an instance
+  # of the given content type.  This automatically happens for the first subclass
+  # of a generated model type, example:
+  #
+  #   class MyMenu < WCC::Contentful::Model::Menu
+  #   end
+  #
+  # In the above case, instances of MyMenu will be instantiated whenever a 'menu'
+  # content type is resolved.
+  # The mapping can be made explicit with the optional parameters.  Example:
+  #
+  #   class MyFoo < WCC::Contentful::Model::Foo
+  #     register_for_content_type 'bar' # MyFoo is assumed
+  #   end
+  #
+  #   # in initializers/wcc_contentful.rb
+  #   WCC::Contentful::Model.register_for_content_type('bar', klass: MyFoo)
   def self.register_for_content_type(content_type = nil, klass: nil)
     klass ||= self
     raise ArgumentError, "#{klass} must be a class constant!" unless klass.respond_to?(:new)
     content_type ||= content_type_from_constant(klass)
     raise ArgumentError, "Cannot determine content type for constant #{klass}" unless content_type
 
-    puts "registering #{klass} for #{content_type}"
     @@registry[content_type] = klass
   end
 
-  def self.register_model_class(klass)
-    raise ArgumentError, "#{klass} must be a class constant!" unless klass.respond_to?(:new)
-    content_type = content_type_from_constant(klass)
-    raise ArgumentError, "Cannot determine content type for constant #{klass}" unless content_type
-
-    @@registry[content_type] = klass
-  end
-
+  ##
+  # Returns the current registry of content type names to constants.
   def self.registry
     return {} unless @@registry
     @@registry.dup.freeze
   end
 
+  ##
+  # Checks if a content type has already been registered to a class and returns
+  # that class.  If nil, the generated WCC::Contentful::Model::{content_type} class
+  # will be resolved for this content type.
   def self.registered?(content_type)
-    @@registry.key?(content_type)
+    @@registry[content_type]
   end
 end
 

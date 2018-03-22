@@ -366,7 +366,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
         Class.new(WCC::Contentful::Model::Menu) do
         end
 
-      WCC::Contentful::Model.register_model_class(SUB_MENU_BUTTON)
+      WCC::Contentful::Model.register_for_content_type(klass: SUB_MENU_BUTTON)
 
       main_menu = SUB_MENU.find('FNlqULSV0sOy4IoGmyWOW')
 

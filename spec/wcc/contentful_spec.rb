@@ -26,6 +26,7 @@ RSpec.describe WCC::Contentful, :vcr do
         warn e
       end
     end
+    WCC::Contentful::Model.class_variable_get('@@registry').clear
   end
 
   describe '.configure' do
