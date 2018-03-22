@@ -3,6 +3,10 @@
 module WCC::Contentful::Store
   class LazyCacheStore
     delegate :find_all, to: :@cdn
+
+    # TODO: https://zube.io/watermarkchurch/development/c/2265
+    #  figure out how to cache the results of a find_by query, ex:
+    #  `find_by('slug' => '/about')`
     delegate :find_by, to: :@cdn
 
     def initialize(client, cache: nil)
