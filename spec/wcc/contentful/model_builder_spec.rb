@@ -340,7 +340,82 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       # has been duplicated to avoid unexpected modification
       expect(ctd).to_not equal(types['page'])
     end
+  end
 
-    it 'is returned when a link is expanded'
+  describe 'model class registry' do
+    before do
+      subject.build_models
+      WCC::Contentful::Model.store = store
+    end
+
+    after do
+      WCC::Contentful::Model.class_variable_get('@@registry').clear
+
+      Object.send(:remove_const, :SUB_MENU) if defined?(SUB_MENU)
+      Object.send(:remove_const, :SUB_MENU_BUTTON) if defined?(SUB_MENU_BUTTON)
+      Object.send(:remove_const, :SUB_MENU_BUTTON_2) if defined?(SUB_MENU_BUTTON_2)
+      Object.send(:remove_const, :SUB_MENU_BUTTON_3) if defined?(SUB_MENU_BUTTON_3)
+    end
+
+    it 'registered class is returned when a link is expanded' do
+      SUB_MENU_BUTTON =
+        Class.new(WCC::Contentful::Model::MenuButton) do
+        end
+
+      SUB_MENU =
+        Class.new(WCC::Contentful::Model::Menu) do
+        end
+
+      WCC::Contentful::Model.register_model_class(SUB_MENU_BUTTON)
+
+      main_menu = SUB_MENU.find('FNlqULSV0sOy4IoGmyWOW')
+
+      # act
+      expanded_button = main_menu.second_group.first
+
+      # assert
+      expect(expanded_button).to_not be_nil
+      expect(expanded_button).to be_a(SUB_MENU_BUTTON)
+    end
+
+    it 'class can be registered by being the first subclass' do
+      SUB_MENU_BUTTON =
+        Class.new(WCC::Contentful::Model::MenuButton) do
+        end
+      SUB_MENU_BUTTON_2 =
+        Class.new(SUB_MENU_BUTTON) do
+        end
+
+      SUB_MENU_BUTTON_3 =
+        Class.new(WCC::Contentful::Model::MenuButton) do
+        end
+
+      # act
+      button = WCC::Contentful::Model.find('5NBhDw3i2kUqSwqYok4YQO')
+
+      # assert
+      expect(button).to be_a(SUB_MENU_BUTTON)
+    end
+
+    it 'class registration can be overridden in the class definition' do
+      SUB_MENU_BUTTON =
+        Class.new(WCC::Contentful::Model::MenuButton) do
+        end
+
+      SUB_MENU_BUTTON_2 =
+        Class.new(SUB_MENU_BUTTON) do
+          register_for_content_type
+        end
+
+      SUB_MENU_BUTTON_3 =
+        Class.new(WCC::Contentful::Model::MenuButton) do
+        end
+
+      # act
+      button = WCC::Contentful::Model.find('5NBhDw3i2kUqSwqYok4YQO')
+
+      # assert
+      expect(button).to be_a(SUB_MENU_BUTTON_2)
+    end
   end
 end

@@ -25,4 +25,10 @@ module WCC::Contentful::Helpers
       l
     end
   end
+
+  def content_type_from_constant(const)
+    return const.content_type if const.respond_to?(:content_type)
+    name = const.try(:name)
+    return name.demodulize.camelize(:lower) if name
+  end
 end

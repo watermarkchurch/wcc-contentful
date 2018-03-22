@@ -61,6 +61,12 @@ module WCC::Contentful
             new(result, context)
           end
 
+          define_singleton_method(:inherited) do |subclass|
+            # only register if it's not already registered
+            return if WCC::Contentful::Model.registered?(typedef.content_type)
+            WCC::Contentful::Model.register_for_content_type(typedef.content_type, klass: subclass)
+          end
+
           define_method(:initialize) do |raw, context = nil|
             ct = content_type_from_raw(raw)
             if ct != typedef.content_type
