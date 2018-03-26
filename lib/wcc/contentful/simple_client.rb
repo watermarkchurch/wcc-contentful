@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'http'
-
 require_relative 'simple_client/response'
 
 module WCC::Contentful
@@ -16,14 +14,14 @@ module WCC::Contentful
   # that handles paging automatically.
   #
   # The SimpleClient by default uses 'http' to perform the gets, but any HTTP
-  # client can be injected by passing a proc as the `override_get_http:` option.
+  # client can be injected by passing a proc as the `adapter:` option.
   class SimpleClient
     def initialize(api_url:, space:, access_token:, **options)
       @api_url = URI.join(api_url, '/spaces/', space + '/')
       @space = space
       @access_token = access_token
 
-      @get_http = options[:override_get_http] if options[:override_get_http].present?
+      @get_http = SimpleClient.load_adapter(options[:adapter])
 
       @options = options
       @query_defaults = {}
@@ -36,6 +34,39 @@ module WCC::Contentful
       Response.new(self,
         { url: url, query: query },
         get_http(url, query))
+    end
+
+    ADAPTERS = {
+      http: ['http', '> 1.0', '< 3.0'],
+      typhoeus: ['typhoeus', '~> 1.0']
+    }.freeze
+
+    def self.load_adapter(adapter)
+      case adapter
+      when nil
+        ADAPTERS.each do |a, spec|
+          begin
+            gem(*spec)
+            return load_adapter(a)
+          rescue Gem::LoadError
+            next
+          end
+        end
+        raise ArgumentError, 'Unable to load adapter!  Please install one of '\
+          "#{ADAPTERS.values.map(&:join).join(',')}"
+      when :http
+        require_relative 'simple_client/http_adapter'
+        HttpAdapter.new
+      when :typhoeus
+        require_relative 'simple_client/typhoeus_adapter'
+        TyphoeusAdapter.new
+      else
+        unless adapter.respond_to?(:call)
+          raise ArgumentError, "Adapter #{adapter} is not invokeable!  Please "\
+            "pass a proc or use one of #{ADAPTERS.keys}"
+        end
+        adapter
+      end
     end
 
     private
@@ -61,12 +92,6 @@ module WCC::Contentful
     end
 
     def default_get_http(url, query, headers = {}, proxy = {})
-      if proxy[:host]
-        HTTP[headers].via(proxy[:host], proxy[:port], proxy[:username], proxy[:password])
-          .get(url, params: query)
-      else
-        HTTP[headers].get(url, params: query)
-      end
     end
 
     ##

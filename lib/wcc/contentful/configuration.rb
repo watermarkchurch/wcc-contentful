@@ -7,7 +7,7 @@ class WCC::Contentful::Configuration
     space
     default_locale
     content_delivery
-    override_get_http
+    http_adapter
     sync_cache_store
     webhook_username
     webhook_password
@@ -82,10 +82,12 @@ class WCC::Contentful::Configuration
     ActiveSupport::Cache.lookup_store(@sync_cache_store)
   end
 
-  # A proc which overrides the "get_http" function in Contentful::Client.
-  # All interaction with Contentful will go through this function.
-  # Should be a lambda like: ->(url, query, headers = {}, proxy = {}) { ... }
-  attr_writer :override_get_http
+  # Sets the adapter which is used to make HTTP requests.
+  # If left unset, the gem attempts to load either 'http' or 'typhoeus'.
+  # You can pass your own adapter which responds to 'call', or even a lambda
+  # that accepts the following parameters:
+  #  ->(url, query, headers = {}, proxy = {}) { ... }
+  attr_writer :http_adapter
 
   def initialize
     @access_token = ''
@@ -108,7 +110,7 @@ class WCC::Contentful::Configuration
   # the application would prefer not to generate all the models.
   #
   # If the {contentful.rb}[https://github.com/contentful/contentful.rb] gem is
-  # loaded, it is extended to make use of the `override_get_http` lambda.
+  # loaded, it is extended to make use of the `http_adapter` lambda.
   def configure_contentful
     @client = nil
     @management_client = nil
@@ -127,13 +129,15 @@ class WCC::Contentful::Configuration
     @client = WCC::Contentful::SimpleClient::Cdn.new(
       access_token: access_token,
       space: space,
-      default_locale: default_locale
+      default_locale: default_locale,
+      adapter: http_adapter
     )
     return unless management_token.present?
     @management_client = WCC::Contentful::SimpleClient::Management.new(
       management_token: management_token,
       space: space,
-      default_locale: default_locale
+      default_locale: default_locale,
+      adapter: http_adapter
     )
   end
 end
