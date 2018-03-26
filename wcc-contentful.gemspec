@@ -53,4 +53,5 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'activesupport', '>= 5'
   spec.add_dependency 'dry-validation', '~> 0.11.1'
+  spec.add_dependency 'wcc-base', '~> 0.3.1'
 end
