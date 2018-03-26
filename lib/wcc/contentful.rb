@@ -134,7 +134,6 @@ module WCC::Contentful
     end
 
     return unless defined?(Rails)
-    Dir[Rails.root.join('lib/wcc/contentful/model/**/*.rb')].each { |file| require file }
 
     # load up the engine so it gets automatically mounted
     require 'wcc/contentful/engine'
@@ -148,6 +147,9 @@ module WCC::Contentful
   # This results in a WCC::Contentful::ValidationError
   # if the 'topButton' field in the 'menu' content type is not a link.
   def self.validate_models!
+    # Ensure application models are loaded before we validate
+    Dir[Rails.root.join('app/models/**/*.rb')].each { |file| require file } if defined?(Rails)
+
     content_types = WCC::Contentful::ModelValidators.transform_content_types_for_validation(
       @content_types
     )
