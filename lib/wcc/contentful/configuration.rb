@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'http'
-
 class WCC::Contentful::Configuration
   ATTRIBUTES = %i[
     access_token
