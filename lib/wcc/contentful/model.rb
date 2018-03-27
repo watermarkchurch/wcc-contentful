@@ -17,6 +17,11 @@ class WCC::Contentful::Model
     # See the {sync_store}[rdoc-ref:WCC::Contentful::Configuration.sync_store] parameter
     # on the WCC::Contentful::Configuration class.
     attr_accessor :store
+
+    def const_missing(name)
+      raise WCC::Contentful::ContentTypeNotFoundError,
+        "Content type '#{content_type_from_constant(name)}' does not exist in the space"
+    end
   end
 
   @@registry = {}
@@ -66,7 +71,6 @@ class WCC::Contentful::Model
     klass ||= self
     raise ArgumentError, "#{klass} must be a class constant!" unless klass.respond_to?(:new)
     content_type ||= content_type_from_constant(klass)
-    raise ArgumentError, "Cannot determine content type for constant #{klass}" unless content_type
 
     @@registry[content_type] = klass
   end

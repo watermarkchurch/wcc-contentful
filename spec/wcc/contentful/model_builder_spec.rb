@@ -264,7 +264,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
   describe 'model subclasses' do
     before do
-      subject.build_models
+      @shema = subject.build_models
       WCC::Contentful::Model.store = store
     end
 
@@ -339,6 +339,16 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       expect(ctd).to eq(types['page'])
       # has been duplicated to avoid unexpected modification
       expect(ctd).to_not equal(types['page'])
+    end
+
+    it 'raises meaningful error when constant not defined' do
+      Object.send(:remove_const, :FooBar) if defined?(FooBar)
+      WCC::Contentful::Model.send(:remove_const, :FooBar) if defined?(WCC::Contentful::Model::FooBar)
+      expect {
+        class FooBar < WCC::Contentful::Model::FooBar
+        end
+      }.to raise_error(NameError,
+        'Content type \'fooBar\' does not exist in the space')
     end
   end
 
