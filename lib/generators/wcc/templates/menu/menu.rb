@@ -3,8 +3,7 @@
 # This model represents the 'menu' content type in Contentful.  Any linked
 # entries of the 'menu' content type will be resolved as instances of this class.
 # It exposes #find, #find_by, and #find_all methods to query Contentful.
-class Menu < WCC::Contentful::Model
-
+class Menu < WCC::Contentful::Model::Menu
   # Add custom validations to ensure that app-specific properties exist:
   # validate_field :foo, :String, :required
   # validate_field :bar_links, :Array, link_to: %w[bar baz]
