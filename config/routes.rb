@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
 WCC::Contentful::Engine.routes.draw do
-  resources :webhook do
-    post 'receive', on: :collection
-  end
+  post 'webhook/receive', to: 'webhook#receive'
 end
