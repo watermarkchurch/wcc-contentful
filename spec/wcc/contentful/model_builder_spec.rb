@@ -5,6 +5,10 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     WCC::Contentful::ModelBuilder.new(types)
   }
 
+  before do
+    WCC::Contentful::Model.class_variable_get('@@registry').clear
+  end
+
   after(:each) do
     @schema&.each do |c|
       WCC::Contentful::Model.send(:remove_const, c.to_s.split(':').last)
@@ -354,7 +358,6 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
   describe 'model class registry' do
     before do
-      WCC::Contentful::Model.class_variable_get('@@registry').clear
       subject.build_models
       WCC::Contentful::Model.store = store
     end

@@ -43,8 +43,19 @@ class WCC::Contentful::Model
 
     content_type = content_type_from_raw(raw)
 
-    const = @@registry[content_type]
-    const ||= WCC::Contentful::Model.const_get(constant_from_content_type(content_type))
+    unless const = @@registry[content_type]
+      begin
+        # The app may have defined a model and we haven't loaded it yet
+        const = Object.const_missing(constant_from_content_type(content_type).to_s)
+      rescue NameError
+        nil
+      end
+    end
+    unless const
+      # Autoloading couldn't find their model - we'll register our own.
+      const = WCC::Contentful::Model.const_get(constant_from_content_type(content_type))
+      register_for_content_type(content_type, klass: const)
+    end
 
     const.new(raw, context)
   end
