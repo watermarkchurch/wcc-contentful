@@ -10,6 +10,7 @@ class WCC::Contentful::Configuration
     default_locale
     content_delivery
     override_get_http
+    preview_token
   ].freeze
   attr_accessor(*ATTRIBUTES)
 
@@ -54,6 +55,7 @@ class WCC::Contentful::Configuration
   def initialize
     @access_token = ''
     @management_token = ''
+    @preview_token = ''
     @space = ''
     @default_locale = nil
     @content_delivery = :direct
@@ -62,10 +64,12 @@ class WCC::Contentful::Configuration
 
   attr_reader :client
   attr_reader :management_client
+  attr_reader :preview_client
 
   def configure_contentful
     @client = nil
     @management_client = nil
+    @preview_client = nil
 
     if defined?(::ContentfulModel)
       ContentfulModel.configure do |config|
@@ -83,11 +87,18 @@ class WCC::Contentful::Configuration
       space: space,
       default_locale: default_locale
     )
-    return unless management_token.present?
-    @management_client = WCC::Contentful::SimpleClient::Management.new(
-      management_token: management_token,
-      space: space,
-      default_locale: default_locale
-    )
+    if management_token.present?
+      @management_client = WCC::Contentful::SimpleClient::Management.new(
+        management_token: management_token,
+        space: space,
+        default_locale: default_locale
+      )
+    elsif preview_token.present?
+      @preview_client = WCC::Contentful::SimpleClient::Preview.new(
+        preview_token: preview_token,
+        space: space,
+        default_locale: default_locale
+      )
+    end
   end
 end

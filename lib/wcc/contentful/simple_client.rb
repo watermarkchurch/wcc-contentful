@@ -123,5 +123,45 @@ module WCC::Contentful
         resp.assert_ok!
       end
     end
+
+    class Preview < SimpleClient
+      def initialize(space:, preview_token:, **options)
+        super(
+          api_url: options[:api_url] || 'https://preview.contentful.com/',
+          space: space,
+          access_token: preview_token,
+          **options
+        )
+      end
+
+      def entry(key, query = {})
+        resp = get("entries/#{key}", query)
+        resp.assert_ok!
+      end
+
+      def entries(query = {})
+        resp = get('entries', query)
+        resp.assert_ok!
+      end
+
+      def asset(key, query = {})
+        resp = get("assets/#{key}", query)
+        resp.assert_ok!
+      end
+
+      def assets(query = {})
+        resp = get('assets', query)
+        resp.assert_ok!
+      end
+
+      def content_types(space: nil, **query)
+        space ||= @space
+        raise ArgumentError, 'please provide a space ID' if space.nil?
+
+        resp = get("/spaces/#{space}/content_types", query)
+        resp.assert_ok!
+      end
+    end
+
   end
 end
