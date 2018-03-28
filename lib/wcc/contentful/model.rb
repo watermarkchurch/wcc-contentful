@@ -7,6 +7,7 @@ class WCC::Contentful::Model
 
   class << self
     attr_accessor :store
+    attr_accessor :preview_store
   end
 
   def self.all_models

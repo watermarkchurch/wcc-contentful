@@ -5,7 +5,11 @@ module WCC::Contentful::Store
     attr_reader :client
 
     def initialize(client)
-      @client = client
+      if client.client_type == 'preview'
+        @preview_client = client
+      else
+        @client = client
+      end
     end
 
     def find(key)
@@ -23,7 +27,11 @@ module WCC::Contentful::Store
     end
 
     def find_by(content_type:)
-      Query.new(@client, content_type: content_type)
+      if @preview_client
+        Query.new(@preview_client, content_type: content_type)
+      else
+        Query.new(@client, content_type: content_type)
+      end
     end
 
     class Query

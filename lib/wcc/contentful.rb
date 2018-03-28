@@ -43,8 +43,8 @@ module WCC::Contentful
   def self.init!
     raise ArgumentError, 'Please first call WCC:Contentful.configure' if configuration.nil?
 
+    use_preview_client = nil
     # we want as much as possible the raw JSON from the API
-    flag = nil
     content_types_resp =
       if configuration.management_client
         configuration.management_client.content_types(limit: 1000)
@@ -54,8 +54,8 @@ module WCC::Contentful
         configuration.client.content_types(limit: 1000)
       end
 
-    (flag = true) unless configuration.preview_client.nil?
-    
+    (use_preview_client = true) unless configuration.preview_client.nil?
+
     @content_types = content_types_resp.items
 
     indexer =
@@ -68,14 +68,20 @@ module WCC::Contentful
     when :eager_sync
       store = configuration.sync_store
 
-      client(preview: flag).sync(initial: true).items.each do |item|
+      client(preview: use_preview_client).sync(initial: true).items.each do |item|
         # TODO: enrich existing type data using Sync::Indexer
         store.index(item.dig('sys', 'id'), item)
       end
+
       WCC::Contentful::Model.store = store
     when :direct
-      store = Store::CDNAdapter.new(client(preview: flag))
-      WCC::Contentful::Model.store = store
+      if use_preview_client
+        preview_store = Store::CDNAdapter.new(client(preview: use_preview_client))
+        WCC::Contentful::Model.preview_store = preview_store
+      else
+        store = Store::CDNAdapter.new(client(preview: use_preview_client))
+        WCC::Contentful::Model.store = store
+      end
     end
 
     WCC::Contentful::ModelBuilder.new(@types).build_models

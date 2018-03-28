@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'dotenv/load'
+
 module WCC::Contentful
   class ModelBuilder
     include Helpers
@@ -50,7 +52,12 @@ module WCC::Contentful
             bad_fields = filter.keys.reject { |k| fields.include?(k) }
             raise ArgumentError, "These fields do not exist: #{bad_fields}" unless bad_fields.empty?
 
-            query = WCC::Contentful::Model.store.find_by(content_type: content_type)
+            if defined?(context[:preview]) && context[:preview] == ENV['CONTENTFUL_PREVIEW_PASSWORD']
+              query = WCC::Contentful::Model.preview_store.find_by(content_type: content_type)
+            else
+              query = WCC::Contentful::Model.store.find_by(content_type: content_type)
+            end
+
             filter.each do |field, v|
               query = query.eq(field, v, context)
             end
