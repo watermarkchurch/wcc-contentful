@@ -3,9 +3,6 @@
 require_relative 'simple_client/response'
 
 module WCC::Contentful
-  attr_reader :api_url
-  attr_reader :space
-
   ##
   # The SimpleClient accesses the Contentful CDN to get JSON responses,
   # returning the raw JSON data as a parsed hash.
