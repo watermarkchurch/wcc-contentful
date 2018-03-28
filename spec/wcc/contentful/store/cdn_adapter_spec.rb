@@ -81,56 +81,106 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
     })
   end
 
-  it 'find_by filters on content type' do
-    # act
-    found = adapter.find_by(content_type: 'menuButton')
+  describe '#find_by' do
+    it 'finds first of content type' do
+      # act
+      found = adapter.find_by(content_type: 'menuButton')
 
-    # assert
-    expect(found.count).to eq(11)
-    expect(found.map { |i| i.dig('fields', 'text', 'en-US') }.sort).to eq(
-      [
-        'About',
-        'About Watermark Resources',
-        'Cart',
-        'Conferences',
-        'Find A Ministry for Your Church',
-        'Login',
-        'Ministries',
-        'Mission',
-        'Privacy Policy',
-        'Terms & Conditions',
-        'Watermark.org'
-      ]
-    )
+      # assert
+      expect(found).to_not be_nil
+      expect(found.dig('sys', 'contentType', 'sys', 'id')).to eq('menuButton')
+    end
+
+    it 'finds assets' do
+      # act
+      found = adapter.find_by(content_type: 'Asset')
+
+      # assert
+      expect(found).to_not be_nil
+      expect(found.dig('fields', 'title', 'en-US')).to eq('goat-clip-art')
+    end
+
+    it 'can apply filter object' do
+      # act
+      found = adapter.find_by(content_type: 'page', filter: { 'slug' => { eq: '/conferences' } })
+
+      # assert
+      expect(found).to_not be_nil
+      expect(found.dig('sys', 'id')).to eq('1UojJt7YoMiemCq2mGGUmQ')
+      expect(found.dig('fields', 'title', 'en-US')).to eq('Conferences')
+    end
   end
 
-  it 'find_by finds assets' do
-    # act
-    found = adapter.find_by(content_type: 'Asset')
+  describe '#find_all' do
+    it 'filters on content type' do
+      # act
+      found = adapter.find_all(content_type: 'menuButton')
 
-    # assert
-    expect(found.count).to eq(6)
-    expect(found.map { |i| i.dig('fields', 'title', 'en-US') }.sort).to eq(
-      [
-        'apple-touch-icon',
-        'favicon',
-        'favicon-16x16',
-        'favicon-32x32',
-        'goat-clip-art',
-        'worship'
-      ]
-    )
+      # assert
+      expect(found.count).to eq(11)
+      expect(found.map { |i| i.dig('fields', 'text', 'en-US') }.sort).to eq(
+        [
+          'About',
+          'About Watermark Resources',
+          'Cart',
+          'Conferences',
+          'Find A Ministry for Your Church',
+          'Login',
+          'Ministries',
+          'Mission',
+          'Privacy Policy',
+          'Terms & Conditions',
+          'Watermark.org'
+        ]
+      )
+    end
+
+    it 'finds assets' do
+      # act
+      found = adapter.find_all(content_type: 'Asset')
+
+      # assert
+      expect(found.count).to eq(6)
+      expect(found.map { |i| i.dig('fields', 'title', 'en-US') }.sort).to eq(
+        [
+          'apple-touch-icon',
+          'favicon',
+          'favicon-16x16',
+          'favicon-32x32',
+          'goat-clip-art',
+          'worship'
+        ]
+      )
+    end
+
+    it 'filter query eq can find value' do
+      # act
+      found = adapter.find_all(content_type: 'page')
+        .apply('slug' => { eq: '/conferences' })
+
+      # assert
+      expect(found.count).to eq(1)
+      page = found.first
+      expect(page.dig('sys', 'id')).to eq('1UojJt7YoMiemCq2mGGUmQ')
+      expect(page.dig('fields', 'title', 'en-US')).to eq('Conferences')
+    end
   end
 
-  it 'filter query eq can find value' do
-    # act
-    found = adapter.find_by(content_type: 'page')
-      .apply({ field: 'slug', eq: '/conferences' })
+  it 'CDN Adapter does not implement #set' do
+    expect {
+      subject.set('id', { 'test' => 'data' })
+    }.to raise_error(NotImplementedError)
+  end
 
-    # assert
-    expect(found.count).to eq(1)
-    page = found.first
-    expect(page.dig('sys', 'id')).to eq('1UojJt7YoMiemCq2mGGUmQ')
-    expect(page.dig('fields', 'title', 'en-US')).to eq('Conferences')
+  it 'CDN Adapter does not implement #delete' do
+    expect {
+      subject.delete('id')
+    }.to raise_error(NotImplementedError)
+  end
+
+  it 'CDN Adapter does not implement #index' do
+    expect {
+      subject.index({ 'sys' => { 'id' => 'asdf' } })
+    }.to raise_error(NotImplementedError)
   end
 end

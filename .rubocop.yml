@@ -20,6 +20,9 @@ AllCops:
     - '**/templates/**/*'
     - 'tmp/**/*'
 
+    # dummy app for testing
+    - 'spec/dummy/**/*'
+
 Style/Documentation:
   Enabled: false
 

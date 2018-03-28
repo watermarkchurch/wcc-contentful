@@ -46,7 +46,7 @@ module WCC::Contentful::Graphql
 
             resolve ->(_obj, args, _ctx) {
               if args['id'].nil?
-                store.find_by(content_type: content_type).first
+                store.find_by(content_type: content_type)
               else
                 store.find(args['id'])
               end
@@ -58,8 +58,13 @@ module WCC::Contentful::Graphql
             argument :filter, Types::FilterType
 
             resolve ->(_obj, args, ctx) {
-              relation = store.find_by(content_type: content_type)
-              relation = relation.apply(args[:filter], ctx) if args[:filter]
+              relation = store.find_all(content_type: content_type)
+              # TODO: improve this POC
+              if args[:filter]
+                filter = {}
+                filter[args[:filter]['field']] = { eq: args[:filter][:eq] }
+                relation = relation.apply(filter, ctx)
+              end
               relation.result
             }
           end

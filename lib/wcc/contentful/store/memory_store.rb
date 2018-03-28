@@ -1,35 +1,39 @@
 # frozen_string_literal: true
 
 module WCC::Contentful::Store
-  class MemoryStore
+  class MemoryStore < Base
     def initialize
+      super
       @hash = {}
-      @mutex = Mutex.new
     end
 
-    def index(key, value)
+    def set(key, value)
       value = value.deep_dup.freeze
-      @mutex.synchronize do
+      mutex.with_write_lock do
+        old = @hash[key]
         @hash[key] = value
+        old
+      end
+    end
+
+    def delete(key)
+      mutex.with_write_lock do
+        @hash.delete(key)
       end
     end
 
     def keys
-      @mutex.synchronize { @hash.keys }
+      mutex.with_read_lock { @hash.keys }
     end
 
     def find(key)
-      @mutex.synchronize do
+      mutex.with_read_lock do
         @hash[key]
       end
     end
 
-    def find_all
-      Query.new(@mutex.synchronize { @hash.values })
-    end
-
-    def find_by(content_type:)
-      relation = @mutex.synchronize { @hash.values }
+    def find_all(content_type:)
+      relation = mutex.with_read_lock { @hash.values }
 
       relation =
         relation.reject do |v|
@@ -39,23 +43,13 @@ module WCC::Contentful::Store
       Query.new(relation)
     end
 
-    class Query
-      delegate :first, to: :@relation
-      delegate :map, to: :@relation
-      delegate :count, to: :@relation
-
+    class Query < Base::Query
       def result
         @relation.dup
       end
 
       def initialize(relation)
         @relation = relation
-      end
-
-      def apply(filter, context = nil)
-        return eq(filter[:field], filter[:eq], context) if filter[:eq]
-
-        raise ArgumentError, "Filter not implemented: #{filter}"
       end
 
       def eq(field, expected, context = nil)

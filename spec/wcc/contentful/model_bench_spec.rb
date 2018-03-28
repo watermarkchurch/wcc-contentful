@@ -34,13 +34,13 @@ RSpec.shared_examples 'model querying' do
     end
   end
 
-  it 'bench find_by (filter)' do
+  it 'bench find_all (filter)' do
     subject.build_models
 
     styles = ['custom', 'rounded', 'external', 'value doesnt exist']
 
     run_bench(store_builder: store_builder, content_type: 'menuButton') do |_, i|
-      _ = WCC::Contentful::MenuButton.find_by(button_style: styles[i % styles.length])
+      _ = WCC::Contentful::MenuButton.find_all(button_style: styles[i % styles.length])
     end
   end
 
@@ -49,8 +49,8 @@ RSpec.shared_examples 'model querying' do
 
     run_bench(store_builder: store_builder, content_type: 'menuButton') do
       redirect = WCC::Contentful::Redirect2.find_by(slug: 'mister_roboto')
-      expect(redirect.length).to eq(1)
-      expect(redirect[0].pageReference.title).to eq('Conferences')
+      expect(redirect.length).to_not be_nil
+      expect(redirect.pageReference.title).to eq('Conferences')
     end
   end
 end

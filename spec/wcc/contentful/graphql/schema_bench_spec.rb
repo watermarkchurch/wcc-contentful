@@ -77,7 +77,7 @@ RSpec.shared_examples 'graphql querying' do
     end
   end
 
-  it 'bench find with filter (find_by equivalend)' do
+  it 'bench find with filter (find_all equivalent)' do
     query_string = 'query menuButtonQuery($style: Any) {
       items: allContentfulMenuButton(filter: { field: "buttonStyle", eq: $style }) {
         id

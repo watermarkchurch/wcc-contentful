@@ -7,7 +7,6 @@ RSpec.describe WCC::Contentful::Store::PostgresStore do
 
   before :each do
     begin
-      puts "postgres connection: #{ENV['POSTGRES_CONNECTION']}"
       conn = PG.connect(ENV['POSTGRES_CONNECTION'] || { dbname: 'postgres' })
 
       conn.exec('DROP TABLE IF EXISTS contentful_raw')
@@ -22,10 +21,10 @@ RSpec.describe WCC::Contentful::Store::PostgresStore do
     data = { 'key' => 'val', '1' => { 'deep' => 9 } }
 
     # act
-    subject.index('1234', data)
-    subject.index('5678', data)
-    subject.index('9999', data)
-    subject.index('8888', data)
+    subject.set('1234', data)
+    subject.set('5678', data)
+    subject.set('9999', data)
+    subject.set('8888', data)
     keys = subject.keys
 
     # assert

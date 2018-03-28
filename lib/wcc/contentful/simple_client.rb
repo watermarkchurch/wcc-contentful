@@ -5,6 +5,15 @@ require 'http'
 require_relative 'simple_client/response'
 
 module WCC::Contentful
+  ##
+  # The SimpleClient accesses the Contentful CDN to get JSON responses,
+  # returning the raw JSON data as a parsed hash.
+  # It can be configured to access any API url and exposes only a single method,
+  # `get`.  This method returns a WCC::Contentful::SimpleClient::Response
+  # that handles paging automatically.
+  #
+  # The SimpleClient by default uses 'http' to perform the gets, but any HTTP
+  # client can be injected by passing a proc as the `override_get_http:` option.
   class SimpleClient
     def initialize(api_url:, space:, access_token:, **options)
       @api_url = URI.join(api_url, '/spaces/', space + '/')
@@ -57,6 +66,11 @@ module WCC::Contentful
       end
     end
 
+    ##
+    # The CDN SimpleClient accesses 'https://cdn.contentful.com' to get raw
+    # JSON responses.  It exposes methods to query entries, assets, and content_types.
+    # The responses are instances of WCC::Contentful::SimpleClient::Response
+    # which handles paging automatically.
     class Cdn < SimpleClient
       def initialize(space:, access_token:, **options)
         super(
@@ -67,31 +81,48 @@ module WCC::Contentful
         )
       end
 
+      ##
+      # Gets an entry by ID
       def entry(key, query = {})
         resp = get("entries/#{key}", query)
         resp.assert_ok!
       end
 
+      ##
+      # Queries entries with optional query parameters
       def entries(query = {})
         resp = get('entries', query)
         resp.assert_ok!
       end
 
+      ##
+      # Gets an asset by ID
       def asset(key, query = {})
         resp = get("assets/#{key}", query)
         resp.assert_ok!
       end
 
+      ##
+      # Queries assets with optional query parameters
       def assets(query = {})
         resp = get('assets', query)
         resp.assert_ok!
       end
 
+      ##
+      # Queries content types with optional query parameters
       def content_types(query = {})
         resp = get('content_types', query)
         resp.assert_ok!
       end
 
+      ##
+      # Accesses the Sync API to get a list of items that have changed since
+      # the last sync.
+      #
+      # If `sync_token` is nil, an initial sync is performed.
+      # Returns a WCC::Contentful::SimpleClient::SyncResponse
+      # which handles paging automatically.
       def sync(sync_token: nil, **query)
         sync_token =
           if sync_token
