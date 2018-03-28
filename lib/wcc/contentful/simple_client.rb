@@ -79,19 +79,12 @@ module WCC::Contentful
       q = @query_defaults.dup
       q = q.merge(query) if query
 
-      resp =
-        if @get_http
-          @get_http.call(url, q, headers, proxy)
-        else
-          default_get_http(url, q, headers, proxy)
-        end
+      resp = @get_http.call(url, q, headers, proxy)
+
       if [301, 302, 307].include?(resp.code) && !@options[:no_follow_redirects]
         resp = get_http(resp.headers['location'], nil, headers, proxy)
       end
       resp
-    end
-
-    def default_get_http(url, query, headers = {}, proxy = {})
     end
 
     ##
