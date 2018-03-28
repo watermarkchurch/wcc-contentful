@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module WCC::Contentful::Store
-  class CDNAdapter < Base
+  class CDNAdapter
     attr_reader :client
 
     # Intentionally not implementing write methods
@@ -21,6 +21,13 @@ module WCC::Contentful::Store
       entry&.raw
     rescue WCC::Contentful::SimpleClient::NotFoundError
       nil
+    end
+
+    def find_by(content_type:, filter: nil)
+      # default implementation - can be overridden
+      q = find_all(content_type: content_type)
+      q = q.apply(filter) if filter
+      q.first
     end
 
     def find_all(content_type:)
