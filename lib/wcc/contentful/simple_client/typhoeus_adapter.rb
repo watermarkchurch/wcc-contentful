@@ -16,18 +16,15 @@ class TyphoeusAdapter
     )
   end
 
-  class Response
-    delegate :body, to: :@raw
-    delegate :to_s, to: :body
-    delegate :code, to: :@raw
-    delegate :headers, to: :@raw
+  Response =
+    Struct.new(:raw) do
+      delegate :body, to: :raw
+      delegate :to_s, to: :body
+      delegate :code, to: :raw
+      delegate :headers, to: :raw
 
-    def status
-      @raw.code
+      def status
+        raw.code
+      end
     end
-
-    def initialize(response)
-      @raw = response
-    end
-  end
 end
