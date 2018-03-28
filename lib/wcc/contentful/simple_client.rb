@@ -67,6 +67,10 @@ module WCC::Contentful
         )
       end
 
+      def client_type
+        'cdn'
+      end
+
       def entry(key, query = {})
         resp = get("entries/#{key}", query)
         resp.assert_ok!
@@ -115,6 +119,10 @@ module WCC::Contentful
         )
       end
 
+      def client_type
+        'management'
+      end
+
       def content_types(space: nil, **query)
         space ||= @space
         raise ArgumentError, 'please provide a space ID' if space.nil?
@@ -132,6 +140,10 @@ module WCC::Contentful
           access_token: preview_token,
           **options
         )
+      end
+
+      def client_type
+        'preview'
       end
 
       def entry(key, query = {})
