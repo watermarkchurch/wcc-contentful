@@ -114,14 +114,14 @@ module WCC::Contentful::Store
     def self.ensure_schema(conn)
       conn.exec(<<~HEREDOC
         CREATE TABLE IF NOT EXISTS contentful_raw (
-          id char(22) PRIMARY KEY,
+          id varchar PRIMARY KEY,
           data jsonb
         );
         CREATE INDEX IF NOT EXISTS contentful_raw_value_type ON contentful_raw ((data->'sys'->>'type'));
         CREATE INDEX IF NOT EXISTS contentful_raw_value_content_type ON contentful_raw ((data->'sys'->'contentType'->'sys'->>'id'));
 
         DROP FUNCTION IF EXISTS "upsert_entry";
-        CREATE FUNCTION "upsert_entry"(_id char(22), _data jsonb) RETURNS jsonb AS $$
+        CREATE FUNCTION "upsert_entry"(_id varchar, _data jsonb) RETURNS jsonb AS $$
         DECLARE
           prev jsonb;
         BEGIN
