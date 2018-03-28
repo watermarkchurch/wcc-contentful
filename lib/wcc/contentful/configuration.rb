@@ -14,20 +14,6 @@ class WCC::Contentful::Configuration
   ].freeze
   attr_accessor(*ATTRIBUTES)
 
-  CDN_METHODS = %i[
-    eager_sync
-    lazy_sync
-    direct
-  ].freeze
-
-  SYNC_STORES = {
-    memory: ->(_config) { WCC::Contentful::Store::MemoryStore.new },
-    postgres: ->(_config) {
-      require_relative 'store/postgres_store'
-      WCC::Contentful::Store::PostgresStore.new(ENV['POSTGRES_CONNECTION'])
-    }
-  }.freeze
-
   ##
   # Defines the method by which content is downloaded from the Contentful CDN.
   #
@@ -36,7 +22,7 @@ class WCC::Contentful::Configuration
   #           'https://cdn.contentful.com' via the
   #           {SimpleClient}[rdoc-ref:WCC::Contentful::SimpleClient::Cdn]
   #
-  # [:eager_sync] `config.content_delivery = :eager_sync`
+  # [:eager_sync] `config.content_delivery = :eager_sync, [sync_store], [options]`
   #               with the `:eager_sync` method, the entire content of the Contentful
   #               space is downloaded locally and stored in the
   #               {Sync Store}[rdoc-ref:WCC::Contentful.store].  The application is responsible
@@ -46,7 +32,7 @@ class WCC::Contentful::Configuration
   #               on publish events:
   #                 mount WCC::Contentful::Engine, at: '/wcc/contentful'
   #
-  # [:lazy_sync] `config.content_delivery = :lazy_sync
+  # [:lazy_sync] `config.content_delivery = :lazy_sync, [cache]`
   #              The `:lazy_sync` method is a hybrid between the other two methods.
   #              Frequently accessed data is stored in an ActiveSupport::Cache implementation
   #              and is kept up-to-date via the Sync API.  Any data that is not present
@@ -54,32 +40,38 @@ class WCC::Contentful::Configuration
   #              The application is still responsible to periodically call `sync!`
   #              or to mount the provided Engine.
   #
-  def content_delivery=(symbol)
-    raise ArgumentError, "Please set one of #{CDN_METHODS}" unless CDN_METHODS.include?(symbol)
-    @content_delivery = symbol
-  end
-
-  ##
-  # Sets the local store which is used with the `:eager_sync` content delivery method.
-  # This can be one of `:memory`, `:postgres`, or a custom implementation.
-  def sync_store=(symbol)
-    if symbol.is_a? Symbol
-      unless SYNC_STORES.keys.include?(symbol)
-        raise ArgumentError, "Please use one of #{SYNC_STORES.keys}"
-      end
+  def content_delivery=(params)
+    cd, *cd_params = params
+    unless cd.is_a? Symbol
+      raise ArgumentError, 'content_delivery must be a symbol, use store= to '\
+        'directly set contentful CDN access adapter'
     end
-    @sync_store = symbol
+
+    WCC::Contentful::Store::Factory.new(
+      self,
+      cd,
+      cd_params
+    ).validate!
+
+    @content_delivery = cd
+    @content_delivery_params = cd_params
   end
 
   ##
   # Initializes the configured Sync Store.
-  def sync_store
-    @sync_store = SYNC_STORES[@sync_store].call(self) if @sync_store.is_a? Symbol
-    @sync_store ||= Store::MemoryStore.new
+  def store
+    @store ||= WCC::Contentful::Store::Factory.new(
+      self,
+      @content_delivery,
+      @content_delivery_params
+    ).build_sync_store
   end
 
-  def sync_cache_store
-    ActiveSupport::Cache.lookup_store(@sync_cache_store)
+  ##
+  # Directly sets the adapter layer for communicating with Contentful
+  def store=(value)
+    @content_delivery = :custom
+    @store = value
   end
 
   # Sets the adapter which is used to make HTTP requests.
@@ -95,7 +87,6 @@ class WCC::Contentful::Configuration
     @space = ''
     @default_locale = nil
     @content_delivery = :direct
-    @sync_store = :memory
   end
 
   ##

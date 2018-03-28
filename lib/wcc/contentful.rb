@@ -105,22 +105,10 @@ module WCC::Contentful
       end
     @types = indexer.types
 
-    store =
-      case configuration.content_delivery
-      when :eager_sync
-        configuration.sync_store
-      when :lazy_sync
-        Store::LazyCacheStore.new(
-          client,
-          cache: configuration.sync_cache_store
-        )
-      when :direct
-        Store::CDNAdapter.new(client)
-      end
+    store = configuration.store
     WCC::Contentful::Model.store = store
 
-    case configuration.content_delivery
-    when :eager_sync, :lazy_sync
+    if store.respond_to?(:index)
       @next_sync_token = store.find("sync:#{configuration.space}:token")
       sync!
     end
@@ -166,7 +154,7 @@ module WCC::Contentful
   #           the sync again after a few minutes.
   #
   def self.sync!(up_to_id: nil)
-    return unless %i[eager_sync lazy_sync].include?(configuration.content_delivery)
+    return unless store.respond_to?(:index)
 
     @mutex.synchronize do
       sync_resp = client.sync(sync_token: next_sync_token)

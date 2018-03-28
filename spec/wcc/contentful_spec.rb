@@ -91,7 +91,10 @@ RSpec.describe WCC::Contentful, :vcr do
           config.space = valid_contentful_space_id
           config.management_token = nil
           config.default_locale = nil
-          config.sync_store = :memory
+
+          # rebuild store
+          config.store = nil
+          config.content_delivery = :eager_sync, :memory
         end
       end
 
@@ -123,7 +126,10 @@ RSpec.describe WCC::Contentful, :vcr do
         WCC::Contentful.configure do |config|
           config.management_token = contentful_management_token
           config.default_locale = nil
-          config.sync_store = :memory
+
+          # rebuild store
+          config.store = nil
+          config.content_delivery = :eager_sync, :memory
         end
       end
 
@@ -158,7 +164,7 @@ RSpec.describe WCC::Contentful, :vcr do
         WCC::Contentful.configure do |config|
           config.management_token = contentful_management_token
           config.default_locale = nil
-          config.sync_store = store
+          config.store = store
         end
       end
 
@@ -184,6 +190,7 @@ RSpec.describe WCC::Contentful, :vcr do
       before(:each) do
         WCC::Contentful.configure do |config|
           config.management_token = contentful_management_token
+          config.store = nil
           config.content_delivery = :direct
         end
       end
@@ -204,6 +211,7 @@ RSpec.describe WCC::Contentful, :vcr do
       before(:each) do
         WCC::Contentful.configure do |config|
           config.management_token = contentful_management_token
+          config.store = nil
           config.content_delivery = :lazy_sync
         end
       end
@@ -330,7 +338,10 @@ RSpec.describe WCC::Contentful, :vcr do
           WCC::Contentful.configure do |config|
             config.management_token = contentful_management_token
             config.default_locale = nil
-            config.sync_cache_store = store
+
+            # rebuild store
+            config.store = nil
+            config.content_delivery = :lazy_sync, store
           end
         end
 
@@ -423,7 +434,10 @@ RSpec.describe WCC::Contentful, :vcr do
         config.space = valid_contentful_space_id
         config.management_token = nil
         config.default_locale = nil
-        config.sync_store = :memory
+
+        # rebuild store
+        config.store = nil
+        config.content_delivery = :eager_sync
       end
 
       WCC::Contentful.init!
