@@ -176,13 +176,15 @@ migrate() {
 
   require_environment
 
+  [[ ! -z "$CONTENTFUL_ENVIRONMENT" ]] && ENV="--environment-id $CONTENTFUL_ENVIRONMENT"
+
   execv node_modules/.bin/ts-node node_modules/.bin/contentful-migration \
-    -s $CONTENTFUL_SPACE_ID -a $CONTENTFUL_MANAGEMENT_TOKEN \
+    -s $CONTENTFUL_SPACE_ID $ENV -a $CONTENTFUL_MANAGEMENT_TOKEN \
     $YES -p $ARG
 
   mkdir -p db
   execv node_modules/.bin/contentful-export --export-dir db --content-file contentful-schema.json \
-    --space-id $CONTENTFUL_SPACE_ID --management-token $CONTENTFUL_MANAGEMENT_TOKEN \
+    --space-id $CONTENTFUL_SPACE_ID $ENV --management-token $CONTENTFUL_MANAGEMENT_TOKEN \
     --query-entries 'content_type=migrationHistory' \
     --query-assets 'sys.id=false'
 
