@@ -1,0 +1,64 @@
+{
+  "sys": {
+    "space": {
+      "sys": {
+        "type": "Link",
+        "linkType": "Space",
+        "id": "l0g0cgoe9wgb"
+      }
+    },
+    "type": "Entry",
+    "contentType": {
+      "sys": {
+        "type": "Link",
+        "linkType": "ContentType",
+        "id": "blogPost"
+      }
+    },
+    "id": "rYhUgNF6k8iU2mI84gQOQ",
+    "revision": 7,
+    "createdAt": "2017-09-13T19:57:47.233Z",
+    "updatedAt": "2017-09-19T18:38:13.757Z"
+  },
+  "fields": {
+    "title": {
+      "en-US": "What's next after #LAUNCH17?"
+    },
+    "author": {
+      "en-US": {
+        "sys": {
+          "type": "Link",
+          "linkType": "Entry",
+          "id": "JesbuE6hYyKmi4Mmmgsww"
+        }
+      }
+    },
+    "pubDate": {
+      "en-US": "2017-09-11"
+    },
+    "tags": {
+      "en-US": [
+        "retreats",
+        "launch 2017"
+      ]
+    },
+    "content": {
+      "en-US": "Every year we have the [LAUNCH Retreat](http://watermark.org/launch) over Labor Day ([watch the 2017 highlight video](https://www.facebook.com/theporchdallas/videos/10155562337322660/)), and hundreds of young adults come back to Dallas feeling that things will be different now. They’ve learned something they’re going to put into practice. They’re committed to changing a part of their life that needs to be changed. They’ve started new friendships they want to develop. They’re passionate about making a difference.\n\nSome of those people really do make a lasting change. Others, though, find themselves falling back into the same everyday routine as before, missing that one Labor Day weekend when things were different.\n\nIf you want things to be different, then you have to do something different. And we’re here to help. There are a number of events, classes, and ways to get involved over the coming days and weeks to keep what you loved about [#LAUNCH17](https://www.instagram.com/launch_retreat/) going, long after Labor Day weekend.\n\n- Want a group of close friends to have fun with, learn from, be encouraged by, and go through life with? Join a community group! [Community Group Formation](http://www.watermark.org/dallas/ministries/community/community-formation/singles-community-formation) is every Sunday, 11:15 am to 12:45 pm in the East Tower (the newest building). You can find more info and sign up [here](http://www.watermark.org/dallas/ministries/community/community-formation/singles-community-formation).\n\n- To go to Community Group Formation and be in a Watermark community group, you need to be a Watermark member. Come check out membership class! Our next three-part membership class starts Sunday, October 8, at 11:15 a.m. [You can get more information or register here](http://www.watermark.org/dallas/connect/membership-class).\n\n- Don't want to wait to become a member to jump in with community? We don't blame you. While you are in the process of completing membership class, you can connect with community Tuesdays after The Porch at Open Community Group right after the message. Just ask any Porch volunteer where to go and they would love to show you!\n- Men: want to learn from other men [what it means to be a man](http://theporch.wpengine.com/how-to-be-a-man/)? Join us for [Summit, an 8-week Bible study](http://www.watermark.org/dallas/ministries/mens-bible-study) on Thursday mornings at 6:30, starting September 28. There’s also a [free Men’s Breakfast](http://www.watermark.org/events/1478) next Thursday morning, September 21.\n- Women: want to learn more about [how to be a godly woman](http://theporch.wpengine.com/how-to-be-a-godly-woman/)? Check out Women’s Bible Study on [Thursday evenings](http://www.watermark.org/events/1296), starting September 14.\n- Need help overcoming a bad habit, addiction, sin struggle, or past hurt? Check out [re:generation](http://www.watermark.org/dallas/ministries/regeneration-recovery) any Monday at 6:30 p.m.\n- If you’d like to get more comfortable in sharing your faith, and serve the city of Dallas, join us for one of our upcoming [Unashamed](http://www.watermark.org/ministries/unashamed) trips! The next one is [October 13-15](http://www.watermark.org/events/1030).\n- Want to have fun like it's #LAUNCH17 again? The Porch is going to [Hydrous Wake Park](https://www.facebook.com/events/821819204661888/) in Allen, TX on Saturday, September 16. Our next Porch Late Night is Tuesday, September 26, after The Porch. You can hear about upcoming events on [The Porch Facebook Page](https://www.facebook.com/theporchdallas).\n- Have a question about something else we didn’t cover here? Email us at theporch@watermark.org!\nWe’re not suggesting that you do all of these things! But, between all those things, everyone can find one thing that would make sense as a next step.\n\n\nWhat change are you going to make after [#LAUNCH17](https://www.instagram.com/launch_retreat/)?"
+    },
+    "featuredImage": {
+      "en-US": {
+        "sys": {
+          "type": "Link",
+          "linkType": "Asset",
+          "id": "p3Y5hOV50OmgiMMUicKWm"
+        }
+      }
+    },
+    "url": {
+      "en-US": "whats-next-after-launch17"
+    },
+    "postUrl": {
+      "en-US": "http://www.theporchdallas.com/whats-next-after-launch17/"
+    }
+  }
+}

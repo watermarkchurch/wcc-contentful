@@ -19,3 +19,8 @@ contentful-*-error-log-*
 # User local env
 .envrc
 .env*
+
+node_modules
+
+log/
+tmp/

@@ -17,3 +17,10 @@
 * Models are built dynamically from downloading the content_types via Contentful CDN
 * 'Menu' and 'MenuItem' are defined and their structures are enforced via validation
 * A GraphQL schema can optionally be generated to execute queries against Contentful
+
+# v0.2.0
+
+* Application models can be registered to be instantiated for a given content type
+* New 'lazy sync' delivery method acts as a cache that is kept up to date by the sync API
+* 'eager sync' is now hooked up to a webhook which can be mounted to receive publish events
+* Major changes to configuration methods
