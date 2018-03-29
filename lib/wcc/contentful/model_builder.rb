@@ -58,7 +58,7 @@ module WCC::Contentful
             raise ArgumentError, "These fields do not exist: #{bad_fields}" unless bad_fields.empty?
 
             result = WCC::Contentful::Model.store.find_by(content_type: content_type, filter: filter)
-            new(result, context)
+            new(result, context) if result
           end
 
           define_singleton_method(:inherited) do |subclass|
@@ -95,6 +95,9 @@ module WCC::Contentful
                 when :Float
                   raw_value = Float(raw_value)
                 end
+              elsif f.array
+                # array fields need to resolve to an empty array when nothing is there
+                raw_value = []
               end
               instance_variable_set('@' + f.name, raw_value)
             end

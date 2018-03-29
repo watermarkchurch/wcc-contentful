@@ -153,6 +153,17 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     )
   end
 
+  it 'returns empty array if find_all finds nothing' do
+    @schema = subject.build_models
+    WCC::Contentful::Model.store = store
+
+    # act
+    menu_items = WCC::Contentful::Model::MenuButton.find_all(button_style: 'asdf')
+
+    # assert
+    expect(menu_items).to eq([])
+  end
+
   it 'finds single item with filter' do
     @schema = subject.build_models
     WCC::Contentful::Model.store = store
@@ -163,6 +174,17 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     # assert
     expect(redirect).to_not be_nil
     expect(redirect.pageReference.title).to eq('Conferences')
+  end
+
+  it 'returns nil if find_by finds nothing' do
+    @schema = subject.build_models
+    WCC::Contentful::Model.store = store
+
+    # act
+    redirect = WCC::Contentful::Model::Redirect2.find_by(slug: 'asdf')
+
+    # assert
+    expect(redirect).to be_nil
   end
 
   it 'resolves numeric fields' do
@@ -243,6 +265,17 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
     # assert
     expect(ministries_page.sub_menu).to be_nil
+  end
+
+  it 'linked arrays are empty when no links found' do
+    subject.build_models
+    WCC::Contentful::Model.store = store
+
+    # act
+    privacy_policy_page = WCC::Contentful::Model::Page.find('1tPGouM76soIsM2e0uikgw')
+
+    # assert
+    expect(privacy_policy_page.sections).to eq([])
   end
 
   it 'resolves linked assets' do
