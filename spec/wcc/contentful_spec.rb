@@ -117,7 +117,7 @@ RSpec.describe WCC::Contentful, :vcr do
         expect(page).to be_a(WCC::Contentful::Model::Page)
         expect(page.slug).to eq('/conferences')
 
-        expect(page.sections).to be_nil
+        expect(page.sections).to be_empty
       end
     end
 
