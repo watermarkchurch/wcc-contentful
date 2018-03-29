@@ -61,6 +61,11 @@ export = function (migration: Migration) {
     .name('Icon')
     .type('Link')
     .linkType('Asset')
+    .validations([
+      {
+        linkMimetypeGroup: ['image']
+      }
+    ])
   
   menuButton.createField('externalLink')
     .name('External Link')
