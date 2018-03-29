@@ -73,15 +73,19 @@ RSpec.describe Wcc::MenuGenerator, type: :generator do
     }
   end
 
-  it 'should drop sample models in app/models dir' do
+  it 'should drop sample model overrides in lib dir' do
     expect(destination_root).to have_structure {
-      directory 'app' do
-        directory 'models' do
-          file 'menu.rb' do
-            contains 'class Menu < WCC::Contentful::Model'
-          end
-          file 'menu_button.rb' do
-            contains 'class MenuButton < WCC::Contentful::Model'
+      directory 'lib' do
+        directory 'wcc' do
+          directory 'contentful' do
+            directory 'model' do
+              file 'menu.rb' do
+                contains 'class WCC::Contentful::Model::Menu < WCC::Contentful::Model'
+              end
+              file 'menu_button.rb' do
+                contains 'class WCC::Contentful::Model::MenuButton < WCC::Contentful::Model'
+              end
+            end
           end
         end
       end

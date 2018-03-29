@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'http'
+
 class WCC::Contentful::Configuration
   ATTRIBUTES = %i[
     access_token
@@ -7,12 +9,25 @@ class WCC::Contentful::Configuration
     space
     default_locale
     content_delivery
-    http_adapter
-    sync_cache_store
+    override_get_http
     webhook_username
     webhook_password
   ].freeze
   attr_accessor(*ATTRIBUTES)
+
+  CDN_METHODS = [
+    :eager_sync,
+    # TODO: :lazy_sync
+    :direct
+  ].freeze
+
+  SYNC_STORES = {
+    memory: ->(_config) { WCC::Contentful::Store::MemoryStore.new },
+    postgres: ->(_config) {
+      require_relative 'store/postgres_store'
+      WCC::Contentful::Store::PostgresStore.new(ENV['POSTGRES_CONNECTION'])
+    }
+  }.freeze
 
   ##
   # Defines the method by which content is downloaded from the Contentful CDN.
@@ -22,7 +37,7 @@ class WCC::Contentful::Configuration
   #           'https://cdn.contentful.com' via the
   #           {SimpleClient}[rdoc-ref:WCC::Contentful::SimpleClient::Cdn]
   #
-  # [:eager_sync] `config.content_delivery = :eager_sync, [sync_store], [options]`
+  # [:eager_sync] `config.content_delivery = :eager_sync`
   #               with the `:eager_sync` method, the entire content of the Contentful
   #               space is downloaded locally and stored in the
   #               {Sync Store}[rdoc-ref:WCC::Contentful.store].  The application is responsible
@@ -32,7 +47,7 @@ class WCC::Contentful::Configuration
   #               on publish events:
   #                 mount WCC::Contentful::Engine, at: '/wcc/contentful'
   #
-  # [:lazy_sync] `config.content_delivery = :lazy_sync, [cache]`
+  # [:lazy_sync] `config.content_delivery = :lazy_sync
   #              The `:lazy_sync` method is a hybrid between the other two methods.
   #              Frequently accessed data is stored in an ActiveSupport::Cache implementation
   #              and is kept up-to-date via the Sync API.  Any data that is not present
@@ -40,46 +55,34 @@ class WCC::Contentful::Configuration
   #              The application is still responsible to periodically call `sync!`
   #              or to mount the provided Engine.
   #
-  def content_delivery=(params)
-    cd, *cd_params = params
-    unless cd.is_a? Symbol
-      raise ArgumentError, 'content_delivery must be a symbol, use store= to '\
-        'directly set contentful CDN access adapter'
+  def content_delivery=(symbol)
+    raise ArgumentError, "Please set one of #{CDN_METHODS}" unless CDN_METHODS.include?(symbol)
+    @content_delivery = symbol
+  end
+
+  ##
+  # Sets the local store which is used with the `:eager_sync` content delivery method.
+  # This can be one of `:memory`, `:postgres`, or a custom implementation.
+  def sync_store=(symbol)
+    if symbol.is_a? Symbol
+      unless SYNC_STORES.keys.include?(symbol)
+        raise ArgumentError, "Please use one of #{SYNC_STORES.keys}"
+      end
     end
-
-    WCC::Contentful::Store::Factory.new(
-      self,
-      cd,
-      cd_params
-    ).validate!
-
-    @content_delivery = cd
-    @content_delivery_params = cd_params
+    @sync_store = symbol
   end
 
   ##
   # Initializes the configured Sync Store.
-  def store
-    @store ||= WCC::Contentful::Store::Factory.new(
-      self,
-      @content_delivery,
-      @content_delivery_params
-    ).build_sync_store
+  def sync_store
+    @sync_store = SYNC_STORES[@sync_store].call(self) if @sync_store.is_a? Symbol
+    @sync_store ||= Store::MemoryStore.new
   end
 
-  ##
-  # Directly sets the adapter layer for communicating with Contentful
-  def store=(value)
-    @content_delivery = :custom
-    @store = value
-  end
-
-  # Sets the adapter which is used to make HTTP requests.
-  # If left unset, the gem attempts to load either 'http' or 'typhoeus'.
-  # You can pass your own adapter which responds to 'call', or even a lambda
-  # that accepts the following parameters:
-  #  ->(url, query, headers = {}, proxy = {}) { ... }
-  attr_writer :http_adapter
+  # A proc which overrides the "get_http" function in Contentful::Client.
+  # All interaction with Contentful will go through this function.
+  # Should be a lambda like: ->(url, query, headers = {}, proxy = {}) { ... }
+  attr_writer :override_get_http
 
   def initialize
     @access_token = ''
@@ -87,6 +90,7 @@ class WCC::Contentful::Configuration
     @space = ''
     @default_locale = nil
     @content_delivery = :direct
+    @sync_store = :memory
   end
 
   ##
@@ -101,7 +105,7 @@ class WCC::Contentful::Configuration
   # the application would prefer not to generate all the models.
   #
   # If the {contentful.rb}[https://github.com/contentful/contentful.rb] gem is
-  # loaded, it is extended to make use of the `http_adapter` lambda.
+  # loaded, it is extended to make use of the `override_get_http` lambda.
   def configure_contentful
     @client = nil
     @management_client = nil
@@ -120,15 +124,13 @@ class WCC::Contentful::Configuration
     @client = WCC::Contentful::SimpleClient::Cdn.new(
       access_token: access_token,
       space: space,
-      default_locale: default_locale,
-      adapter: http_adapter
+      default_locale: default_locale
     )
     return unless management_token.present?
     @management_client = WCC::Contentful::SimpleClient::Management.new(
       management_token: management_token,
       space: space,
-      default_locale: default_locale,
-      adapter: http_adapter
+      default_locale: default_locale
     )
   end
 end

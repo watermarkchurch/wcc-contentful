@@ -28,8 +28,8 @@ RSpec.describe WCC::Contentful::DelayedSyncJob, type: :job do
       config.space = contentful_space_id
       config.management_token = nil
       config.default_locale = nil
-      config.store = nil
       config.content_delivery = :eager_sync
+      config.sync_store = :memory
     end
 
     WCC::Contentful.init!

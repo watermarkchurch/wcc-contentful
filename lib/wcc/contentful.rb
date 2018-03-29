@@ -68,10 +68,10 @@ module WCC::Contentful
     @next_sync_token = nil
     yield(configuration)
 
-    raise ArgumentError, 'Please provide "space"' unless configuration.space.present?
-    raise ArgumentError, 'Please provide "access_token"' unless configuration.access_token.present?
-
     configuration.configure_contentful
+
+    raise ArgumentError, 'Please provide "space" ID' unless configuration.space.present?
+    raise ArgumentError, 'Please provide "access_token"' unless configuration.access_token.present?
 
     configuration
   end
@@ -105,12 +105,17 @@ module WCC::Contentful
       end
     @types = indexer.types
 
-    store = configuration.store
-    WCC::Contentful::Model.store = store
+    case configuration.content_delivery
+    when :eager_sync
+      store = configuration.sync_store
 
-    if store.respond_to?(:index)
+      WCC::Contentful::Model.store = store
+
       @next_sync_token = store.find("sync:#{configuration.space}:token")
       sync!
+    when :direct
+      store = Store::CDNAdapter.new(client)
+      WCC::Contentful::Model.store = store
     end
 
     WCC::Contentful::ModelBuilder.new(@types).build_models
@@ -122,6 +127,7 @@ module WCC::Contentful
     end
 
     return unless defined?(Rails)
+    Dir[Rails.root.join('lib/wcc/contentful/model/**/*.rb')].each { |file| require file }
 
     # load up the engine so it gets automatically mounted
     require 'wcc/contentful/engine'
@@ -135,9 +141,6 @@ module WCC::Contentful
   # This results in a WCC::Contentful::ValidationError
   # if the 'topButton' field in the 'menu' content type is not a link.
   def self.validate_models!
-    # Ensure application models are loaded before we validate
-    Dir[Rails.root.join('app/models/**/*.rb')].each { |file| require file } if defined?(Rails)
-
     content_types = WCC::Contentful::ModelValidators.transform_content_types_for_validation(
       @content_types
     )
@@ -154,7 +157,7 @@ module WCC::Contentful
   #           the sync again after a few minutes.
   #
   def self.sync!(up_to_id: nil)
-    return unless store.respond_to?(:index)
+    return unless %i[eager_sync lazy_sync].include?(configuration.content_delivery)
 
     @mutex.synchronize do
       sync_resp = client.sync(sync_token: next_sync_token)

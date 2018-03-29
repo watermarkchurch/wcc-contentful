@@ -10,85 +10,75 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
     )
   }
 
-  describe '#find' do
-    it 'finds data by ID' do
-      # act
-      found = adapter.find('3bZRv5ISCkui6kguIwM2U0')
+  it 'finds data by ID' do
+    # act
+    found = adapter.find('3bZRv5ISCkui6kguIwM2U0')
 
-      # assert
-      expect(found['sys']).to include({
-        'id' => '3bZRv5ISCkui6kguIwM2U0',
-        'type' => 'Entry'
-      })
-      expect(found['fields']).to include({
-        'text' => {
-          'en-US' => 'Ministries'
-        },
-        'iconFA' => {
-          'en-US' => 'fa-file-alt'
-        },
-        'buttonStyle' => {
-          'en-US' => %w[
-            rounded
-            custom
-          ]
-        },
-        'customButtonCss' => {
-          'en-US' => [
-            'border-color: green;'
-          ]
-        },
-        'link' => {
-          'en-US' => {
-            'sys' => {
-              'type' => 'Link',
-              'linkType' => 'Entry',
-              'id' => 'JhYhSfZPAOMqsaK8cYOUK'
+    # assert
+    expect(found['sys']).to include({
+      'id' => '3bZRv5ISCkui6kguIwM2U0',
+      'type' => 'Entry'
+    })
+    expect(found['fields']).to include({
+      'text' => {
+        'en-US' => 'Ministries'
+      },
+      'iconFA' => {
+        'en-US' => 'fa-file-alt'
+      },
+      'buttonStyle' => {
+        'en-US' => %w[
+          rounded
+          custom
+        ]
+      },
+      'customButtonCss' => {
+        'en-US' => [
+          'border-color: green;'
+        ]
+      },
+      'link' => {
+        'en-US' => {
+          'sys' => {
+            'type' => 'Link',
+            'linkType' => 'Entry',
+            'id' => 'JhYhSfZPAOMqsaK8cYOUK'
+          }
+        }
+      }
+    })
+  end
+
+  it 'finds asset by ID' do
+    # act
+    found = adapter.find('4JV2MbQVoAeEUQGUmYGQGY')
+
+    # assert
+    expect(found['sys']).to include({
+      'id' => '4JV2MbQVoAeEUQGUmYGQGY',
+      'type' => 'Asset'
+    })
+
+    expect(found['fields']).to eq({
+      'title' => {
+        'en-US' => 'goat-clip-art'
+      },
+      'file' => {
+        'en-US' => {
+          'url' => "//images.ctfassets.net/#{contentful_space_id}/"\
+            '4JV2MbQVoAeEUQGUmYGQGY/1f0e377e665d2ab94fb86b0c88e75b06/goat-clip-art.png',
+          'details' => {
+            'size' => 62_310,
+            'image' => {
+              'width' => 219,
+              'height' => 203
             }
-          }
+          },
+          'fileName' => 'goat-clip-art.png',
+          'contentType' => 'image/png'
         }
-      })
-    end
-
-    it 'finds asset by ID' do
-      # act
-      found = adapter.find('4JV2MbQVoAeEUQGUmYGQGY')
-
-      # assert
-      expect(found['sys']).to include({
-        'id' => '4JV2MbQVoAeEUQGUmYGQGY',
-        'type' => 'Asset'
-      })
-
-      expect(found['fields']).to eq({
-        'title' => {
-          'en-US' => 'goat-clip-art'
-        },
-        'file' => {
-          'en-US' => {
-            'url' => "//images.ctfassets.net/#{contentful_space_id}/"\
-              '4JV2MbQVoAeEUQGUmYGQGY/1f0e377e665d2ab94fb86b0c88e75b06/goat-clip-art.png',
-            'details' => {
-              'size' => 62_310,
-              'image' => {
-                'width' => 219,
-                'height' => 203
-              }
-            },
-            'fileName' => 'goat-clip-art.png',
-            'contentType' => 'image/png'
-          }
-        }
-      })
-    end
-
-    it 'returns nil when not found' do
-      # act
-      found = adapter.find('asdf')
-
-      # assert
-      expect(found).to be_nil
-    end
+      }
+    })
   end
 
   describe '#find_by' do
@@ -177,14 +167,20 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
   end
 
   it 'CDN Adapter does not implement #set' do
-    expect(subject).to_not respond_to(:set)
+    expect {
+      subject.set('id', { 'test' => 'data' })
+    }.to raise_error(NotImplementedError)
   end
 
   it 'CDN Adapter does not implement #delete' do
-    expect(subject).to_not respond_to(:delete)
+    expect {
+      subject.delete('id')
+    }.to raise_error(NotImplementedError)
   end
 
   it 'CDN Adapter does not implement #index' do
-    expect(subject).to_not respond_to(:index)
+    expect {
+      subject.index({ 'sys' => { 'id' => 'asdf' } })
+    }.to raise_error(NotImplementedError)
   end
 end

@@ -7,81 +7,9 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
     WCC::Contentful::SimpleClient.new(
       api_url: 'https://cdn.contentful.com',
       access_token: contentful_access_token,
-      space: contentful_space_id,
-      adapter: WCC::Contentful::SimpleClient::ADAPTERS.keys.sample
+      space: contentful_space_id
     )
   }
-
-  describe 'initialize' do
-    after do
-      WCC::Contentful::SimpleClient::ADAPTERS = {
-        typhoeus: ['typhoeus', '~> 1.0'],
-        http: ['http', '> 1.0', '< 3.0']
-      }.freeze
-    end
-
-    it 'fails to load when no adapter gem found' do
-      expect {
-        WCC::Contentful::SimpleClient::ADAPTERS = {
-          asdf: ['asdf', '~> 1.0']
-        }.freeze
-
-        WCC::Contentful::SimpleClient.new(
-          api_url: 'https://cdn.contentful.com',
-          access_token: contentful_access_token,
-          space: contentful_space_id
-        )
-      }.to raise_error(ArgumentError)
-    end
-
-    it 'fails to load when gem is wrong version' do
-      expect {
-        WCC::Contentful::SimpleClient::ADAPTERS = {
-          http: ['http', '< 1.0']
-        }.freeze
-
-        WCC::Contentful::SimpleClient.new(
-          api_url: 'https://cdn.contentful.com',
-          access_token: contentful_access_token,
-          space: contentful_space_id
-        )
-      }.to raise_error(ArgumentError)
-    end
-
-    it 'loads proc as adapter' do
-      WCC::Contentful::SimpleClient::ADAPTERS = {}.freeze
-      resp = double(body: 'test body', code: 200)
-
-      # act
-      client = WCC::Contentful::SimpleClient.new(
-        api_url: 'https://cdn.contentful.com',
-        access_token: contentful_access_token,
-        space: contentful_space_id,
-        adapter: proc { resp }
-      )
-      resp = client.get('http://asdf.com')
-
-      # assert
-      expect(resp.body).to eq('test body')
-    end
-
-    it 'fails to load when adapter is not invokeable' do
-      WCC::Contentful::SimpleClient::ADAPTERS = {}.freeze
-
-      expect {
-        WCC::Contentful::SimpleClient::ADAPTERS = {
-          http: ['http', '< 1.0']
-        }.freeze
-
-        WCC::Contentful::SimpleClient.new(
-          api_url: 'https://cdn.contentful.com',
-          access_token: contentful_access_token,
-          space: contentful_space_id,
-          adapter: :whoopsie
-        )
-      }.to raise_error(ArgumentError)
-    end
-  end
 
   describe 'get' do
     it 'gets entries with query params' do
