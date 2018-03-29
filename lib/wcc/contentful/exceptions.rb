@@ -34,4 +34,7 @@ module WCC::Contentful
 
   class SyncError < StandardError
   end
+
+  class ContentTypeNotFoundError < NameError
+  end
 end
