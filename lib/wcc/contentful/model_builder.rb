@@ -96,7 +96,7 @@ module WCC::Contentful
               if raw_value.present?
                 case f.type
                 when :DateTime
-                  raw_value = Time.zone.parse(raw_value)
+                  raw_value = Time.parse(raw_value).localtime
                 when :Int
                   raw_value = Integer(raw_value)
                 when :Float
