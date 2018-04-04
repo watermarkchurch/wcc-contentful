@@ -130,7 +130,8 @@ class WCC::Contentful::Configuration
       management_token: management_token,
       space: space,
       default_locale: default_locale,
-      adapter: http_adapter
+      adapter: http_adapter,
+      environment: environment
     )
   end
 
