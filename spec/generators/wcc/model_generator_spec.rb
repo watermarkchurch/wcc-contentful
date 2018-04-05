@@ -2,13 +2,14 @@
 
 require 'rails_helper'
 require 'rails/generators'
-require 'generators/wcc/menu_generator'
+require 'generators/wcc/model_generator'
 
 require 'generator_spec'
 require 'timecop'
 
-RSpec.describe Wcc::MenuGenerator, type: :generator do
+RSpec.describe Wcc::ModelGenerator, type: :generator do
   destination Rails.root.join('tmp/generators')
+  arguments %w[menu]
 
   before(:all) do
     Timecop.freeze(Time.parse('2018-01-02T12:03:04'))
