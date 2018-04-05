@@ -59,11 +59,12 @@ module WCC::Contentful
             bad_fields = filter.keys.reject { |k| fields.include?(k) }
             raise ArgumentError, "These fields do not exist: #{bad_fields}" unless bad_fields.empty?
 
-            if defined?(context[:preview]) && context[:preview] == ENV['CONTENTFUL_PREVIEW_PASSWORD']
-              result = WCC::Contentful::Model.preview_store.find_by(content_type: content_type, filter: filter)
-            else
-              result = WCC::Contentful::Model.store.find_by(content_type: content_type, filter: filter)
-            end
+            result =
+              if defined?(context[:preview]) && context[:preview] == ENV['CONTENTFUL_PREVIEW_PASSWORD']
+                WCC::Contentful::Model.preview_store.find_by(content_type: content_type, filter: filter)
+              else
+                WCC::Contentful::Model.store.find_by(content_type: content_type, filter: filter)
+              end
 
             new(result, context) if result
           end

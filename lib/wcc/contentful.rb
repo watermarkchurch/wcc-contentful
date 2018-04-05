@@ -127,7 +127,6 @@ module WCC::Contentful
       WCC::Contentful::Model.store = store
     end
 
-
     if store.respond_to?(:index)
       @next_sync_token = store.find("sync:#{configuration.space}:token")
       sync!

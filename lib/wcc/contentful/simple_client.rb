@@ -223,6 +223,5 @@ module WCC::Contentful
         resp.assert_ok!
       end
     end
-
   end
 end
