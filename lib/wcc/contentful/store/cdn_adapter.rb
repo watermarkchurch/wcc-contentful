@@ -9,7 +9,9 @@ module WCC::Contentful::Store
 
     def initialize(client)
       super()
-      if client.client_type == 'preview'
+      if client.nil?
+        @client = client
+      elsif client.client_type == 'preview'
         @preview_client = client
       else
         @client = client
