@@ -65,7 +65,7 @@ module WCC::Contentful
               result = WCC::Contentful::Model.store.find_by(content_type: content_type, filter: filter)
             end
 
-            new(result, context)
+            new(result, context) if result
           end
 
           define_singleton_method(:inherited) do |subclass|
@@ -102,6 +102,9 @@ module WCC::Contentful
                 when :Float
                   raw_value = Float(raw_value)
                 end
+              elsif f.array
+                # array fields need to resolve to an empty array when nothing is there
+                raw_value = []
               end
               instance_variable_set('@' + f.name, raw_value)
             end
