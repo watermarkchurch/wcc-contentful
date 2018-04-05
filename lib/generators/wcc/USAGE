@@ -3,14 +3,14 @@ Description:
     to your contentful space.
 
 Example:
-    rails generate wcc:menu
+    rails generate wcc:model MODEL
 
     This will install:
       https://www.github.com/watermarkchurch/migration-cli
 
     This will create:
-      db/migrate/[date]_generated_add_menus.ts -
-        this migration is run by the migration CLI to create menus in your
+      db/migrate/[date]_generated_add_[MODEL].ts -
+        this migration is run by the migration CLI to create MODEL in your
         contentful space
       bin/release -
         Adds a release command to your rails app which runs migrations.
