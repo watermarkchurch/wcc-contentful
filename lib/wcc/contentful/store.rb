@@ -25,7 +25,7 @@ module WCC::Contentful::Store
   ].freeze
 
   Factory =
-    Struct.new(:config, :cdn_method, :content_delivery_params, :use_preview_boolean) do
+    Struct.new(:config, :cdn_method, :content_delivery_params) do
       def build_sync_store
         unless respond_to?("build_#{cdn_method}")
           raise ArgumentError, "Don't know how to build content delivery method #{cdn_method}"
