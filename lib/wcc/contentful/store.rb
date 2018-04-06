@@ -25,13 +25,17 @@ module WCC::Contentful::Store
   ].freeze
 
   Factory =
-    Struct.new(:config, :cdn_method, :content_delivery_params) do
+    Struct.new(:config, :cdn_method, :content_delivery_params, :use_preview_boolean) do
       def build_sync_store
         unless respond_to?("build_#{cdn_method}")
           raise ArgumentError, "Don't know how to build content delivery method #{cdn_method}"
         end
 
-        public_send("build_#{cdn_method}", config, *content_delivery_params)
+        if cdn_method == :direct
+          public_send("build_#{cdn_method}", config, *content_delivery_params, use_preview_boolean)
+        else
+          public_send("build_#{cdn_method}", config, *content_delivery_params)
+        end
       end
 
       def validate!
@@ -56,8 +60,8 @@ module WCC::Contentful::Store
         )
       end
 
-      def build_direct(config, *_options)
-        if config.preview_client
+      def build_direct(config, *_options, use_preview_boolean)
+        if use_preview_boolean
           CDNAdapter.new(config.preview_client)
         else
           CDNAdapter.new(config.client)

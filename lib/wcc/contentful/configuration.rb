@@ -62,16 +62,20 @@ class WCC::Contentful::Configuration
   # Initializes the configured Sync Store.
   def store(preview: nil)
     if preview
+      @use_preview_boolean = true
       @preview_store ||= WCC::Contentful::Store::Factory.new(
         self,
         @content_delivery,
-        @content_delivery_params
+        @content_delivery_params,
+        @use_preview_boolean
       ).build_sync_store
     else
+      @use_preview_boolean = false
       @store ||= WCC::Contentful::Store::Factory.new(
         self,
         @content_delivery,
-        @content_delivery_params
+        @content_delivery_params,
+        @use_preview_boolean
       ).build_sync_store
     end
   end
@@ -134,14 +138,12 @@ class WCC::Contentful::Configuration
 
     require_relative 'client_ext' if defined?(::Contentful)
 
-    unless preview_token.present?
-      @client = WCC::Contentful::SimpleClient::Cdn.new(
-        access_token: access_token,
-        space: space,
-        default_locale: default_locale,
-        adapter: http_adapter
-      )
-    end
+    @client = WCC::Contentful::SimpleClient::Cdn.new(
+      access_token: access_token,
+      space: space,
+      default_locale: default_locale,
+      adapter: http_adapter
+    )
 
     if management_token.present?
       @management_client = WCC::Contentful::SimpleClient::Management.new(
@@ -150,7 +152,9 @@ class WCC::Contentful::Configuration
         default_locale: default_locale,
         adapter: http_adapter
       )
-    elsif preview_token.present?
+    end
+    
+    if preview_token.present?
       @preview_client = WCC::Contentful::SimpleClient::Preview.new(
         preview_token: preview_token,
         space: space,

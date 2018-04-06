@@ -103,8 +103,6 @@ module WCC::Contentful
     content_types_resp =
       if configuration.management_client
         configuration.management_client.content_types(limit: 1000)
-      elsif configuration.preview_client
-        configuration.preview_client.content_types(limit: 1000)
       else
         configuration.client.content_types(limit: 1000)
       end
@@ -120,6 +118,8 @@ module WCC::Contentful
     @types = indexer.types
 
     if use_preview_client
+      store = configuration.store(preview: nil)  
+      WCC::Contentful::Model.store = store
       preview_store = configuration.store(preview: use_preview_client)
       WCC::Contentful::Model.preview_store = preview_store
     else
