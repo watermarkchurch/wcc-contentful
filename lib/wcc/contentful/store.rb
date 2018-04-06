@@ -32,7 +32,6 @@ module WCC::Contentful::Store
         end
 
         public_send("build_#{cdn_method}", config, *content_delivery_params)
-
       end
 
       def validate!
@@ -45,9 +44,7 @@ module WCC::Contentful::Store
       end
 
       def build_eager_sync(config, store = nil, *_options)
-        if store == {:preview=>false} || store == {:preview=>false}
-          store = nil
-        end
+        store = nil if [{ preview: false }, { preview: true }].include?(store)
         puts "store: #{store}"
         store = SYNC_STORES[store].call(config) if store.is_a?(Symbol)
         store || MemoryStore.new
