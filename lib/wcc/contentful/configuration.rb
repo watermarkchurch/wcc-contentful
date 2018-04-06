@@ -62,11 +62,11 @@ class WCC::Contentful::Configuration
   # Initializes the configured Sync Store.
   def store(preview: false)
     if @content_delivery_params.nil?
-      @content_delivery_params = [{preview: preview}]
+      @content_delivery_params = [{ preview: preview }]
     else
-      @content_delivery_params << {preview: preview}
+      @content_delivery_params << { preview: preview }
     end
-    
+
     if preview
       @preview_store ||= WCC::Contentful::Store::Factory.new(
         self,
@@ -147,15 +147,6 @@ class WCC::Contentful::Configuration
       adapter: http_adapter
     )
 
-    if management_token.present?
-      @management_client = WCC::Contentful::SimpleClient::Management.new(
-        management_token: management_token,
-        space: space,
-        default_locale: default_locale,
-        adapter: http_adapter
-      )
-    end
-
     if preview_token.present?
       @preview_client = WCC::Contentful::SimpleClient::Preview.new(
         preview_token: preview_token,
@@ -164,5 +155,13 @@ class WCC::Contentful::Configuration
         adapter: http_adapter
       )
     end
+
+    return unless management_token.present?
+    @management_client = WCC::Contentful::SimpleClient::Management.new(
+      management_token: management_token,
+      space: space,
+      default_locale: default_locale,
+      adapter: http_adapter
+    )
   end
 end

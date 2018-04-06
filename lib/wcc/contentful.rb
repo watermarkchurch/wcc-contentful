@@ -118,7 +118,7 @@ module WCC::Contentful
     @types = indexer.types
 
     if use_preview_client
-      store = configuration.store(preview: false)  
+      store = configuration.store(preview: false)
       WCC::Contentful::Model.store = store
       preview_store = configuration.store(preview: use_preview_client)
       WCC::Contentful::Model.preview_store = preview_store
