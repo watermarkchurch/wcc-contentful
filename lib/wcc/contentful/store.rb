@@ -31,7 +31,11 @@ module WCC::Contentful::Store
           raise ArgumentError, "Don't know how to build content delivery method #{cdn_method}"
         end
 
-        public_send("build_#{cdn_method}", config, *content_delivery_params)
+        if cdn_method == :eager_sync
+          public_send("build_#{cdn_method}", config, nil, *content_delivery_params)
+        else
+          public_send("build_#{cdn_method}", config, *content_delivery_params)
+        end
       end
 
       def validate!
