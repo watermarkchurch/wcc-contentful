@@ -35,7 +35,7 @@ module WCC::Contentful
   ##
   # Gets a {CDN Client}[rdoc-ref:WCC::Contentful::SimpleClient::Cdn] which provides
   # methods for getting and paging raw JSON data from the Contentful CDN.
-  def self.client(preview: nil)
+  def self.client(preview: false)
     if preview
       configuration&.preview_client
     else
@@ -98,7 +98,7 @@ module WCC::Contentful
     raise ArgumentError, 'Please first call WCC:Contentful.configure' if configuration.nil?
     @mutex ||= Mutex.new
 
-    use_preview_client = nil
+    use_preview_client = false
     # we want as much as possible the raw JSON from the API
     content_types_resp =
       if configuration.management_client
@@ -118,7 +118,7 @@ module WCC::Contentful
     @types = indexer.types
 
     if use_preview_client
-      store = configuration.store(preview: nil)  
+      store = configuration.store(preview: false)  
       WCC::Contentful::Model.store = store
       preview_store = configuration.store(preview: use_preview_client)
       WCC::Contentful::Model.preview_store = preview_store

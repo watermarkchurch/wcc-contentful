@@ -60,7 +60,7 @@ class WCC::Contentful::Configuration
 
   ##
   # Initializes the configured Sync Store.
-  def store(preview: nil)
+  def store(preview: false)
     if preview
       @use_preview_boolean = true
       @preview_store ||= WCC::Contentful::Store::Factory.new(
@@ -153,7 +153,7 @@ class WCC::Contentful::Configuration
         adapter: http_adapter
       )
     end
-    
+
     if preview_token.present?
       @preview_client = WCC::Contentful::SimpleClient::Preview.new(
         preview_token: preview_token,
