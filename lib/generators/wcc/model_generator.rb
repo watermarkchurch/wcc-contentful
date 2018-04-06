@@ -12,7 +12,7 @@ module Wcc
         deps = package['dependencies']
 
         unless deps.try(:[], 'contentful-migration-cli').present?
-          run 'npm install --save watermarkchurch/migration-cli ts-node typescript'
+          run 'npm install --save watermarkchurch/migration-cli ts-node typescript contentful-export'
         end
       end
     end
