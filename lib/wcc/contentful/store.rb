@@ -31,11 +31,8 @@ module WCC::Contentful::Store
           raise ArgumentError, "Don't know how to build content delivery method #{cdn_method}"
         end
 
-        if cdn_method == :eager_sync
-          public_send("build_#{cdn_method}", config, nil, *content_delivery_params)
-        else
-          public_send("build_#{cdn_method}", config, *content_delivery_params)
-        end
+        public_send("build_#{cdn_method}", config, *content_delivery_params)
+
       end
 
       def validate!
@@ -48,6 +45,9 @@ module WCC::Contentful::Store
       end
 
       def build_eager_sync(config, store = nil, *_options)
+        if store == {:preview=>false} || store == {:preview=>false}
+          store = nil
+        end
         puts "store: #{store}"
         store = SYNC_STORES[store].call(config) if store.is_a?(Symbol)
         store || MemoryStore.new
