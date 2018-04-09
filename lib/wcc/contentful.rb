@@ -68,7 +68,7 @@ module WCC::Contentful
     @next_sync_token = nil
     yield(configuration)
 
-    @configuration.validate!
+    configuration.validate!
 
     configuration.configure_contentful
 
