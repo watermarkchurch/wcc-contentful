@@ -14,6 +14,7 @@ RSpec.describe WCC::Contentful, :vcr do
       config.access_token = valid_contentful_access_token
       config.space = valid_contentful_space_id
       config.content_delivery = :eager_sync
+      config.environment = nil
     end
   end
 
@@ -30,10 +31,6 @@ RSpec.describe WCC::Contentful, :vcr do
   end
 
   describe '.configure' do
-    let(:invalid_contentful_access_token) { 'test5678' }
-    let(:invalid_contentful_space_id) { 'testxxxx' }
-    let(:invalid_contentful_default_locale) { 'simmer-down-now-fella' }
-
     context 'when passed VALID configuration arguments' do
       before do
         WCC::Contentful.configure do |config|
@@ -59,13 +56,35 @@ RSpec.describe WCC::Contentful, :vcr do
       end
     end
 
-    context 'when passed INVALID configuration arguments' do
-      it 'should error with a Contentful::Unauthorized' do
-        WCC::Contentful.configure do |config|
-          config.access_token = invalid_contentful_access_token
-          config.space = invalid_contentful_space_id
-          config.default_locale = invalid_contentful_default_locale
-        end
+    context 'invalid config' do
+      it 'should error when space is nil' do
+        expect {
+          WCC::Contentful.configure do |config|
+            config.access_token = valid_contentful_access_token
+            config.space = nil
+          end
+        }.to raise_error(ArgumentError)
+      end
+
+      it 'should error when access token is nil' do
+        expect {
+          WCC::Contentful.configure do |config|
+            config.access_token = nil
+            config.space = valid_contentful_space_id
+          end
+        }.to raise_error(ArgumentError)
+      end
+
+      it 'should error when trying to use sync with environments' do
+        expect {
+          WCC::Contentful.configure do |config|
+            config.access_token = valid_contentful_access_token
+            config.space = valid_contentful_space_id
+
+            config.content_delivery = :eager_sync
+            config.environment = 'specs'
+          end
+        }.to raise_error(ArgumentError)
       end
     end
   end

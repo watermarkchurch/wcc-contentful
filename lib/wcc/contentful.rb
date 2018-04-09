@@ -68,8 +68,7 @@ module WCC::Contentful
     @next_sync_token = nil
     yield(configuration)
 
-    raise ArgumentError, 'Please provide "space"' unless configuration.space.present?
-    raise ArgumentError, 'Please provide "access_token"' unless configuration.access_token.present?
+    configuration.validate!
 
     configuration.configure_contentful
 
