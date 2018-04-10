@@ -28,6 +28,7 @@
 # v0.3.0
 
 * Now neccesary to require the engine in a Gemfile when using in Rails
+    `gem 'wcc-contentful', require: 'wcc/contentful/rails'
 * The gem can be configured to point to a non-master environment with the following configuration parameter:
     `config.environment = 'my_environment'`
-* When a model is not found in contentful, `Model.find_by` returns nil rather than raising an error.
+* When a model is not found in contentful, `Model.find_by` returns `nil` rather than raising an error.
