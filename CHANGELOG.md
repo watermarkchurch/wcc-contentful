@@ -24,3 +24,7 @@
 * New 'lazy sync' delivery method acts as a cache that is kept up to date by the sync API
 * 'eager sync' is now hooked up to a webhook which can be mounted to receive publish events
 * Major changes to configuration methods
+
+# v0.3.0
+
+* Now neccesary to require the engine in a Gemfile when using in Rails
