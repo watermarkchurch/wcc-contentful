@@ -119,11 +119,6 @@ module WCC::Contentful
       file = File.dirname(__FILE__) + "/contentful/model/#{t.name.underscore}.rb"
       require file if File.exist?(file)
     end
-
-    return unless defined?(Rails)
-
-    # load up the engine so it gets automatically mounted
-    require 'wcc/contentful/engine'
   end
 
   ##

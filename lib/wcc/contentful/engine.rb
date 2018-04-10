@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'wcc/rails'
-
 module WCC::Contentful
   class Engine < ::Rails::Engine
     isolate_namespace WCC::Contentful
