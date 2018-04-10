@@ -1,0 +1,113 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=redirect&fields.slug.en-US=published-redirect&locale=*
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Bearer <CONTENTFUL_ACCESS_TOKEN>
+      Connection:
+      - close
+      Host:
+      - cdn.contentful.com
+      User-Agent:
+      - http.rb/1.0.4
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Access-Control-Allow-Headers:
+      - Accept,Accept-Language,Authorization,Cache-Control,Content-Length,Content-Range,Content-Type,DNT,Destination,Expires,If-Match,If-Modified-Since,If-None-Match,Keep-Alive,Last-Modified,Origin,Pragma,Range,User-Agent,X-Http-Method-Override,X-Mx-ReqToken,X-Requested-With,X-Contentful-Version,X-Contentful-Content-Type,X-Contentful-Organization,X-Contentful-Skip-Transformation,X-Contentful-User-Agent,X-Contentful-Enable-Alpha-Feature
+      Access-Control-Allow-Methods:
+      - GET,HEAD,OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Etag
+      Access-Control-Max-Age:
+      - '86400'
+      Cache-Control:
+      - max-age=0
+      Content-Type:
+      - application/vnd.contentful.delivery.v1+json
+      Etag:
+      - '"c8e49f96095fd63416f729ef60920364"'
+      Server:
+      - Contentful
+      X-Content-Type-Options:
+      - nosniff
+      X-Contentful-Request-Id:
+      - ed35b2812e31d94b228ce2134249c9a7
+      Content-Length:
+      - '829'
+      Accept-Ranges:
+      - bytes
+      Date:
+      - Tue, 10 Apr 2018 22:45:15 GMT
+      Via:
+      - 1.1 varnish
+      Age:
+      - '5112'
+      Connection:
+      - close
+      X-Served-By:
+      - cache-dfw18630-DFW
+      X-Cache:
+      - HIT
+      X-Cache-Hits:
+      - '1'
+      X-Timer:
+      - S1523400316.924432,VS0,VE0
+      Vary:
+      - Accept-Encoding
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "sys": {
+            "type": "Array"
+          },
+          "total": 1,
+          "skip": 0,
+          "limit": 100,
+          "items": [
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "7fkNyeM7IIA0AsWwey2KWY",
+                "type": "Entry",
+                "createdAt": "2018-04-05T21:37:18.741Z",
+                "updatedAt": "2018-04-10T21:05:31.208Z",
+                "revision": 3,
+                "contentType": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "ContentType",
+                    "id": "redirect"
+                  }
+                }
+              },
+              "fields": {
+                "slug": {
+                  "en-US": "published-redirect"
+                },
+                "url": {
+                  "en-US": "https://watermark.formstack.com/forms/theporch"
+                }
+              }
+            }
+          ]
+        }
+    http_version: 
+  recorded_at: Tue, 10 Apr 2018 22:45:15 GMT
+recorded_with: VCR 4.0.0

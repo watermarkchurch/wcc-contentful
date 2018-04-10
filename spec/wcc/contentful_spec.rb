@@ -8,6 +8,8 @@ RSpec.describe WCC::Contentful, :vcr do
   let(:valid_contentful_access_token) { contentful_access_token }
   let(:valid_contentful_space_id) { contentful_space_id }
   let(:valid_contentful_default_locale) { 'en-US' }
+  let(:valid_contentful_preview_token) { contentful_preview_token }
+  let(:valid_contentful_preview_password) { contentful_preview_password }
 
   before do
     WCC::Contentful.configure do |config|
@@ -27,6 +29,72 @@ RSpec.describe WCC::Contentful, :vcr do
       end
     end
     WCC::Contentful::Model.class_variable_get('@@registry').clear
+  end
+
+  describe '.init with preview token' do
+    context 'with preview token' do
+      before do
+        WCC::Contentful.configure do |config|
+          config.access_token = valid_contentful_access_token
+          config.space = valid_contentful_space_id
+          config.store = nil
+          config.preview_token = valid_contentful_preview_token
+          config.content_delivery = :direct
+        end
+      end
+
+      it 'should populate models via Preview client' do
+        # act
+        VCR.use_cassette('WCC_Contentful/_init/with_preview_token/init_with_preview_token') do
+          WCC::Contentful.init!
+
+        # assert
+          content_type = WCC::Contentful::Model::Redirect.content_type
+          expect(content_type).to eq('redirect')
+        end
+      end
+
+      it 'should find published content in Contentful' do
+        # act
+        VCR.use_cassette('WCC_Contentful/_init/with_preview_token/init_with_preview_token') do
+          WCC::Contentful.init!
+
+          VCR.use_cassette('WCC_Contentful/_init/with_preview_token/published_redirect') do
+            redirect = WCC::Contentful::Model::Redirect.find_by(slug: 'published-redirect')
+
+            expect(redirect).to_not be_nil
+            expect(redirect.url).to eq('https://watermark.formstack.com/forms/theporch')
+          end
+        end
+      end
+
+      it 'should not find draft content in Contentful if no preview password is given' do
+        # act
+        VCR.use_cassette('WCC_Contentful/_init/with_preview_token/init_with_preview_token') do
+          WCC::Contentful.init!
+
+          VCR.use_cassette('WCC_Contentful/_init/with_preview_token/redirect_without_preview_password') do
+            redirect = WCC::Contentful::Model::Redirect.find_by(slug: 'draft-redirect')
+
+            expect(redirect).to be_nil
+          end
+        end
+      end
+
+      it 'should find draft content in Contentful if correct preview password is given' do
+        # act
+        VCR.use_cassette('WCC_Contentful/_init/with_preview_token/init_with_preview_token') do
+          WCC::Contentful.init!
+
+          VCR.use_cassette('WCC_Contentful/_init/with_preview_token/redirect_with_preview_password') do
+            redirect = WCC::Contentful::Model::Redirect.find_by({slug: 'draft-redirect'}, preview: valid_contentful_preview_password)
+
+            expect(redirect).to_not be_nil
+            expect(redirect.url).to eq('https://google.com')
+          end
+        end
+      end
+    end
   end
 
   describe '.configure' do
