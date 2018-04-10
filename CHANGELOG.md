@@ -28,3 +28,6 @@
 # v0.3.0
 
 * Now neccesary to require the engine in a Gemfile when using in Rails
+* The gem can be configured to point to a non-master environment with the following configuration parameter:
+    `config.environment = 'my_environment'`
+* When a model is not found in contentful, `Model.find` returns nil rather than raising an error.
