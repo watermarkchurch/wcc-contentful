@@ -5,6 +5,16 @@ module Wcc
     source_root File.expand_path('templates', __dir__)
     argument :model, type: :string
 
+    VALID_MODELS = %w[ menu page ].freeze
+
+    def initialize(*)
+      super
+
+      return if VALID_MODELS.include?(singular)
+
+      raise ArgumentError, "Model must be #{VALID_MODELS.to_sentence}"
+    end
+
     def ensure_migration_tools_installed
       in_root do
         run 'npm init -y' unless File.exist?('package.json')
