@@ -159,6 +159,7 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
           %w[
             Asset
             asdf
+            blogPost
             dog
             faq
             homepage
@@ -168,6 +169,7 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
             ministry
             ministryCard
             page
+            person
             redirect
             section-CardSearch
             section-Faq
@@ -196,8 +198,8 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
         end
 
         # assert
-        sub_menu = indexer.types['page'].fields['subMenu']
-        expect(sub_menu.link_types).to eq(['menu'])
+        sub_pages = indexer.types['page'].fields['subpages']
+        expect(sub_pages.link_types).to eq(['page'])
       end
     end
 
@@ -231,6 +233,7 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
         expect(indexer.types.keys.sort).to eq(
           %w[
             Asset
+            blogPost
             dog
             faq
             homepage
@@ -240,6 +243,7 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
             ministry
             ministryCard
             page
+            person
             redirect
             section-CardSearch
             section-Faq
@@ -268,11 +272,11 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
         end
 
         # assert
-        sub_menu = indexer.types['page'].fields['subMenu']
+        page_link = indexer.types['menuButton'].fields['link']
 
         # We would love for this to be present, but the contentful CDN
         # does not give us this info.
-        expect(sub_menu.link_types).to_not be_present
+        expect(page_link.link_types).to_not be_present
       end
     end
   end
