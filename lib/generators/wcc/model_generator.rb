@@ -5,7 +5,7 @@ module Wcc
     source_root File.expand_path('templates', __dir__)
     argument :model, type: :string
 
-    VALID_MODELS = %w[ menu page ].freeze
+    VALID_MODELS = %w[menu page].freeze
 
     def initialize(*)
       super
