@@ -5,7 +5,7 @@ export = function (migration: Migration) {
     .name('Page')
     .description('A page describes a collection of sections that correspond' +
      'to a URL slug')
-    .displayField('title') 
+    .displayField('title')
 
   page.createField('title')
     .name('Title')
@@ -18,7 +18,11 @@ export = function (migration: Migration) {
     .required(true)
     .validations([
       {
-        "unique": true
+        unique: true
+      },
+      {
+        regexp: { pattern: "(\\/|\\/([\w#!:.?+=&%@!\\-\\/]))?$" },
+        message: "The slug must look like the path part of a URL and begin with a forward slash, example: '/my-page-slug'"
       }
     ])
 
@@ -37,7 +41,7 @@ export = function (migration: Migration) {
       type: 'Link',
       linkType: 'Entry',
       validations: [
-        { 
+        {
           linkContentType: [ 'page' ]
         }
       ]
