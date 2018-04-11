@@ -307,4 +307,59 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
       end
     end
   end
+
+  context 'with environment' do
+    subject(:client) {
+      WCC::Contentful::SimpleClient.new(
+        api_url: 'https://cdn.contentful.com',
+        access_token: contentful_access_token,
+        space: contentful_space_id,
+        adapter: WCC::Contentful::SimpleClient::ADAPTERS.keys.sample,
+        environment: 'specs'
+      )
+    }
+
+    describe 'get' do
+      it 'gets entries with query params from environment' do
+        # act
+        resp = client.get('entries', { limit: 2 })
+
+        # assert
+        resp.assert_ok!
+        expect(resp.code).to eq(200)
+        expect(resp.to_json['items'].map { |i| i.dig('sys', 'id') }).to eq(
+          %w[ym4r3nweSywSuw042uUUk 1qXeLjFXoIuqEqgckoMyAM]
+        )
+        resp.to_json['items'].each do |item|
+          expect(item.dig('sys', 'environment', 'sys', 'id')).to eq('specs')
+        end
+      end
+
+      it 'paginates all items' do
+        # act
+        resp = client.get('entries', { content_type: 'faq', limit: 5 })
+
+        # assert
+        resp.assert_ok!
+        items = resp.items.force
+        ids =
+          items.map do |item|
+            item.dig('sys', 'id')
+          end
+        expect(ids)
+          .to eq(%w[
+                   6ktgj3Bc88kmWuM4gSM686
+                   PqDxIBykmq2sucqQGUeCC
+                   ym4r3nweSywSuw042uUUk
+                   4jZvAKqv4AmqqO2sAmgqUc
+                   5P5NEDpjNYo6AoQo28gWcK
+                   1Au9nhG1I4sWMugOCUakE4
+                   4Seuo60ERySe6SmiyeMqGg
+                   2xiwkMS0z2k4sSWKKASU4C
+                 ])
+
+        expect(items[5].dig('fields', 'answer')).to include('specs environment')
+      end
+    end
+  end
 end

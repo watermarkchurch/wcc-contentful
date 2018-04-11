@@ -68,8 +68,7 @@ module WCC::Contentful
     @next_sync_token = nil
     yield(configuration)
 
-    raise ArgumentError, 'Please provide "space"' unless configuration.space.present?
-    raise ArgumentError, 'Please provide "access_token"' unless configuration.access_token.present?
+    configuration.validate!
 
     configuration.configure_contentful
 
@@ -120,11 +119,6 @@ module WCC::Contentful
       file = File.dirname(__FILE__) + "/contentful/model/#{t.name.underscore}.rb"
       require file if File.exist?(file)
     end
-
-    return unless defined?(Rails)
-
-    # load up the engine so it gets automatically mounted
-    require 'wcc/contentful/engine'
   end
 
   ##
