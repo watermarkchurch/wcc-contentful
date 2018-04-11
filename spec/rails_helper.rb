@@ -10,8 +10,8 @@ ENV['RAILS_ENV'] ||= 'test'
 require 'action_controller/railtie'
 require 'active_job'
 
-# require our rails engine
-require 'wcc/contentful/engine'
+# require rails specific code
+require 'wcc/contentful/rails'
 
 # require rspec-rails to simulate framework behavior in specs
 require 'rspec/rails'

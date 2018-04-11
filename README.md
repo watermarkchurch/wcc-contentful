@@ -5,7 +5,7 @@
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'wcc-contentful'
+gem 'wcc-contentful', require: 'wcc/contentful/rails'
 ```
 
 And then execute:

@@ -5,6 +5,7 @@ class WCC::Contentful::Configuration
     access_token
     management_token
     space
+    environment
     default_locale
     content_delivery
     preview_token
@@ -144,7 +145,8 @@ class WCC::Contentful::Configuration
       access_token: access_token,
       space: space,
       default_locale: default_locale,
-      adapter: http_adapter
+      adapter: http_adapter,
+      environment: environment
     )
 
     if preview_token.present?
@@ -161,7 +163,17 @@ class WCC::Contentful::Configuration
       management_token: management_token,
       space: space,
       default_locale: default_locale,
-      adapter: http_adapter
+      adapter: http_adapter,
+      environment: environment
     )
+  end
+
+  def validate!
+    raise ArgumentError, 'Please provide "space"' unless space.present?
+    raise ArgumentError, 'Please provide "access_token"' unless access_token.present?
+
+    return if environment.nil? || %i[direct custom].include?(content_delivery)
+    raise ArgumentError, 'The Contentful Sync API currently does not work with environments.  ' \
+      'You can use the ":direct" content_delivery method, or provide a custom store implementation.'
   end
 end
