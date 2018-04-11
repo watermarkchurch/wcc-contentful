@@ -1,4 +1,3 @@
-
 # frozen_string_literal: true
 
 module WCC::Contentful::Helpers
@@ -16,7 +15,7 @@ module WCC::Contentful::Helpers
   end
 
   def constant_from_content_type(content_type)
-    content_type.camelize.gsub(/[^_a-zA-Z0-9]/, '_')
+    content_type.gsub(/[^_a-zA-Z0-9]/, '_').camelize
   end
 
   def shared_prefix(string_array)
