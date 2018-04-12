@@ -10,7 +10,7 @@ class WCC::Contentful::Model::Redirect < WCC::Contentful::Model
   end
 
   def valid_page_reference?(page_ref)
-    if !page_ref.nil? || !defined?(page_ref.url).nil?
+    if !page_ref.nil? && !defined?(page_ref.url).nil?
       true
     else
       false
