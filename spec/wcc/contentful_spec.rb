@@ -44,20 +44,6 @@ RSpec.describe WCC::Contentful, :vcr do
         end
       end
 
-      it 'should populate models via Preview client' do
-        # act
-        VCR.use_cassette(
-          'WCC_Contentful/_init/with_preview_token/init_with_preview_token',
-          record: :new_episodes
-        ) do
-          WCC::Contentful.init!
-
-          # assert
-          content_type = WCC::Contentful::Model::Redirect.content_type
-          expect(content_type).to eq('redirect')
-        end
-      end
-
       it 'should find published content in Contentful' do
         # act
         VCR.use_cassette(
