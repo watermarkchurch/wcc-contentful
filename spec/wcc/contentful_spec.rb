@@ -47,7 +47,8 @@ RSpec.describe WCC::Contentful, :vcr do
       it 'should populate models via Preview client' do
         # act
         VCR.use_cassette(
-          'WCC_Contentful/_init/with_preview_token/init_with_preview_token'
+          'WCC_Contentful/_init/with_preview_token/init_with_preview_token',
+          record: :new_episodes
         ) do
           WCC::Contentful.init!
 
@@ -60,12 +61,14 @@ RSpec.describe WCC::Contentful, :vcr do
       it 'should find published content in Contentful' do
         # act
         VCR.use_cassette(
-          'WCC_Contentful/_init/with_preview_token/init_with_preview_token'
+          'WCC_Contentful/_init/with_preview_token/init_with_preview_token',
+          record: :new_episodes
         ) do
           WCC::Contentful.init!
 
           VCR.use_cassette(
-            'WCC_Contentful/_init/with_preview_token/published_redirect'
+            'WCC_Contentful/_init/with_preview_token/published_redirect',
+            record: :new_episodes
           ) do
             redirect = WCC::Contentful::Model::Redirect.find_by(slug: 'published-redirect')
 
@@ -78,12 +81,14 @@ RSpec.describe WCC::Contentful, :vcr do
       it 'should not find draft content in Contentful if no preview password is given' do
         # act
         VCR.use_cassette(
-          'WCC_Contentful/_init/with_preview_token/init_with_preview_token'
+          'WCC_Contentful/_init/with_preview_token/init_with_preview_token',
+          record: :new_episodes
         ) do
           WCC::Contentful.init!
 
           VCR.use_cassette(
-            'WCC_Contentful/_init/with_preview_token/redirect_without_preview_password'
+            'WCC_Contentful/_init/with_preview_token/redirect_without_preview_password',
+            record: :new_episodes
           ) do
             redirect = WCC::Contentful::Model::Redirect.find_by(slug: 'draft-redirect')
 
@@ -95,12 +100,14 @@ RSpec.describe WCC::Contentful, :vcr do
       it 'should find draft content in Contentful if correct preview password is given' do
         # act
         VCR.use_cassette(
-          'WCC_Contentful/_init/with_preview_token/init_with_preview_token'
+          'WCC_Contentful/_init/with_preview_token/init_with_preview_token',
+          record: :new_episodes
         ) do
           WCC::Contentful.init!
 
           VCR.use_cassette(
-            'WCC_Contentful/_init/with_preview_token/redirect_with_preview_password'
+            'WCC_Contentful/_init/with_preview_token/redirect_with_preview_password',
+            record: :new_episodes
           ) do
             redirect = WCC::Contentful::Model::Redirect.find_by(
               { slug: 'draft-redirect' },
