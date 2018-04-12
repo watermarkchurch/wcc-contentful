@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class WCC::Contentful::Model::Redirect < WCC::Contentful::Model
-  def location
+  def href
     if !url.nil?
       url
     elsif valid_page_reference?(pageReference)
