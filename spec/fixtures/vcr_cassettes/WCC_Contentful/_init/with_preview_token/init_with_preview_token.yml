@@ -47,21 +47,21 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Thu, 12 Apr 2018 20:40:35 GMT
+      - Thu, 12 Apr 2018 20:48:05 GMT
       Via:
       - 1.1 varnish
       Age:
-      - '170'
+      - '620'
       Connection:
       - close
       X-Served-By:
-      - cache-dfw18638-DFW
+      - cache-dfw18645-DFW
       X-Cache:
       - HIT
       X-Cache-Hits:
       - '1'
       X-Timer:
-      - S1523565636.580135,VS0,VE1
+      - S1523566086.691101,VS0,VE2
       Vary:
       - Accept-Encoding
     body:
@@ -1708,5 +1708,5 @@ http_interactions:
           ]
         }
     http_version: 
-  recorded_at: Thu, 12 Apr 2018 20:40:35 GMT
+  recorded_at: Thu, 12 Apr 2018 20:48:05 GMT
 recorded_with: VCR 4.0.0
