@@ -158,20 +158,17 @@ module WCC::Contentful
     end
 
     class Management < SimpleClient
-      def initialize(management_token:, **options)
+      def initialize(space:, management_token:, **options)
         super(
           api_url: options[:api_url] || 'https://api.contentful.com',
-          space: options[:space] || '/',
+          space: space,
           access_token: management_token,
           **options
         )
       end
 
-      def content_types(space: nil, **query)
-        space ||= @space
-        raise ArgumentError, 'please provide a space ID' if space.nil?
-
-        resp = get("/spaces/#{space}/content_types", query)
+      def content_types(**query)
+        resp = get('content_types', query)
         resp.assert_ok!
       end
     end
