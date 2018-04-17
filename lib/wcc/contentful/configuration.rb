@@ -71,7 +71,7 @@ class WCC::Contentful::Configuration
     if preview
       @preview_store ||= WCC::Contentful::Store::Factory.new(
         self,
-        @content_delivery,
+        :direct,
         @content_delivery_params
       ).build_sync_store
     else
