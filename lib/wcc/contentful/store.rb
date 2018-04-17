@@ -44,15 +44,12 @@ module WCC::Contentful::Store
       end
 
       def build_eager_sync(config, store = nil, *_options)
-        store = nil if [{ preview: false }, { preview: true }].include?(store)
         puts "store: #{store}"
         store = SYNC_STORES[store].call(config) if store.is_a?(Symbol)
         store || MemoryStore.new
       end
 
       def build_lazy_sync(config, *options)
-        options.delete({ preview: false })
-        options.delete({ preview: true })
         WCC::Contentful::Store::LazyCacheStore.new(
           config.client,
           cache: ActiveSupport::Cache.lookup_store(*options)
