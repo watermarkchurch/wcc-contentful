@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=redirect&fields.slug.en-US=published-redirect&locale=*
+    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=redirect&fields.slug.en-US=draft-redirect&locale=*
     body:
       encoding: US-ASCII
       string: ''
@@ -35,33 +35,33 @@ http_interactions:
       Content-Type:
       - application/vnd.contentful.delivery.v1+json
       Etag:
-      - '"c8e49f96095fd63416f729ef60920364"'
+      - '"29f2c21be26360c424f617d8592cf6f9"'
       Server:
       - Contentful
       X-Content-Type-Options:
       - nosniff
       X-Contentful-Request-Id:
-      - cb4758ec1e0b2b0cee90c2fac7dd7e25
+      - 7e550961e3230f734e8d501dbba29bcf
       Content-Length:
-      - '829'
+      - '97'
       Accept-Ranges:
       - bytes
       Date:
-      - Thu, 12 Apr 2018 20:48:06 GMT
+      - Wed, 18 Apr 2018 23:22:39 GMT
       Via:
       - 1.1 varnish
       Age:
-      - '620'
+      - '0'
       Connection:
       - close
       X-Served-By:
-      - cache-dfw18630-DFW
+      - cache-dfw18636-DFW
       X-Cache:
-      - HIT
+      - MISS
       X-Cache-Hits:
-      - '1'
+      - '0'
       X-Timer:
-      - S1523566086.123479,VS0,VE0
+      - S1524093759.006012,VS0,VE113
       Vary:
       - Accept-Encoding
     body:
@@ -71,43 +71,11 @@ http_interactions:
           "sys": {
             "type": "Array"
           },
-          "total": 1,
+          "total": 0,
           "skip": 0,
           "limit": 100,
-          "items": [
-            {
-              "sys": {
-                "space": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "Space",
-                    "id": "<CONTENTFUL_SPACE_ID>"
-                  }
-                },
-                "id": "7fkNyeM7IIA0AsWwey2KWY",
-                "type": "Entry",
-                "createdAt": "2018-04-05T21:37:18.741Z",
-                "updatedAt": "2018-04-10T21:05:31.208Z",
-                "revision": 3,
-                "contentType": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "ContentType",
-                    "id": "redirect"
-                  }
-                }
-              },
-              "fields": {
-                "slug": {
-                  "en-US": "published-redirect"
-                },
-                "url": {
-                  "en-US": "https://watermark.formstack.com/forms/theporch"
-                }
-              }
-            }
-          ]
+          "items": []
         }
     http_version: 
-  recorded_at: Thu, 12 Apr 2018 20:48:06 GMT
+  recorded_at: Wed, 18 Apr 2018 23:22:39 GMT
 recorded_with: VCR 4.0.0

@@ -1,0 +1,108 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://preview.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=redirect&fields.slug.en-US=draft-redirect&locale=*
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Bearer 665913d6385fb05abc577d8df312edbe737c5ec34baec6f7aca98af29f567150
+      Connection:
+      - close
+      Host:
+      - preview.contentful.com
+      User-Agent:
+      - http.rb/1.0.4
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Access-Control-Allow-Headers:
+      - Accept,Accept-Language,Authorization,Cache-Control,Content-Length,Content-Range,Content-Type,DNT,Destination,Expires,If-Match,If-Modified-Since,If-None-Match,Keep-Alive,Last-Modified,Origin,Pragma,Range,User-Agent,X-Http-Method-Override,X-Mx-ReqToken,X-Requested-With,X-Contentful-Version,X-Contentful-Content-Type,X-Contentful-Organization,X-Contentful-Skip-Transformation,X-Contentful-User-Agent,X-Contentful-Enable-Alpha-Feature
+      Access-Control-Allow-Methods:
+      - GET,HEAD,OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Etag
+      Access-Control-Max-Age:
+      - '1728000'
+      Cf-Cache-Name:
+      - content_delivery
+      Cf-Organization-Id:
+      - 0ExroY77YE46MliPY6xQ0h
+      Cf-Space-Id:
+      - "<CONTENTFUL_SPACE_ID>"
+      Content-Type:
+      - application/vnd.contentful.delivery.v1+json
+      Date:
+      - Wed, 18 Apr 2018 23:22:39 GMT
+      Etag:
+      - '"c37d2b6451a14490aec45cc0623984d3"'
+      Server:
+      - Contentful
+      X-Content-Type-Options:
+      - nosniff
+      X-Contentful-Request-Id:
+      - f877809b42e9b5116fa6fc5b3861bda0
+      Content-Length:
+      - '958'
+      Connection:
+      - Close
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "sys": {
+            "type": "Array"
+          },
+          "total": 1,
+          "skip": 0,
+          "limit": 100,
+          "items": [
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "type": "Entry",
+                "id": "6EnvdUeFskygWy2sSocSqC",
+                "contentType": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "ContentType",
+                    "id": "redirect"
+                  }
+                },
+                "revision": 0,
+                "createdAt": "2018-04-06T16:37:08.011Z",
+                "updatedAt": "2018-04-10T21:05:11.960Z",
+                "environment": {
+                  "sys": {
+                    "id": "master",
+                    "type": "Link",
+                    "linkType": "Environment"
+                  }
+                }
+              },
+              "fields": {
+                "slug": {
+                  "en-US": "draft-redirect"
+                },
+                "url": {
+                  "en-US": "https://google.com"
+                }
+              }
+            }
+          ]
+        }
+    http_version: 
+  recorded_at: Wed, 18 Apr 2018 23:22:39 GMT
+recorded_with: VCR 4.0.0
