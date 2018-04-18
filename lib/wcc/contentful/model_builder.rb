@@ -58,7 +58,7 @@ module WCC::Contentful
             raise ArgumentError, "These fields do not exist: #{bad_fields}" unless bad_fields.empty?
 
             result =
-              if defined?(context[:preview])
+              if defined?(context[:preview]) && context[:preview] == true
                 WCC::Contentful::Model.preview_store.find_by(content_type: content_type, filter: filter)
               else
                 WCC::Contentful::Model.store.find_by(content_type: content_type, filter: filter)
