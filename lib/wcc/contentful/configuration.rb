@@ -68,7 +68,7 @@ class WCC::Contentful::Configuration
       else
         @content_delivery_params << { preview: preview }
       end
-      
+
       @preview_store ||= WCC::Contentful::Store::Factory.new(
         self,
         :direct,

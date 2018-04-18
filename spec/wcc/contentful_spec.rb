@@ -55,7 +55,10 @@ RSpec.describe WCC::Contentful, :vcr do
             'WCC_Contentful/_init/with_preview_token/published_redirect_preview_true',
             record: :new_episodes
           ) do
-            redirect = WCC::Contentful::Model::Redirect.find_by({ slug: 'published-redirect' }, preview: true)
+            redirect = WCC::Contentful::Model::Redirect.find_by(
+              { slug: 'published-redirect' },
+              preview: true
+            )
 
             expect(redirect).to_not be_nil
             expect(redirect.url).to eq('https://watermark.formstack.com/forms/theporch')
@@ -75,7 +78,10 @@ RSpec.describe WCC::Contentful, :vcr do
             'WCC_Contentful/_init/with_preview_token/published_redirect_preview_false',
             record: :new_episodes
           ) do
-            redirect = WCC::Contentful::Model::Redirect.find_by({ slug: 'published-redirect' }, preview: false)
+            redirect = WCC::Contentful::Model::Redirect.find_by(
+              { slug: 'published-redirect' },
+              preview: false
+            )
 
             expect(redirect).to_not be_nil
             expect(redirect.url).to eq('https://watermark.formstack.com/forms/theporch')
@@ -95,7 +101,10 @@ RSpec.describe WCC::Contentful, :vcr do
             'WCC_Contentful/_init/with_preview_token/draft_redirect_preview_false',
             record: :new_episodes
           ) do
-            redirect = WCC::Contentful::Model::Redirect.find_by({ slug: 'draft-redirect' }, preview: false)
+            redirect = WCC::Contentful::Model::Redirect.find_by(
+              { slug: 'draft-redirect' },
+              preview: false
+            )
 
             expect(redirect).to be_nil
           end
