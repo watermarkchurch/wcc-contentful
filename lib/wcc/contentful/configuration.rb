@@ -62,13 +62,13 @@ class WCC::Contentful::Configuration
   ##
   # Initializes the configured Sync Store.
   def store(preview: false)
-    if @content_delivery_params.nil?
-      @content_delivery_params = [{ preview: preview }]
-    else
-      @content_delivery_params << { preview: preview }
-    end
-
     if preview
+      if @content_delivery_params.nil?
+        @content_delivery_params = [{ preview: preview }]
+      else
+        @content_delivery_params << { preview: preview }
+      end
+      
       @preview_store ||= WCC::Contentful::Store::Factory.new(
         self,
         :direct,
