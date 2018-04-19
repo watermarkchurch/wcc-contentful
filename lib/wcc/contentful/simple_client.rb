@@ -184,7 +184,7 @@ module WCC::Contentful
       end
     end
 
-    class Preview < SimpleClient
+    class Preview < Cdn
       def initialize(space:, preview_token:, **options)
         super(
           api_url: options[:api_url] || 'https://preview.contentful.com/',
@@ -196,26 +196,6 @@ module WCC::Contentful
 
       def client_type
         'preview'
-      end
-
-      def entry(key, query = {})
-        resp = get("entries/#{key}", query)
-        resp.assert_ok!
-      end
-
-      def entries(query = {})
-        resp = get('entries', query)
-        resp.assert_ok!
-      end
-
-      def asset(key, query = {})
-        resp = get("assets/#{key}", query)
-        resp.assert_ok!
-      end
-
-      def assets(query = {})
-        resp = get('assets', query)
-        resp.assert_ok!
       end
 
       def content_types(space: nil, **query)
