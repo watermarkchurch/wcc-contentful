@@ -439,7 +439,7 @@ RSpec.describe WCC::Contentful, :vcr do
             record: :new_episodes
           ) do
             expect {
-              result = WCC::Contentful::Model::Menu.find_by(
+              WCC::Contentful::Model::Menu.find_by(
                 { id: 'menuId' },
                 preview: true
               )
