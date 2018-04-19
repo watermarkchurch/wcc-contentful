@@ -127,7 +127,7 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
     end
 
     before do
-      VCR.use_cassette('models/wcc_contentful/content_types', record: :none) do
+      VCR.use_cassette('models/wcc_contentful/content_types', record: :new_episodes) do
         WCC::Contentful.configure do |config|
           config.access_token = contentful_access_token
           config.space = contentful_space_id
@@ -139,7 +139,7 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
 
     context 'management API' do
       let(:content_types) {
-        VCR.use_cassette('models/wcc_contentful/content_types/mgmt_api', record: :none) do
+        VCR.use_cassette('models/wcc_contentful/content_types/mgmt_api', record: :new_episodes) do
           Contentful::Management::Client.new(contentful_management_token)
             .content_types
             .all(contentful_space_id)
@@ -213,7 +213,7 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
       end
 
       let(:content_types) {
-        VCR.use_cassette('models/wcc_contentful/content_types', record: :none) do
+        VCR.use_cassette('models/wcc_contentful/content_types', record: :new_episodes) do
           Contentful::Client.new(
             access_token: contentful_access_token,
             space: contentful_space_id
