@@ -63,16 +63,10 @@ class WCC::Contentful::Configuration
   # Initializes the configured Sync Store.
   def store(preview: false)
     if preview
-      if @content_delivery_params.nil?
-        @content_delivery_params = [{ preview: preview }]
-      else
-        @content_delivery_params << { preview: preview }
-      end
-
       @preview_store ||= WCC::Contentful::Store::Factory.new(
         self,
         :direct,
-        @content_delivery_params
+        [{ preview: preview }]
       ).build_sync_store
     else
       @store ||= WCC::Contentful::Store::Factory.new(
@@ -88,11 +82,6 @@ class WCC::Contentful::Configuration
   def store=(value)
     @content_delivery = :custom
     @store = value
-  end
-
-  def preview_store=(value)
-    @content_delivery = :custom
-    @preview_store = value
   end
 
   # Sets the adapter which is used to make HTTP requests.
