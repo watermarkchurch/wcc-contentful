@@ -3,19 +3,12 @@
 module WCC::Contentful::Store
   class CDNAdapter
     attr_reader :client
-    attr_reader :preview_client
 
     # Intentionally not implementing write methods
 
     def initialize(client)
       super()
-      if client.nil?
-        @client = client
-      elsif client.client_type == 'preview'
-        @preview_client = client
-      else
-        @client = client
-      end
+      @client = client
     end
 
     def find(key)
@@ -38,11 +31,7 @@ module WCC::Contentful::Store
     end
 
     def find_all(content_type:)
-      if @preview_client
-        Query.new(@preview_client, content_type: content_type)
-      else
-        Query.new(@client, content_type: content_type)
-      end
+      Query.new(@client, content_type: content_type)
     end
 
     class Query < Base::Query
