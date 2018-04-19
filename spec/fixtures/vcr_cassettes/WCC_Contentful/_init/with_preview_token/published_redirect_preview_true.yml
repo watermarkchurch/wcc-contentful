@@ -39,7 +39,7 @@ http_interactions:
       Content-Type:
       - application/vnd.contentful.delivery.v1+json
       Date:
-      - Wed, 18 Apr 2018 23:22:38 GMT
+      - Thu, 19 Apr 2018 00:07:47 GMT
       Etag:
       - '"eb0943d35d6a9133828966f089ce5a23"'
       Server:
@@ -47,7 +47,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       X-Contentful-Request-Id:
-      - 188c0aae930ea23f9703945ed77163bf
+      - 6ff6ddc40383b9ce8da2fd2bf9c5dfaf
       Content-Length:
       - '990'
       Connection:
@@ -104,5 +104,5 @@ http_interactions:
           ]
         }
     http_version: 
-  recorded_at: Wed, 18 Apr 2018 23:22:38 GMT
+  recorded_at: Thu, 19 Apr 2018 00:07:47 GMT
 recorded_with: VCR 4.0.0
