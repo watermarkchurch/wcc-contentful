@@ -127,7 +127,7 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
     end
 
     before do
-      VCR.use_cassette('models/wcc_contentful/content_types', record: :new_episodes) do
+      VCR.use_cassette('models/wcc_contentful/content_types', record: :none) do
         WCC::Contentful.configure do |config|
           config.access_token = contentful_access_token
           config.space = contentful_space_id
@@ -139,10 +139,10 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
 
     context 'management API' do
       let(:content_types) {
-        VCR.use_cassette('models/wcc_contentful/content_types/mgmt_api', record: :new_episodes) do
+        VCR.use_cassette('models/wcc_contentful/content_types/mgmt_api_master', record: :none) do
           Contentful::Management::Client.new(contentful_management_token)
-            .content_types
-            .all(contentful_space_id)
+            .content_types(contentful_space_id, 'master')
+            .all
             .map { |t| t }
         end
       }
@@ -213,7 +213,7 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
       end
 
       let(:content_types) {
-        VCR.use_cassette('models/wcc_contentful/content_types', record: :new_episodes) do
+        VCR.use_cassette('models/wcc_contentful/content_types_env_master', record: :none) do
           Contentful::Client.new(
             access_token: contentful_access_token,
             space: contentful_space_id
@@ -221,58 +221,16 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
         end
       }
 
-      it 'generates type data' do
+      it 'figures out link types from validations' do
         # act
         content_types.each do |managed_content_type|
           indexer.index(managed_content_type)
         end
 
         # assert
-        expect(indexer.types.keys.sort).to eq(
-          %w[
-            Asset
-            dog
-            faq
-            homepage
-            menu
-            menuButton
-            migrationHistory
-            ministry
-            ministryCard
-            page
-            redirect
-            section-CardSearch
-            section-Faq
-            section-Testimonials
-            section-VideoHighlight
-            testimonial
-            theme
-          ]
-        )
+        sections_field = indexer.types['page'].fields['sections']
 
-        sections = indexer.types['page'].fields['sections']
-        expect(sections.link_types).to eq(
-          %w[
-            section-CardSearch
-            section-Faq
-            section-Testimonials
-            section-VideoHighlight
-          ]
-        )
-      end
-
-      it 'fails to generate link types for single links' do
-        # act
-        content_types.each do |managed_content_type|
-          indexer.index(managed_content_type)
-        end
-
-        # assert
-        sub_menu = indexer.types['page'].fields['subMenu']
-
-        # We would love for this to be present, but the contentful CDN
-        # does not give us this info.
-        expect(sub_menu.link_types).to_not be_present
+        expect(sections_field.link_types).to be_present
       end
     end
   end
