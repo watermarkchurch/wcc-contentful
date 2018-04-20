@@ -162,10 +162,10 @@ module WCC::Contentful
     end
 
     class Management < SimpleClient
-      def initialize(management_token:, **options)
+      def initialize(space:, management_token:, **options)
         super(
           api_url: options[:api_url] || 'https://api.contentful.com',
-          space: options[:space] || '/',
+          space: space,
           access_token: management_token,
           **options
         )

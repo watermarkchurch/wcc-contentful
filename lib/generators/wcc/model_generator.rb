@@ -1,13 +1,18 @@
 # frozen_string_literal: true
 
 module Wcc
-  class MenuGenerator < Rails::Generators::Base
+  class ModelGenerator < Rails::Generators::Base
     source_root File.expand_path('templates', __dir__)
+    argument :model, type: :string
 
-    def create_menus_migration
-      now = Time.now.strftime('%Y%m%d%H%M')
-      copy_file 'menu/generated_add_menus.ts',
-        "db/migrate/#{now}01_generated_add_menus.ts"
+    VALID_MODELS = %w[menu page].freeze
+
+    def initialize(*)
+      super
+
+      return if VALID_MODELS.include?(singular)
+
+      raise ArgumentError, "Model must be #{VALID_MODELS.to_sentence}"
     end
 
     def ensure_migration_tools_installed
@@ -17,7 +22,7 @@ module Wcc
         deps = package['dependencies']
 
         unless deps.try(:[], 'contentful-migration-cli').present?
-          run 'npm install --save watermarkchurch/migration-cli ts-node typescript'
+          run 'npm install --save watermarkchurch/migration-cli ts-node typescript contentful-export'
         end
       end
     end
@@ -59,9 +64,27 @@ module Wcc
       copy_file 'wcc_contentful.rb', 'config/initializers/wcc_contentful.rb'
     end
 
+    def create_model_migration
+      copy_file "#{singular}/generated_add_#{plural}.ts",
+        "db/migrate/#{timestamp}01_generated_add_#{plural}.ts"
+    end
+
     def drop_model_overrides_in_app_models
-      copy_file 'menu/menu.rb', 'app/models/menu.rb'
-      copy_file 'menu/menu_button.rb', 'app/models/menu_button.rb'
+      directory "#{singular}/models", 'app/models'
+    end
+
+    private
+
+    def singular
+      model.downcase.singularize
+    end
+
+    def plural
+      model.downcase.pluralize
+    end
+
+    def timestamp
+      Time.now.strftime('%Y%m%d%H%M')
     end
   end
 end

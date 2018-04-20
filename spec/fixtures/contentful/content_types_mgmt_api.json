@@ -1150,9 +1150,6 @@
           "localized": false,
           "required": true,
           "validations": [
-            {
-              "unique": true
-            }
           ],
           "disabled": false,
           "omitted": false
@@ -1178,67 +1175,13 @@
           "omitted": false
         },
         {
-          "id": "heroImage",
-          "name": "Hero Image",
-          "type": "Link",
-          "localized": false,
-          "required": false,
-          "validations": [
-            {
-              "linkMimetypeGroup": [
-                "image"
-              ]
-            }
-          ],
-          "disabled": false,
-          "omitted": false,
-          "linkType": "Asset"
-        },
-        {
-          "id": "heroText",
-          "name": "Hero Text",
-          "type": "Text",
-          "localized": false,
-          "required": false,
-          "validations": [],
-          "disabled": false,
-          "omitted": false
-        },
-        {
-          "id": "callToAction",
-          "name": "Call To Action",
-          "type": "Link",
-          "localized": false,
-          "required": false,
-          "validations": [],
-          "disabled": false,
-          "omitted": false,
-          "linkType": "Entry"
-        },
-        {
-          "id": "subMenu",
-          "name": "SubMenu",
-          "type": "Link",
-          "localized": false,
-          "required": false,
-          "validations": [
-            {
-              "linkContentType": [
-                "menu"
-              ]
-            }
-          ],
-          "disabled": false,
-          "omitted": false,
-          "linkType": "Entry"
-        },
-        {
           "id": "sections",
           "name": "Sections",
           "type": "Array",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+          ],
           "disabled": false,
           "omitted": false,
           "items": {
@@ -1250,6 +1193,28 @@
                   "section-Faq",
                   "section-Testimonials",
                   "section-VideoHighlight"
+                ]
+              }
+            ],
+            "linkType": "Entry"
+          }
+        },
+        {
+          "id": "subpages",
+          "name": "Subpages",
+          "type": "Array",
+          "localized": false,
+          "required": false,
+          "validations": [
+          ],
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Link",
+            "validations": [
+              {
+                "linkContentType": [
+                  "page"
                 ]
               }
             ],
