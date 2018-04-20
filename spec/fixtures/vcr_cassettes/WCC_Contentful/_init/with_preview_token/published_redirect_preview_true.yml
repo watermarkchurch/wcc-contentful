@@ -14,7 +14,7 @@ http_interactions:
       Host:
       - preview.contentful.com
       User-Agent:
-      - http.rb/1.0.4
+      - http.rb/2.2.2
   response:
     status:
       code: 200
@@ -39,7 +39,7 @@ http_interactions:
       Content-Type:
       - application/vnd.contentful.delivery.v1+json
       Date:
-      - Fri, 20 Apr 2018 16:09:43 GMT
+      - Fri, 20 Apr 2018 19:40:28 GMT
       Etag:
       - '"e408864ab7ed8d69f6611baf89ce6ca3"'
       Server:
@@ -47,7 +47,7 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       X-Contentful-Request-Id:
-      - 8b543de4486cf5d642245be9dca5cb8a
+      - ce39bc1caa30ee2259820302f82c61d8
       Content-Length:
       - '990'
       Connection:
@@ -104,5 +104,5 @@ http_interactions:
           ]
         }
     http_version: 
-  recorded_at: Fri, 20 Apr 2018 16:09:43 GMT
+  recorded_at: Fri, 20 Apr 2018 19:40:28 GMT
 recorded_with: VCR 4.0.0

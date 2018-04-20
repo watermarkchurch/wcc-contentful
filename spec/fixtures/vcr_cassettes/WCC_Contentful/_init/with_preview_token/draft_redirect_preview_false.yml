@@ -14,7 +14,7 @@ http_interactions:
       Host:
       - cdn.contentful.com
       User-Agent:
-      - http.rb/1.0.4
+      - http.rb/2.2.2
   response:
     status:
       code: 200
@@ -47,21 +47,21 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Date:
-      - Fri, 20 Apr 2018 16:09:43 GMT
+      - Fri, 20 Apr 2018 19:40:28 GMT
       Via:
       - 1.1 varnish
       Age:
-      - '0'
+      - '12645'
       Connection:
       - close
       X-Served-By:
-      - cache-dfw18631-DFW
+      - cache-dfw18643-DFW
       X-Cache:
-      - MISS
+      - HIT
       X-Cache-Hits:
-      - '0'
+      - '1'
       X-Timer:
-      - S1524240584.625476,VS0,VE170
+      - S1524253229.935322,VS0,VE1
       Vary:
       - Accept-Encoding
     body:
@@ -77,5 +77,5 @@ http_interactions:
           "items": []
         }
     http_version: 
-  recorded_at: Fri, 20 Apr 2018 16:09:43 GMT
+  recorded_at: Fri, 20 Apr 2018 19:40:28 GMT
 recorded_with: VCR 4.0.0
