@@ -12,6 +12,7 @@ RSpec.describe WCC::Contentful, :vcr do
 
   before do
     WCC::Contentful.configure do |config|
+      config.management_token = nil
       config.access_token = valid_contentful_access_token
       config.space = valid_contentful_space_id
       config.content_delivery = :eager_sync
@@ -47,13 +48,13 @@ RSpec.describe WCC::Contentful, :vcr do
         # act
         VCR.use_cassette(
           'WCC_Contentful/_init/with_preview_token/init_with_preview_token',
-          record: :new_episodes
+          record: :none
         ) do
           WCC::Contentful.init!
 
           VCR.use_cassette(
             'WCC_Contentful/_init/with_preview_token/published_redirect_preview_true',
-            record: :new_episodes
+            record: :none
           ) do
             redirect = WCC::Contentful::Model::Redirect.find_by(
               { slug: 'published-redirect' },
@@ -70,13 +71,13 @@ RSpec.describe WCC::Contentful, :vcr do
         # act
         VCR.use_cassette(
           'WCC_Contentful/_init/with_preview_token/init_with_preview_token',
-          record: :new_episodes
+          record: :none
         ) do
           WCC::Contentful.init!
 
           VCR.use_cassette(
             'WCC_Contentful/_init/with_preview_token/published_redirect_preview_false',
-            record: :new_episodes
+            record: :none
           ) do
             redirect = WCC::Contentful::Model::Redirect.find_by(
               { slug: 'published-redirect' },
@@ -93,13 +94,13 @@ RSpec.describe WCC::Contentful, :vcr do
         # act
         VCR.use_cassette(
           'WCC_Contentful/_init/with_preview_token/init_with_preview_token',
-          record: :new_episodes
+          record: :none
         ) do
           WCC::Contentful.init!
 
           VCR.use_cassette(
             'WCC_Contentful/_init/with_preview_token/draft_redirect_preview_false',
-            record: :new_episodes
+            record: :none
           ) do
             redirect = WCC::Contentful::Model::Redirect.find_by(
               { slug: 'draft-redirect' },
@@ -115,13 +116,13 @@ RSpec.describe WCC::Contentful, :vcr do
         # act
         VCR.use_cassette(
           'WCC_Contentful/_init/with_preview_token/init_with_preview_token',
-          record: :new_episodes
+          record: :none
         ) do
           WCC::Contentful.init!
 
           VCR.use_cassette(
             'WCC_Contentful/_init/with_preview_token/draft_redirect_preview_true',
-            record: :new_episodes
+            record: :none
           ) do
             redirect = WCC::Contentful::Model::Redirect.find_by(
               { slug: 'draft-redirect' },
