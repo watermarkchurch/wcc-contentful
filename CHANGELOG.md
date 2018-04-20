@@ -25,6 +25,13 @@
 * 'eager sync' is now hooked up to a webhook which can be mounted to receive publish events
 * Major changes to configuration methods
 
+# v0.2.2
+
+* Add preview_client for doing contentful calls to their preview api
+* 'find_by' can now receive a preview param set to a boolean value 
+* Can configure your preview_api by passing a preview_token to configure block
+* The Redirect model provides a 'href' method that will give you the url it points to
+
 # v0.3.0
 
 * Now neccesary to require the engine in a Gemfile when using in Rails:

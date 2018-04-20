@@ -21,6 +21,7 @@ Or install it yourself as:
 ```ruby
 WCC::Contentful.configure do |config|
   config.access_token = <CONTENTFUL_ACCESS_TOKEN>
+  config.preview_token = <CONTENTFUL_PREVIEW_TOKEN>
   config.space = <CONTENTFUL_SPACE_ID>
   config.default_locale = "en-US"
 end
@@ -29,9 +30,11 @@ end
 ## Usage
 
 ```ruby
-redirect_object = WCC::Contentful::Redirect.find_by_slug('new')
+redirect_object = WCC::Contentful::Model::Redirect.find_by({slug: 'published-redirect'}, preview: false)
+redirect_object.href
 
-redirect_object.location
+preview_redirect_object = WCC::Contentful::Model::Redirect.find_by({slug: 'draft-redirect'}, preview: true)
+preview_redirect_object.href
 ```
 
 ## Development
