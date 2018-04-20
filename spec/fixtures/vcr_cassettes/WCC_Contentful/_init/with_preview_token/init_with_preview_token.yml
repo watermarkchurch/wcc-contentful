@@ -1,0 +1,1859 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/content_types?limit=1000
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Bearer <CONTENTFUL_ACCESS_TOKEN>
+      Connection:
+      - close
+      Host:
+      - cdn.contentful.com
+      User-Agent:
+      - http.rb/2.2.2
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Access-Control-Allow-Headers:
+      - Accept,Accept-Language,Authorization,Cache-Control,Content-Length,Content-Range,Content-Type,DNT,Destination,Expires,If-Match,If-Modified-Since,If-None-Match,Keep-Alive,Last-Modified,Origin,Pragma,Range,User-Agent,X-Http-Method-Override,X-Mx-ReqToken,X-Requested-With,X-Contentful-Version,X-Contentful-Content-Type,X-Contentful-Organization,X-Contentful-Skip-Transformation,X-Contentful-User-Agent,X-Contentful-Enable-Alpha-Feature
+      Access-Control-Allow-Methods:
+      - GET,HEAD,OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Etag
+      Access-Control-Max-Age:
+      - '86400'
+      Cache-Control:
+      - max-age=0
+      Content-Type:
+      - application/vnd.contentful.delivery.v1+json
+      Etag:
+      - W/"dfc5713248908abec497e34a85c87958"
+      Server:
+      - Contentful
+      X-Content-Type-Options:
+      - nosniff
+      X-Contentful-Request-Id:
+      - 3369c6e7f90a4c06dac419e7c8154aa7
+      Content-Length:
+      - '42493'
+      Accept-Ranges:
+      - bytes
+      Date:
+      - Fri, 20 Apr 2018 19:40:28 GMT
+      Via:
+      - 1.1 varnish
+      Age:
+      - '12646'
+      Connection:
+      - close
+      X-Served-By:
+      - cache-dfw18638-DFW
+      X-Cache:
+      - HIT
+      X-Cache-Hits:
+      - '1'
+      X-Timer:
+      - S1524253228.361314,VS0,VE4
+      Vary:
+      - Accept-Encoding
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "sys": {
+            "type": "Array"
+          },
+          "total": 21,
+          "skip": 0,
+          "limit": 1000,
+          "items": [
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "icon",
+                "type": "ContentType",
+                "createdAt": "2018-04-05T21:23:16.873Z",
+                "updatedAt": "2018-04-05T22:07:57.946Z",
+                "environment": {
+                  "sys": {
+                    "id": "master",
+                    "type": "Link",
+                    "linkType": "Environment"
+                  }
+                },
+                "revision": 3
+              },
+              "displayField": "title",
+              "name": "Icon",
+              "description": "",
+              "fields": [
+                {
+                  "id": "title",
+                  "name": "Title",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "images",
+                  "name": "Images",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Asset"
+                },
+                {
+                  "id": "url",
+                  "name": "URL",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "scriptureOfTheNight",
+                "type": "ContentType",
+                "createdAt": "2018-04-05T21:23:21.306Z",
+                "updatedAt": "2018-04-05T22:08:02.607Z",
+                "environment": {
+                  "sys": {
+                    "id": "master",
+                    "type": "Link",
+                    "linkType": "Environment"
+                  }
+                },
+                "revision": 3
+              },
+              "displayField": "title",
+              "name": "Scripture of the night",
+              "description": "",
+              "fields": [
+                {
+                  "id": "title",
+                  "name": "Title",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "backgroundImage",
+                  "name": "Background Image",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Asset"
+                },
+                {
+                  "id": "verse",
+                  "name": "Verse",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "verseNumber",
+                  "name": "Verse Number",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "line1",
+                  "name": "Line 1",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "line2",
+                  "name": "Line 2",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "shareIcon",
+                  "name": "Share Icon",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Entry"
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "MenuItem",
+                "type": "ContentType",
+                "createdAt": "2018-04-05T21:23:17.505Z",
+                "updatedAt": "2018-04-05T22:07:58.378Z",
+                "environment": {
+                  "sys": {
+                    "id": "master",
+                    "type": "Link",
+                    "linkType": "Environment"
+                  }
+                },
+                "revision": 3
+              },
+              "displayField": "title",
+              "name": "MenuItem",
+              "description": "",
+              "fields": [
+                {
+                  "id": "title",
+                  "name": "Title",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "submenu",
+                  "name": "Submenu",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Link",
+                    "validations": [
+                      {
+                        "linkContentType": [
+                          "submenu"
+                        ]
+                      }
+                    ],
+                    "linkType": "Entry"
+                  }
+                },
+                {
+                  "id": "url",
+                  "name": "URL",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "page",
+                  "name": "Page",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Entry"
+                },
+                {
+                  "id": "order",
+                  "name": "Order",
+                  "type": "Integer",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "recurringEvent",
+                "type": "ContentType",
+                "createdAt": "2018-04-05T21:23:13.906Z",
+                "updatedAt": "2018-04-05T22:07:53.849Z",
+                "environment": {
+                  "sys": {
+                    "id": "master",
+                    "type": "Link",
+                    "linkType": "Environment"
+                  }
+                },
+                "revision": 3
+              },
+              "displayField": "title",
+              "name": "Recurring Event",
+              "description": "",
+              "fields": [
+                {
+                  "id": "title",
+                  "name": "Title",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "schedule",
+                  "name": "Schedule",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "nextOccurrence",
+                  "name": "Next Occurrence",
+                  "type": "Date",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "timeOfDay",
+                  "name": "Time Of Day",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "durationInMinutes",
+                  "name": "Duration In Minutes",
+                  "type": "Integer",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "timeZone",
+                  "name": "Time Zone",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "excerpt",
+                  "name": "Excerpt",
+                  "type": "Text",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "location",
+                "type": "ContentType",
+                "createdAt": "2018-04-05T21:23:16.488Z",
+                "updatedAt": "2018-04-05T22:07:57.593Z",
+                "environment": {
+                  "sys": {
+                    "id": "master",
+                    "type": "Link",
+                    "linkType": "Environment"
+                  }
+                },
+                "revision": 3
+              },
+              "displayField": "title",
+              "name": "Location",
+              "description": "",
+              "fields": [
+                {
+                  "id": "title",
+                  "name": "Title",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "map",
+                  "name": "Map",
+                  "type": "Location",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "hero",
+                  "name": "Hero",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Asset"
+                },
+                {
+                  "id": "image",
+                  "name": "Image",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Asset"
+                },
+                {
+                  "id": "content",
+                  "name": "Content",
+                  "type": "Text",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "contact",
+                  "name": "Contact",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "phone",
+                  "name": "Phone Number",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "url",
+                  "name": "URL",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "sections",
+                  "name": "Sections",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Link",
+                    "validations": [
+                      {
+                        "linkContentType": [
+                          "section"
+                        ]
+                      }
+                    ],
+                    "linkType": "Entry"
+                  }
+                },
+                {
+                  "id": "order",
+                  "name": "Order",
+                  "type": "Integer",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "signatureCampus",
+                  "name": "Signature Campus",
+                  "type": "Boolean",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "faq",
+                "type": "ContentType",
+                "createdAt": "2018-04-05T21:23:20.954Z",
+                "updatedAt": "2018-04-05T22:08:02.108Z",
+                "environment": {
+                  "sys": {
+                    "id": "master",
+                    "type": "Link",
+                    "linkType": "Environment"
+                  }
+                },
+                "revision": 3
+              },
+              "displayField": "questions",
+              "name": "FAQ",
+              "description": "",
+              "fields": [
+                {
+                  "id": "questions",
+                  "name": "Questions",
+                  "type": "Text",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "answers",
+                  "name": "Answers",
+                  "type": "Text",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "blog",
+                "type": "ContentType",
+                "createdAt": "2018-04-05T21:23:20.558Z",
+                "updatedAt": "2018-04-05T22:08:01.786Z",
+                "environment": {
+                  "sys": {
+                    "id": "master",
+                    "type": "Link",
+                    "linkType": "Environment"
+                  }
+                },
+                "revision": 3
+              },
+              "displayField": "title",
+              "name": "Blog",
+              "description": "",
+              "fields": [
+                {
+                  "id": "title",
+                  "name": "Title",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "category",
+                  "name": "Category",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "hero",
+                  "name": "Hero",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Asset"
+                },
+                {
+                  "id": "content",
+                  "name": "Content",
+                  "type": "Text",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "url",
+                  "name": "URL",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "author",
+                  "name": "Author",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Link",
+                    "validations": [],
+                    "linkType": "Entry"
+                  }
+                },
+                {
+                  "id": "date",
+                  "name": "Date",
+                  "type": "Date",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "blogPost",
+                "type": "ContentType",
+                "createdAt": "2018-04-05T21:23:19.041Z",
+                "updatedAt": "2018-04-05T22:12:51.826Z",
+                "environment": {
+                  "sys": {
+                    "id": "master",
+                    "type": "Link",
+                    "linkType": "Environment"
+                  }
+                },
+                "revision": 4
+              },
+              "displayField": "title",
+              "name": "Blog Post",
+              "description": "",
+              "fields": [
+                {
+                  "id": "title",
+                  "name": "Title",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "author",
+                  "name": "Author",
+                  "type": "Link",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Entry"
+                },
+                {
+                  "id": "pubDate",
+                  "name": "Publish Date",
+                  "type": "Date",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "tags",
+                  "name": "Tags",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Symbol",
+                    "validations": []
+                  }
+                },
+                {
+                  "id": "content",
+                  "name": "Content",
+                  "type": "Text",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "featuredImage",
+                  "name": "Featured Image",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Asset"
+                },
+                {
+                  "id": "url",
+                  "name": "URL / Slug",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "shareIcon",
+                  "name": "Share Icon",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Entry"
+                },
+                {
+                  "id": "postUrl",
+                  "name": "Legacy Post URL",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "action",
+                "type": "ContentType",
+                "createdAt": "2018-04-05T21:23:18.207Z",
+                "updatedAt": "2018-04-05T22:07:59.012Z",
+                "environment": {
+                  "sys": {
+                    "id": "master",
+                    "type": "Link",
+                    "linkType": "Environment"
+                  }
+                },
+                "revision": 3
+              },
+              "displayField": "title",
+              "name": "Action",
+              "description": "",
+              "fields": [
+                {
+                  "id": "title",
+                  "name": "Title",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "action",
+                  "name": "Action",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "image",
+                  "name": "Image",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Asset"
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "getConnected",
+                "type": "ContentType",
+                "createdAt": "2018-04-05T21:23:16.090Z",
+                "updatedAt": "2018-04-05T22:07:57.210Z",
+                "environment": {
+                  "sys": {
+                    "id": "master",
+                    "type": "Link",
+                    "linkType": "Environment"
+                  }
+                },
+                "revision": 3
+              },
+              "displayField": "title",
+              "name": "Get Connected",
+              "description": "",
+              "fields": [
+                {
+                  "id": "title",
+                  "name": "Title",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "backgroundImage",
+                  "name": "Background Image",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Asset"
+                },
+                {
+                  "id": "sections",
+                  "name": "Sections",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Link",
+                    "validations": [],
+                    "linkType": "Entry"
+                  }
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "testimonial",
+                "type": "ContentType",
+                "createdAt": "2018-04-05T21:23:12.972Z",
+                "updatedAt": "2018-04-05T22:07:53.387Z",
+                "environment": {
+                  "sys": {
+                    "id": "master",
+                    "type": "Link",
+                    "linkType": "Environment"
+                  }
+                },
+                "revision": 3
+              },
+              "displayField": "title",
+              "name": "Testimonial",
+              "description": "",
+              "fields": [
+                {
+                  "id": "title",
+                  "name": "Title",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "content",
+                  "name": "Content",
+                  "type": "Text",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "image",
+                  "name": "Image",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Asset"
+                },
+                {
+                  "id": "name",
+                  "name": "Name",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "location",
+                  "name": "Location",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "icons",
+                  "name": "Icons",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Entry"
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "redirect",
+                "type": "ContentType",
+                "createdAt": "2018-04-05T21:23:14.282Z",
+                "updatedAt": "2018-04-05T22:07:54.609Z",
+                "environment": {
+                  "sys": {
+                    "id": "master",
+                    "type": "Link",
+                    "linkType": "Environment"
+                  }
+                },
+                "revision": 3
+              },
+              "displayField": "slug",
+              "name": "Redirect",
+              "description": "",
+              "fields": [
+                {
+                  "id": "slug",
+                  "name": "Slug",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "url",
+                  "name": "Url",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "pageReference",
+                  "name": "Page Reference",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Entry"
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "socialMedia",
+                "type": "ContentType",
+                "createdAt": "2018-04-05T21:23:14.938Z",
+                "updatedAt": "2018-04-05T22:07:55.279Z",
+                "environment": {
+                  "sys": {
+                    "id": "master",
+                    "type": "Link",
+                    "linkType": "Environment"
+                  }
+                },
+                "revision": 3
+              },
+              "displayField": "title",
+              "name": "Social Media",
+              "description": "",
+              "fields": [
+                {
+                  "id": "title",
+                  "name": "Title",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "icons",
+                  "name": "Icons",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Link",
+                    "validations": [
+                      {
+                        "linkContentType": [
+                          "icon"
+                        ]
+                      }
+                    ],
+                    "linkType": "Entry"
+                  }
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "page",
+                "type": "ContentType",
+                "createdAt": "2018-04-05T21:23:17.865Z",
+                "updatedAt": "2018-04-05T22:07:58.728Z",
+                "environment": {
+                  "sys": {
+                    "id": "master",
+                    "type": "Link",
+                    "linkType": "Environment"
+                  }
+                },
+                "revision": 3
+              },
+              "displayField": "title",
+              "name": "Page",
+              "description": "",
+              "fields": [
+                {
+                  "id": "title",
+                  "name": "Title",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "hero",
+                  "name": "Hero",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Asset"
+                },
+                {
+                  "id": "sections",
+                  "name": "Sections",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Link",
+                    "validations": [
+                      {
+                        "linkContentType": [
+                          "section"
+                        ]
+                      }
+                    ],
+                    "linkType": "Entry"
+                  }
+                },
+                {
+                  "id": "url",
+                  "name": "URL",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "video",
+                  "name": "Video",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Asset"
+                },
+                {
+                  "id": "cssTheme",
+                  "name": "CSS Theme",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Entry"
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "submenu",
+                "type": "ContentType",
+                "createdAt": "2018-04-05T21:23:21.790Z",
+                "updatedAt": "2018-04-05T22:08:02.920Z",
+                "environment": {
+                  "sys": {
+                    "id": "master",
+                    "type": "Link",
+                    "linkType": "Environment"
+                  }
+                },
+                "revision": 3
+              },
+              "displayField": "title",
+              "name": "Submenu",
+              "description": "",
+              "fields": [
+                {
+                  "id": "title",
+                  "name": "Title",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "url",
+                  "name": "URL",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "blogDetail",
+                "type": "ContentType",
+                "createdAt": "2018-04-05T21:23:15.305Z",
+                "updatedAt": "2018-04-05T22:07:55.792Z",
+                "environment": {
+                  "sys": {
+                    "id": "master",
+                    "type": "Link",
+                    "linkType": "Environment"
+                  }
+                },
+                "revision": 3
+              },
+              "displayField": "title",
+              "name": "Blog Detail",
+              "description": "",
+              "fields": [
+                {
+                  "id": "title",
+                  "name": "Title",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "author",
+                  "name": "Author",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Entry"
+                },
+                {
+                  "id": "pubDate",
+                  "name": "Publish Date",
+                  "type": "Date",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "tags",
+                  "name": "Tags",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Symbol",
+                    "validations": []
+                  }
+                },
+                {
+                  "id": "content",
+                  "name": "Content",
+                  "type": "Text",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "featuredImage",
+                  "name": "Featured Image",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Asset"
+                },
+                {
+                  "id": "url",
+                  "name": "URL",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "shareIcon",
+                  "name": "Share Icon",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Entry"
+                },
+                {
+                  "id": "postUrl",
+                  "name": "Post URL",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "section",
+                "type": "ContentType",
+                "createdAt": "2018-04-05T21:23:20.166Z",
+                "updatedAt": "2018-04-05T22:08:00.904Z",
+                "environment": {
+                  "sys": {
+                    "id": "master",
+                    "type": "Link",
+                    "linkType": "Environment"
+                  }
+                },
+                "revision": 3
+              },
+              "displayField": "title",
+              "name": "Section",
+              "description": "",
+              "fields": [
+                {
+                  "id": "title",
+                  "name": "Title",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "layout",
+                  "name": "Layout",
+                  "type": "Link",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Entry"
+                },
+                {
+                  "id": "carousel",
+                  "name": "Carousel",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Link",
+                    "validations": [
+                      {
+                        "linkContentType": [
+                          "testimonial"
+                        ]
+                      }
+                    ],
+                    "linkType": "Entry"
+                  }
+                },
+                {
+                  "id": "faq",
+                  "name": "FAQ",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Link",
+                    "validations": [
+                      {
+                        "linkContentType": [
+                          "faq"
+                        ]
+                      }
+                    ],
+                    "linkType": "Entry"
+                  }
+                },
+                {
+                  "id": "content",
+                  "name": "Content",
+                  "type": "Text",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "bgcolor",
+                  "name": "Background color",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "foregroundColor",
+                  "name": "Foreground color",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "backgroundImage",
+                  "name": "Background Image",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Asset"
+                },
+                {
+                  "id": "image",
+                  "name": "Image",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Asset"
+                },
+                {
+                  "id": "imageOverlay",
+                  "name": "Image Overlay",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Asset"
+                },
+                {
+                  "id": "icons",
+                  "name": "Icons",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Link",
+                    "validations": [
+                      {
+                        "linkContentType": [
+                          "icon"
+                        ]
+                      }
+                    ],
+                    "linkType": "Entry"
+                  }
+                },
+                {
+                  "id": "actions",
+                  "name": "Actions",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Link",
+                    "validations": [
+                      {
+                        "linkContentType": [
+                          "action"
+                        ]
+                      }
+                    ],
+                    "linkType": "Entry"
+                  }
+                },
+                {
+                  "id": "location",
+                  "name": "Location",
+                  "type": "Location",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "layout",
+                "type": "ContentType",
+                "createdAt": "2018-04-05T21:23:15.627Z",
+                "updatedAt": "2018-04-05T22:07:56.129Z",
+                "environment": {
+                  "sys": {
+                    "id": "master",
+                    "type": "Link",
+                    "linkType": "Environment"
+                  }
+                },
+                "revision": 3
+              },
+              "displayField": "title",
+              "name": "Layout",
+              "description": "",
+              "fields": [
+                {
+                  "id": "title",
+                  "name": "Title",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "description",
+                  "name": "Description",
+                  "type": "Text",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "image",
+                  "name": "Image",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Asset"
+                },
+                {
+                  "id": "filename",
+                  "name": "Filename",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "author",
+                "type": "ContentType",
+                "createdAt": "2018-04-05T21:23:19.780Z",
+                "updatedAt": "2018-04-05T22:08:00.286Z",
+                "environment": {
+                  "sys": {
+                    "id": "master",
+                    "type": "Link",
+                    "linkType": "Environment"
+                  }
+                },
+                "revision": 3
+              },
+              "displayField": "name",
+              "name": "Author",
+              "description": "",
+              "fields": [
+                {
+                  "id": "name",
+                  "name": "Name",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "image",
+                  "name": "Image",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Asset"
+                },
+                {
+                  "id": "displayName",
+                  "name": "Display Name",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "event",
+                "type": "ContentType",
+                "createdAt": "2018-04-05T21:23:18.594Z",
+                "updatedAt": "2018-04-05T22:07:59.535Z",
+                "environment": {
+                  "sys": {
+                    "id": "master",
+                    "type": "Link",
+                    "linkType": "Environment"
+                  }
+                },
+                "revision": 3
+              },
+              "displayField": "title",
+              "name": "Event",
+              "description": "",
+              "fields": [
+                {
+                  "id": "title",
+                  "name": "Title",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "eventStartTime",
+                  "name": "Event start time",
+                  "type": "Date",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "eventEndTime",
+                  "name": "Event end time",
+                  "type": "Date",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "hero",
+                  "name": "Hero",
+                  "type": "Link",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "linkType": "Asset"
+                },
+                {
+                  "id": "excerpt",
+                  "name": "Excerpt",
+                  "type": "Text",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "sections",
+                  "name": "Sections",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Link",
+                    "validations": [
+                      {
+                        "linkContentType": [
+                          "section"
+                        ]
+                      }
+                    ],
+                    "linkType": "Entry"
+                  }
+                },
+                {
+                  "id": "eventType",
+                  "name": "Event type",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "skipInWeeks",
+                  "name": "Skip In Weeks",
+                  "type": "Integer",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "url",
+                  "name": "URL",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "disabled": false,
+                  "omitted": false
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "cssTheme",
+                "type": "ContentType",
+                "createdAt": "2018-04-05T21:23:14.601Z",
+                "updatedAt": "2018-04-05T22:07:54.933Z",
+                "environment": {
+                  "sys": {
+                    "id": "master",
+                    "type": "Link",
+                    "linkType": "Environment"
+                  }
+                },
+                "revision": 3
+              },
+              "displayField": "title",
+              "name": "CSS Theme",
+              "description": "",
+              "fields": [
+                {
+                  "id": "title",
+                  "name": "Title",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "colorHexCode",
+                  "name": "Color Hex Code",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": true,
+                  "disabled": false,
+                  "omitted": false
+                }
+              ]
+            }
+          ]
+        }
+    http_version: 
+  recorded_at: Fri, 20 Apr 2018 19:40:28 GMT
+recorded_with: VCR 4.0.0

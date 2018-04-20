@@ -35,8 +35,12 @@ module WCC::Contentful
   ##
   # Gets a {CDN Client}[rdoc-ref:WCC::Contentful::SimpleClient::Cdn] which provides
   # methods for getting and paging raw JSON data from the Contentful CDN.
-  def self.client
-    configuration&.client
+  def self.client(preview: false)
+    if preview
+      configuration&.preview_client
+    else
+      configuration&.client
+    end
   end
 
   ##
@@ -57,6 +61,10 @@ module WCC::Contentful
   #
   def self.store
     WCC::Contentful::Model.store
+  end
+
+  def self.preview_store
+    WCC::Contentful::Model.preview_store
   end
 
   ##
@@ -89,6 +97,7 @@ module WCC::Contentful
     raise ArgumentError, 'Please first call WCC:Contentful.configure' if configuration.nil?
     @mutex ||= Mutex.new
 
+    use_preview_client = false
     # we want as much as possible the raw JSON from the API
     content_types_resp =
       if configuration.management_client
@@ -96,6 +105,9 @@ module WCC::Contentful
       else
         configuration.client.content_types(limit: 1000)
       end
+
+    (use_preview_client = true) unless configuration.preview_client.nil?
+
     @content_types = content_types_resp.items
 
     indexer =
@@ -104,8 +116,15 @@ module WCC::Contentful
       end
     @types = indexer.types
 
-    store = configuration.store
-    WCC::Contentful::Model.store = store
+    if use_preview_client
+      store = configuration.store(preview: false)
+      WCC::Contentful::Model.store = store
+      preview_store = configuration.store(preview: use_preview_client)
+      WCC::Contentful::Model.preview_store = preview_store
+    else
+      store = configuration.store(preview: use_preview_client)
+      WCC::Contentful::Model.store = store
+    end
 
     if store.respond_to?(:index)
       @next_sync_token = store.find("sync:#{configuration.space}:token")

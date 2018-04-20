@@ -57,7 +57,13 @@ module WCC::Contentful
             bad_fields = filter.keys.reject { |k| fields.include?(k) }
             raise ArgumentError, "These fields do not exist: #{bad_fields}" unless bad_fields.empty?
 
-            result = WCC::Contentful::Model.store.find_by(content_type: content_type, filter: filter)
+            result =
+              if defined?(context[:preview]) && context[:preview] == true
+                WCC::Contentful::Model.preview_store.find_by(content_type: content_type, filter: filter)
+              else
+                WCC::Contentful::Model.store.find_by(content_type: content_type, filter: filter)
+              end
+
             new(result, context) if result
           end
 
@@ -89,7 +95,7 @@ module WCC::Contentful
               if raw_value.present?
                 case f.type
                 when :DateTime
-                  raw_value = Time.zone.parse(raw_value)
+                  raw_value = Time.parse(raw_value).localtime
                 when :Int
                   raw_value = Integer(raw_value)
                 when :Float

@@ -8,6 +8,7 @@ class WCC::Contentful::Configuration
     environment
     default_locale
     content_delivery
+    preview_token
     http_adapter
     sync_cache_store
     webhook_username
@@ -60,12 +61,20 @@ class WCC::Contentful::Configuration
 
   ##
   # Initializes the configured Sync Store.
-  def store
-    @store ||= WCC::Contentful::Store::Factory.new(
-      self,
-      @content_delivery,
-      @content_delivery_params
-    ).build_sync_store
+  def store(preview: false)
+    if preview
+      @preview_store ||= WCC::Contentful::Store::Factory.new(
+        self,
+        :direct,
+        [{ preview: preview }]
+      ).build_sync_store
+    else
+      @store ||= WCC::Contentful::Store::Factory.new(
+        self,
+        @content_delivery,
+        @content_delivery_params
+      ).build_sync_store
+    end
   end
 
   ##
@@ -85,6 +94,7 @@ class WCC::Contentful::Configuration
   def initialize
     @access_token = ''
     @management_token = ''
+    @preview_token = ''
     @space = ''
     @default_locale = nil
     @content_delivery = :direct
@@ -95,6 +105,7 @@ class WCC::Contentful::Configuration
   # methods for getting and paging raw JSON data from the Contentful CDN.
   attr_reader :client
   attr_reader :management_client
+  attr_reader :preview_client
 
   ##
   # Called by WCC::Contentful.init! to configure the
@@ -106,6 +117,7 @@ class WCC::Contentful::Configuration
   def configure_contentful
     @client = nil
     @management_client = nil
+    @preview_client = nil
 
     if defined?(::ContentfulModel)
       ContentfulModel.configure do |config|
@@ -125,6 +137,16 @@ class WCC::Contentful::Configuration
       adapter: http_adapter,
       environment: environment
     )
+
+    if preview_token.present?
+      @preview_client = WCC::Contentful::SimpleClient::Preview.new(
+        preview_token: preview_token,
+        space: space,
+        default_locale: default_locale,
+        adapter: http_adapter
+      )
+    end
+
     return unless management_token.present?
     @management_client = WCC::Contentful::SimpleClient::Management.new(
       management_token: management_token,

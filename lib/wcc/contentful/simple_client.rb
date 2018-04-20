@@ -102,6 +102,10 @@ module WCC::Contentful
         )
       end
 
+      def client_type
+        'cdn'
+      end
+
       ##
       # Gets an entry by ID
       def entry(key, query = {})
@@ -167,9 +171,28 @@ module WCC::Contentful
         )
       end
 
+      def client_type
+        'management'
+      end
+
       def content_types(**query)
         resp = get('content_types', query)
         resp.assert_ok!
+      end
+    end
+
+    class Preview < Cdn
+      def initialize(space:, preview_token:, **options)
+        super(
+          api_url: options[:api_url] || 'https://preview.contentful.com/',
+          space: space,
+          access_token: preview_token,
+          **options
+        )
+      end
+
+      def client_type
+        'preview'
       end
     end
   end

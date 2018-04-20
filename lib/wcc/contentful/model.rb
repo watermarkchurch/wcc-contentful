@@ -17,6 +17,7 @@ class WCC::Contentful::Model
     # See the {sync_store}[rdoc-ref:WCC::Contentful::Configuration.sync_store] parameter
     # on the WCC::Contentful::Configuration class.
     attr_accessor :store
+    attr_accessor :preview_store
 
     def const_missing(name)
       raise WCC::Contentful::ContentTypeNotFoundError,

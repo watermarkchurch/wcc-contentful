@@ -8,9 +8,11 @@ RSpec.describe WCC::Contentful, :vcr do
   let(:valid_contentful_access_token) { contentful_access_token }
   let(:valid_contentful_space_id) { contentful_space_id }
   let(:valid_contentful_default_locale) { 'en-US' }
+  let(:valid_contentful_preview_token) { contentful_preview_token }
 
   before do
     WCC::Contentful.configure do |config|
+      config.management_token = nil
       config.access_token = valid_contentful_access_token
       config.space = valid_contentful_space_id
       config.content_delivery = :eager_sync
@@ -28,6 +30,111 @@ RSpec.describe WCC::Contentful, :vcr do
       end
     end
     WCC::Contentful::Model.class_variable_get('@@registry').clear
+  end
+
+  describe '.init with preview token' do
+    context 'with preview token' do
+      before do
+        WCC::Contentful.configure do |config|
+          config.access_token = valid_contentful_access_token
+          config.space = valid_contentful_space_id
+          config.store = nil
+          config.preview_token = valid_contentful_preview_token
+          config.content_delivery = :direct
+        end
+      end
+
+      it 'should find published content in Contentful if preview is set to true' do
+        # act
+        VCR.use_cassette(
+          'WCC_Contentful/_init/with_preview_token/init_with_preview_token',
+          record: :none
+        ) do
+          WCC::Contentful.init!
+
+          VCR.use_cassette(
+            'WCC_Contentful/_init/with_preview_token/published_redirect_preview_true',
+            record: :none
+          ) do
+            redirect = WCC::Contentful::Model::Redirect.find_by(
+              { slug: 'published-redirect' },
+              preview: true
+            )
+
+            expect(redirect).to_not be_nil
+            expect(redirect.url).to eq('https://watermark.formstack.com/forms/theporch')
+          end
+        end
+      end
+
+      it 'should find published content in Contentful if preview is set to false' do
+        # act
+        VCR.use_cassette(
+          'WCC_Contentful/_init/with_preview_token/init_with_preview_token',
+          record: :none
+        ) do
+          WCC::Contentful.init!
+
+          VCR.use_cassette(
+            'WCC_Contentful/_init/with_preview_token/published_redirect_preview_false',
+            record: :none
+          ) do
+            redirect = WCC::Contentful::Model::Redirect.find_by(
+              { slug: 'published-redirect' },
+              preview: false
+            )
+
+            expect(redirect).to_not be_nil
+            expect(redirect.url).to eq('https://watermark.formstack.com/forms/theporch')
+          end
+        end
+      end
+
+      it 'should not find draft content in Contentful if preview is set to false' do
+        # act
+        VCR.use_cassette(
+          'WCC_Contentful/_init/with_preview_token/init_with_preview_token',
+          record: :none
+        ) do
+          WCC::Contentful.init!
+
+          VCR.use_cassette(
+            'WCC_Contentful/_init/with_preview_token/draft_redirect_preview_false',
+            record: :none
+          ) do
+            redirect = WCC::Contentful::Model::Redirect.find_by(
+              { slug: 'draft-redirect' },
+              preview: false
+            )
+
+            expect(redirect).to be_nil
+          end
+        end
+      end
+
+      it 'should find draft content in Contentful if preview is set to true' do
+        # act
+        VCR.use_cassette(
+          'WCC_Contentful/_init/with_preview_token/init_with_preview_token',
+          record: :none
+        ) do
+          WCC::Contentful.init!
+
+          VCR.use_cassette(
+            'WCC_Contentful/_init/with_preview_token/draft_redirect_preview_true',
+            record: :none
+          ) do
+            redirect = WCC::Contentful::Model::Redirect.find_by(
+              { slug: 'draft-redirect' },
+              preview: true
+            )
+
+            expect(redirect).to_not be_nil
+            expect(redirect.url).to eq('https://google.com')
+          end
+        end
+      end
+    end
   end
 
   describe '.configure' do
@@ -320,6 +427,27 @@ RSpec.describe WCC::Contentful, :vcr do
           }
         JSON
       }
+
+      it 'should error when trying to use preview api' do
+        VCR.use_cassette(
+          'WCC_Contentful/_init/content_delivery_lazy_sync/should_call_out_to_CDN_for_first_calls_only',
+          record: :none
+        ) do
+          WCC::Contentful.init!
+
+          VCR.use_cassette(
+            'WCC_Contentful/_init/with_management_token/published_redirect_preview_true',
+            record: :new_episodes
+          ) do
+            expect {
+              WCC::Contentful::Model::Menu.find_by(
+                { id: 'menuId' },
+                preview: true
+              )
+            }.to raise_error(ArgumentError)
+          end
+        end
+      end
 
       it 'should call out to CDN for first calls only' do
         stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\

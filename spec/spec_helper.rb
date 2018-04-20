@@ -15,6 +15,7 @@ Dir['./spec/support/**/*.rb'].sort.each { |f| require f }
 RSpec.shared_context 'Contentful config' do
   let(:contentful_access_token) { ENV['CONTENTFUL_ACCESS_TOKEN'] || 'test1234' }
   let(:contentful_management_token) { ENV['CONTENTFUL_MANAGEMENT_TOKEN'] || 'CFPAT-test1234' }
+  let(:contentful_preview_token) { ENV['CONTENTFUL_PREVIEW_TOKEN'] || 'test123456' }
   let(:contentful_space_id) { ENV['CONTENTFUL_SPACE_ID'] || 'test1xab' }
 end
 

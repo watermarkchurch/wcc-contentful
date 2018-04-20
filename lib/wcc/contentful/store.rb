@@ -56,8 +56,12 @@ module WCC::Contentful::Store
         )
       end
 
-      def build_direct(config, *_options)
-        CDNAdapter.new(config.client)
+      def build_direct(config, *options)
+        if options.find { |array| array[:preview] == true }
+          CDNAdapter.new(config.preview_client)
+        else
+          CDNAdapter.new(config.client)
+        end
       end
 
       def validate_eager_sync(_config, store = nil, *_options)
