@@ -8,9 +8,15 @@ RSpec.describe WCC::Contentful::ModelBuilder do
   before do
     WCC::Contentful::Model.class_variable_get('@@registry').clear
 
-    @schema&.each do |c|
-      WCC::Contentful::Model.send(:remove_const, c.to_s.split(':').last)
+    consts = WCC::Contentful::Model.all_models.map(&:to_s).uniq
+    consts.each do |c|
+      begin
+        WCC::Contentful::Model.send(:remove_const, c.split(':').last)
+      rescue StandardError => e
+        warn e
+      end
     end
+    WCC::Contentful::Model.class_variable_get('@@registry').clear
   end
 
   after(:each) do
@@ -268,7 +274,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
   end
 
   it 'handles nil linked types' do
-    subject.build_models
+    @schema = subject.build_models
     WCC::Contentful::Model.store = store
 
     # act
@@ -279,7 +285,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
   end
 
   it 'linked arrays are empty when no links found' do
-    subject.build_models
+    @schema = subject.build_models
     WCC::Contentful::Model.store = store
 
     # act
@@ -402,7 +408,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
   describe 'model class registry' do
     before do
-      subject.build_models
+      @schema = subject.build_models
       WCC::Contentful::Model.store = store
     end
 
