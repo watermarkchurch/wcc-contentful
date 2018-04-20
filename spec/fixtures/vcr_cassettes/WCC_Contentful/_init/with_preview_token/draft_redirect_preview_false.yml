@@ -41,27 +41,27 @@ http_interactions:
       X-Content-Type-Options:
       - nosniff
       X-Contentful-Request-Id:
-      - 7e550961e3230f734e8d501dbba29bcf
+      - b4a295ca812183bb77109328bf5e27a2
       Content-Length:
       - '97'
       Accept-Ranges:
       - bytes
       Date:
-      - Thu, 19 Apr 2018 00:07:46 GMT
+      - Fri, 20 Apr 2018 16:09:43 GMT
       Via:
       - 1.1 varnish
       Age:
-      - '2708'
+      - '0'
       Connection:
       - close
       X-Served-By:
-      - cache-dfw18634-DFW
+      - cache-dfw18631-DFW
       X-Cache:
-      - HIT
+      - MISS
       X-Cache-Hits:
-      - '1'
+      - '0'
       X-Timer:
-      - S1524096467.730398,VS0,VE1
+      - S1524240584.625476,VS0,VE170
       Vary:
       - Accept-Encoding
     body:
@@ -77,5 +77,5 @@ http_interactions:
           "items": []
         }
     http_version: 
-  recorded_at: Thu, 19 Apr 2018 00:07:46 GMT
+  recorded_at: Fri, 20 Apr 2018 16:09:43 GMT
 recorded_with: VCR 4.0.0

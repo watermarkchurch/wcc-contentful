@@ -35,33 +35,33 @@ http_interactions:
       Content-Type:
       - application/vnd.contentful.delivery.v1+json
       Etag:
-      - '"fb432241fa7cec2c317beefce6f5a656"'
+      - '"14667d902e84ee21d9728077e5132b9d"'
       Server:
       - Contentful
       X-Content-Type-Options:
       - nosniff
       X-Contentful-Request-Id:
-      - 974bbc01a67fd9f7ebdf22b870fe08f4
+      - 6455c214da5f3f3ddd10a426e966d91d
       Content-Length:
       - '990'
       Accept-Ranges:
       - bytes
       Date:
-      - Thu, 19 Apr 2018 00:07:46 GMT
+      - Fri, 20 Apr 2018 16:09:43 GMT
       Via:
       - 1.1 varnish
       Age:
-      - '2708'
+      - '0'
       Connection:
       - close
       X-Served-By:
-      - cache-dfw18624-DFW
+      - cache-dfw18647-DFW
       X-Cache:
-      - HIT
+      - MISS
       X-Cache-Hits:
-      - '1'
+      - '0'
       X-Timer:
-      - S1524096467.682330,VS0,VE1
+      - S1524240583.434851,VS0,VE142
       Vary:
       - Accept-Encoding
     body:
@@ -87,7 +87,7 @@ http_interactions:
                 "id": "7fkNyeM7IIA0AsWwey2KWY",
                 "type": "Entry",
                 "createdAt": "2018-04-05T21:37:18.741Z",
-                "updatedAt": "2018-04-10T21:05:31.208Z",
+                "updatedAt": "2018-04-19T14:58:50.767Z",
                 "environment": {
                   "sys": {
                     "id": "master",
@@ -95,7 +95,7 @@ http_interactions:
                     "linkType": "Environment"
                   }
                 },
-                "revision": 3,
+                "revision": 4,
                 "contentType": {
                   "sys": {
                     "type": "Link",
@@ -116,5 +116,5 @@ http_interactions:
           ]
         }
     http_version: 
-  recorded_at: Thu, 19 Apr 2018 00:07:46 GMT
+  recorded_at: Fri, 20 Apr 2018 16:09:43 GMT
 recorded_with: VCR 4.0.0
