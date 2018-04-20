@@ -7,6 +7,10 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
   before do
     WCC::Contentful::Model.class_variable_get('@@registry').clear
+
+    @schema&.each do |c|
+      WCC::Contentful::Model.send(:remove_const, c.to_s.split(':').last)
+    end
   end
 
   after(:each) do
@@ -155,7 +159,14 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
   it 'returns empty array if find_all finds nothing' do
     @schema = subject.build_models
-    WCC::Contentful::Model.store = store
+    WCC::Contentful::Model.store = double
+    store_resp = double
+    expect(WCC::Contentful::Model.store).to receive(:find_all).and_return(store_resp)
+    expect(store_resp).to receive(:apply).and_return(store_resp)
+
+    expect(store_resp).to_not be_nil
+
+    expect(store_resp).to receive(:map).and_return([])
 
     # act
     menu_items = WCC::Contentful::Model::MenuButton.find_all(button_style: 'asdf')
