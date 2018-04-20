@@ -25,6 +25,8 @@ WCC::Contentful.configure do |config|
   config.space = <CONTENTFUL_SPACE_ID>
   config.default_locale = "en-US"
 end
+
+WCC::Contentful.init!
 ```
 
 ## Usage
