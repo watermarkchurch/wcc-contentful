@@ -175,11 +175,8 @@ module WCC::Contentful
         'management'
       end
 
-      def content_types(space: nil, **query)
-        space ||= @space
-        raise ArgumentError, 'please provide a space ID' if space.nil?
-
-        resp = get("/spaces/#{space}/content_types", query)
+      def content_types(**query)
+        resp = get('content_types', query)
         resp.assert_ok!
       end
     end
@@ -196,14 +193,6 @@ module WCC::Contentful
 
       def client_type
         'preview'
-      end
-
-      def content_types(space: nil, **query)
-        space ||= @space
-        raise ArgumentError, 'please provide a space ID' if space.nil?
-
-        resp = get("/spaces/#{space}/content_types", query)
-        resp.assert_ok!
       end
     end
   end
