@@ -119,6 +119,30 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       expect(found.dig('sys', 'id')).to eq('1UojJt7YoMiemCq2mGGUmQ')
       expect(found.dig('fields', 'title', 'en-US')).to eq('Conferences')
     end
+
+    it 'allows filtering by a reference field' do
+      found = adapter.find_by(
+        content_type: 'menuButton',
+        filter: {
+          'link' => { slug: { eq: '/conferences' }, contentType: 'page' }
+        }
+      )
+
+      # assert
+      expect(found).to_not be_nil
+      expect(found.dig('sys', 'id')).to eq('4j79PYivYIWuqwA4scaAOW')
+    end
+
+    it 'allows filtering by reference id' do
+      found = adapter.find_by(
+        content_type: 'menuButton',
+        filter: { 'link' => { id: '1UojJt7YoMiemCq2mGGUmQ' } }
+      )
+
+      # assert
+      expect(found).to_not be_nil
+      expect(found.dig('sys', 'id')).to eq('4j79PYivYIWuqwA4scaAOW')
+    end
   end
 
   describe '#find_all' do

@@ -69,6 +69,21 @@ module WCC::Contentful::Store
       delegate :map, to: :result
       delegate :count, to: :result
 
+      OPERATORS = %i[
+        eq
+        ne
+        all
+        in
+        nin
+        exists
+        lt
+        lte
+        gt
+        gte
+        query
+        match
+      ].freeze
+
       def result
         raise NotImplementedError
       end
@@ -77,12 +92,21 @@ module WCC::Contentful::Store
         filter.reduce(self) do |query, (field, value)|
           if value.is_a?(Hash)
             k = value.keys.first
-            raise ArgumentError, "Filter not implemented: #{value}" unless query.respond_to?(k)
-            query.public_send(k, field, value[k], context)
+            if op?(k)
+              query.apply_operator(k.to_sym, field.to_s, value[k], context)
+            else
+              query.nested_conditions(field, value, context)
+            end
           else
-            query.eq(field.to_s, value)
+            query.apply_operator(:eq, field.to_s, value)
           end
         end
+      end
+
+      private
+
+      def op?(key)
+        OPERATORS.include?(key.to_sym)
       end
     end
   end
