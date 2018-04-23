@@ -50,26 +50,26 @@ module WCC::Contentful::Store
 
       def apply_operator(operator, field, expected, context = nil)
         op = operator == :eq ? nil : operator
-        param = parameter(field, operator: op, context: context)
+        param = parameter(field, operator: op, context: context, locale: true)
 
         Query.new(@client, @relation.merge(param => expected))
       end
 
       def nested_conditions(field, conditions, context)
-        base_param = parameter(field, locale: false)
+        base_param = parameter(field)
 
         conditions.reduce(self) do |query, (ref, value)|
-          nested = parameter(ref, locale: false)
-
-          query.apply({ "#{base_param}.#{nested}" => value }, context)
+          query.apply({ "#{base_param}.#{parameter(ref)}" => value }, context)
         end
       end
 
       private
 
-      def parameter(field, operator: nil, context: nil, locale: true)
+      def parameter(field, operator: nil, context: nil, locale: false)
         if sys?(field)
-          "#{sys_reference(field)}#{op_param(operator)}"
+          "#{field}#{op_param(operator)}"
+        elsif id?(field)
+          "sys.#{field}#{op_param(operator)}"
         else
           "#{field_reference(field)}#{locale(context) if locale}#{op_param(operator)}"
         end
@@ -81,33 +81,6 @@ module WCC::Contentful::Store
 
       def op_param(operator)
         operator ? "[#{operator}]" : ''
-      end
-
-      SYS_FIELDS = %w[
-        id
-        type
-        createdAt
-        updatedAt
-        revision
-        locale
-
-        contentType
-        space
-        environment
-      ].freeze
-
-      def sys?(field)
-        SYS_FIELDS.any? { |f| field.to_s =~ /#{f}$/ }
-      end
-
-      def sys_reference(field)
-        return field if nested?(field)
-
-        if %i[contentType space environment].include?(field.to_sym)
-          "sys.#{field}.sys.id"
-        else
-          "sys.#{field}"
-        end
       end
 
       def field_reference(field)

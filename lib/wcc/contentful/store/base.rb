@@ -108,6 +108,14 @@ module WCC::Contentful::Store
       def op?(key)
         OPERATORS.include?(key.to_sym)
       end
+
+      def sys?(field)
+        field.to_s =~ /sys/
+      end
+
+      def id?(field)
+        field.to_sym == :id
+      end
     end
   end
 end
