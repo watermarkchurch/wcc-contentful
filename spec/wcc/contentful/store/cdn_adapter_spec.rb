@@ -121,6 +121,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
     end
 
     it 'allows filtering by a reference field' do
+      # act
       found = adapter.find_by(
         content_type: 'menuButton',
         filter: {
@@ -138,6 +139,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
     end
 
     it 'allows filtering by reference id' do
+      # act
       found = adapter.find_by(
         content_type: 'menuButton',
         filter: { 'link' => { id: '1UojJt7YoMiemCq2mGGUmQ' } }
@@ -165,6 +167,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
     end
 
     it 'assumes all non-sys arguments to be fields' do
+      # act
       found = adapter.find_by(
         content_type: 'page',
         filter: { slug: '/conferences' }
@@ -174,6 +177,16 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       expect(found).to_not be_nil
       expect(found.dig('sys', 'id')).to eq('1UojJt7YoMiemCq2mGGUmQ')
       expect(found.dig('fields', 'slug', 'en-US')).to eq('/conferences')
+    end
+
+    it 'does allows properties named `*sys*`' do
+      # act
+      found = adapter.find_by(content_type: 'system', filter: { system: 'One' })
+
+      # assert
+      expect(found).to_not be_nil
+      expect(found.dig('sys', 'id')).to eq('2eXv0N3vUkIOWAauGg4q8a')
+      expect(found.dig('fields', 'system', 'en-US')).to eq('One')
     end
   end
 

@@ -110,7 +110,7 @@ module WCC::Contentful::Store
       end
 
       def sys?(field)
-        field.to_s =~ /sys/
+        field.to_s =~ /sys\./
       end
 
       def id?(field)
