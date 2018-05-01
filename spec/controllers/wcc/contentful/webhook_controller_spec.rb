@@ -20,6 +20,8 @@ RSpec.describe WCC::Contentful::WebhookController, type: :controller do
       WCC::Contentful.configure do |config|
         config.webhook_username = 'tester1'
         config.webhook_password = 'password1'
+        config.space = contentful_space_id
+        config.access_token = contentful_access_token
       end
       allow(WCC::Contentful).to receive(:sync!)
     end
