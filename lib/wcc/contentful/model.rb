@@ -27,12 +27,6 @@ class WCC::Contentful::Model
 
   @@registry = {}
 
-  def self.all_models
-    # TODO: this needs to use the registry but it's OK for now cause we only
-    # use it in specs
-    WCC::Contentful::Model.constants(false).map { |k| WCC::Contentful::Model.const_get(k) }
-  end
-
   ##
   # Finds an Entry or Asset by ID in the configured contentful space
   # and returns an initialized instance of the appropriate model type.

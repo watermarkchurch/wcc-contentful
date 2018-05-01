@@ -36,6 +36,21 @@ RSpec.configure do |config|
 
   config.include FixturesHelper
   config.include_context 'Contentful config'
+
+  config.after(:each) do
+    WCC::Contentful.instance_variable_set('@configuration', nil)
+
+    # clean out everything in the WCC::Contentful::Model generated namespace
+    consts = WCC::Contentful::Model.constants(false).map(&:to_s).uniq
+    consts.each do |c|
+      begin
+        WCC::Contentful::Model.send(:remove_const, c.split(':').last)
+      rescue StandardError => e
+        warn e
+      end
+    end
+    WCC::Contentful::Model.class_variable_get('@@registry').clear
+  end
 end
 
 VCR.configure do |c|

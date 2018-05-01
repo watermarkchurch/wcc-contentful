@@ -20,18 +20,6 @@ RSpec.describe WCC::Contentful, :vcr do
     end
   end
 
-  after(:each) do
-    consts = WCC::Contentful::Model.all_models.map(&:to_s).uniq
-    consts.each do |c|
-      begin
-        WCC::Contentful::Model.send(:remove_const, c.split(':').last)
-      rescue StandardError => e
-        warn e
-      end
-    end
-    WCC::Contentful::Model.class_variable_get('@@registry').clear
-  end
-
   describe '.init with preview token' do
     context 'with preview token' do
       before do

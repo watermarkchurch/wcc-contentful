@@ -5,25 +5,6 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     WCC::Contentful::ModelBuilder.new(types)
   }
 
-  before do
-    WCC::Contentful::Model.class_variable_get('@@registry').clear
-
-    consts = WCC::Contentful::Model.all_models.map(&:to_s).uniq
-    consts.each do |c|
-      begin
-        WCC::Contentful::Model.send(:remove_const, c.split(':').last)
-      rescue StandardError => e
-        warn e
-      end
-    end
-    WCC::Contentful::Model.class_variable_get('@@registry').clear
-  end
-
-  after(:each) do
-    @schema&.each do |c|
-      WCC::Contentful::Model.send(:remove_const, c.to_s.split(':').last)
-    end
-  end
   let(:types) { load_indexed_types }
   let!(:store) {
     load_store_from_sync
@@ -56,7 +37,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       ]
     )
 
-    expect(WCC::Contentful::Model.all_models).to include(WCC::Contentful::Model::Page)
+    expect(WCC::Contentful::Model.constants(false)).to include(:Page)
   end
 
   it 'finds types by ID' do
