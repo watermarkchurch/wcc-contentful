@@ -169,8 +169,94 @@
           "omitted": false
         },
         {
-          "id": "topButton",
-          "name": "Top Button",
+          "id": "items",
+          "name": "Items",
+          "type": "Array",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Link",
+            "validations": [
+              {
+                "linkContentType": [
+                  "dropdownMenu",
+                  "menuButton"
+                ],
+                "message": "The Menu groups must contain only sub-Menus or MenuButtons"
+              }
+            ],
+            "linkType": "Entry"
+          }
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "7yx6ovlj39n5"
+          }
+        },
+        "id": "dropdownMenu",
+        "type": "ContentType",
+        "createdAt": "2018-05-01T21:48:25.933Z",
+        "updatedAt": "2018-05-01T21:48:26.137Z",
+        "environment": {
+          "sys": {
+            "id": "gburgett",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "publishedCounter": 1,
+        "version": 2,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "publishedVersion": 1,
+        "firstPublishedAt": "2018-05-01T21:48:26.137Z",
+        "publishedAt": "2018-05-01T21:48:26.137Z"
+      },
+      "displayField": "name",
+      "name": "Dropdown Menu",
+      "description": "A Dropdown Menu can be attached to a main menu to show additional menu items on click.",
+      "fields": [
+        {
+          "id": "name",
+          "name": "Menu Name",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "label",
+          "name": "Menu Label",
           "type": "Link",
           "localized": false,
           "required": false,
@@ -199,92 +285,12 @@
             "validations": [
               {
                 "linkContentType": [
-                  "menu",
                   "menuButton"
-                ],
-                "message": "The Menu groups must contain only sub-Menus or MenuButtons"
+                ]
               }
             ],
             "linkType": "Entry"
           }
-        },
-        {
-          "id": "secondGroup",
-          "name": "Second Group",
-          "type": "Array",
-          "localized": false,
-          "required": false,
-          "validations": [],
-          "disabled": false,
-          "omitted": false,
-          "items": {
-            "type": "Link",
-            "validations": [
-              {
-                "linkContentType": [
-                  "menu",
-                  "menuButton"
-                ],
-                "message": "The Menu groups must contain only sub-Menus or MenuButtons"
-              }
-            ],
-            "linkType": "Entry"
-          }
-        },
-        {
-          "id": "thirdGroup",
-          "name": "Third Group",
-          "type": "Array",
-          "localized": false,
-          "required": false,
-          "validations": [],
-          "disabled": false,
-          "omitted": false,
-          "items": {
-            "type": "Link",
-            "validations": [
-              {
-                "linkContentType": [
-                  "menu",
-                  "menuButton"
-                ],
-                "message": "The Menu groups must contain only sub-Menus or MenuButtons"
-              }
-            ],
-            "linkType": "Entry"
-          }
-        },
-        {
-          "id": "hamburger",
-          "name": "Hamburger",
-          "type": "Link",
-          "localized": false,
-          "required": false,
-          "validations": [],
-          "disabled": false,
-          "omitted": false,
-          "linkType": "Entry"
-        },
-        {
-          "id": "search",
-          "name": "Search",
-          "type": "Symbol",
-          "localized": false,
-          "required": false,
-          "validations": [
-            {
-              "in": [
-                "wmresources-ministries-index",
-                "wmresources-conferences-index",
-                "wmresources-podcasts-index",
-                "wmresources-blogposts-index",
-                "wmresources-gatherings-index"
-              ],
-              "message": "You must choose a value that corresponds to an index name in Algolia."
-            }
-          ],
-          "disabled": false,
-          "omitted": false
         }
       ]
     },
