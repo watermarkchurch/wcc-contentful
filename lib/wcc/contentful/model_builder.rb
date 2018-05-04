@@ -59,6 +59,10 @@ module WCC::Contentful
 
             result =
               if defined?(context[:preview]) && context[:preview] == true
+                if WCC::Contentful::Model.preview_store.nil?
+                  raise ArgumentError,
+                    'You must include a contentful preview token in your WCC::Contentful.configure block'
+                end
                 WCC::Contentful::Model.preview_store.find_by(content_type: content_type, filter: filter)
               else
                 WCC::Contentful::Model.store.find_by(content_type: content_type, filter: filter)
