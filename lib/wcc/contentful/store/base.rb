@@ -88,11 +88,17 @@ module WCC::Contentful::Store
         raise NotImplementedError
       end
 
+      def apply_operator(operator, field, expected, context = nil)
+        respond_to?(operator) ||
+          raise(ArgumentError, "Operator not implemented: #{operator}")
+
+        public_send(operator, field, expected, context)
+      end
+
       def apply(filter, context = nil)
         filter.reduce(self) do |query, (field, value)|
           if value.is_a?(Hash)
-            k = value.keys.first
-            if op?(k)
+            if op?(k = value.keys.first)
               query.apply_operator(k.to_sym, field.to_s, value[k], context)
             else
               query.nested_conditions(field, value, context)
