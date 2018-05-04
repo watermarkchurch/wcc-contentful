@@ -606,5 +606,25 @@ RSpec.describe(WCC::Contentful::ModelValidators) do
         'myClass' => ['is missing']
       })
     end
+
+    it 'can nullify validations on parent' do
+      generated_model_class =
+        Class.new(base_class('page')) do
+          validate_field :asdfblah, :String, :required
+        end
+
+      _my_class =
+        Class.new(generated_model_class) do
+          no_validate_field :asdfblah
+        end
+
+      # act
+      result = WCC::Contentful::Model.schema.call(transformed)
+      result2 = generated_model_class.schema.call(transformed)
+
+      # assert
+      expect(result).to be_success
+      expect(result2).to be_success
+    end
   end
 end

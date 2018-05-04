@@ -93,6 +93,14 @@ module WCC::Contentful::ModelValidators
     (validations[ct] ||= []) << dsl
   end
 
+  def no_validate_field(field)
+    ct = try(:content_type) || name.demodulize.camelize(:lower)
+    return unless v = validations[ct]
+
+    field = field.to_s.camelize(:lower) unless field.is_a?(String)
+    v.reject! { |dsl| dsl.try(:field) == field }
+  end
+
   ##
   # Accepts a content types response from the API and transforms it
   # to be acceptible for the validator.
