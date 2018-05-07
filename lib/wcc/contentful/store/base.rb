@@ -69,20 +69,58 @@ module WCC::Contentful::Store
       delegate :map, to: :result
       delegate :count, to: :result
 
+      OPERATORS = %i[
+        eq
+        ne
+        all
+        in
+        nin
+        exists
+        lt
+        lte
+        gt
+        gte
+        query
+        match
+      ].freeze
+
       def result
         raise NotImplementedError
+      end
+
+      def apply_operator(operator, field, expected, context = nil)
+        respond_to?(operator) ||
+          raise(ArgumentError, "Operator not implemented: #{operator}")
+
+        public_send(operator, field, expected, context)
       end
 
       def apply(filter, context = nil)
         filter.reduce(self) do |query, (field, value)|
           if value.is_a?(Hash)
-            k = value.keys.first
-            raise ArgumentError, "Filter not implemented: #{value}" unless query.respond_to?(k)
-            query.public_send(k, field, value[k], context)
+            if op?(k = value.keys.first)
+              query.apply_operator(k.to_sym, field.to_s, value[k], context)
+            else
+              query.nested_conditions(field, value, context)
+            end
           else
-            query.eq(field.to_s, value)
+            query.apply_operator(:eq, field.to_s, value)
           end
         end
+      end
+
+      private
+
+      def op?(key)
+        OPERATORS.include?(key.to_sym)
+      end
+
+      def sys?(field)
+        field.to_s =~ /sys\./
+      end
+
+      def id?(field)
+        field.to_sym == :id
       end
     end
   end

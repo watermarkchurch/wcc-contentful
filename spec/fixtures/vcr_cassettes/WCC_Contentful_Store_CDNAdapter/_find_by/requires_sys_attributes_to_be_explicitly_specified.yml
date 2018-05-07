@@ -1,0 +1,241 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=menuButton&fields.link.fields.contentType.en-US=page&locale=*
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Bearer <CONTENTFUL_ACCESS_TOKEN>
+      Connection:
+      - close
+      Host:
+      - cdn.contentful.com
+      User-Agent:
+      - http.rb/1.0.4
+  response:
+    status:
+      code: 400
+      message: Bad Request
+    headers:
+      Access-Control-Allow-Headers:
+      - Accept,Accept-Language,Authorization,Cache-Control,Content-Length,Content-Range,Content-Type,DNT,Destination,Expires,If-Match,If-Modified-Since,If-None-Match,Keep-Alive,Last-Modified,Origin,Pragma,Range,User-Agent,X-Http-Method-Override,X-Mx-ReqToken,X-Requested-With,X-Contentful-Version,X-Contentful-Content-Type,X-Contentful-Organization,X-Contentful-Skip-Transformation,X-Contentful-User-Agent,X-Contentful-Enable-Alpha-Feature
+      Access-Control-Allow-Methods:
+      - GET,HEAD,OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Etag
+      Access-Control-Max-Age:
+      - '86400'
+      Cache-Control:
+      - max-age=0
+      Content-Type:
+      - application/vnd.contentful.delivery.v1+json
+      Server:
+      - Contentful
+      X-Content-Type-Options:
+      - nosniff
+      X-Contentful-Request-Id:
+      - caab57284c59f438c0bdda70a14f578d
+      Content-Length:
+      - '262'
+      Accept-Ranges:
+      - bytes
+      Date:
+      - Mon, 23 Apr 2018 21:31:57 GMT
+      Via:
+      - 1.1 varnish
+      Connection:
+      - close
+      X-Served-By:
+      - cache-dfw18630-DFW
+      X-Cache:
+      - MISS
+      X-Cache-Hits:
+      - '0'
+      X-Timer:
+      - S1524519118.523861,VS0,VE120
+      Vary:
+      - Accept-Encoding
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "sys": {
+            "type": "Error",
+            "id": "BadRequest"
+          },
+          "message": "When searching on references you must specify the Content Type of the reference. Please send a Content Type id as a query parameter",
+          "requestId": "caab57284c59f438c0bdda70a14f578d"
+        }
+    http_version: 
+  recorded_at: Mon, 23 Apr 2018 21:31:57 GMT
+- request:
+    method: get
+    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=menuButton&fields.link.sys.contentType.sys.id=page&locale=*
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Bearer <CONTENTFUL_ACCESS_TOKEN>
+      Connection:
+      - close
+      Host:
+      - cdn.contentful.com
+      User-Agent:
+      - http.rb/1.0.4
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Access-Control-Allow-Headers:
+      - Accept,Accept-Language,Authorization,Cache-Control,Content-Length,Content-Range,Content-Type,DNT,Destination,Expires,If-Match,If-Modified-Since,If-None-Match,Keep-Alive,Last-Modified,Origin,Pragma,Range,User-Agent,X-Http-Method-Override,X-Mx-ReqToken,X-Requested-With,X-Contentful-Version,X-Contentful-Content-Type,X-Contentful-Organization,X-Contentful-Skip-Transformation,X-Contentful-User-Agent,X-Contentful-Enable-Alpha-Feature
+      Access-Control-Allow-Methods:
+      - GET,HEAD,OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Etag
+      Access-Control-Max-Age:
+      - '86400'
+      Cache-Control:
+      - max-age=0
+      Content-Type:
+      - application/vnd.contentful.delivery.v1+json
+      Etag:
+      - W/"c85a19419bcf36276a0ef607647c4554"
+      Server:
+      - Contentful
+      X-Content-Type-Options:
+      - nosniff
+      X-Contentful-Request-Id:
+      - d9dc61a931836a03781560f517e7beeb
+      Content-Length:
+      - '2061'
+      Accept-Ranges:
+      - bytes
+      Date:
+      - Mon, 23 Apr 2018 21:31:57 GMT
+      Via:
+      - 1.1 varnish
+      Age:
+      - '240'
+      Connection:
+      - close
+      X-Served-By:
+      - cache-dfw18627-DFW
+      X-Cache:
+      - HIT
+      X-Cache-Hits:
+      - '1'
+      X-Timer:
+      - S1524519118.683603,VS0,VE1
+      Vary:
+      - Accept-Encoding
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "sys": {
+            "type": "Array"
+          },
+          "total": 1,
+          "skip": 0,
+          "limit": 100,
+          "items": [
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "4j79PYivYIWuqwA4scaAOW",
+                "type": "Entry",
+                "createdAt": "2018-03-29T21:58:26.691Z",
+                "updatedAt": "2018-03-29T21:58:26.691Z",
+                "environment": {
+                  "sys": {
+                    "id": "master",
+                    "type": "Link",
+                    "linkType": "Environment"
+                  }
+                },
+                "revision": 1,
+                "contentType": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "ContentType",
+                    "id": "menuButton"
+                  }
+                }
+              },
+              "fields": {
+                "text": {
+                  "en-US": "Conferences"
+                },
+                "link": {
+                  "en-US": {
+                    "sys": {
+                      "type": "Link",
+                      "linkType": "Entry",
+                      "id": "1UojJt7YoMiemCq2mGGUmQ"
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "includes": {
+            "Entry": [
+              {
+                "sys": {
+                  "space": {
+                    "sys": {
+                      "type": "Link",
+                      "linkType": "Space",
+                      "id": "<CONTENTFUL_SPACE_ID>"
+                    }
+                  },
+                  "id": "1UojJt7YoMiemCq2mGGUmQ",
+                  "type": "Entry",
+                  "createdAt": "2018-02-12T20:07:49.118Z",
+                  "updatedAt": "2018-02-12T20:07:49.118Z",
+                  "environment": {
+                    "sys": {
+                      "id": "master",
+                      "type": "Link",
+                      "linkType": "Environment"
+                    }
+                  },
+                  "revision": 1,
+                  "contentType": {
+                    "sys": {
+                      "type": "Link",
+                      "linkType": "ContentType",
+                      "id": "page"
+                    }
+                  }
+                },
+                "fields": {
+                  "title": {
+                    "en-US": "Conferences"
+                  },
+                  "slug": {
+                    "en-US": "/conferences"
+                  }
+                }
+              }
+            ]
+          }
+        }
+    http_version: 
+  recorded_at: Mon, 23 Apr 2018 21:31:57 GMT
+recorded_with: VCR 4.0.0

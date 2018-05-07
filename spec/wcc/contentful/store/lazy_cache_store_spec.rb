@@ -104,13 +104,13 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
 
     # act
     main_menu = store.find_all(content_type: 'menu')
-      .eq('name', 'Main Menu')
+      .apply(name: 'Main Menu')
       .first
 
     # assert
     expect(main_menu.dig('sys', 'id')).to eq('FNlqULSV0sOy4IoGmyWOW')
     main_menu2 = store.find_all(content_type: 'menu')
-      .eq('name', 'Main Menu')
+      .apply(name: 'Main Menu')
       .first
     expect(main_menu2).to eq(main_menu)
   end

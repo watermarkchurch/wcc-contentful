@@ -48,14 +48,50 @@ module WCC::Contentful::Store
         @relation = relation
       end
 
-      def eq(field, expected, context = nil)
-        locale = context[:locale] if context.present?
-        locale ||= 'en-US'
-        Query.new(@client,
-          @relation.merge("fields.#{field}.#{locale}" => expected))
+      def apply_operator(operator, field, expected, context = nil)
+        op = operator == :eq ? nil : operator
+        param = parameter(field, operator: op, context: context, locale: true)
+
+        Query.new(@client, @relation.merge(param => expected))
+      end
+
+      def nested_conditions(field, conditions, context)
+        base_param = parameter(field)
+
+        conditions.reduce(self) do |query, (ref, value)|
+          query.apply({ "#{base_param}.#{parameter(ref)}" => value }, context)
+        end
       end
 
       private
+
+      def parameter(field, operator: nil, context: nil, locale: false)
+        if sys?(field)
+          "#{field}#{op_param(operator)}"
+        elsif id?(field)
+          "sys.#{field}#{op_param(operator)}"
+        else
+          "#{field_reference(field)}#{locale(context) if locale}#{op_param(operator)}"
+        end
+      end
+
+      def locale(context)
+        ".#{(context || {}).fetch(:locale, 'en-US')}"
+      end
+
+      def op_param(operator)
+        operator ? "[#{operator}]" : ''
+      end
+
+      def field_reference(field)
+        return field if nested?(field)
+
+        "fields.#{field}"
+      end
+
+      def nested?(field)
+        field.to_s.include?('.')
+      end
 
       def resolve
         return @resolve if @resolve

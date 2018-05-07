@@ -119,6 +119,75 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       expect(found.dig('sys', 'id')).to eq('1UojJt7YoMiemCq2mGGUmQ')
       expect(found.dig('fields', 'title', 'en-US')).to eq('Conferences')
     end
+
+    it 'allows filtering by a reference field' do
+      # act
+      found = adapter.find_by(
+        content_type: 'menuButton',
+        filter: {
+          link: {
+            slug: { eq: '/conferences' },
+            'sys.contentType.sys.id': 'page'
+          }
+        }
+      )
+
+      # assert
+      expect(found).to_not be_nil
+      expect(found.dig('sys', 'id')).to eq('4j79PYivYIWuqwA4scaAOW')
+      expect(found.dig('sys', 'contentType', 'sys', 'id')).to eq('menuButton')
+    end
+
+    it 'allows filtering by reference id' do
+      # act
+      found = adapter.find_by(
+        content_type: 'menuButton',
+        filter: { 'link' => { id: '1UojJt7YoMiemCq2mGGUmQ' } }
+      )
+
+      # assert
+      expect(found).to_not be_nil
+      expect(found.dig('sys', 'id')).to eq('4j79PYivYIWuqwA4scaAOW')
+    end
+
+    it 'requires sys attributes to be explicitly specified' do
+      expect {
+        adapter.find_by(
+          content_type: 'menuButton',
+          filter: { 'link' => { contentType: 'page' } }
+        )
+      }.to raise_exception(WCC::Contentful::SimpleClient::ApiError)
+
+      expect {
+        adapter.find_by(
+          content_type: 'menuButton',
+          filter: { 'link' => { 'sys.contentType.sys.id': 'page' } }
+        )
+      }.to_not raise_exception
+    end
+
+    it 'assumes all non-sys arguments to be fields' do
+      # act
+      found = adapter.find_by(
+        content_type: 'page',
+        filter: { slug: '/conferences' }
+      )
+
+      # assert
+      expect(found).to_not be_nil
+      expect(found.dig('sys', 'id')).to eq('1UojJt7YoMiemCq2mGGUmQ')
+      expect(found.dig('fields', 'slug', 'en-US')).to eq('/conferences')
+    end
+
+    it 'does allows properties named `*sys*`' do
+      # act
+      found = adapter.find_by(content_type: 'system', filter: { system: 'One' })
+
+      # assert
+      expect(found).to_not be_nil
+      expect(found.dig('sys', 'id')).to eq('2eXv0N3vUkIOWAauGg4q8a')
+      expect(found.dig('fields', 'system', 'en-US')).to eq('One')
+    end
   end
 
   describe '#find_all' do
