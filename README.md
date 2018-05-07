@@ -32,11 +32,28 @@ WCC::Contentful.init!
 ## Usage
 
 ```ruby
-redirect_object = WCC::Contentful::Model::Redirect.find_by({slug: 'published-redirect'}, preview: false)
-redirect_object.href
+# Find objects by id
+WCC::Contentful::Model::Page.find('1E2ucWSdacxxf233sfa3')
+# => #<WCC::Contentful::Model::Page:0x0000000005c71a78 @created_at=2018-04-16 18:41:17 UTC...>
 
-preview_redirect_object = WCC::Contentful::Model::Redirect.find_by({slug: 'draft-redirect'}, preview: true)
+# Find objects by field
+WCC::Contentful::Model::Page.find_by(slug: '/some-slug')
+# => #<WCC::Contentful::Model::Page:0x0000000005c71a78 @created_at=2018-04-16 18:41:17 UTC...>
+
+# Use operators to filter by a field
+# must use full notation for sys attributes (except ID)
+WCC::Contentful::Model::Page.find_all('sys.created_at' => { lte: Date.today })
+# => [#<WCC::Contentful::Model::Page:0x0000000005c71a78 @created_at=2018-04-16 18:41:17 UTC...>, ... ]
+
+# Nest queries to mimick joins
+WCC::Contentful::Model::Page.find_by(subpages: { slug: '/some-slug' })
+# => #<WCC::Contentful::Model::Page:0x0000000005c71a78 @created_at=2018-04-16 18:41:17 UTC...>
+
+# Pass the preview flag to use the preview client
+preview_redirect = WCC::Contentful::Model::Redirect.find_by({ slug: 'draft-redirect' }, preview: true)
+# => #<WCC::Contentful::Model::Redirect:0x0000000005d879ad @created_at=2018-04-16 18:41:17 UTC...>
 preview_redirect_object.href
+# => 'http://www.somesite.com/slug-for-redirect'
 ```
 
 ## Development
