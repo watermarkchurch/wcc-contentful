@@ -463,4 +463,114 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       expect(button).to be_a(SUB_MENU_BUTTON_2)
     end
   end
+
+  describe 'to_json' do
+    let(:typedef) {
+      WCC::Contentful::IndexedRepresentation::ContentType.new({
+        name: 'ToJsonTest',
+        content_type: 'toJsonTest',
+        fields: {
+          'name' => {
+            name: 'name',
+            type: :String
+          },
+          'blob' => {
+            name: 'blob',
+            type: :Json
+          },
+          'someLink' => {
+            name: 'someLink',
+            type: :Link
+          },
+          'items' => {
+            name: 'items',
+            array: true,
+            type: :Link
+          }
+        }
+      })
+    }
+
+    let(:raw) {
+      {
+        'sys' => {
+          'space' => {
+            'sys' => {
+              'type' => 'Link',
+              'linkType' => 'Space',
+              'id' => '343qxys30lid'
+            }
+          },
+          'id' => '1',
+          'type' => 'Entry',
+          'createdAt' => '2018-02-13T22:54:35.359Z',
+          'updatedAt' => '2018-02-23T21:07:54.897Z',
+          'revision' => 3,
+          'contentType' => {
+            'sys' => {
+              'type' => 'Link',
+              'linkType' => 'ContentType',
+              'id' => 'toJsonTest'
+            }
+          }
+        },
+        'fields' => {
+          'name' => {
+            'en-US' => 'asdf'
+          },
+          'blob' => {
+            'en-US' => {
+              'some' => { 'data' => 3 }
+            }
+          },
+          'someLink' => {
+            'en-US' => {
+              'sys' => {
+                'type' => 'Link',
+                'linkType' => 'Entry',
+                'id' => '2'
+              }
+            }
+          },
+          'items' => {
+            'en-US' => [
+              {
+                'sys' => {
+                  'type' => 'Link',
+                  'linkType' => 'Entry',
+                  'id' => '3'
+                }
+              },
+              {
+                'sys' => {
+                  'type' => 'Link',
+                  'linkType' => 'Entry',
+                  'id' => '4'
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+
+    subject {
+      WCC::Contentful::ModelBuilder.new({ 'toJsonTest' => typedef })
+    }
+
+    it 'returns raw data for depth 0' do
+      subject.build_models
+      item = WCC::Contentful::Model::ToJsonTest.new(raw)
+
+      # act
+      js = item.to_json
+
+      # assert
+      expect(js).to eq(raw)
+    end
+
+    it 'resolves links for depth 1'
+
+    it 'stops when it hits a circular reference'
+  end
 end

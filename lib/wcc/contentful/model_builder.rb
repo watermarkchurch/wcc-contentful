@@ -45,7 +45,7 @@ module WCC::Contentful
               raise ArgumentError, 'Wrong Content Type - ' \
                 "'#{raw.dig('sys', 'id')}' is a #{ct}, expected #{typedef.content_type}"
             end
-            @raw = raw
+            @raw = raw.freeze
 
             @locale = context[:locale] if context.present?
             @locale ||= 'en-US'
