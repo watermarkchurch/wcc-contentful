@@ -22,10 +22,14 @@ module WCC::Contentful
 
       # TODO: https://github.com/dkubb/ice_nine ?
       typedef = typedef.deep_dup.freeze
-      fields = typedef.fields.keys
       WCC::Contentful::Model.const_set(const,
         Class.new(WCC::Contentful::Model) do
+          extend ModelSingletonMethods
+          include ModelMethods
           include Helpers
+
+          const_set('ATTRIBUTES', typedef.fields.each_value.map(&:name).map(&:to_sym).freeze)
+          const_set('FIELDS', typedef.fields.keys.freeze)
 
           define_singleton_method(:content_type) do
             typedef.content_type
@@ -35,54 +39,13 @@ module WCC::Contentful
             typedef
           end
 
-          define_singleton_method(:find) do |id, context = nil|
-            raw = WCC::Contentful::Model.store.find(id)
-            new(raw, context) if raw.present?
-          end
-
-          define_singleton_method(:find_all) do |filter = nil, context = nil|
-            if filter
-              filter.transform_keys! { |k| k.to_s.camelize(:lower) }
-              bad_fields = filter.keys.reject { |k| fields.include?(k) }
-              raise ArgumentError, "These fields do not exist: #{bad_fields}" unless bad_fields.empty?
-            end
-
-            query = WCC::Contentful::Model.store.find_all(content_type: content_type)
-            query = query.apply(filter) if filter
-            query.map { |r| new(r, context) }
-          end
-
-          define_singleton_method(:find_by) do |filter, context = nil|
-            filter.transform_keys! { |k| k.to_s.camelize(:lower) }
-            bad_fields = filter.keys.reject { |k| fields.include?(k) }
-            raise ArgumentError, "These fields do not exist: #{bad_fields}" unless bad_fields.empty?
-
-            result =
-              if defined?(context[:preview]) && context[:preview] == true
-                if WCC::Contentful::Model.preview_store.nil?
-                  raise ArgumentError,
-                    'You must include a contentful preview token in your WCC::Contentful.configure block'
-                end
-                WCC::Contentful::Model.preview_store.find_by(content_type: content_type, filter: filter)
-              else
-                WCC::Contentful::Model.store.find_by(content_type: content_type, filter: filter)
-              end
-
-            new(result, context) if result
-          end
-
-          define_singleton_method(:inherited) do |subclass|
-            # only register if it's not already registered
-            return if WCC::Contentful::Model.registered?(typedef.content_type)
-            WCC::Contentful::Model.register_for_content_type(typedef.content_type, klass: subclass)
-          end
-
           define_method(:initialize) do |raw, context = nil|
             ct = content_type_from_raw(raw)
             if ct != typedef.content_type
               raise ArgumentError, 'Wrong Content Type - ' \
                 "'#{raw.dig('sys', 'id')}' is a #{ct}, expected #{typedef.content_type}"
             end
+            @raw = raw
 
             @locale = context[:locale] if context.present?
             @locale ||= 'en-US'

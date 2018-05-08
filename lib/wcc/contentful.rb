@@ -13,6 +13,8 @@ require 'wcc/contentful/store'
 require 'wcc/contentful/content_type_indexer'
 require 'wcc/contentful/model_validators'
 require 'wcc/contentful/model'
+require 'wcc/contentful/model_methods'
+require 'wcc/contentful/model_singleton_methods'
 require 'wcc/contentful/model_builder'
 
 ##
