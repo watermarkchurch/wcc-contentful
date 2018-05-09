@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative './sys'
+
 module WCC::Contentful
   class ModelBuilder
     include Helpers
@@ -28,7 +30,7 @@ module WCC::Contentful
           include ModelMethods
           include Helpers
 
-          const_set('ATTRIBUTES', typedef.fields.each_value.map(&:name).map(&:to_sym).freeze)
+          const_set('ATTRIBUTES', typedef.fields.keys.map(&:to_sym).freeze)
           const_set('FIELDS', typedef.fields.keys.freeze)
 
           define_singleton_method(:content_type) do
@@ -47,18 +49,24 @@ module WCC::Contentful
             end
             @raw = raw.freeze
 
-            @locale = context[:locale] if context.present?
-            @locale ||= 'en-US'
-            @id = raw.dig('sys', 'id')
-            @space = raw.dig('sys', 'space', 'sys', 'id')
-            @created_at = raw.dig('sys', 'createdAt')
-            @created_at = Time.parse(@created_at) if @created_at.present?
-            @updated_at = raw.dig('sys', 'updatedAt')
-            @updated_at = Time.parse(@updated_at) if @updated_at.present?
-            @revision = raw.dig('sys', 'revision')
+            locale = context[:locale] if context.present?
+            locale ||= 'en-US'
+
+            created_at = raw.dig('sys', 'createdAt')
+            created_at = Time.parse(created_at) if created_at.present?
+            updated_at = raw.dig('sys', 'updatedAt')
+            updated_at = Time.parse(updated_at) if updated_at.present?
+            @sys = WCC::Contentful::Sys.new(
+              raw.dig('sys', 'id'),
+              locale,
+              raw.dig('sys', 'space', 'sys', 'id'),
+              created_at,
+              updated_at,
+              raw.dig('sys', 'revision')
+            )
 
             typedef.fields.each_value do |f|
-              raw_value = raw.dig('fields', f.name, @locale)
+              raw_value = raw.dig('fields', f.name, @sys.locale)
               if raw_value.present?
                 case f.type
                 when :DateTime
@@ -76,11 +84,12 @@ module WCC::Contentful
             end
           end
 
-          attr_reader :id
-          attr_reader :space
-          attr_reader :created_at
-          attr_reader :updated_at
-          attr_reader :revision
+          attr_reader :sys
+          delegate :id, to: :sys
+          delegate :created_at, to: :sys
+          delegate :updated_at, to: :sys
+          delegate :revision, to: :sys
+          delegate :space, to: :sys
 
           # Make a field for each column:
           typedef.fields.each_value do |f|
