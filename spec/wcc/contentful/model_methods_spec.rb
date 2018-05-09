@@ -92,10 +92,13 @@ RSpec.describe WCC::Contentful::ModelMethods do
     }
 
     subject {
-      builder = WCC::Contentful::ModelBuilder.new({ 'toJsonTest' => typedef })
-      builder.build_models
       WCC::Contentful::Model::ToJsonTest.new(raw)
     }
+
+    before do
+      builder = WCC::Contentful::ModelBuilder.new({ 'toJsonTest' => typedef })
+      builder.build_models
+    end
 
     it 'raises argument error for depth 0' do
       expect {
@@ -133,7 +136,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
 
     it 'recursively resolves links for further depth' do
       fake2 = double(
-        resolve: nil
+        _resolve: nil
       )
       allow(WCC::Contentful::Model).to receive(:find)
         .with('2').once
@@ -145,11 +148,33 @@ RSpec.describe WCC::Contentful::ModelMethods do
       # assert
       expect(WCC::Contentful::Model).to have_received(:find)
         .with('2')
-      expect(fake2).to have_received(:resolve)
-        .with({ depth: 1, '1' => subject })
+      expect(fake2).to have_received(:_resolve)
+        .with(1, nil, { '1' => subject, '2' => fake2 })
     end
 
     it 'stops when it hits a circular reference' do
+      raw3 = raw.deep_dup
+      raw3['sys']['id'] = '3'
+      # circular back to 1
+      raw3['fields']['items']['en-US'][0] = { 'sys' => { 'id' => '1' } }
+      test3 = WCC::Contentful::Model::ToJsonTest.new(raw3)
+
+      expect(WCC::Contentful::Model).to receive(:find)
+        .with('2').once
+        .and_return(nil)
+      expect(WCC::Contentful::Model).to receive(:find)
+        .with('3').once
+        .and_return(test3)
+      expect(WCC::Contentful::Model).to receive(:find)
+        .with('4').once
+        .and_return(double(_resolve: nil))
+
+      # act
+      subject.resolve(depth: 99)
+
+      # assert
+      expect(subject.items[0]).to equal(test3)
+      expect(test3.items[0]).to equal(subject)
     end
   end
 end
