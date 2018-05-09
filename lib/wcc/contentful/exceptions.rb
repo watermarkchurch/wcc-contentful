@@ -37,4 +37,7 @@ module WCC::Contentful
 
   class ContentTypeNotFoundError < NameError
   end
+
+  class CircularReferenceError < StandardError
+  end
 end

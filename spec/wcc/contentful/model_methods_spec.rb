@@ -280,6 +280,29 @@ RSpec.describe WCC::Contentful::ModelMethods do
       )
     end
 
-    it 'raises circular reference exception'
+    it 'raises circular reference exception' do
+      raw3 = raw.deep_dup
+      raw3['sys']['id'] = '3'
+      # circular back to 1
+      raw3['fields']['items']['en-US'][0] = { 'sys' => { 'id' => '1' } }
+      test3 = WCC::Contentful::Model::ToJsonTest.new(raw3)
+
+      expect(WCC::Contentful::Model).to receive(:find)
+        .with('2').once
+        .and_return(nil)
+      expect(WCC::Contentful::Model).to receive(:find)
+        .with('3').once
+        .and_return(test3)
+      expect(WCC::Contentful::Model).to receive(:find)
+        .with('4').once
+        .and_return(double(resolve: nil))
+
+      subject.resolve(depth: 99)
+
+      # act
+      expect {
+        subject.to_json
+      }.to raise_error(WCC::Contentful::CircularReferenceError)
+    end
   end
 end

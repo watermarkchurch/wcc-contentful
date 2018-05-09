@@ -18,15 +18,18 @@ module WCC::Contentful::ModelMethods
     self
   end
 
-  def to_h
+  def to_h(stack = nil)
+    raise WCC::Contentful::CircularReferenceError, stack.join(' -> ') if stack&.include?(id)
+    stack = [*stack, id]
+
     fields =
       self.class::FIELDS.each_with_object({}) do |field, h|
         if val = instance_variable_get('@' + field + '_resolved')
           val =
             if val.is_a? Array
-              val.map { |v| v ? v.to_h : v }
+              val.map { |v| v ? v.to_h(stack) : v }
             else
-              val.to_h
+              val.to_h(stack)
             end
         end
 
