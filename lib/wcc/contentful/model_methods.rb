@@ -15,6 +15,7 @@ module WCC::Contentful::ModelMethods
     typedef = self.class.content_type_definition
     links = fields.select { |f| %i[Asset Link].include?(typedef.fields[f].type) }
     links.each { |f| _resolve_field(f, depth, context) }
+    self
   end
 
   private
