@@ -39,8 +39,8 @@ RSpec.describe Wcc::ModelGenerator, type: :generator do
           directory 'migrate' do
             file '20180102120301_generated_add_menus.ts' do
               contains 'export = function (migration: Migration) {'
-              contains 'migration.createContentType(\'menu\')'
-              contains 'migration.createContentType(\'menuButton\')'
+              contains 'migration.createContentType(\'menu\''
+              contains 'migration.createContentType(\'menuButton\''
             end
           end
         end

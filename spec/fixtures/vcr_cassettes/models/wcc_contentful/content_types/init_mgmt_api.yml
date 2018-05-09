@@ -1077,8 +1077,94 @@ http_interactions:
                   "omitted": false
                 },
                 {
-                  "id": "topButton",
-                  "name": "Top Button",
+                  "id": "items",
+                  "name": "Items",
+                  "type": "Array",
+                  "localized": false,
+                  "required": false,
+                  "validations": [],
+                  "disabled": false,
+                  "omitted": false,
+                  "items": {
+                    "type": "Link",
+                    "validations": [
+                      {
+                        "linkContentType": [
+                          "dropdownMenu",
+                          "menuButton"
+                        ],
+                        "message": "The items must be either buttons or drop-down menus"
+                      }
+                    ],
+                    "linkType": "Entry"
+                  }
+                }
+              ]
+            },
+            {
+              "sys": {
+                "space": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Space",
+                    "id": "<CONTENTFUL_SPACE_ID>"
+                  }
+                },
+                "id": "dropdownMenu",
+                "type": "ContentType",
+                "createdAt": "2018-05-01T21:48:25.933Z",
+                "updatedAt": "2018-05-01T21:48:26.137Z",
+                "environment": {
+                  "sys": {
+                    "id": "gburgett",
+                    "type": "Link",
+                    "linkType": "Environment"
+                  }
+                },
+                "createdBy": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "User",
+                    "id": "0SUbYs2vZlXjVR6bH6o83O"
+                  }
+                },
+                "updatedBy": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "User",
+                    "id": "0SUbYs2vZlXjVR6bH6o83O"
+                  }
+                },
+                "publishedCounter": 1,
+                "version": 2,
+                "publishedBy": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "User",
+                    "id": "0SUbYs2vZlXjVR6bH6o83O"
+                  }
+                },
+                "publishedVersion": 1,
+                "firstPublishedAt": "2018-05-01T21:48:26.137Z",
+                "publishedAt": "2018-05-01T21:48:26.137Z"
+              },
+              "displayField": "name",
+              "name": "Dropdown Menu",
+              "description": "A Dropdown Menu can be attached to a main menu to show additional menu items on click.",
+              "fields": [
+                {
+                  "id": "name",
+                  "name": "Menu Name",
+                  "type": "Symbol",
+                  "localized": false,
+                  "required": false,
+                  "validations": [],
+                  "disabled": false,
+                  "omitted": false
+                },
+                {
+                  "id": "label",
+                  "name": "Menu Label",
                   "type": "Link",
                   "localized": false,
                   "required": false,
@@ -1086,8 +1172,7 @@ http_interactions:
                     {
                       "linkContentType": [
                         "menuButton"
-                      ],
-                      "message": "The Top Button must be a button linking to a URL or page.  If the menu is a dropdown, this button is visible when it is collapsed."
+                      ]
                     }
                   ],
                   "disabled": false,
@@ -1108,55 +1193,12 @@ http_interactions:
                     "validations": [
                       {
                         "linkContentType": [
-                          "menu",
                           "menuButton"
-                        ],
-                        "message": "The items must be either buttons or drop-down menus"
+                        ]
                       }
                     ],
                     "linkType": "Entry"
                   }
-                },
-                {
-                  "id": "secondaryItems",
-                  "name": "Secondary Items",
-                  "type": "Array",
-                  "localized": false,
-                  "required": false,
-                  "validations": [],
-                  "disabled": false,
-                  "omitted": false,
-                  "items": {
-                    "type": "Link",
-                    "validations": [
-                      {
-                        "linkContentType": [
-                          "menu",
-                          "menuButton"
-                        ],
-                        "message": "The items must be either buttons or drop-down menus"
-                      }
-                    ],
-                    "linkType": "Entry"
-                  }
-                },
-                {
-                  "id": "sideMenu",
-                  "name": "Side Menu",
-                  "type": "Link",
-                  "localized": false,
-                  "required": false,
-                  "validations": [
-                    {
-                      "linkContentType": [
-                        "menu"
-                      ],
-                      "message": "The Side Menu must be a Menu"
-                    }
-                  ],
-                  "disabled": false,
-                  "omitted": false,
-                  "linkType": "Entry"
                 }
               ]
             },

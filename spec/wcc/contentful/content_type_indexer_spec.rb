@@ -19,6 +19,7 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
         %w[
           Asset
           dog
+          dropdownMenu
           faq
           homepage
           menu

@@ -38,21 +38,29 @@ class WCC::Contentful::Model
 
     content_type = content_type_from_raw(raw)
 
-    unless const = @@registry[content_type]
-      begin
-        # The app may have defined a model and we haven't loaded it yet
-        const = Object.const_missing(constant_from_content_type(content_type).to_s)
-      rescue NameError
-        nil
-      end
-    end
-    unless const
-      # Autoloading couldn't find their model - we'll register our own.
-      const = WCC::Contentful::Model.const_get(constant_from_content_type(content_type))
-      register_for_content_type(content_type, klass: const)
-    end
+    const = resolve_constant(content_type)
 
     const.new(raw, context)
+  end
+
+  ##
+  # Accepts a content type ID as a string and returns the Ruby constant
+  # stored in the registry that represents this content type.
+  def self.resolve_constant(content_type)
+    const = @@registry[content_type]
+    return const if const
+
+    begin
+      # The app may have defined a model and we haven't loaded it yet
+      const = Object.const_missing(constant_from_content_type(content_type).to_s)
+      return const if const
+    rescue NameError
+      nil
+    end
+
+    # Autoloading couldn't find their model - we'll register our own.
+    const = WCC::Contentful::Model.const_get(constant_from_content_type(content_type))
+    register_for_content_type(content_type, klass: const)
   end
 
   ##
