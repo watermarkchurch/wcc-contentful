@@ -136,7 +136,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
 
     it 'recursively resolves links for further depth' do
       fake2 = double(
-        _resolve: nil
+        resolve: nil
       )
       allow(WCC::Contentful::Model).to receive(:find)
         .with('2').once
@@ -148,8 +148,8 @@ RSpec.describe WCC::Contentful::ModelMethods do
       # assert
       expect(WCC::Contentful::Model).to have_received(:find)
         .with('2')
-      expect(fake2).to have_received(:_resolve)
-        .with(1, nil, { '1' => subject, '2' => fake2 })
+      expect(fake2).to have_received(:resolve)
+        .with(depth: 1, context: { '1' => subject, '2' => fake2 })
     end
 
     it 'stops when it hits a circular reference' do
@@ -167,7 +167,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
         .and_return(test3)
       expect(WCC::Contentful::Model).to receive(:find)
         .with('4').once
-        .and_return(double(_resolve: nil))
+        .and_return(double(resolve: nil))
 
       # act
       subject.resolve(depth: 99)
