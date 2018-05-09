@@ -101,17 +101,7 @@ module WCC::Contentful
                 val = instance_variable_get(var_name + '_resolved')
                 return val if val.present?
 
-                return unless val = instance_variable_get(var_name)
-
-                val =
-                  if val.is_a? Array
-                    val.map { |v| WCC::Contentful::Model.find(v.dig('sys', 'id')) }
-                  else
-                    WCC::Contentful::Model.find(val.dig('sys', 'id'))
-                  end
-
-                instance_variable_set(var_name + '_resolved', val)
-                val
+                _resolve_field(name)
               end
             when :Coordinates
               define_method(name) do
