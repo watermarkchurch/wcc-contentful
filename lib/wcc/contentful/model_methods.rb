@@ -18,6 +18,19 @@ module WCC::Contentful::ModelMethods
     self
   end
 
+  def to_json
+    fields =
+      self.class::FIELDS.each_with_object({}) do |field, h|
+        h[field] = instance_variable_get('@' + field + '_resolved')
+        h[field] ||= instance_variable_get('@' + field)
+      end
+
+    {
+      sys: { 'locale' => @sys.locale }.merge!(@raw['sys']),
+      fields: fields
+    }.to_json
+  end
+
   private
 
   def _resolve_field(field_name, depth = 1, context = {})
