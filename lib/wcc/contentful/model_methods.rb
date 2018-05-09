@@ -18,17 +18,29 @@ module WCC::Contentful::ModelMethods
     self
   end
 
-  def to_json
+  def to_h
     fields =
       self.class::FIELDS.each_with_object({}) do |field, h|
-        h[field] = instance_variable_get('@' + field + '_resolved')
-        h[field] ||= instance_variable_get('@' + field)
+        if val = instance_variable_get('@' + field + '_resolved')
+          val =
+            if val.is_a? Array
+              val.map { |v| v ? v.to_h : v }
+            else
+              val.to_h
+            end
+        end
+
+        h[field] = val || instance_variable_get('@' + field)
       end
 
     {
       sys: { 'locale' => @sys.locale }.merge!(@raw['sys']),
       fields: fields
-    }.to_json
+    }
+  end
+
+  def to_json
+    to_h.to_json
   end
 
   private

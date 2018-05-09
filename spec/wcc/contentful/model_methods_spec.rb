@@ -242,7 +242,43 @@ RSpec.describe WCC::Contentful::ModelMethods do
       )
     end
 
-    it 'writes resolved links'
+    it 'writes resolved links' do
+      fake2 = double({ to_h: { 'sys' => { 'type' => 'double', 'id' => 'fake2' } } })
+      allow(WCC::Contentful::Model).to receive(:find)
+        .with('2').once
+        .and_return(fake2)
+      allow(WCC::Contentful::Model).to receive(:find)
+        .with('3').once
+        .and_return(nil)
+      fake4 = double({ to_h: { 'sys' => { 'type' => 'double', 'id' => 'fake4' } } })
+      allow(WCC::Contentful::Model).to receive(:find)
+        .with('4').once
+        .and_return(fake4)
+
+      subject.resolve
+
+      # act
+      json = JSON.parse(subject.to_json)
+
+      # assert
+      expect(json.dig('fields', 'someLink')).to eq({
+        'sys' => {
+          'type' => 'double',
+          'id' => 'fake2'
+        }
+      })
+      expect(json.dig('fields', 'items')).to eq(
+        [
+          nil,
+          {
+            'sys' => {
+              'type' => 'double',
+              'id' => 'fake4'
+            }
+          }
+        ]
+      )
+    end
 
     it 'raises circular reference exception'
   end
