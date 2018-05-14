@@ -67,7 +67,7 @@ module WCC::Contentful::Store
       def validate_eager_sync(_config, store = nil, *_options)
         return unless store.is_a?(Symbol)
 
-        return if SYNC_STORES.keys.include?(store)
+        return if SYNC_STORES.key?(store)
         raise ArgumentError, "Please use one of #{SYNC_STORES.keys}"
       end
     end
