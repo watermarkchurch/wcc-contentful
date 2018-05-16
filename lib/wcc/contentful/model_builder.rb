@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative './sys'
+
 module WCC::Contentful
   class ModelBuilder
     include Helpers
@@ -22,10 +24,14 @@ module WCC::Contentful
 
       # TODO: https://github.com/dkubb/ice_nine ?
       typedef = typedef.deep_dup.freeze
-      fields = typedef.fields.keys
       WCC::Contentful::Model.const_set(const,
         Class.new(WCC::Contentful::Model) do
+          extend ModelSingletonMethods
+          include ModelMethods
           include Helpers
+
+          const_set('ATTRIBUTES', typedef.fields.keys.map(&:to_sym).freeze)
+          const_set('FIELDS', typedef.fields.keys.freeze)
 
           define_singleton_method(:content_type) do
             typedef.content_type
@@ -35,67 +41,32 @@ module WCC::Contentful
             typedef
           end
 
-          define_singleton_method(:find) do |id, context = nil|
-            raw = WCC::Contentful::Model.store.find(id)
-            new(raw, context) if raw.present?
-          end
-
-          define_singleton_method(:find_all) do |filter = nil, context = nil|
-            if filter
-              filter.transform_keys! { |k| k.to_s.camelize(:lower) }
-              bad_fields = filter.keys.reject { |k| fields.include?(k) }
-              raise ArgumentError, "These fields do not exist: #{bad_fields}" unless bad_fields.empty?
-            end
-
-            query = WCC::Contentful::Model.store.find_all(content_type: content_type)
-            query = query.apply(filter) if filter
-            query.map { |r| new(r, context) }
-          end
-
-          define_singleton_method(:find_by) do |filter, context = nil|
-            filter.transform_keys! { |k| k.to_s.camelize(:lower) }
-            bad_fields = filter.keys.reject { |k| fields.include?(k) }
-            raise ArgumentError, "These fields do not exist: #{bad_fields}" unless bad_fields.empty?
-
-            result =
-              if defined?(context[:preview]) && context[:preview] == true
-                if WCC::Contentful::Model.preview_store.nil?
-                  raise ArgumentError,
-                    'You must include a contentful preview token in your WCC::Contentful.configure block'
-                end
-                WCC::Contentful::Model.preview_store.find_by(content_type: content_type, filter: filter)
-              else
-                WCC::Contentful::Model.store.find_by(content_type: content_type, filter: filter)
-              end
-
-            new(result, context) if result
-          end
-
-          define_singleton_method(:inherited) do |subclass|
-            # only register if it's not already registered
-            return if WCC::Contentful::Model.registered?(typedef.content_type)
-            WCC::Contentful::Model.register_for_content_type(typedef.content_type, klass: subclass)
-          end
-
           define_method(:initialize) do |raw, context = nil|
             ct = content_type_from_raw(raw)
             if ct != typedef.content_type
               raise ArgumentError, 'Wrong Content Type - ' \
                 "'#{raw.dig('sys', 'id')}' is a #{ct}, expected #{typedef.content_type}"
             end
+            @raw = raw.freeze
 
-            @locale = context[:locale] if context.present?
-            @locale ||= 'en-US'
-            @id = raw.dig('sys', 'id')
-            @space = raw.dig('sys', 'space', 'sys', 'id')
-            @created_at = raw.dig('sys', 'createdAt')
-            @created_at = Time.parse(@created_at) if @created_at.present?
-            @updated_at = raw.dig('sys', 'updatedAt')
-            @updated_at = Time.parse(@updated_at) if @updated_at.present?
-            @revision = raw.dig('sys', 'revision')
+            locale = context[:locale] if context.present?
+            locale ||= 'en-US'
+
+            created_at = raw.dig('sys', 'createdAt')
+            created_at = Time.parse(created_at) if created_at.present?
+            updated_at = raw.dig('sys', 'updatedAt')
+            updated_at = Time.parse(updated_at) if updated_at.present?
+            @sys = WCC::Contentful::Sys.new(
+              raw.dig('sys', 'id'),
+              locale,
+              raw.dig('sys', 'space', 'sys', 'id'),
+              created_at,
+              updated_at,
+              raw.dig('sys', 'revision')
+            )
 
             typedef.fields.each_value do |f|
-              raw_value = raw.dig('fields', f.name, @locale)
+              raw_value = raw.dig('fields', f.name, @sys.locale)
               if raw_value.present?
                 case f.type
                 when :DateTime
@@ -113,11 +84,13 @@ module WCC::Contentful
             end
           end
 
-          attr_reader :id
-          attr_reader :space
-          attr_reader :created_at
-          attr_reader :updated_at
-          attr_reader :revision
+          attr_reader :sys
+          attr_reader :raw
+          delegate :id, to: :sys
+          delegate :created_at, to: :sys
+          delegate :updated_at, to: :sys
+          delegate :revision, to: :sys
+          delegate :space, to: :sys
 
           # Make a field for each column:
           typedef.fields.each_value do |f|
@@ -129,17 +102,7 @@ module WCC::Contentful
                 val = instance_variable_get(var_name + '_resolved')
                 return val if val.present?
 
-                return unless val = instance_variable_get(var_name)
-
-                val =
-                  if val.is_a? Array
-                    val.map { |v| WCC::Contentful::Model.find(v.dig('sys', 'id')) }
-                  else
-                    WCC::Contentful::Model.find(val.dig('sys', 'id'))
-                  end
-
-                instance_variable_set(var_name + '_resolved', val)
-                val
+                _resolve_field(name)
               end
             when :Coordinates
               define_method(name) do
