@@ -85,6 +85,7 @@ module WCC::Contentful
           end
 
           attr_reader :sys
+          attr_reader :raw
           delegate :id, to: :sys
           delegate :created_at, to: :sys
           delegate :updated_at, to: :sys
