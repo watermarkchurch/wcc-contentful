@@ -53,7 +53,7 @@ class WCC::Contentful::Model
     begin
       # The app may have defined a model and we haven't loaded it yet
       const = Object.const_missing(constant_from_content_type(content_type).to_s)
-      return const if const
+      return const if const && const < WCC::Contentful::Model
     rescue NameError
       nil
     end
