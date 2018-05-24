@@ -400,6 +400,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       Object.send(:remove_const, :SUB_MENU_BUTTON) if defined?(SUB_MENU_BUTTON)
       Object.send(:remove_const, :SUB_MENU_BUTTON_2) if defined?(SUB_MENU_BUTTON_2)
       Object.send(:remove_const, :SUB_MENU_BUTTON_3) if defined?(SUB_MENU_BUTTON_3)
+      Object.send(:remove_const, :MenuButton) if defined?(MenuButton)
     end
 
     it 'registered class is returned when a link is expanded' do
@@ -461,6 +462,36 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
       # assert
       expect(button).to be_a(SUB_MENU_BUTTON_2)
+    end
+
+    it 'loads app-defined constant using const_missing' do
+      expect(Object).to receive(:const_missing).with('MenuButton') do
+        MenuButton =
+          Class.new(WCC::Contentful::Model::MenuButton) do
+          end
+      end
+
+      # act
+      button = WCC::Contentful::Model.find('5NBhDw3i2kUqSwqYok4YQO')
+
+      # assert
+      expect(button).to be_a(MenuButton)
+    end
+
+    it 'does not use loaded class if it does not inherit WCC::Contentful::Model' do
+      expect(Object).to receive(:const_missing) do
+        MenuButton =
+          Class.new do
+            def initialize(raw, context)
+            end
+          end
+      end
+
+      # act
+      button = WCC::Contentful::Model.find('5NBhDw3i2kUqSwqYok4YQO')
+
+      # assert
+      expect(button).to be_a(WCC::Contentful::Model::MenuButton)
     end
   end
 end
