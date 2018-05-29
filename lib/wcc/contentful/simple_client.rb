@@ -14,12 +14,15 @@ module WCC::Contentful
   # The SimpleClient by default uses 'http' to perform the gets, but any HTTP
   # client can be injected by passing a proc as the `adapter:` option.
   class SimpleClient
+    attr_reader :api_url
+    attr_reader :space
+
     def initialize(api_url:, space:, access_token:, **options)
       @api_url = URI.join(api_url, '/spaces/', space + '/')
       @space = space
       @access_token = access_token
 
-      @get_http = SimpleClient.load_adapter(options[:adapter])
+      @adapter = SimpleClient.load_adapter(options[:adapter])
 
       @options = options
       @query_defaults = {}
@@ -80,7 +83,7 @@ module WCC::Contentful
       q = @query_defaults.dup
       q = q.merge(query) if query
 
-      resp = @get_http.call(url, q, headers, proxy)
+      resp = @adapter.call(url, q, headers, proxy)
 
       if [301, 302, 307].include?(resp.code) && !@options[:no_follow_redirects]
         resp = get_http(resp.headers['location'], nil, headers, proxy)

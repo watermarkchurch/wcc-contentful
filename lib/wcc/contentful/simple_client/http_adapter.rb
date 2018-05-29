@@ -12,4 +12,13 @@ class HttpAdapter
       HTTP[headers].get(url, params: query)
     end
   end
+
+  def post(url, body, headers = {}, proxy = {})
+    if proxy[:host]
+      HTTP[headers].via(proxy[:host], proxy[:port], proxy[:username], proxy[:password])
+        .post(url, json: body)
+    else
+      HTTP[headers].post(url, json: body)
+    end
+  end
 end

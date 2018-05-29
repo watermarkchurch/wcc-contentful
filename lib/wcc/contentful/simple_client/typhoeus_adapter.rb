@@ -16,6 +16,18 @@ class TyphoeusAdapter
     )
   end
 
+  def post(url, body, headers = {}, proxy = {})
+    raise NotImplementedError, 'Proxying Not Yet Implemented' if proxy[:host]
+
+    TyphoeusAdapter::Response.new(
+      Typhoeus.post(
+        url,
+        body: body,
+        headers: headers
+      )
+    )
+  end
+
   Response =
     Struct.new(:raw) do
       delegate :body, to: :raw
