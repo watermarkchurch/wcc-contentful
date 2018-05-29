@@ -3,6 +3,7 @@
 class WCC::Contentful::Configuration
   ATTRIBUTES = %i[
     access_token
+    app_url
     management_token
     space
     environment
@@ -93,6 +94,7 @@ class WCC::Contentful::Configuration
 
   def initialize
     @access_token = ''
+    @app_url = ENV['APP_URL']
     @management_token = ''
     @preview_token = ''
     @space = ''

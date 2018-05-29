@@ -4,6 +4,7 @@ require 'active_job'
 
 module WCC::Contentful
   class DelayedSyncJob < ActiveJob::Base
+    self.queue_adapter = :async
     queue_as :default
 
     def perform(*args)
