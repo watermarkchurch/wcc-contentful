@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'simple_client/response'
+require_relative 'simple_client/management'
 
 module WCC::Contentful
   ##
@@ -157,26 +158,6 @@ module WCC::Contentful
           end
         query = query.merge(sync_token)
         resp = SyncResponse.new(get('sync', query))
-        resp.assert_ok!
-      end
-    end
-
-    class Management < SimpleClient
-      def initialize(space:, management_token:, **options)
-        super(
-          api_url: options[:api_url] || 'https://api.contentful.com',
-          space: space,
-          access_token: management_token,
-          **options
-        )
-      end
-
-      def client_type
-        'management'
-      end
-
-      def content_types(**query)
-        resp = get('content_types', query)
         resp.assert_ok!
       end
     end
