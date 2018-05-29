@@ -7,7 +7,7 @@ RSpec.describe WCC::Contentful::WebhookEnableJob, type: :job do
 
   subject(:job) { described_class.new }
 
-  describe 'enable_webhook' do
+  describe '#enable_webhook' do
     it 'bails if webhook already exists' do
       response = double(items: [{
         'name' => 'test webhook',
@@ -57,6 +57,20 @@ RSpec.describe WCC::Contentful::WebhookEnableJob, type: :job do
         app_url: 'https://test.url/',
         webhook_username: 'testuser',
         webhook_password: 'testpw')
+    end
+  end
+
+  describe '#perform' do
+    it 'passes client to #enable_webhook' do
+      expect(job).to receive(:enable_webhook) do |client|
+        expect(client).to be_a WCC::Contentful::SimpleClient::Management
+      end
+
+      # act
+      job.perform({
+        space: 'testspace',
+        management_token: 'testtoken'
+      })
     end
   end
 end

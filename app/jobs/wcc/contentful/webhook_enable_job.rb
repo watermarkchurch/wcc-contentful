@@ -9,9 +9,9 @@ module WCC::Contentful
 
     def perform(args)
       client = WCC::Contentful::SimpleClient::Management.new(
-        **args
+        args
       )
-      enable_webhook(client, **args)
+      enable_webhook(client, args)
     end
 
     def enable_webhook(client, app_url:, webhook_username: nil, webhook_password: nil)
