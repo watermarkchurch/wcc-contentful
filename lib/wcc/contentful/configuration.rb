@@ -95,7 +95,7 @@ class WCC::Contentful::Configuration
     raise ArgumentError, 'Please provide "space"' unless space.present?
     raise ArgumentError, 'Please provide "access_token"' unless access_token.present?
 
-    return if environment.nil? || %i[direct custom].include?(content_delivery)
+    return unless environment.present? && %i[eager_sync lazy_sync].include?(content_delivery)
     raise ArgumentError, 'The Contentful Sync API currently does not work with environments.  ' \
       'You can use the ":direct" content_delivery method, or provide a custom store implementation.'
   end

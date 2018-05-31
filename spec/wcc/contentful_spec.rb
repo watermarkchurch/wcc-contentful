@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'rails_helper'
+
 RSpec.describe WCC::Contentful, :vcr do
   it 'has a version number' do
     expect(WCC::Contentful::VERSION).not_to be nil
@@ -214,19 +216,6 @@ RSpec.describe WCC::Contentful, :vcr do
         content_type = WCC::Contentful::Model::MenuButton.content_type
         expect(content_type).to eq('menuButton')
       end
-
-      it 'should populate store via sync API' do
-        # act
-        WCC::Contentful.init!
-
-        # assert
-        page = WCC::Contentful::Model.find('1UojJt7YoMiemCq2mGGUmQ')
-        expect(page).to_not be_nil
-        expect(page).to be_a(WCC::Contentful::Model::Page)
-        expect(page.slug).to eq('/conferences')
-
-        expect(page.sections).to be_empty
-      end
     end
 
     context 'with management token' do
@@ -248,17 +237,6 @@ RSpec.describe WCC::Contentful, :vcr do
         # assert
         content_type = WCC::Contentful::Model::Page.content_type
         expect(content_type).to eq('page')
-      end
-
-      it 'should populate store via sync API' do
-        # act
-        WCC::Contentful.init!
-
-        # assert
-        asset = WCC::Contentful::Model::Asset.find('2zKTmej544IakmIqoEu0y8')
-        expect(asset).to_not be_nil
-        expect(asset).to be_a(WCC::Contentful::Model::Asset)
-        expect(asset.file.fileName).to eq('favicon.ico')
       end
     end
 

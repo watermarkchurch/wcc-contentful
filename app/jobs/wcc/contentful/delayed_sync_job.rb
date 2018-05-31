@@ -35,14 +35,16 @@ module WCC::Contentful
 
         id_found = up_to_id.nil?
 
+        count = 0
         sync_resp.items.each do |item|
           id = item.dig('sys', 'id')
           id_found ||= id == up_to_id
           store.index(item)
+          count += 1
         end
         store.set('sync:token', sync_resp.next_sync_token)
 
-        puts "found? #{id_found}"
+        logger.info "Synced #{count} entries.  Next sync token:\n  #{sync_resp.next_sync_token}"
         sync_later!(up_to_id: up_to_id) unless id_found
         sync_resp.next_sync_token
       end

@@ -271,12 +271,22 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
         # assert
         resp.assert_ok!
         items = resp.items.map { |i| i.dig('sys', 'id') }
-        expect(resp.count).to eq(34)
+        expect(resp.items.count).to eq(34)
         expect(items.sort.take(5))
           .to eq(%w[
                    1EjBdAgOOgAQKAggQoY2as 1IJEXB4AKEqQYEm4WuceG2 1MsOLBrDwEUAUIuMY8Ys6o
                    1TikjmGeSIisEWoC4CwokQ 1UojJt7YoMiemCq2mGGUmQ
                  ])
+      end
+
+      it 'pages when theres a lot of items' do
+        # act
+        resp = client.sync
+
+        # assert
+        resp.assert_ok!
+        items = resp.items.map { |i| i.dig('sys', 'id') }
+        expect(items.count).to be > 200
       end
 
       let(:sync_token) {
@@ -302,7 +312,7 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
         # assert
         resp.assert_ok!
         items = resp.items.map { |i| i.dig('sys', 'id') }
-        expect(resp.count).to eq(0)
+        expect(resp.items.count).to eq(0)
         expect(items.force).to eq([])
       end
     end

@@ -28,8 +28,8 @@ module WCC::Contentful
       @query_defaults = {}
       @query_defaults[:locale] = @options[:default_locale] if @options[:default_locale]
 
-      return unless env = options[:environment]
-      @api_url = URI.join(@api_url, 'environments/', env + '/')
+      return unless options[:environment].present?
+      @api_url = URI.join(@api_url, 'environments/', options[:environment] + '/')
     end
 
     def get(path, query = {})
