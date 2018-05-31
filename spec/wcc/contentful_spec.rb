@@ -143,12 +143,6 @@ RSpec.describe WCC::Contentful, :vcr do
         expect(config.default_locale).to eq(valid_contentful_default_locale)
         expect(config.nil?).to eq(false)
       end
-
-      it 'should set the Contentful client on the WCC::Contentful module' do
-        client = WCC::Contentful.client
-
-        expect(client).to be_a(WCC::Contentful::SimpleClient)
-      end
     end
 
     context 'invalid config' do
@@ -585,9 +579,9 @@ RSpec.describe WCC::Contentful, :vcr do
           .to_return(body: empty.merge({ 'nextSyncUrl' =>
             "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync?sync_token=test" }).to_json)
 
-        expect(WCC::Contentful.store).to receive(:set)
+        expect(WCC::Contentful::Services.instance.store).to receive(:set)
           .with("sync:#{contentful_space_id}:token", 'test')
-        expect(WCC::Contentful.store).to_not receive(:index)
+        expect(WCC::Contentful::Services.instance.store).to_not receive(:index)
 
         # act
         synced = WCC::Contentful.sync!
@@ -610,9 +604,9 @@ RSpec.describe WCC::Contentful, :vcr do
 
         items = next_sync['items']
 
-        expect(WCC::Contentful.store).to receive(:set)
+        expect(WCC::Contentful::Services.instance.store).to receive(:set)
           .with("sync:#{contentful_space_id}:token", 'test2')
-        expect(WCC::Contentful.store).to receive(:index)
+        expect(WCC::Contentful::Services.instance.store).to receive(:index)
           .exactly(items.count).times
 
         # act

@@ -10,14 +10,7 @@ class WCC::Contentful::Model
   # rubocop:disable Style/ClassVars
 
   class << self
-    ##
-    # The configured store which executes all model queries against either the
-    # Contentful CDN or a locally-downloaded copy.
-    #
-    # See the {sync_store}[rdoc-ref:WCC::Contentful::Configuration.sync_store] parameter
-    # on the WCC::Contentful::Configuration class.
-    attr_accessor :store
-    attr_accessor :preview_store
+    include WCC::Contentful::ServiceAccessors
 
     def const_missing(name)
       raise WCC::Contentful::ContentTypeNotFoundError,

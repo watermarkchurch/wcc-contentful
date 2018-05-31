@@ -8,6 +8,7 @@ require 'active_support/core_ext/object'
 require 'wcc/contentful/configuration'
 require 'wcc/contentful/exceptions'
 require 'wcc/contentful/helpers'
+require 'wcc/contentful/services'
 require 'wcc/contentful/simple_client'
 require 'wcc/contentful/store'
 require 'wcc/contentful/content_type_indexer'
@@ -35,41 +36,6 @@ module WCC::Contentful
   end
 
   ##
-  # Gets a {CDN Client}[rdoc-ref:WCC::Contentful::SimpleClient::Cdn] which provides
-  # methods for getting and paging raw JSON data from the Contentful CDN.
-  def self.client(preview: false)
-    if preview
-      configuration&.preview_client
-    else
-      configuration&.client
-    end
-  end
-
-  ##
-  # Gets the data-store which executes the queries run against the dynamic
-  # models in the WCC::Contentful::Model namespace.
-  # This is one of the following based on the configured content_delivery method:
-  #
-  # [:direct] an instance of WCC::Contentful::Store::CDNAdapter with a
-  #           {CDN Client}[rdoc-ref:WCC::Contentful::SimpleClient::Cdn] to access the CDN.
-  #
-  # [:lazy_sync] an instance of WCC::Contentful::Store::LazyCacheStore
-  #              with the configured ActiveSupport::Cache implementation and a
-  #              {CDN Client}[rdoc-ref:WCC::Contentful::SimpleClient::Cdn] for when data
-  #              cannot be found in the cache.
-  #
-  # [:eager_sync] an instance of the configured Store type, defined by
-  #               WCC::Contentful::Configuration.sync_store
-  #
-  def self.store
-    WCC::Contentful::Model.store
-  end
-
-  def self.preview_store
-    WCC::Contentful::Model.preview_store
-  end
-
-  ##
   # Configures the WCC::Contentful gem to talk to a Contentful space.
   # This must be called first in your initializer, before #init! or accessing the
   # client.
@@ -79,8 +45,6 @@ module WCC::Contentful
     yield(configuration)
 
     configuration.validate!
-
-    configuration.configure_contentful
 
     configuration
   end
@@ -99,18 +63,12 @@ module WCC::Contentful
     raise ArgumentError, 'Please first call WCC:Contentful.configure' if configuration.nil?
     @mutex ||= Mutex.new
 
-    use_preview_client = false
-    # we want as much as possible the raw JSON from the API
-    content_types_resp =
-      if configuration.management_client
-        configuration.management_client.content_types(limit: 1000)
-      else
-        configuration.client.content_types(limit: 1000)
-      end
+    # we want as much as possible the raw JSON from the API so use the management
+    # client if possible
+    client = Services.instance.management_client ||
+      Services.instance.client
 
-    (use_preview_client = true) unless configuration.preview_client.nil?
-
-    @content_types = content_types_resp.items
+    @content_types = client.content_types(limit: 1000).items
 
     indexer =
       ContentTypeIndexer.new.tap do |ixr|
@@ -118,16 +76,7 @@ module WCC::Contentful
       end
     @types = indexer.types
 
-    if use_preview_client
-      store = configuration.store(preview: false)
-      WCC::Contentful::Model.store = store
-      preview_store = configuration.store(preview: use_preview_client)
-      WCC::Contentful::Model.preview_store = preview_store
-    else
-      store = configuration.store(preview: use_preview_client)
-      WCC::Contentful::Model.store = store
-    end
-
+    store = Services.instance.store
     if store.respond_to?(:index)
       @next_sync_token = store.find("sync:#{configuration.space}:token")
       sync!
@@ -140,6 +89,8 @@ module WCC::Contentful
       file = File.dirname(__FILE__) + "/contentful/model/#{t.name.underscore}.rb"
       require file if File.exist?(file)
     end
+
+    require_relative 'client_ext' if defined?(::Contentful)
   end
 
   ##
@@ -169,6 +120,8 @@ module WCC::Contentful
   #           the sync again after a few minutes.
   #
   def self.sync!(up_to_id: nil)
+    store = Services.instance.store
+    client = Services.instance.client
     return unless store.respond_to?(:index)
 
     @mutex.synchronize do

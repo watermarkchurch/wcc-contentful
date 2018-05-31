@@ -3,6 +3,13 @@
 RSpec.describe WCC::Contentful::Configuration do
   subject(:config) { WCC::Contentful::Configuration.new }
 
+  let(:services) { WCC::Contentful::Services.instance }
+
+  before do
+    allow(WCC::Contentful).to receive(:configuration)
+      .and_return(config)
+  end
+
   describe '#content_delivery' do
     it 'raises error when setting invalid content delivery method' do
       expect {
@@ -25,7 +32,28 @@ RSpec.describe WCC::Contentful::Configuration do
 
       # assert
       expect(config.content_delivery).to eq(:custom)
-      expect(config.store).to be(store)
+      expect(services.store).to be(store)
+    end
+
+    it 'allows setting a store class with parameters to store=' do
+      store_class =
+        Class.new do
+          attr_accessor :config
+          attr_accessor :params
+
+          def initialize(config, params)
+            @config = config
+            @params = params
+          end
+        end
+
+      # act
+      config.store = store_class, :param_1, 'param_2'
+
+      # assert
+      expect(config.content_delivery).to eq(:custom)
+      expect(services.store).to be_a(store_class)
+      expect(services.store.params).to eq([:param_1, 'param_2'])
     end
 
     context 'eager sync' do
@@ -35,7 +63,7 @@ RSpec.describe WCC::Contentful::Configuration do
 
         # assert
         expect(config.content_delivery).to eq(:eager_sync)
-        expect(config.store).to be_a(WCC::Contentful::Store::PostgresStore)
+        expect(services.store).to be_a(WCC::Contentful::Store::PostgresStore)
       end
 
       it 'uses provided store' do
@@ -46,7 +74,7 @@ RSpec.describe WCC::Contentful::Configuration do
 
         # assert
         expect(config.content_delivery).to eq(:eager_sync)
-        expect(config.store).to be(store)
+        expect(services.store).to be(store)
       end
 
       it 'errors when using a bad store' do
@@ -69,8 +97,9 @@ RSpec.describe WCC::Contentful::Configuration do
 
         # assert
         expect(config.content_delivery).to eq(:lazy_sync)
-        expect(config.store).to be_a(WCC::Contentful::Store::LazyCacheStore)
-        expect(config.store.find('test')).to eq('test data')
+        store = services.store
+        expect(store).to be_a(WCC::Contentful::Store::LazyCacheStore)
+        expect(store.find('test')).to eq('test data')
       end
 
       it 'uses provided cache' do
@@ -81,8 +110,9 @@ RSpec.describe WCC::Contentful::Configuration do
 
         # assert
         expect(config.content_delivery).to eq(:lazy_sync)
-        expect(config.store).to be_a(WCC::Contentful::Store::LazyCacheStore)
-        expect(config.store.find('test')).to eq('test data')
+        store = services.store
+        expect(store).to be_a(WCC::Contentful::Store::LazyCacheStore)
+        expect(store.find('test')).to eq('test data')
       end
     end
 
@@ -93,7 +123,8 @@ RSpec.describe WCC::Contentful::Configuration do
 
         # assert
         expect(config.content_delivery).to eq(:direct)
-        expect(config.store).to be_a(WCC::Contentful::Store::CDNAdapter)
+        store = services.store
+        expect(store).to be_a(WCC::Contentful::Store::CDNAdapter)
       end
     end
   end

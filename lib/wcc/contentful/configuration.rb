@@ -52,6 +52,7 @@ class WCC::Contentful::Configuration
 
     WCC::Contentful::Store::Factory.new(
       self,
+      nil,
       cd,
       cd_params
     ).validate!
@@ -60,30 +61,18 @@ class WCC::Contentful::Configuration
     @content_delivery_params = cd_params
   end
 
-  ##
-  # Initializes the configured Sync Store.
-  def store(preview: false)
-    if preview
-      @preview_store ||= WCC::Contentful::Store::Factory.new(
-        self,
-        :direct,
-        [{ preview: preview }]
-      ).build_sync_store
-    else
-      @store ||= WCC::Contentful::Store::Factory.new(
-        self,
-        @content_delivery,
-        @content_delivery_params
-      ).build_sync_store
-    end
-  end
+  attr_reader :content_delivery_params
 
   ##
   # Directly sets the adapter layer for communicating with Contentful
   def store=(value)
     @content_delivery = :custom
-    @store = value
+    store, *cd_params = value
+    @store = store
+    @content_delivery_params = cd_params
   end
+
+  attr_reader :store
 
   # Sets the adapter which is used to make HTTP requests.
   # If left unset, the gem attempts to load either 'http' or 'typhoeus'.
@@ -100,63 +89,6 @@ class WCC::Contentful::Configuration
     @space = ''
     @default_locale = nil
     @content_delivery = :direct
-  end
-
-  ##
-  # Gets a {CDN Client}[rdoc-ref:WCC::Contentful::SimpleClient::Cdn] which provides
-  # methods for getting and paging raw JSON data from the Contentful CDN.
-  attr_reader :client
-  attr_reader :management_client
-  attr_reader :preview_client
-
-  ##
-  # Called by WCC::Contentful.init! to configure the
-  # Contentful clients.  This method can be called independently of `init!` if
-  # the application would prefer not to generate all the models.
-  #
-  # If the {contentful.rb}[https://github.com/contentful/contentful.rb] gem is
-  # loaded, it is extended to make use of the `http_adapter` lambda.
-  def configure_contentful
-    @client = nil
-    @management_client = nil
-    @preview_client = nil
-
-    if defined?(::ContentfulModel)
-      ContentfulModel.configure do |config|
-        config.access_token = access_token
-        config.management_token = management_token if management_token.present?
-        config.space = space
-        config.default_locale = default_locale || 'en-US'
-      end
-    end
-
-    require_relative 'client_ext' if defined?(::Contentful)
-
-    @client = WCC::Contentful::SimpleClient::Cdn.new(
-      access_token: access_token,
-      space: space,
-      default_locale: default_locale,
-      adapter: http_adapter,
-      environment: environment
-    )
-
-    if preview_token.present?
-      @preview_client = WCC::Contentful::SimpleClient::Preview.new(
-        preview_token: preview_token,
-        space: space,
-        default_locale: default_locale,
-        adapter: http_adapter
-      )
-    end
-
-    return unless management_token.present?
-    @management_client = WCC::Contentful::SimpleClient::Management.new(
-      management_token: management_token,
-      space: space,
-      default_locale: default_locale,
-      adapter: http_adapter,
-      environment: environment
-    )
   end
 
   def validate!
