@@ -9,7 +9,7 @@ module WCC::Contentful
       next unless config&.management_token.present?
       next unless config.app_url.present?
 
-      WebhookEnableJob.perform_later(
+      WebhookEnableJob.set(wait: 10.seconds).perform_later(
         management_token: config.management_token,
         app_url: config.app_url,
         space: config.space,
