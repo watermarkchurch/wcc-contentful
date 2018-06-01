@@ -188,6 +188,33 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       expect(found.dig('sys', 'id')).to eq('2eXv0N3vUkIOWAauGg4q8a')
       expect(found.dig('fields', 'system', 'en-US')).to eq('One')
     end
+
+    it 'passes query params thru to client' do
+      expect(adapter.client).to receive(:entries)
+        .with({
+          locale: '*',
+          content_type: 'page',
+          'fields.slug.en-US' => '/conferences',
+          limit: 2,
+          skip: 10,
+          include: 5
+        })
+        .and_return(double(items: ['item1']))
+
+      # act
+      found = adapter.find_by(
+        content_type: 'page',
+        filter: { slug: '/conferences' },
+        query: {
+          limit: 2,
+          skip: 10,
+          include: 5
+        }
+      )
+
+      # assert
+      expect(found).to eq('item1')
+    end
   end
 
   describe '#find_all' do
@@ -242,6 +269,31 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       page = found.first
       expect(page.dig('sys', 'id')).to eq('1UojJt7YoMiemCq2mGGUmQ')
       expect(page.dig('fields', 'title', 'en-US')).to eq('Conferences')
+    end
+
+    it 'passes query params thru to client' do
+      expect(adapter.client).to receive(:entries)
+        .with({
+          locale: '*',
+          content_type: 'page',
+          limit: 2,
+          skip: 10,
+          include: 5
+        })
+        .and_return(double(count: 17))
+
+      # act
+      count = adapter.find_all(
+        content_type: 'page',
+        query: {
+          limit: 2,
+          skip: 10,
+          include: 5
+        }
+      ).count
+
+      # assert
+      expect(count).to eq(17)
     end
   end
 

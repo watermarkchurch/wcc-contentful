@@ -23,15 +23,15 @@ module WCC::Contentful::Store
       nil
     end
 
-    def find_by(content_type:, filter: nil)
+    def find_by(content_type:, filter: nil, query: nil)
       # default implementation - can be overridden
-      q = find_all(content_type: content_type)
+      q = find_all(content_type: content_type, query: query)
       q = q.apply(filter) if filter
       q.first
     end
 
-    def find_all(content_type:)
-      Query.new(@client, content_type: content_type)
+    def find_all(content_type:, query: nil)
+      Query.new(@client, { content_type: content_type }, query)
     end
 
     class Query < Base::Query
@@ -41,18 +41,19 @@ module WCC::Contentful::Store
         resolve.items
       end
 
-      def initialize(client, relation)
+      def initialize(client, relation, query = nil)
         raise ArgumentError, 'Client cannot be nil' unless client.present?
         raise ArgumentError, 'content_type must be provided' unless relation[:content_type].present?
         @client = client
         @relation = relation
+        @query = query || {}
       end
 
       def apply_operator(operator, field, expected, context = nil)
         op = operator == :eq ? nil : operator
         param = parameter(field, operator: op, context: context, locale: true)
 
-        Query.new(@client, @relation.merge(param => expected))
+        Query.new(@client, @relation.merge(param => expected), @query)
       end
 
       def nested_conditions(field, conditions, context)
@@ -98,10 +99,10 @@ module WCC::Contentful::Store
         @resolve ||=
           if @relation[:content_type] == 'Asset'
             @client.assets(
-              { locale: '*' }.merge!(@relation.reject { |k| k == :content_type })
+              { locale: '*' }.merge!(@relation.reject { |k| k == :content_type }).merge!(@query)
             )
           else
-            @client.entries({ locale: '*' }.merge!(@relation))
+            @client.entries({ locale: '*' }.merge!(@relation).merge!(@query))
           end
       end
     end
