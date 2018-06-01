@@ -86,6 +86,16 @@ class WCC::Contentful::SimpleClient
       raise ArgumentError, 'Not a collection response' unless raw['items']
       raw['items'].first
     end
+
+    def includes
+      @includes ||=
+        raw.dig('includes')&.each_with_object({}) do |(_t, entries), h|
+          entries.each { |e| h[e.dig('sys', 'id')] = e }
+        end || {}
+
+      return @includes unless @next_page
+      @includes.merge(@next_page.includes)
+    end
   end
 
   class SyncResponse < Response

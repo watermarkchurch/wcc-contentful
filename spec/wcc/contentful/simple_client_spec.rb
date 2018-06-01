@@ -253,6 +253,95 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
                  JhYhSfZPAOMqsaK8cYOUK
                ])
     end
+
+    it 'builds a hash of included links by ID' do
+      # act
+      resp = client.get('entries', { content_type: 'page', limit: 5, include: 2 })
+      # range the pages to load up the whole hash
+      resp.items.force
+
+      # assert
+      expect(resp.includes.count).to eq(73)
+
+      # loads an entry from 2 levels deep
+      expect(resp.includes['6B4mPenxokGUM2GuIEmg8C']).to eq({
+        'sys' => {
+          'space' => {
+            'sys' => {
+              'type' => 'Link',
+              'linkType' => 'Space',
+              'id' => '7yx6ovlj39n5'
+            }
+          },
+          'id' => '6B4mPenxokGUM2GuIEmg8C',
+          'type' => 'Entry',
+          'createdAt' => '2018-04-19T21:14:41.272Z',
+          'updatedAt' => '2018-04-19T21:14:41.272Z',
+          'environment' => {
+            'sys' => {
+              'id' => 'master',
+              'type' => 'Link',
+              'linkType' => 'Environment'
+            }
+          },
+          'revision' => 1,
+          'contentType' => {
+            'sys' => {
+              'type' => 'Link',
+              'linkType' => 'ContentType',
+              'id' => 'menuButton'
+            }
+          },
+          'locale' => 'en-US'
+        },
+        'fields' => {
+          'text' => 'Conflict Field Guide Download',
+          'externalLink' => 'http://www.watermark.org/dallas/ministries/community/resources/conflict-field-guide'
+        }
+      })
+
+      # loads an asset
+      expect(resp.includes['2rakCOkeRumQuig0K8uaYm']).to eq({
+        'sys' => {
+          'space' => {
+            'sys' => {
+              'type' => 'Link',
+              'linkType' => 'Space',
+              'id' => '7yx6ovlj39n5'
+            }
+          },
+          'id' => '2rakCOkeRumQuig0K8uaYm',
+          'type' => 'Asset',
+          'createdAt' => '2018-04-16T19:45:06.658Z',
+          'updatedAt' => '2018-05-21T14:55:21.976Z',
+          'environment' => {
+            'sys' => {
+              'id' => 'master',
+              'type' => 'Link',
+              'linkType' => 'Environment'
+            }
+          },
+          'revision' => 2,
+          'locale' => 'en-US'
+        },
+        'fields' => {
+          'title' => 'bg-watermark-the-porch-marvin',
+          'file' => {
+            'url' => '//images.ctfassets.net/7yx6ovlj39n5/2rakCOkeRumQuig0K8uaYm/' \
+              'ca2d47f56904a5069876856f3524990b/bg-watermark-the-porch-dea.jpg',
+            'details' => {
+              'size' => 217_715,
+              'image' => {
+                'width' => 1600,
+                'height' => 833
+              }
+            },
+            'fileName' => 'bg-watermark-the-porch-dea.jpg',
+            'contentType' => 'image/jpeg'
+          }
+        }
+      })
+    end
   end
 
   describe 'Cdn' do
