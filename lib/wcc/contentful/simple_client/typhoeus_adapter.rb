@@ -22,7 +22,7 @@ class TyphoeusAdapter
     TyphoeusAdapter::Response.new(
       Typhoeus.post(
         url,
-        body: body,
+        body: body.to_json,
         headers: headers
       )
     )

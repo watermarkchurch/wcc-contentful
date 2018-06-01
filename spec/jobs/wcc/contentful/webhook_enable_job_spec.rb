@@ -35,6 +35,7 @@ RSpec.describe WCC::Contentful::WebhookEnableJob, type: :job do
               '*.unpublish'
             ]
         }))
+        .and_return(double(raw: {}))
 
       # act
       job.enable_webhook(client,
@@ -51,6 +52,7 @@ RSpec.describe WCC::Contentful::WebhookEnableJob, type: :job do
           'httpBasicUsername' => 'testuser',
           'httpBasicPassword' => 'testpw'
         }))
+        .and_return(double(raw: {}))
 
       # act
       job.enable_webhook(client,

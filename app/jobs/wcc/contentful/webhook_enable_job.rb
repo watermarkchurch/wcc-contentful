@@ -11,16 +11,18 @@ module WCC::Contentful
       client = WCC::Contentful::SimpleClient::Management.new(
         args
       )
-      enable_webhook(client, args)
+      enable_webhook(client, args.slice(:app_url, :webhook_username, :webhook_password))
     end
 
     def enable_webhook(client, app_url:, webhook_username: nil, webhook_password: nil)
-      webhook = client.webhook_definitions.items.find { |w| w['url']&.include?(app_url) }
+      expected_url = URI.join(app_url, 'webhook/receive').to_s
+      webhook = client.webhook_definitions.items.find { |w| w['url'] == expected_url }
+      logger.debug "existing webhook: #{webhook.inspect}" if webhook
       return if webhook
 
       body = {
         'name' => 'WCC::Contentful webhook',
-        'url' => URI.join(app_url, 'webhook/receive').to_s,
+        'url' => expected_url,
         'topics' => [
           '*.publish',
           '*.unpublish'
@@ -29,7 +31,13 @@ module WCC::Contentful
       body['httpBasicUsername'] = webhook_username if webhook_username.present?
       body['httpBasicPassword'] = webhook_password if webhook_password.present?
 
-      client.post_webhook_definition(body)
+      begin
+        resp = client.post_webhook_definition(body)
+        logger.info "Created webhook: #{resp.raw.dig('sys', 'id')}"
+      rescue WCC::Contentful::SimpleClient::ApiError => e
+        logger.error "#{e.response.code}: #{e.response.raw}" if e.response
+        raise
+      end
     end
   end
 end
