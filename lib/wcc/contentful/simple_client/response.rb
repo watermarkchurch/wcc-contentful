@@ -22,6 +22,23 @@ class WCC::Contentful::SimpleClient
       raw.dig('message') || "#{code}: #{raw_response.message}"
     end
 
+    def next_page?
+      return unless raw.key? 'items'
+      raw['items'].length + raw['skip'] < raw['total']
+    end
+
+    def next_page
+      return unless next_page?
+
+      @next_page ||= @client.get(
+        @request[:url],
+        (@request[:query] || {}).merge({
+          skip: raw['items'].length + raw['skip']
+        })
+      )
+      @next_page.assert_ok!
+    end
+
     def initialize(client, request, raw_response)
       @client = client
       @request = request
@@ -37,27 +54,13 @@ class WCC::Contentful::SimpleClient
     def each_page(&block)
       raise ArgumentError, 'Not a collection response' unless raw['items']
 
-      memoized_pages = (@memoized_pages ||= [self])
       ret =
         Enumerator.new do |y|
-          page_index = 0
-          current_page = self
-          loop do
-            y << current_page
+          y << self
 
-            skip_amt = current_page.raw['items'].length + current_page.raw['skip']
-            break if current_page.raw['items'].empty? || skip_amt >= current_page.raw['total']
-
-            page_index += 1
-            if page_index < memoized_pages.length
-              current_page = memoized_pages[page_index]
-            else
-              current_page = @client.get(
-                @request[:url],
-                (@request[:query] || {}).merge({ skip: skip_amt })
-              )
-              current_page.assert_ok!
-              memoized_pages.push(current_page)
+          if next_page?
+            next_page.each_page.each do |page|
+              y << page
             end
           end
         end
@@ -90,33 +93,36 @@ class WCC::Contentful::SimpleClient
       super(response.client, response.request, response.raw_response)
     end
 
+    def next_page?
+      raw['nextPageUrl'].present?
+    end
+
+    def next_page
+      return unless next_page?
+
+      @next_page ||= SyncResponse.new(@client.get(raw['nextPageUrl']))
+      @next_page.assert_ok!
+    end
+
     def next_sync_token
-      @next_sync_token ||= SyncResponse.parse_sync_token(raw['nextSyncUrl'])
+      # If we haven't grabbed the next page yet, then our next "sync" will be getting
+      # the next page.  We could just as easily call sync again with that token.
+      @next_page&.next_sync_token ||
+        @next_sync_token ||= SyncResponse.parse_sync_token(
+          raw['nextPageUrl'] || raw['nextSyncUrl']
+        )
     end
 
     def each_page
       raise ArgumentError, 'Not a collection response' unless raw['items']
 
-      memoized_pages = (@memoized_pages ||= [self])
       ret =
         Enumerator.new do |y|
-          page_index = 0
-          current_page = self
-          loop do
-            y << current_page
+          y << self
 
-            page_index += 1
-            if page_index < memoized_pages.length
-              current_page = memoized_pages[page_index]
-            else
-              @next_sync_token = SyncResponse.parse_sync_token(
-                current_page.raw['nextPageUrl'] || current_page.raw['nextSyncUrl']
-              )
-
-              break unless current_page.raw['nextPageUrl'].present?
-              current_page = @client.get(current_page.raw['nextPageUrl'])
-              current_page.assert_ok!
-              memoized_pages.push(current_page)
+          if next_page?
+            next_page.each_page.each do |page|
+              y << page
             end
           end
         end
