@@ -35,10 +35,11 @@ module WCC::Contentful::Store
     end
 
     class Query < Base::Query
-      delegate :count, to: :resolve
+      delegate :count, to: :response
 
       def result
-        resolve.items
+        return response.items unless @query[:include]
+        response.items.map { |e| resolve_includes(e, response.includes, @query[:include]) }
       end
 
       def initialize(client, relation, query = nil)
@@ -94,9 +95,9 @@ module WCC::Contentful::Store
         field.to_s.include?('.')
       end
 
-      def resolve
-        return @resolve if @resolve
-        @resolve ||=
+      def response
+        return @response if @response
+        @response ||=
           if @relation[:content_type] == 'Asset'
             @client.assets(
               { locale: '*' }.merge!(@relation.reject { |k| k == :content_type }).merge!(@query)
@@ -104,6 +105,31 @@ module WCC::Contentful::Store
           else
             @client.entries({ locale: '*' }.merge!(@relation).merge!(@query))
           end
+      end
+
+      def resolve_includes(entry, includes, depth)
+        return entry unless depth > 0 && fields = entry['fields']
+
+        resolve_link =
+          ->(val) {
+            return val unless val.is_a?(Hash) && val.dig('sys', 'type') == 'Link'
+            return val unless included = includes[val.dig('sys', 'id')]
+            resolve_includes(included, includes, depth - 1)
+          }
+
+        fields.each do |(_name, locales)|
+          # TODO: handle non-* locale
+          locales.each do |(locale, val)|
+            locales[locale] =
+              if val.is_a? Array
+                val.map { |e| resolve_link.call(e) }
+              else
+                resolve_link.call(val)
+              end
+          end
+        end
+
+        entry
       end
     end
   end

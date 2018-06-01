@@ -199,7 +199,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
           skip: 10,
           include: 5
         })
-        .and_return(double(items: ['item1']))
+        .and_return(double(items: ['item1'], includes: {}))
 
       # act
       found = adapter.find_by(
@@ -214,6 +214,60 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
 
       # assert
       expect(found).to eq('item1')
+    end
+
+    it 'recursively resolves links if include > 0' do
+      # act
+      found = adapter.find_all(content_type: 'page', query: {
+        limit: 5,
+        include: 2
+      })
+
+      # assert
+      expect(found.result).to be_a(Enumerator::Lazy)
+      items = found.result.force
+      expect(items.count).to eq(11)
+
+      page5 = items[5]
+      expect(page5.dig('sys', 'id')).to eq('3DvAuJkpBCCos2SiGswWW4')
+
+      # depth 1
+      domain_object = page5.dig('fields', 'domainObject', 'en-US')
+      expect(domain_object.dig('sys', 'type')).to eq('Entry')
+
+      # depth 2
+      thumbnail = domain_object.dig('fields', 'thumbnail', 'en-US')
+      expect(thumbnail.dig('sys', 'type')).to eq('Asset')
+    end
+
+    it 'stops resolving links at include depth' do
+      # act
+      found = adapter.find_all(content_type: 'page', query: {
+        limit: 5,
+        include: 2
+      })
+
+      # assert
+      expect(found.result).to be_a(Enumerator::Lazy)
+      items = found.result.force
+      expect(items.count).to eq(11)
+
+      page5 = items[5]
+      expect(page5.dig('sys', 'id')).to eq('3DvAuJkpBCCos2SiGswWW4')
+
+      # depth 1
+      sections = page5.dig('fields', 'sections', 'en-US')
+      expect(sections.all? { |s| s.dig('sys', 'type') == 'Entry' }).to be true
+
+      # depth 2
+      section1 = sections[1]
+      message = section1.dig('fields', 'message', 'en-US')
+      expect(message.dig('sys', 'type')).to eq('Entry')
+
+      # depth 3
+      button = message.dig('fields', 'actionButtons', 'en-US', 0)
+      expect(button.dig('sys', 'type')).to eq('Link')
+      expect(button.dig('sys', 'linkType')).to eq('Entry')
     end
   end
 
