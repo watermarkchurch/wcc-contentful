@@ -54,9 +54,17 @@ module WCC::Contentful::ModelMethods
 
     context[id] ||= self
     load =
-      ->(id) {
+      ->(raw) {
+        id = raw.dig('sys', 'id')
         return context[id] if context.key?(id)
-        m = context[id] = WCC::Contentful::Model.find(id)
+        m = context[id] =
+              if raw.dig('sys', 'type') == 'Link'
+                WCC::Contentful::Model.find(id)
+              else
+                content_type = content_type_from_raw(raw)
+                const = WCC::Contentful::Model.resolve_constant(content_type)
+                const.new(raw, context)
+              end
 
         m.resolve(depth: depth - 1, context: context) if m && depth > 1
         m
@@ -64,9 +72,9 @@ module WCC::Contentful::ModelMethods
 
     val =
       if val.is_a? Array
-        val.map { |v| load.call(v.dig('sys', 'id')) }
-      else
-        load.call(val.dig('sys', 'id'))
+        val.map { |v| load.call(v) if v }
+      elsif val
+        load.call(val)
       end
 
     instance_variable_set(var_name + '_resolved', val)
