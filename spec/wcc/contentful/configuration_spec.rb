@@ -128,4 +128,76 @@ RSpec.describe WCC::Contentful::Configuration do
       end
     end
   end
+
+  describe '#validate!' do
+    it 'errors when non-master environment combined with sync delivery strategy' do
+      config.space = 'test_space'
+      config.access_token = 'test_token'
+
+      # good
+      config.environment = ''
+      config.content_delivery = :lazy_sync
+      config.validate!
+
+      config.content_delivery = :eager_sync
+      config.validate!
+
+      config.environment = 'staging'
+      config.content_delivery = :direct
+      config.validate!
+
+      # bad
+      config.environment = 'staging'
+      expect {
+        config.content_delivery = :lazy_sync
+        config.validate!
+      }.to raise_error(ArgumentError)
+
+      expect {
+        config.content_delivery = :eager_sync
+        config.validate!
+      }.to raise_error(ArgumentError)
+    end
+
+    require 'active_job'
+    it 'errors when non-callable object given to webhook_jobs' do
+      config.space = 'test_space'
+      config.access_token = 'test_token'
+
+      callable_class =
+        Class.new {
+          def call(evt)
+          end
+        }
+      some_job_class =
+        Class.new(ActiveJob::Base) {
+          def perform(args)
+          end
+        }
+
+      # good
+      config.webhook_jobs << ->(e) {}
+      config.webhook_jobs << proc {}
+      config.webhook_jobs << callable_class.new
+      config.webhook_jobs << some_job_class
+
+      config.validate!
+
+      # bad
+      expect {
+        config.webhook_jobs = ['some string']
+        config.validate!
+      }.to raise_error(ArgumentError)
+
+      expect {
+        config.webhook_jobs = [callable_class]
+        config.validate!
+      }.to raise_error(ArgumentError)
+
+      expect {
+        config.webhook_jobs = [some_job_class.new]
+        config.validate!
+      }.to raise_error(ArgumentError)
+    end
+  end
 end

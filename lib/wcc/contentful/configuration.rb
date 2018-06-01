@@ -14,6 +14,7 @@ class WCC::Contentful::Configuration
     sync_cache_store
     webhook_username
     webhook_password
+    webhook_jobs
   ].freeze
   attr_accessor(*ATTRIBUTES)
 
@@ -89,11 +90,17 @@ class WCC::Contentful::Configuration
     @space = ''
     @default_locale = nil
     @content_delivery = :direct
+    @webhook_jobs = []
   end
 
   def validate!
     raise ArgumentError, 'Please provide "space"' unless space.present?
     raise ArgumentError, 'Please provide "access_token"' unless access_token.present?
+
+    webhook_jobs&.each do |job|
+      next if job.respond_to?(:call) || job.respond_to?(:perform_later)
+      raise ArgumentError, "The job '#{job}' must be an instance of ActiveJob::Base or respond to :call"
+    end
 
     return unless environment.present? && %i[eager_sync lazy_sync].include?(content_delivery)
     raise ArgumentError, 'The Contentful Sync API currently does not work with environments.  ' \
