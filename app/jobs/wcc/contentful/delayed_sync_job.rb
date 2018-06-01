@@ -13,9 +13,10 @@ module WCC::Contentful
       @mutex ||= Mutex.new
     end
 
-    def perform(*args)
-      sync_options = args.first || {}
-      sync!(**sync_options)
+    def perform(event = nil)
+      up_to_id = nil
+      up_to_id = event[:up_to_id] || event.dig('sys', 'id') if event
+      sync!(up_to_id: up_to_id)
     end
 
     ##
