@@ -389,6 +389,118 @@ RSpec.shared_examples 'contentful store' do
       expect(found).to_not be_nil
       expect(found.dig('sys', 'id')).to eq('k5')
     end
+
+    it 'recursively resolves links if include > 0' do
+      root = {
+        'sys' => {
+          'id' => 'root',
+          'contentType' => { 'sys' => { 'id' => 'root' } }
+        },
+        'fields' => {
+          'name' => { 'en-US' => 'root' },
+          'link' => { 'en-US' => make_link_to('deep1') },
+          'links' => { 'en-US' => [
+            make_link_to('shallow3'),
+            make_link_to('deep2')
+          ] }
+        }
+      }
+      shallow =
+        1.upto(3).map do |i|
+          {
+            'sys' => { 'id' => "shallow#{i}", 'contentType' => make_link_to('shallow', 'ContentType') },
+            'fields' => { 'name' => { 'en-US' => "shallow#{i}" } }
+          }
+        end
+      deep =
+        1.upto(2).map do |i|
+          {
+            'sys' => { 'id' => "deep#{i}", 'contentType' => make_link_to('deep', 'ContentType') },
+            'fields' => {
+              'name' => { 'en-US' => "deep#{i}" },
+              'subLink' => { 'en-US' => make_link_to("shallow#{i}") }
+            }
+          }
+        end
+
+      [root, *shallow, *deep].each { |d| subject.set(d.dig('sys', 'id'), d) }
+
+      # act
+      found = subject.find_by(content_type: 'root', filter: { name: 'root' }, query: {
+        include: 2
+      })
+
+      # assert
+      expect(found.dig('sys', 'id')).to eq('root')
+
+      # depth 1
+      link = found.dig('fields', 'link', 'en-US')
+      expect(link.dig('fields', 'name', 'en-US')).to eq('deep1')
+      links = found.dig('fields', 'links', 'en-US')
+      expect(links[0].dig('fields', 'name', 'en-US')).to eq('shallow3')
+
+      # depth 2
+      expect(link.dig('fields', 'subLink', 'en-US', 'fields', 'name', 'en-US'))
+        .to eq('shallow1')
+      expect(links[1].dig('fields', 'subLink', 'en-US', 'fields', 'name', 'en-US'))
+        .to eq('shallow2')
+    end
+
+    it 'stops resolving links at include depth' do
+      root = {
+        'sys' => {
+          'id' => 'root',
+          'contentType' => { 'sys' => { 'id' => 'root' } }
+        },
+        'fields' => {
+          'name' => { 'en-US' => 'root' },
+          'link' => { 'en-US' => make_link_to('deep1') },
+          'links' => { 'en-US' => [
+            make_link_to('shallow3'),
+            make_link_to('deep2')
+          ] }
+        }
+      }
+      shallow =
+        1.upto(3).map do |i|
+          {
+            'sys' => { 'id' => "shallow#{i}", 'contentType' => make_link_to('shallow', 'ContentType') },
+            'fields' => { 'name' => { 'en-US' => "shallow#{i}" } }
+          }
+        end
+      deep =
+        1.upto(2).map do |i|
+          {
+            'sys' => { 'id' => "deep#{i}", 'contentType' => make_link_to('deep', 'ContentType') },
+            'fields' => {
+              'name' => { 'en-US' => "deep#{i}" },
+              'subLink' => { 'en-US' => make_link_to("shallow#{i}") }
+            }
+          }
+        end
+
+      [root, *shallow, *deep].each { |d| subject.set(d.dig('sys', 'id'), d) }
+
+      # act
+      found = subject.find_by(content_type: 'root', filter: { name: 'root' }, query: {
+        include: 1
+      })
+
+      # assert
+      expect(found.dig('sys', 'id')).to eq('root')
+
+      # depth 1
+      link = found.dig('fields', 'link', 'en-US')
+      expect(link.dig('fields', 'name', 'en-US')).to eq('deep1')
+      links = found.dig('fields', 'links', 'en-US')
+      expect(links[0].dig('fields', 'name', 'en-US')).to eq('shallow3')
+
+      # depth 2
+      expect(link.dig('fields', 'subLink', 'en-US', 'sys', 'type'))
+        .to eq('Link')
+      expect(links[1].dig('fields', 'subLink', 'en-US', 'sys', 'type'))
+        .to eq('Link')
+    end
   end
 
   describe '#find_all' do
@@ -456,5 +568,15 @@ RSpec.shared_examples 'contentful store' do
       expect(found.count).to eq(1)
       expect(found.first.dig('sys', 'id')).to eq('k5')
     end
+  end
+
+  def make_link_to(id, link_type = 'Entry')
+    {
+      'sys' => {
+        'type' => 'Link',
+        'linkType' => link_type,
+        'id' => id
+      }
+    }
   end
 end

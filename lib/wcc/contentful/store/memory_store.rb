@@ -32,7 +32,7 @@ module WCC::Contentful::Store
       end
     end
 
-    def find_all(content_type:)
+    def find_all(content_type:, query: nil)
       relation = mutex.with_read_lock { @hash.values }
 
       relation =
@@ -40,29 +40,32 @@ module WCC::Contentful::Store
           value_content_type = v.dig('sys', 'contentType', 'sys', 'id')
           value_content_type.nil? || value_content_type != content_type
         end
-      Query.new(relation)
+      Query.new(self, relation, query)
     end
 
     class Query < Base::Query
       def result
-        @relation.dup
+        return @relation.dup unless @query[:include]
+        @relation.map { |e| resolve_includes(e, @query[:include]) }
       end
 
-      def initialize(relation)
+      def initialize(store, relation, query = nil)
+        super(store)
         @relation = relation
+        @query = query || {}
       end
 
       def eq(field, expected, context = nil)
         locale = context[:locale] if context.present?
         locale ||= 'en-US'
-        Query.new(@relation.select do |v|
+        Query.new(@store, @relation.select do |v|
           val = v.dig('fields', field, locale)
           if val.is_a? Array
             val.include?(expected)
           else
             val == expected
           end
-        end)
+        end, @query)
       end
     end
   end

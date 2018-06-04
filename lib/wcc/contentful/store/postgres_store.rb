@@ -38,21 +38,25 @@ module WCC::Contentful::Store
       JSON.parse(result.getvalue(0, 1))
     end
 
-    def find_all(content_type:)
+    def find_all(content_type:, query: nil)
       statement = "WHERE data->'sys'->'contentType'->'sys'->>'id' = $1"
       Query.new(
+        self,
         @conn,
         statement,
-        [content_type]
+        [content_type],
+        query
       )
     end
 
     class Query < Base::Query
-      def initialize(conn, statement = nil, params = nil)
+      def initialize(store, conn, statement = nil, params = nil, options = nil)
+        super(store)
         @conn = conn
         @statement = statement ||
           "WHERE data->'sys'->>'id' IS NOT NULL"
         @params = params || []
+        @options = options || {}
       end
 
       def eq(field, expected, context = nil)
@@ -65,9 +69,11 @@ module WCC::Contentful::Store
           "->$#{push_param(locale, params)} ? $#{push_param(expected, params)}"
 
         Query.new(
+          @store,
           @conn,
           statement,
-          params
+          params,
+          @options
         )
       end
 
@@ -82,20 +88,38 @@ module WCC::Contentful::Store
         return @first if @first
         statement = 'SELECT * FROM contentful_raw ' + @statement + ' LIMIT 1'
         result = @conn.exec(statement, @params)
-        JSON.parse(result.getvalue(0, 1))
+        resolve_includes(
+          JSON.parse(result.getvalue(0, 1)),
+          @options[:include]
+        )
       end
 
       def map
         arr = []
-        resolve.each { |row| arr << yield(JSON.parse(row['data'])) }
+        resolve.each do |row|
+          arr << yield(
+          resolve_includes(
+            JSON.parse(row['data']),
+            @options[:include]
+            )
+          )
+        end
         arr
       end
 
       def result
         arr = []
-        resolve.each { |row| arr << JSON.parse(row['data']) }
+        resolve.each do |row|
+          arr <<
+            resolve_includes(
+              JSON.parse(row['data']),
+              @options[:include]
+             )
+        end
         arr
       end
+
+      # TODO: override resolve_includes to make it more efficient
 
       private
 

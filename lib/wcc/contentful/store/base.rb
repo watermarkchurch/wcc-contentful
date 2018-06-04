@@ -43,15 +43,15 @@ module WCC::Contentful::Store
       end
     end
 
-    def find_by(content_type:, filter: nil)
+    def find_by(content_type:, filter: nil, query: nil)
       # default implementation - can be overridden
-      q = find_all(content_type: content_type)
+      q = find_all(content_type: content_type, query: query)
       q = q.apply(filter) if filter
       q.first
     end
 
     # rubocop:disable Lint/UnusedMethodArgument
-    def find_all(content_type:)
+    def find_all(content_type:, query: nil)
       raise NotImplementedError, "#{self.class} does not implement find_all"
     end
     # rubocop:enable Lint/UnusedMethodArgument
@@ -88,6 +88,10 @@ module WCC::Contentful::Store
         raise NotImplementedError
       end
 
+      def initialize(store)
+        @store = store
+      end
+
       def apply_operator(operator, field, expected, context = nil)
         respond_to?(operator) ||
           raise(ArgumentError, "Operator not implemented: #{operator}")
@@ -107,6 +111,33 @@ module WCC::Contentful::Store
             query.apply_operator(:eq, field.to_s, value)
           end
         end
+      end
+
+      protected
+
+      ## naiive implementation
+      def resolve_includes(entry, depth)
+        return entry unless entry && depth && depth > 0 && fields = entry['fields']
+
+        fields.each do |(_name, locales)|
+          # TODO: handle non-* locale
+          locales.each do |(locale, val)|
+            locales[locale] =
+              if val.is_a? Array
+                val.map { |e| resolve_link(e, depth) }
+              else
+                resolve_link(val, depth)
+              end
+          end
+        end
+
+        entry
+      end
+
+      def resolve_link(val, depth)
+        return val unless val.is_a?(Hash) && val.dig('sys', 'type') == 'Link'
+        return val unless included = @store.find(val.dig('sys', 'id'))
+        resolve_includes(included, depth - 1)
       end
 
       private

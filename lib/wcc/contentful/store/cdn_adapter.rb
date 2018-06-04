@@ -31,7 +31,7 @@ module WCC::Contentful::Store
     end
 
     def find_all(content_type:, query: nil)
-      Query.new(@client, { content_type: content_type }, query)
+      Query.new(self, @client, { content_type: content_type }, query)
     end
 
     class Query < Base::Query
@@ -39,12 +39,14 @@ module WCC::Contentful::Store
 
       def result
         return response.items unless @query[:include]
-        response.items.map { |e| resolve_includes(e, response.includes, @query[:include]) }
+        response.items.map { |e| resolve_includes(e, @query[:include]) }
       end
 
-      def initialize(client, relation, query = nil)
+      def initialize(store, client, relation, query = nil)
         raise ArgumentError, 'Client cannot be nil' unless client.present?
         raise ArgumentError, 'content_type must be provided' unless relation[:content_type].present?
+
+        super(store)
         @client = client
         @relation = relation
         @query = query || {}
@@ -54,7 +56,7 @@ module WCC::Contentful::Store
         op = operator == :eq ? nil : operator
         param = parameter(field, operator: op, context: context, locale: true)
 
-        Query.new(@client, @relation.merge(param => expected), @query)
+        Query.new(@store, @client, @relation.merge(param => expected), @query)
       end
 
       def nested_conditions(field, conditions, context)
@@ -107,29 +109,10 @@ module WCC::Contentful::Store
           end
       end
 
-      def resolve_includes(entry, includes, depth)
-        return entry unless depth > 0 && fields = entry['fields']
-
-        resolve_link =
-          ->(val) {
-            return val unless val.is_a?(Hash) && val.dig('sys', 'type') == 'Link'
-            return val unless included = includes[val.dig('sys', 'id')]
-            resolve_includes(included, includes, depth - 1)
-          }
-
-        fields.each do |(_name, locales)|
-          # TODO: handle non-* locale
-          locales.each do |(locale, val)|
-            locales[locale] =
-              if val.is_a? Array
-                val.map { |e| resolve_link.call(e) }
-              else
-                resolve_link.call(val)
-              end
-          end
-        end
-
-        entry
+      def resolve_link(val, depth)
+        return val unless val.is_a?(Hash) && val.dig('sys', 'type') == 'Link'
+        return val unless included = response.includes[val.dig('sys', 'id')]
+        resolve_includes(included, depth - 1)
       end
     end
   end

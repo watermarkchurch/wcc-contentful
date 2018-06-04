@@ -94,6 +94,7 @@ class WCC::Contentful::SimpleClient
         end || {}
 
       return @includes unless @next_page
+      # This could be more efficient - maybe not worth worrying about
       @includes.merge(@next_page.includes)
     end
   end
