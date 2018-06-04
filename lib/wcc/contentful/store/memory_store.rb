@@ -37,7 +37,7 @@ module WCC::Contentful::Store
 
       relation =
         relation.reject do |v|
-          value_content_type = v.dig('sys', 'contentType', 'sys', 'id')
+          value_content_type = v.try(:dig, 'sys', 'contentType', 'sys', 'id')
           value_content_type.nil? || value_content_type != content_type
         end
       Query.new(self, relation, query)
