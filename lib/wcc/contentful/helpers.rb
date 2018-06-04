@@ -5,9 +5,9 @@ module WCC::Contentful::Helpers
 
   def content_type_from_raw(value)
     case value.dig('sys', 'type')
-    when 'Entry'
+    when 'Entry', 'DeletedEntry'
       value.dig('sys', 'contentType', 'sys', 'id')
-    when 'Asset'
+    when 'Asset', 'DeletedAsset'
       'Asset'
     else
       raise ArgumentError, "Unknown content type '#{value.dig('sys', 'type') || 'null'}'"
