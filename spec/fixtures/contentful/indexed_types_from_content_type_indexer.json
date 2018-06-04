@@ -103,7 +103,7 @@
     }
   },
   "section-VideoHighlight": {
-    "name": "Section_VideoHighlight",
+    "name": "SectionVideohighlight",
     "content_type": "section-VideoHighlight",
     "fields": {
       "text": {
@@ -296,7 +296,7 @@
     }
   },
   "section-CardSearch": {
-    "name": "Section_CardSearch",
+    "name": "SectionCardsearch",
     "content_type": "section-CardSearch",
     "fields": {
       "name": {
@@ -418,7 +418,7 @@
     }
   },
   "section-Faq": {
-    "name": "Section_Faq",
+    "name": "SectionFaq",
     "content_type": "section-Faq",
     "fields": {
       "helpText": {
@@ -454,7 +454,7 @@
     }
   },
   "section-Testimonials": {
-    "name": "Section_Testimonials",
+    "name": "SectionTestimonials",
     "content_type": "section-Testimonials",
     "fields": {
       "title": {

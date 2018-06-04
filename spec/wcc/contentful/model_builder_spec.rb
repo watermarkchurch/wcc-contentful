@@ -33,10 +33,10 @@ RSpec.describe WCC::Contentful::ModelBuilder do
         WCC::Contentful::Model::MinistryCard
         WCC::Contentful::Model::Page
         WCC::Contentful::Model::Redirect2
-        WCC::Contentful::Model::Section_CardSearch
-        WCC::Contentful::Model::Section_Faq
-        WCC::Contentful::Model::Section_Testimonials
-        WCC::Contentful::Model::Section_VideoHighlight
+        WCC::Contentful::Model::SectionCardsearch
+        WCC::Contentful::Model::SectionFaq
+        WCC::Contentful::Model::SectionTestimonials
+        WCC::Contentful::Model::SectionVideohighlight
         WCC::Contentful::Model::Testimonial
         WCC::Contentful::Model::Theme
       ]
@@ -284,6 +284,28 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     expect(homepage.favicons.length).to eq(4)
     expect(homepage.favicons[0]).to be_instance_of(WCC::Contentful::Model::Asset)
     expect(homepage.favicons[0].file.fileName).to eq('favicon.ico')
+  end
+
+  context 'with options' do
+    it 'find_by preloads links when include param > 0' do
+      @schema = subject.build_models
+
+      # act
+      home_page = WCC::Contentful::Model::Homepage.find_by(
+        options: { include: 1 },
+        site_title: 'Watermark Resources'
+      )
+
+      # assert
+      # no on-demand link resolution, it's already been resolved
+      expect(store).to_not receive(:find)
+
+      expect(home_page.heroImage).to be_a(WCC::Contentful::Model::Asset)
+      expect(home_page.heroImage.file.fileName).to eq('worship.jpg')
+
+      expect(home_page.sections[0]).to be_a(WCC::Contentful::Model::SectionFaq)
+      expect(home_page.sections[0].helpText).to eq('asdf')
+    end
   end
 
   describe 'model subclasses' do

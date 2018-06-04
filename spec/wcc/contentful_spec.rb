@@ -47,8 +47,8 @@ RSpec.describe WCC::Contentful, :vcr do
             record: :none
           ) do
             redirect = WCC::Contentful::Model::Redirect.find_by(
-              { slug: 'published-redirect' },
-              preview: true
+              slug: 'published-redirect',
+              options: { preview: true }
             )
 
             expect(redirect).to_not be_nil
@@ -70,8 +70,8 @@ RSpec.describe WCC::Contentful, :vcr do
             record: :none
           ) do
             redirect = WCC::Contentful::Model::Redirect.find_by(
-              { slug: 'published-redirect' },
-              preview: false
+              slug: 'published-redirect',
+              options: { preview: false }
             )
 
             expect(redirect).to_not be_nil
@@ -93,8 +93,8 @@ RSpec.describe WCC::Contentful, :vcr do
             record: :none
           ) do
             redirect = WCC::Contentful::Model::Redirect.find_by(
-              { slug: 'draft-redirect' },
-              preview: false
+              slug: 'draft-redirect',
+              options: { preview: false }
             )
 
             expect(redirect).to be_nil
@@ -115,8 +115,8 @@ RSpec.describe WCC::Contentful, :vcr do
             record: :none
           ) do
             redirect = WCC::Contentful::Model::Redirect.find_by(
-              { slug: 'draft-redirect' },
-              preview: true
+              slug: 'draft-redirect',
+              options: { preview: true }
             )
 
             expect(redirect).to_not be_nil
@@ -369,8 +369,8 @@ RSpec.describe WCC::Contentful, :vcr do
           ) do
             expect {
               WCC::Contentful::Model::Menu.find_by(
-                { id: 'menuId' },
-                preview: true
+                id: 'menuId',
+                options: { preview: true }
               )
             }.to raise_error(ArgumentError)
           end

@@ -32,10 +32,10 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
           MinistryCard
           Page
           Redirect2
-          Section_CardSearch
-          Section_Faq
-          Section_Testimonials
-          Section_VideoHighlight
+          SectionCardsearch
+          SectionFaq
+          SectionTestimonials
+          SectionVideohighlight
           Testimonial
           Theme
           allAsset
@@ -49,10 +49,10 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
           allMinistryCard
           allPage
           allRedirect2
-          allSection_CardSearch
-          allSection_Faq
-          allSection_Testimonials
-          allSection_VideoHighlight
+          allSectionCardsearch
+          allSectionFaq
+          allSectionTestimonials
+          allSectionVideohighlight
           allTestimonial
           allTheme
         ]
@@ -187,7 +187,7 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
 
       # act
       query_string = '{
-      faq: Section_Faq(id: "6nDGEkPhn28Awg2MqeEAAK") {
+      faq: SectionFaq(id: "6nDGEkPhn28Awg2MqeEAAK") {
         faqs {
           question
           answer
@@ -209,14 +209,14 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
       query_string = '{
       home: Homepage {
         sections {
-          ... on Section_Faq {
+          ... on SectionFaq {
             _content_type
             faqs {
               question
               answer
             }
           }
-          ... on Section_VideoHighlight {
+          ... on SectionVideohighlight {
             _content_type
             youtubeLink
           }
@@ -291,10 +291,10 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
           MinistryCard
           Page
           Redirect2
-          Section_CardSearch
-          Section_Faq
-          Section_Testimonials
-          Section_VideoHighlight
+          SectionCardsearch
+          SectionFaq
+          SectionTestimonials
+          SectionVideohighlight
           Testimonial
           Theme
           allAsset
@@ -308,10 +308,10 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
           allMinistryCard
           allPage
           allRedirect2
-          allSection_CardSearch
-          allSection_Faq
-          allSection_Testimonials
-          allSection_VideoHighlight
+          allSectionCardsearch
+          allSectionFaq
+          allSectionTestimonials
+          allSectionVideohighlight
           allTestimonial
           allTheme
         ]
@@ -414,7 +414,7 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
 
       # act
       query_string = '{
-      faq: Section_Faq(id: "6nDGEkPhn28Awg2MqeEAAK") {
+      faq: SectionFaq(id: "6nDGEkPhn28Awg2MqeEAAK") {
         faqs {
           question
           answer
@@ -436,13 +436,13 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
       query_string = '{
       home: Homepage {
         sections {
-          ... on Section_Faq {
+          ... on SectionFaq {
             faqs {
               question
               answer
             }
           }
-          ... on Section_VideoHighlight {
+          ... on SectionVideohighlight {
             youtubeLink
           }
         }

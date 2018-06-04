@@ -17,31 +17,38 @@ module WCC::Contentful::ModelSingletonMethods
     end
   end
 
-  def find(id, context: nil, preview: false)
-    raw = store(preview).find(id)
-    new(raw, context) if raw.present?
+  def find(id, options: nil)
+    options ||= {}
+    raw = store(options[:preview]).find(id)
+    new(raw, options) if raw.present?
   end
 
-  def find_all(context: nil, preview: false, **filter)
+  def find_all(filter = nil)
+    options = filter&.delete(:options) || {}
+
     if filter
       filter.transform_keys! { |k| k.to_s.camelize(:lower) }
       bad_fields = filter.keys.reject { |k| self::FIELDS.include?(k) }
       raise ArgumentError, "These fields do not exist: #{bad_fields}" unless bad_fields.empty?
     end
 
-    query = store(preview).find_all(content_type: content_type)
+    query = store(options.delete(:preview))
+      .find_all(content_type: content_type, query: options)
     query = query.apply(filter) if filter
-    query.map { |r| new(r, context) }
+    query.map { |r| new(r, options) }
   end
 
-  def find_by(context: nil, preview: false, **filter)
+  def find_by(filter = nil)
+    options = filter&.delete(:options) || {}
+
     filter.transform_keys! { |k| k.to_s.camelize(:lower) }
     bad_fields = filter.keys.reject { |k| self::FIELDS.include?(k) }
     raise ArgumentError, "These fields do not exist: #{bad_fields}" unless bad_fields.empty?
 
-    result = store(preview).find_by(content_type: content_type, filter: filter)
+    result = store(options.delete(:preview))
+      .find_by(content_type: content_type, filter: filter, query: options)
 
-    new(result, context) if result
+    new(result, options) if result
   end
 
   def inherited(subclass)
