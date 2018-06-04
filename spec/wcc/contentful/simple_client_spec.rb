@@ -270,7 +270,7 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
             'sys' => {
               'type' => 'Link',
               'linkType' => 'Space',
-              'id' => '7yx6ovlj39n5'
+              'id' => contentful_space_id
             }
           },
           'id' => '6B4mPenxokGUM2GuIEmg8C',
@@ -307,7 +307,7 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
             'sys' => {
               'type' => 'Link',
               'linkType' => 'Space',
-              'id' => '7yx6ovlj39n5'
+              'id' => contentful_space_id
             }
           },
           'id' => '2rakCOkeRumQuig0K8uaYm',
@@ -327,7 +327,7 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
         'fields' => {
           'title' => 'bg-watermark-the-porch-marvin',
           'file' => {
-            'url' => '//images.ctfassets.net/7yx6ovlj39n5/2rakCOkeRumQuig0K8uaYm/' \
+            'url' => "//images.ctfassets.net/#{contentful_space_id}/2rakCOkeRumQuig0K8uaYm/" \
               'ca2d47f56904a5069876856f3524990b/bg-watermark-the-porch-dea.jpg',
             'details' => {
               'size' => 217_715,
