@@ -10,6 +10,11 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     load_store_from_sync
   }
 
+  before do
+    allow(WCC::Contentful::Services.instance).to receive(:store)
+      .and_return(store)
+  end
+
   it 'builds models from loaded types' do
     # act
     @schema = subject.build_models
@@ -42,7 +47,6 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
   it 'finds types by ID' do
     @schema = subject.build_models
-    WCC::Contentful::Model.store = store
 
     # act
     main_menu = WCC::Contentful::Model.find('FNlqULSV0sOy4IoGmyWOW')
@@ -60,7 +64,6 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
   it 'finds by ID on derived class' do
     @schema = subject.build_models
-    WCC::Contentful::Model.store = store
 
     # act
     main_menu = WCC::Contentful::Model::Menu.find('FNlqULSV0sOy4IoGmyWOW')
@@ -78,7 +81,6 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
   it 'returns nil if cannot find ID' do
     @schema = subject.build_models
-    WCC::Contentful::Model.store = store
 
     # act
     main_menu = WCC::Contentful::Model::Menu.find('asdf')
@@ -89,7 +91,6 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
   it 'errors fast if ID is wrong content type' do
     @schema = subject.build_models
-    WCC::Contentful::Model.store = store
 
     # act
     expect {
@@ -99,7 +100,6 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
   it 'finds types by content type' do
     @schema = subject.build_models
-    WCC::Contentful::Model.store = store
 
     # act
     menu_items = WCC::Contentful::Model::MenuButton.find_all
@@ -132,7 +132,6 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
   it 'finds with filter' do
     @schema = subject.build_models
-    WCC::Contentful::Model.store = store
 
     # act
     menu_items = WCC::Contentful::Model::MenuButton.find_all(button_style: 'custom')
@@ -146,9 +145,8 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
   it 'returns empty array if find_all finds nothing' do
     @schema = subject.build_models
-    WCC::Contentful::Model.store = double
     store_resp = double
-    expect(WCC::Contentful::Model.store).to receive(:find_all).and_return(store_resp)
+    expect(store).to receive(:find_all).and_return(store_resp)
     expect(store_resp).to receive(:apply).and_return(store_resp)
 
     expect(store_resp).to_not be_nil
@@ -164,7 +162,6 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
   it 'finds single item with filter' do
     @schema = subject.build_models
-    WCC::Contentful::Model.store = store
 
     # act
     redirect = WCC::Contentful::Model::Redirect2.find_by(slug: 'mister_roboto')
@@ -176,7 +173,6 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
   it 'returns nil if find_by finds nothing' do
     @schema = subject.build_models
-    WCC::Contentful::Model.store = store
 
     # act
     redirect = WCC::Contentful::Model::Redirect2.find_by(slug: 'asdf')
@@ -187,7 +183,6 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
   it 'resolves numeric fields' do
     @schema = subject.build_models
-    WCC::Contentful::Model.store = store
 
     # act
     faq = WCC::Contentful::Model::Faq.find_all.first
@@ -199,7 +194,6 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
   it 'resolves date times and json blobs' do
     @schema = subject.build_models
-    WCC::Contentful::Model.store = store
 
     # act
     migration = WCC::Contentful::Model::MigrationHistory.find_all.first
@@ -230,7 +224,6 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
   it 'resolves coordinates' do
     @schema = subject.build_models
-    WCC::Contentful::Model.store = store
 
     # act
     faq = WCC::Contentful::Model::Faq.find('1nzrZZShhWQsMcey28uOUQ')
@@ -242,7 +235,6 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
   it 'resolves linked types' do
     @schema = subject.build_models
-    WCC::Contentful::Model.store = store
 
     # act
     main_menu = WCC::Contentful::Model::Menu.find('FNlqULSV0sOy4IoGmyWOW')
@@ -256,7 +248,6 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
   it 'handles nil linked types' do
     @schema = subject.build_models
-    WCC::Contentful::Model.store = store
 
     # act
     ministries_page = WCC::Contentful::Model::Page.find('JhYhSfZPAOMqsaK8cYOUK')
@@ -267,7 +258,6 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
   it 'linked arrays are empty when no links found' do
     @schema = subject.build_models
-    WCC::Contentful::Model.store = store
 
     # act
     privacy_policy_page = WCC::Contentful::Model::Page.find('1tPGouM76soIsM2e0uikgw')
@@ -278,7 +268,6 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
   it 'resolves linked assets' do
     @schema = subject.build_models
-    WCC::Contentful::Model.store = store
 
     # act
     homepage = WCC::Contentful::Model::Homepage.find_all.first
@@ -300,7 +289,6 @@ RSpec.describe WCC::Contentful::ModelBuilder do
   describe 'model subclasses' do
     before do
       @shema = subject.build_models
-      WCC::Contentful::Model.store = store
     end
 
     after do
@@ -390,7 +378,6 @@ RSpec.describe WCC::Contentful::ModelBuilder do
   describe 'model class registry' do
     before do
       @schema = subject.build_models
-      WCC::Contentful::Model.store = store
     end
 
     after do

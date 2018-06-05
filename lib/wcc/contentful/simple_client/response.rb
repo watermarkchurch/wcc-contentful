@@ -105,15 +105,17 @@ class WCC::Contentful::SimpleClient
           loop do
             y << current_page
 
-            break if current_page.raw['items'].empty?
-
             page_index += 1
             if page_index < memoized_pages.length
               current_page = memoized_pages[page_index]
             else
-              current_page = @client.get(raw['nextSyncUrl'])
+              @next_sync_token = SyncResponse.parse_sync_token(
+                current_page.raw['nextPageUrl'] || current_page.raw['nextSyncUrl']
+              )
+
+              break unless current_page.raw['nextPageUrl'].present?
+              current_page = @client.get(current_page.raw['nextPageUrl'])
               current_page.assert_ok!
-              @next_sync_token = SyncResponse.parse_sync_token(current_page.raw['nextSyncUrl'])
               memoized_pages.push(current_page)
             end
           end
@@ -127,7 +129,8 @@ class WCC::Contentful::SimpleClient
     end
 
     def count
-      raw['items'].length
+      raise NotImplementedError,
+        'Sync does not return an accurate total.  Use #items.count instead.'
     end
 
     def self.parse_sync_token(url)

@@ -5,9 +5,33 @@ require_dependency 'wcc/contentful/application_controller'
 module WCC::Contentful
   class WebhookController < ApplicationController
     before_action :authorize_contentful
+    protect_from_forgery unless: -> { request.format.json? }
+
+    rescue_from ActionController::ParameterMissing do |_e|
+      render json: { msg: 'The request must conform to Contentful webhook structure' }, status: 400
+    end
 
     def receive
-      WCC::Contentful.sync!(up_to_id: params.dig('sys', 'id'))
+      jobs = [WCC::Contentful::DelayedSyncJob, *WCC::Contentful.configuration.webhook_jobs]
+
+      event = params.require('webhook').permit!
+      event.require('sys').require(%w[id type])
+      event = event.to_h
+
+      jobs.each do |job|
+        begin
+          if job.respond_to?(:perform_later)
+            job.perform_later(event)
+          elsif job.respond_to?(:call)
+            job.call(event)
+          else
+            Rails.logger.error "Misconfigured webhook job: #{job} does not respond to " \
+              ':perform_later or :call'
+          end
+        rescue StandardError => e
+          Rails.logger.error "Error in job #{job}: #{e}"
+        end
+      end
     end
 
     def authorize_contentful

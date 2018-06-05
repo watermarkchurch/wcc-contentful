@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'simple_client/response'
+require_relative 'simple_client/management'
 
 module WCC::Contentful
   ##
@@ -13,19 +14,22 @@ module WCC::Contentful
   # The SimpleClient by default uses 'http' to perform the gets, but any HTTP
   # client can be injected by passing a proc as the `adapter:` option.
   class SimpleClient
+    attr_reader :api_url
+    attr_reader :space
+
     def initialize(api_url:, space:, access_token:, **options)
       @api_url = URI.join(api_url, '/spaces/', space + '/')
       @space = space
       @access_token = access_token
 
-      @get_http = SimpleClient.load_adapter(options[:adapter])
+      @adapter = SimpleClient.load_adapter(options[:adapter])
 
       @options = options
       @query_defaults = {}
       @query_defaults[:locale] = @options[:default_locale] if @options[:default_locale]
 
-      return unless env = options[:environment]
-      @api_url = URI.join(@api_url, 'environments/', env + '/')
+      return unless options[:environment].present?
+      @api_url = URI.join(@api_url, 'environments/', options[:environment] + '/')
     end
 
     def get(path, query = {})
@@ -79,7 +83,7 @@ module WCC::Contentful
       q = @query_defaults.dup
       q = q.merge(query) if query
 
-      resp = @get_http.call(url, q, headers, proxy)
+      resp = @adapter.call(url, q, headers, proxy)
 
       if [301, 302, 307].include?(resp.code) && !@options[:no_follow_redirects]
         resp = get_http(resp.headers['location'], nil, headers, proxy)
@@ -157,26 +161,6 @@ module WCC::Contentful
           end
         query = query.merge(sync_token)
         resp = SyncResponse.new(get('sync', query))
-        resp.assert_ok!
-      end
-    end
-
-    class Management < SimpleClient
-      def initialize(space:, management_token:, **options)
-        super(
-          api_url: options[:api_url] || 'https://api.contentful.com',
-          space: space,
-          access_token: management_token,
-          **options
-        )
-      end
-
-      def client_type
-        'management'
-      end
-
-      def content_types(**query)
-        resp = get('content_types', query)
         resp.assert_ok!
       end
     end

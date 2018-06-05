@@ -4,70 +4,128 @@ require 'rails_helper'
 
 RSpec.describe WCC::Contentful::DelayedSyncJob, type: :job do
   ActiveJob::Base.queue_adapter = :test
+  described_class.queue_adapter = :test
 
-  let(:empty) { JSON.parse(load_fixture('contentful/sync_empty.json')) }
   let(:next_sync) { JSON.parse(load_fixture('contentful/sync_continue.json')) }
 
+  subject(:job) { described_class.new }
+
+  let(:client) { double }
+  let(:store) { double(find: nil, index: nil, set: nil) }
+
   before do
-    stub_request(:get,
-      "https://cdn.contentful.com/spaces/#{contentful_space_id}/content_types?limit=1000")
-      .to_return(body: load_fixture('contentful/content_types_cdn.json'))
+    allow(WCC::Contentful::Services.instance).to receive(:store)
+      .and_return(store)
 
-    # initial sync
-    stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
-      .with(query: hash_including('initial' => 'true'))
-      .to_return(body: load_fixture('contentful/sync.json'))
-
-    # first empty sync
-    stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
-      .with(query: hash_including('sync_token' => 'w5ZGw...'))
-      .to_return(body: load_fixture('contentful/sync_empty.json'))
-
-    WCC::Contentful.configure do |config|
-      config.access_token = contentful_access_token
-      config.space = contentful_space_id
-      config.management_token = nil
-      config.default_locale = nil
-      config.store = nil
-      config.content_delivery = :eager_sync
-    end
-
-    WCC::Contentful.init!
+    allow(WCC::Contentful::Services.instance).to receive(:client)
+      .and_return(client)
   end
 
-  describe 'WCC::Contentful.sync!' do
-    it 'Drops the job again if the ID still does not come back' do
-      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
-        .with(query: hash_including('sync_token' => 'FwqZm...'))
-        .to_return(body: next_sync.merge({ 'nextSyncUrl' =>
-          "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync?sync_token=test1" }).to_json)
+  describe '.sync!' do
+    context 'when no ID given' do
+      it 'does nothing if no sync data available' do
+        allow(client).to receive(:sync)
+          .and_return(double(
+                        items: [],
+                        next_sync_token: 'test'
+                      ))
 
-      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
-        .with(query: hash_including('sync_token' => 'test1'))
-        .to_return(body: empty.merge({ 'nextSyncUrl' =>
-          "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync?sync_token=test2" }).to_json)
+        expect(WCC::Contentful::Services.instance.store).to receive(:set)
+          .with('sync:token', 'test')
+        expect(WCC::Contentful::Services.instance.store).to_not receive(:index)
+
+        # act
+        synced = job.sync!
+
+        # assert
+        expect(synced).to eq('test')
+      end
+
+      it 'updates the store with the latest data' do
+        allow(store).to receive(:find)
+          .with('sync:token')
+          .and_return('test1')
+
+        allow(client).to receive(:sync)
+          .with(sync_token: 'test1')
+          .and_return(double(
+                        items: next_sync['items'],
+                        next_sync_token: 'test2'
+                      ))
+
+        items = next_sync['items']
+        expect(WCC::Contentful::Services.instance.store).to receive(:set)
+          .with('sync:token', 'test2')
+        expect(WCC::Contentful::Services.instance.store).to receive(:index)
+          .exactly(items.count).times
+
+        # act
+        job.sync!
+      end
+    end
+
+    context 'when ID given' do
+      it 'does not drop a job if the ID comes back in the sync' do
+        allow(client).to receive(:sync)
+          .and_return(double(
+                        items: next_sync['items'],
+                        next_sync_token: 'test2'
+                      ))
+
+        expect(ActiveJob::Base.queue_adapter).to_not receive(:enqueue)
+        expect(ActiveJob::Base.queue_adapter).to_not receive(:enqueue_at)
+
+        # act
+        job.sync!(up_to_id: '1EjBdAgOOgAQKAggQoY2as')
+      end
+    end
+
+    it 'Drops the job again if the ID still does not come back' do
+      allow(client).to receive(:sync)
+        .and_return(double(
+                      items: next_sync['items'],
+                      next_sync_token: 'test2'
+                    ))
+
+      # expect
+      expect(job).to receive(:sync_later!)
+        .with(up_to_id: 'foobar')
 
       # act
-      expect {
-        WCC::Contentful.sync!(up_to_id: 'foobar')
-      }.to have_enqueued_job(described_class)
+      job.sync!(up_to_id: 'foobar')
     end
   end
 
   describe 'Perform' do
-    it 'calls into WCC::Contentful.sync!' do
-      expect(WCC::Contentful).to receive(:sync!)
+    it 'calls into job.sync!' do
+      expect_any_instance_of(described_class)
+        .to receive(:sync!)
+        .with(up_to_id: nil)
 
       # act
       described_class.perform_now
     end
 
-    it 'calls into WCC::Contentful.sync! with params' do
-      expect(WCC::Contentful).to receive(:sync!)
+    it 'calls into job.sync! with explicit params' do
+      expect_any_instance_of(described_class)
+        .to receive(:sync!)
         .with(up_to_id: 'asdf')
 
       # act
       described_class.perform_now(up_to_id: 'asdf')
+    end
+
+    it 'calls into job.sync! with webhook event' do
+      expect_any_instance_of(described_class)
+        .to receive(:sync!)
+        .with(up_to_id: 'testId1')
+
+      # act
+      described_class.perform_now({
+        'sys' => {
+          'id' => 'testId1'
+        }
+      })
     end
   end
 end

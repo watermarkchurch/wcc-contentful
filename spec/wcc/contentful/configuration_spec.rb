@@ -3,6 +3,13 @@
 RSpec.describe WCC::Contentful::Configuration do
   subject(:config) { WCC::Contentful::Configuration.new }
 
+  let(:services) { WCC::Contentful::Services.instance }
+
+  before do
+    allow(WCC::Contentful).to receive(:configuration)
+      .and_return(config)
+  end
+
   describe '#content_delivery' do
     it 'raises error when setting invalid content delivery method' do
       expect {
@@ -25,7 +32,28 @@ RSpec.describe WCC::Contentful::Configuration do
 
       # assert
       expect(config.content_delivery).to eq(:custom)
-      expect(config.store).to be(store)
+      expect(services.store).to be(store)
+    end
+
+    it 'allows setting a store class with parameters to store=' do
+      store_class =
+        Class.new do
+          attr_accessor :config
+          attr_accessor :params
+
+          def initialize(config, params)
+            @config = config
+            @params = params
+          end
+        end
+
+      # act
+      config.store = store_class, :param_1, 'param_2'
+
+      # assert
+      expect(config.content_delivery).to eq(:custom)
+      expect(services.store).to be_a(store_class)
+      expect(services.store.params).to eq([:param_1, 'param_2'])
     end
 
     context 'eager sync' do
@@ -35,7 +63,7 @@ RSpec.describe WCC::Contentful::Configuration do
 
         # assert
         expect(config.content_delivery).to eq(:eager_sync)
-        expect(config.store).to be_a(WCC::Contentful::Store::PostgresStore)
+        expect(services.store).to be_a(WCC::Contentful::Store::PostgresStore)
       end
 
       it 'uses provided store' do
@@ -46,7 +74,7 @@ RSpec.describe WCC::Contentful::Configuration do
 
         # assert
         expect(config.content_delivery).to eq(:eager_sync)
-        expect(config.store).to be(store)
+        expect(services.store).to be(store)
       end
 
       it 'errors when using a bad store' do
@@ -69,8 +97,9 @@ RSpec.describe WCC::Contentful::Configuration do
 
         # assert
         expect(config.content_delivery).to eq(:lazy_sync)
-        expect(config.store).to be_a(WCC::Contentful::Store::LazyCacheStore)
-        expect(config.store.find('test')).to eq('test data')
+        store = services.store
+        expect(store).to be_a(WCC::Contentful::Store::LazyCacheStore)
+        expect(store.find('test')).to eq('test data')
       end
 
       it 'uses provided cache' do
@@ -81,8 +110,9 @@ RSpec.describe WCC::Contentful::Configuration do
 
         # assert
         expect(config.content_delivery).to eq(:lazy_sync)
-        expect(config.store).to be_a(WCC::Contentful::Store::LazyCacheStore)
-        expect(config.store.find('test')).to eq('test data')
+        store = services.store
+        expect(store).to be_a(WCC::Contentful::Store::LazyCacheStore)
+        expect(store.find('test')).to eq('test data')
       end
     end
 
@@ -93,8 +123,81 @@ RSpec.describe WCC::Contentful::Configuration do
 
         # assert
         expect(config.content_delivery).to eq(:direct)
-        expect(config.store).to be_a(WCC::Contentful::Store::CDNAdapter)
+        store = services.store
+        expect(store).to be_a(WCC::Contentful::Store::CDNAdapter)
       end
+    end
+  end
+
+  describe '#validate!' do
+    it 'errors when non-master environment combined with sync delivery strategy' do
+      config.space = 'test_space'
+      config.access_token = 'test_token'
+
+      # good
+      config.environment = ''
+      config.content_delivery = :lazy_sync
+      config.validate!
+
+      config.content_delivery = :eager_sync
+      config.validate!
+
+      config.environment = 'staging'
+      config.content_delivery = :direct
+      config.validate!
+
+      # bad
+      config.environment = 'staging'
+      expect {
+        config.content_delivery = :lazy_sync
+        config.validate!
+      }.to raise_error(ArgumentError)
+
+      expect {
+        config.content_delivery = :eager_sync
+        config.validate!
+      }.to raise_error(ArgumentError)
+    end
+
+    require 'active_job'
+    it 'errors when non-callable object given to webhook_jobs' do
+      config.space = 'test_space'
+      config.access_token = 'test_token'
+
+      callable_class =
+        Class.new {
+          def call(evt)
+          end
+        }
+      some_job_class =
+        Class.new(ActiveJob::Base) {
+          def perform(args)
+          end
+        }
+
+      # good
+      config.webhook_jobs << ->(e) {}
+      config.webhook_jobs << proc {}
+      config.webhook_jobs << callable_class.new
+      config.webhook_jobs << some_job_class
+
+      config.validate!
+
+      # bad
+      expect {
+        config.webhook_jobs = ['some string']
+        config.validate!
+      }.to raise_error(ArgumentError)
+
+      expect {
+        config.webhook_jobs = [callable_class]
+        config.validate!
+      }.to raise_error(ArgumentError)
+
+      expect {
+        config.webhook_jobs = [some_job_class.new]
+        config.validate!
+      }.to raise_error(ArgumentError)
     end
   end
 end

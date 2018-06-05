@@ -39,6 +39,7 @@ RSpec.configure do |config|
 
   config.after(:each) do
     WCC::Contentful.instance_variable_set('@configuration', nil)
+    WCC::Contentful::Services.instance_variable_set(:@singleton__instance__, nil)
 
     # clean out everything in the WCC::Contentful::Model generated namespace
     consts = WCC::Contentful::Model.constants(false).map(&:to_s).uniq

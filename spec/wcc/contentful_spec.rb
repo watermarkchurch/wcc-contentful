@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'rails_helper'
+
 RSpec.describe WCC::Contentful, :vcr do
   it 'has a version number' do
     expect(WCC::Contentful::VERSION).not_to be nil
@@ -143,12 +145,6 @@ RSpec.describe WCC::Contentful, :vcr do
         expect(config.default_locale).to eq(valid_contentful_default_locale)
         expect(config.nil?).to eq(false)
       end
-
-      it 'should set the Contentful client on the WCC::Contentful module' do
-        client = WCC::Contentful.client
-
-        expect(client).to be_a(WCC::Contentful::SimpleClient)
-      end
     end
 
     context 'invalid config' do
@@ -220,19 +216,6 @@ RSpec.describe WCC::Contentful, :vcr do
         content_type = WCC::Contentful::Model::MenuButton.content_type
         expect(content_type).to eq('menuButton')
       end
-
-      it 'should populate store via sync API' do
-        # act
-        WCC::Contentful.init!
-
-        # assert
-        page = WCC::Contentful::Model.find('1UojJt7YoMiemCq2mGGUmQ')
-        expect(page).to_not be_nil
-        expect(page).to be_a(WCC::Contentful::Model::Page)
-        expect(page.slug).to eq('/conferences')
-
-        expect(page.sections).to be_empty
-      end
     end
 
     context 'with management token' do
@@ -254,49 +237,6 @@ RSpec.describe WCC::Contentful, :vcr do
         # assert
         content_type = WCC::Contentful::Model::Page.content_type
         expect(content_type).to eq('page')
-      end
-
-      it 'should populate store via sync API' do
-        # act
-        WCC::Contentful.init!
-
-        # assert
-        asset = WCC::Contentful::Model::Asset.find('2zKTmej544IakmIqoEu0y8')
-        expect(asset).to_not be_nil
-        expect(asset).to be_a(WCC::Contentful::Model::Asset)
-        expect(asset.file.fileName).to eq('favicon.ico')
-      end
-    end
-
-    context 'with stored sync_token' do
-      let(:empty) { JSON.parse(load_fixture('contentful/sync_empty.json')) }
-      let(:store) { WCC::Contentful::Store::MemoryStore.new }
-
-      before(:each) do
-        store.set("sync:#{contentful_space_id}:token", 'testX')
-
-        WCC::Contentful.configure do |config|
-          config.management_token = contentful_management_token
-          config.default_locale = nil
-          config.store = store
-        end
-      end
-
-      it 'continues from stored sync ID' do
-        stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
-          .with(query: hash_including('sync_token' => 'testX'))
-          .to_return(body: empty.merge({ 'nextSyncUrl' =>
-            "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync?sync_token=testY" }).to_json)
-
-        stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
-          .with(query: hash_including('initial' => 'true'))
-          .to_raise('Should not call sync with initial=true when a stored sync token exists')
-
-        # act
-        WCC::Contentful.init!
-
-        # assert
-        expect(WCC::Contentful.next_sync_token).to eq('testY')
       end
     end
 
@@ -462,42 +402,6 @@ RSpec.describe WCC::Contentful, :vcr do
         button2 = WCC::Contentful::Model::Menu.find('6y9DftpiYoA4YiKg2CgoUU').items.first
         expect(button2.text).to eq('About')
       end
-
-      context 'with stored sync_token' do
-        let(:empty) { JSON.parse(load_fixture('contentful/sync_empty.json')) }
-        let(:store) { ActiveSupport::Cache::MemoryStore.new }
-
-        before(:each) do
-          store.write("sync:#{contentful_space_id}:token", 'testX')
-
-          WCC::Contentful.configure do |config|
-            config.management_token = contentful_management_token
-            config.default_locale = nil
-
-            # rebuild store
-            config.store = nil
-            config.content_delivery = :lazy_sync, store
-          end
-        end
-
-        it 'continues from stored sync ID' do
-          stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
-            .with(query: hash_including('sync_token' => 'testX'))
-            .to_return(body: empty.merge({ 'nextSyncUrl' =>
-              "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync?sync_token=testY" })
-              .to_json)
-
-          stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
-            .with(query: hash_including('initial' => 'true'))
-            .to_raise('Should not call sync with initial=true when a stored sync token exists')
-
-          # act
-          WCC::Contentful.init!
-
-          # assert
-          expect(WCC::Contentful.next_sync_token).to eq('testY')
-        end
-      end
     end
   end
 
@@ -542,137 +446,6 @@ RSpec.describe WCC::Contentful, :vcr do
       expect {
         WCC::Contentful.validate_models!
       }.to raise_error(WCC::Contentful::ValidationError)
-    end
-  end
-
-  describe '.sync!' do
-    let(:empty) { JSON.parse(load_fixture('contentful/sync_empty.json')) }
-    let(:next_sync) { JSON.parse(load_fixture('contentful/sync_continue.json')) }
-
-    before do
-      stub_request(:get,
-        "https://cdn.contentful.com/spaces/#{contentful_space_id}/content_types?limit=1000")
-        .to_return(body: load_fixture('contentful/content_types_cdn.json'))
-
-      # initial sync
-      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
-        .with(query: hash_including('initial' => 'true'))
-        .to_return(body: load_fixture('contentful/sync.json'))
-
-      # first empty sync
-      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
-        .with(query: hash_including('sync_token' => 'w5ZGw...'))
-        .to_return(body: load_fixture('contentful/sync_empty.json'))
-
-      WCC::Contentful.configure do |config|
-        config.access_token = valid_contentful_access_token
-        config.space = valid_contentful_space_id
-        config.management_token = nil
-        config.default_locale = nil
-
-        # rebuild store
-        config.store = nil
-        config.content_delivery = :eager_sync
-      end
-
-      WCC::Contentful.init!
-    end
-
-    context 'when no ID given' do
-      it 'does nothing if no sync data available' do
-        stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
-          .with(query: hash_including('sync_token' => 'FwqZm...'))
-          .to_return(body: empty.merge({ 'nextSyncUrl' =>
-            "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync?sync_token=test" }).to_json)
-
-        expect(WCC::Contentful.store).to receive(:set)
-          .with("sync:#{contentful_space_id}:token", 'test')
-        expect(WCC::Contentful.store).to_not receive(:index)
-
-        # act
-        synced = WCC::Contentful.sync!
-
-        # assert
-        expect(synced).to eq('test')
-        expect(WCC::Contentful.next_sync_token).to eq('test')
-      end
-
-      it 'updates the store with the latest data' do
-        stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
-          .with(query: hash_including('sync_token' => 'FwqZm...'))
-          .to_return(body: next_sync.merge({ 'nextSyncUrl' =>
-            "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync?sync_token=test1" }).to_json)
-
-        stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
-          .with(query: hash_including('sync_token' => 'test1'))
-          .to_return(body: empty.merge({ 'nextSyncUrl' =>
-            "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync?sync_token=test2" }).to_json)
-
-        items = next_sync['items']
-
-        expect(WCC::Contentful.store).to receive(:set)
-          .with("sync:#{contentful_space_id}:token", 'test2')
-        expect(WCC::Contentful.store).to receive(:index)
-          .exactly(items.count).times
-
-        # act
-        WCC::Contentful.sync!
-
-        # assert
-        expect(WCC::Contentful.next_sync_token).to eq('test2')
-      end
-    end
-
-    context 'when ID given' do
-      before do
-        # ensure rails doesn't exist - because if it does, `sync!` drops a job
-        # instead of raising a sync error
-        if defined?(Rails)
-          @tmp_rails = Rails
-          Object.send(:remove_const, 'Rails')
-        end
-      end
-
-      after do
-        Object.const_set('Rails', @tmp_rails) if @tmp_rails
-      end
-
-      it 'raises a sync error if the ID does not come back' do
-        stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
-          .with(query: hash_including('sync_token' => 'FwqZm...'))
-          .to_return(body: next_sync.merge({ 'nextSyncUrl' =>
-            "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync?sync_token=test1" }).to_json)
-
-        stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
-          .with(query: hash_including('sync_token' => 'test1'))
-          .to_return(body: empty.merge({ 'nextSyncUrl' =>
-            "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync?sync_token=test2" }).to_json)
-
-        # act
-        expect {
-          WCC::Contentful.sync!(up_to_id: 'foobar')
-        }.to raise_error(WCC::Contentful::SyncError)
-      end
-
-      it 'does not drop a job if the ID comes back in the sync' do
-        require 'active_job'
-
-        stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
-          .with(query: hash_including('sync_token' => 'FwqZm...'))
-          .to_return(body: next_sync.merge({ 'nextSyncUrl' =>
-            "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync?sync_token=test1" }).to_json)
-
-        stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync")
-          .with(query: hash_including('sync_token' => 'test1'))
-          .to_return(body: empty.merge({ 'nextSyncUrl' =>
-            "https://cdn.contentful.com/spaces/#{contentful_space_id}/sync?sync_token=test2" }).to_json)
-
-        expect(ActiveJob::Base.queue_adapter).to_not receive(:enqueue)
-        expect(ActiveJob::Base.queue_adapter).to_not receive(:enqueue_at)
-
-        # act
-        WCC::Contentful.sync!(up_to_id: '1EjBdAgOOgAQKAggQoY2as')
-      end
     end
   end
 end

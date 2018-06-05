@@ -22,10 +22,11 @@ module WCC::Contentful::Store
     eager_sync
     lazy_sync
     direct
+    custom
   ].freeze
 
   Factory =
-    Struct.new(:config, :cdn_method, :content_delivery_params) do
+    Struct.new(:config, :services, :cdn_method, :content_delivery_params) do
       def build_sync_store
         unless respond_to?("build_#{cdn_method}")
           raise ArgumentError, "Don't know how to build content delivery method #{cdn_method}"
@@ -36,7 +37,7 @@ module WCC::Contentful::Store
 
       def validate!
         unless CDN_METHODS.include?(cdn_method)
-          raise ArgumentError, "Please use one of #{CDN_METHODS} for 'content_delivery'"
+          raise ArgumentError, "Please use one of #{CDN_METHODS} instead of #{cdn_method}"
         end
 
         return unless respond_to?("validate_#{cdn_method}")
@@ -44,24 +45,29 @@ module WCC::Contentful::Store
       end
 
       def build_eager_sync(config, store = nil, *_options)
-        puts "store: #{store}"
         store = SYNC_STORES[store].call(config) if store.is_a?(Symbol)
         store || MemoryStore.new
       end
 
-      def build_lazy_sync(config, *options)
+      def build_lazy_sync(_config, *options)
         WCC::Contentful::Store::LazyCacheStore.new(
-          config.client,
+          services.client,
           cache: ActiveSupport::Cache.lookup_store(*options)
         )
       end
 
-      def build_direct(config, *options)
+      def build_direct(_config, *options)
         if options.find { |array| array[:preview] == true }
-          CDNAdapter.new(config.preview_client)
+          CDNAdapter.new(services.preview_client)
         else
-          CDNAdapter.new(config.client)
+          CDNAdapter.new(services.client)
         end
+      end
+
+      def build_custom(config, *options)
+        store = config.store
+        return store unless store&.respond_to?(:new)
+        store.new(config, options)
       end
 
       def validate_eager_sync(_config, store = nil, *_options)
