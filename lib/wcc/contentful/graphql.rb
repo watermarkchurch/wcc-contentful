@@ -1,4 +1,3 @@
-
 # frozen_string_literal: true
 
 gem 'graphql', '~> 1.7'

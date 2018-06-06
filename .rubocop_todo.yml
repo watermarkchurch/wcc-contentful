@@ -12,11 +12,6 @@ Layout/ClosingParenthesisIndentation:
   Exclude:
     - 'lib/wcc/contentful/store/postgres_store.rb'
 
-# Offense count: 1
-Lint/SplatKeywordArguments:
-  Exclude:
-    - 'app/jobs/wcc/contentful/delayed_sync_job.rb'
-
 # Offense count: 239
 # Configuration parameters: AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.
 # URISchemes: http, https

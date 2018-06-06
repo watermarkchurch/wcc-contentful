@@ -157,7 +157,7 @@ module WCC::Contentful::Store
            RETURN prev;
         END;
         $$ LANGUAGE 'plpgsql';
-HEREDOC
+      HEREDOC
       )
 
       conn.prepare('upsert_entry', 'SELECT * FROM upsert_entry($1,$2)')
