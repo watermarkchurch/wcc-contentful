@@ -23,40 +23,40 @@ module WCC::Contentful::Store
       nil
     end
 
-    def find_by(content_type:, filter: nil, query: nil)
+    def find_by(content_type:, filter: nil, options: nil)
       # default implementation - can be overridden
-      q = find_all(content_type: content_type, query: query)
+      q = find_all(content_type: content_type, options: options)
       q = q.apply(filter) if filter
       q.first
     end
 
-    def find_all(content_type:, query: nil)
-      Query.new(self, @client, { content_type: content_type }, query)
+    def find_all(content_type:, options: nil)
+      Query.new(self, @client, { content_type: content_type }, options)
     end
 
     class Query < Base::Query
       delegate :count, to: :response
 
       def result
-        return response.items unless @query[:include]
-        response.items.map { |e| resolve_includes(e, @query[:include]) }
+        return response.items unless @options[:include]
+        response.items.map { |e| resolve_includes(e, @options[:include]) }
       end
 
-      def initialize(store, client, relation, query = nil)
+      def initialize(store, client, relation, options = nil)
         raise ArgumentError, 'Client cannot be nil' unless client.present?
         raise ArgumentError, 'content_type must be provided' unless relation[:content_type].present?
 
         super(store)
         @client = client
         @relation = relation
-        @query = query || {}
+        @options = options || {}
       end
 
       def apply_operator(operator, field, expected, context = nil)
         op = operator == :eq ? nil : operator
         param = parameter(field, operator: op, context: context, locale: true)
 
-        Query.new(@store, @client, @relation.merge(param => expected), @query)
+        Query.new(@store, @client, @relation.merge(param => expected), @options)
       end
 
       def nested_conditions(field, conditions, context)
@@ -102,10 +102,10 @@ module WCC::Contentful::Store
         @response ||=
           if @relation[:content_type] == 'Asset'
             @client.assets(
-              { locale: '*' }.merge!(@relation.reject { |k| k == :content_type }).merge!(@query)
+              { locale: '*' }.merge!(@relation.reject { |k| k == :content_type }).merge!(@options)
             )
           else
-            @client.entries({ locale: '*' }.merge!(@relation).merge!(@query))
+            @client.entries({ locale: '*' }.merge!(@relation).merge!(@options))
           end
       end
 

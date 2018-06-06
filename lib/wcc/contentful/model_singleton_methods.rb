@@ -33,7 +33,7 @@ module WCC::Contentful::ModelSingletonMethods
     end
 
     query = store(options.delete(:preview))
-      .find_all(content_type: content_type, query: options)
+      .find_all(content_type: content_type, options: options)
     query = query.apply(filter) if filter
     query.map { |r| new(r, options) }
   end
@@ -46,7 +46,7 @@ module WCC::Contentful::ModelSingletonMethods
     raise ArgumentError, "These fields do not exist: #{bad_fields}" unless bad_fields.empty?
 
     result = store(options.delete(:preview))
-      .find_by(content_type: content_type, filter: filter, query: options)
+      .find_by(content_type: content_type, filter: filter, options: options)
 
     new(result, options) if result
   end

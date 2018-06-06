@@ -43,15 +43,15 @@ module WCC::Contentful::Store
       end
     end
 
-    def find_by(content_type:, filter: nil, query: nil)
+    def find_by(content_type:, filter: nil, options: nil)
       # default implementation - can be overridden
-      q = find_all(content_type: content_type, query: query)
+      q = find_all(content_type: content_type, options: options)
       q = q.apply(filter) if filter
       q.first
     end
 
     # rubocop:disable Lint/UnusedMethodArgument
-    def find_all(content_type:, query: nil)
+    def find_all(content_type:, options: nil)
       raise NotImplementedError, "#{self.class} does not implement find_all"
     end
     # rubocop:enable Lint/UnusedMethodArgument

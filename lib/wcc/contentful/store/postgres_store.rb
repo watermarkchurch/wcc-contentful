@@ -38,14 +38,14 @@ module WCC::Contentful::Store
       JSON.parse(result.getvalue(0, 1))
     end
 
-    def find_all(content_type:, query: nil)
+    def find_all(content_type:, options: nil)
       statement = "WHERE data->'sys'->'contentType'->'sys'->>'id' = $1"
       Query.new(
         self,
         @conn,
         statement,
         [content_type],
-        query
+        options
       )
     end
 

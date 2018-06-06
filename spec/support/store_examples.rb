@@ -426,7 +426,7 @@ RSpec.shared_examples 'contentful store' do
       [root, *shallow, *deep].each { |d| subject.set(d.dig('sys', 'id'), d) }
 
       # act
-      found = subject.find_by(content_type: 'root', filter: { name: 'root' }, query: {
+      found = subject.find_by(content_type: 'root', filter: { name: 'root' }, options: {
         include: 2
       })
 
@@ -482,7 +482,7 @@ RSpec.shared_examples 'contentful store' do
       [root, *shallow, *deep].each { |d| subject.set(d.dig('sys', 'id'), d) }
 
       # act
-      found = subject.find_by(content_type: 'root', filter: { name: 'root' }, query: {
+      found = subject.find_by(content_type: 'root', filter: { name: 'root' }, options: {
         include: 1
       })
 

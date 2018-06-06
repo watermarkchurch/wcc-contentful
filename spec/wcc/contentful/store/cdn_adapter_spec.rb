@@ -205,7 +205,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       found = adapter.find_by(
         content_type: 'page',
         filter: { slug: '/conferences' },
-        query: {
+        options: {
           limit: 2,
           skip: 10,
           include: 5
@@ -233,7 +233,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       found = adapter.find_by(
         content_type: 'page',
         filter: { test: 'junk' },
-        query: {
+        options: {
           limit: 2,
           skip: 10,
           include: 5
@@ -301,7 +301,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
 
     it 'recursively resolves links if include > 0' do
       # act
-      found = adapter.find_all(content_type: 'page', query: {
+      found = adapter.find_all(content_type: 'page', options: {
         limit: 5,
         include: 2
       })
@@ -325,7 +325,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
 
     it 'stops resolving links at include depth' do
       # act
-      found = adapter.find_all(content_type: 'page', query: {
+      found = adapter.find_all(content_type: 'page', options: {
         limit: 5,
         include: 2
       })
