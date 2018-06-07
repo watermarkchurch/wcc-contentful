@@ -176,6 +176,46 @@ RSpec.describe WCC::Contentful::ModelMethods do
       expect(subject.items[0]).to equal(test3)
       expect(test3.items[0]).to equal(subject)
     end
+
+    it 'instantiates a model class for an already resolved raw value' do
+      expect(WCC::Contentful::Model).to_not receive(:find)
+
+      raw2 = {
+        'sys' => {
+          'id' => '2',
+          'type' => 'Entry',
+          'contentType' => { 'sys' => { 'id' => 'toJsonTest' } }
+        },
+        'fields' => {
+          'name' => {
+            'en-US' => 'raw2'
+          }
+        }
+      }
+      raw3 = {
+        'sys' => {
+          'id' => '3',
+          'type' => 'Entry',
+          'contentType' => { 'sys' => { 'id' => 'toJsonTest' } }
+        },
+        'fields' => {
+          'name' => {
+            'en-US' => 'raw3'
+          }
+        }
+      }
+
+      raw['fields']['someLink']['en-US'] = raw2
+      raw['fields']['items']['en-US'] = [raw3, nil]
+
+      # act
+      subject.resolve(depth: 2, fields: [:some_link])
+
+      # assert
+      expect(subject.some_link.name).to eq('raw2')
+      expect(subject.items[0].name).to eq('raw3')
+      expect(subject.items[1]).to be_nil
+    end
   end
 
   describe '#to_json' do

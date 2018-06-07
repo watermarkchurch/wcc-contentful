@@ -23,36 +23,40 @@ module WCC::Contentful::Store
       nil
     end
 
-    def find_by(content_type:, filter: nil)
+    def find_by(content_type:, filter: nil, options: nil)
       # default implementation - can be overridden
-      q = find_all(content_type: content_type)
+      q = find_all(content_type: content_type, options: options)
       q = q.apply(filter) if filter
       q.first
     end
 
-    def find_all(content_type:)
-      Query.new(@client, content_type: content_type)
+    def find_all(content_type:, options: nil)
+      Query.new(self, @client, { content_type: content_type }, options)
     end
 
     class Query < Base::Query
-      delegate :count, to: :resolve
+      delegate :count, to: :response
 
       def result
-        resolve.items
+        return response.items unless @options[:include]
+        response.items.map { |e| resolve_includes(e, @options[:include]) }
       end
 
-      def initialize(client, relation)
+      def initialize(store, client, relation, options = nil)
         raise ArgumentError, 'Client cannot be nil' unless client.present?
         raise ArgumentError, 'content_type must be provided' unless relation[:content_type].present?
+
+        super(store)
         @client = client
         @relation = relation
+        @options = options || {}
       end
 
       def apply_operator(operator, field, expected, context = nil)
         op = operator == :eq ? nil : operator
         param = parameter(field, operator: op, context: context, locale: true)
 
-        Query.new(@client, @relation.merge(param => expected))
+        Query.new(@store, @client, @relation.merge(param => expected), @options)
       end
 
       def nested_conditions(field, conditions, context)
@@ -93,16 +97,22 @@ module WCC::Contentful::Store
         field.to_s.include?('.')
       end
 
-      def resolve
-        return @resolve if @resolve
-        @resolve ||=
+      def response
+        return @response if @response
+        @response ||=
           if @relation[:content_type] == 'Asset'
             @client.assets(
-              { locale: '*' }.merge!(@relation.reject { |k| k == :content_type })
+              { locale: '*' }.merge!(@relation.reject { |k| k == :content_type }).merge!(@options)
             )
           else
-            @client.entries({ locale: '*' }.merge!(@relation))
+            @client.entries({ locale: '*' }.merge!(@relation).merge!(@options))
           end
+      end
+
+      def resolve_link(val, depth)
+        return val unless val.is_a?(Hash) && val.dig('sys', 'type') == 'Link'
+        return val unless included = response.includes[val.dig('sys', 'id')]
+        resolve_includes(included, depth - 1)
       end
     end
   end

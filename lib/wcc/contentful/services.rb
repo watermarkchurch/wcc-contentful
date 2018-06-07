@@ -35,7 +35,6 @@ module WCC::Contentful
     end
 
     def preview_store
-      puts "@preview_store: #{@preview_store}"
       @preview_store ||=
         ensure_configured do |config|
           WCC::Contentful::Store::Factory.new(

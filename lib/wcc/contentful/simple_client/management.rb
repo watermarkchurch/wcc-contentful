@@ -1,5 +1,3 @@
-
-
 # frozen_string_literal: true
 
 class WCC::Contentful::SimpleClient::Management < WCC::Contentful::SimpleClient
