@@ -24,12 +24,7 @@ module WCC::Contentful::ModelMethods
     fields =
       self.class::FIELDS.each_with_object({}) do |field, h|
         if val = instance_variable_get('@' + field + '_resolved')
-          val =
-            if val.is_a? Array
-              val.map { |v| v ? v.to_h(stack) : v }
-            else
-              val.to_h(stack)
-            end
+          val = _try_map(val) { |v| v ? v.to_h(stack) : v }
         end
 
         h[field] = val || instance_variable_get('@' + field)
@@ -43,6 +38,21 @@ module WCC::Contentful::ModelMethods
 
   def to_json
     to_h.to_json
+  end
+
+  def raw_dup(fields = nil)
+    new_raw = raw.deep_dup
+    fields&.each do |(k, v)|
+      k = k.to_s.camelize(:lower)
+      raise ArgumentError, "Field #{k} does not exist" unless self.class::FIELDS.include?(k)
+      v = _try_map(v) { |i| i&.try(:raw) || i }
+      new_raw['fields'][k][sys.locale] = v
+    end
+    new_raw
+  end
+
+  def dup(fields = nil)
+    self.class.new(raw_dup(fields))
   end
 
   private
@@ -69,13 +79,18 @@ module WCC::Contentful::ModelMethods
         m
       }
 
-    val =
-      if val.is_a? Array
-        val.map { |v| load.call(v) if v }
-      elsif val
-        load.call(val)
-      end
+    val = _try_map(val) { |v| load.call(v) if v }
+    # if val.is_a? Array
+    #   val.map { |v| load.call(v) if v }
+    # elsif val
+    #   load.call(val)
+    # end
 
     instance_variable_set(var_name + '_resolved', val)
+  end
+
+  def _try_map(val, &block)
+    return val&.map(&block) if val.is_a? Array
+    yield val
   end
 end
