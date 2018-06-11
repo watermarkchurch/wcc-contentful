@@ -502,5 +502,26 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       # assert
       expect(button).to be_a(WCC::Contentful::Model::MenuButton)
     end
+
+    it 'does not use loaded class if it does not exist' do
+      expect(Object).to receive(:const_missing).with('MenuButton')
+        .and_raise(NameError, 'uninitialized constant MenuButton')
+
+      # act
+      button = WCC::Contentful::Model.find('5NBhDw3i2kUqSwqYok4YQO')
+
+      # assert
+      expect(button).to be_a(WCC::Contentful::Model::MenuButton)
+    end
+
+    it 're-raises NameError if the class def itself raises a name error' do
+      expect(Object).to receive(:const_missing).with('MenuButton')
+        .and_raise(NameError, 'uninitialized constant FooBar')
+
+      # act
+      expect {
+        WCC::Contentful::Model.find('5NBhDw3i2kUqSwqYok4YQO')
+      }.to raise_error(NameError)
+    end
   end
 end

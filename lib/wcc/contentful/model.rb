@@ -42,11 +42,13 @@ class WCC::Contentful::Model
     const = @@registry[content_type]
     return const if const
 
+    const_name = constant_from_content_type(content_type).to_s
     begin
       # The app may have defined a model and we haven't loaded it yet
-      const = Object.const_missing(constant_from_content_type(content_type).to_s)
+      const = Object.const_missing(const_name)
       return const if const && const < WCC::Contentful::Model
-    rescue NameError
+    rescue NameError => e
+      raise e unless e.message =~ /uninitialized constant #{const_name}/
       nil
     end
 
