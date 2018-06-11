@@ -13,7 +13,8 @@ module WCC::Contentful::ModelMethods
   #
   # * :depth - how far to recursively resolve.  Must be >= 1
   # * :fields - (optional) A subset of fields whose links should be resolved.  Defaults to all fields.
-  # * :context - passed to the resolved model's `new` function to provide ex. current locale.  See Model#find
+  # * :context - passed to the resolved model's `new` function to provide ex. current locale.
+  #              See Model#find
   def resolve(depth: 1, fields: nil, context: {})
     raise ArgumentError, "Depth must be > 0 (was #{depth})" unless depth && depth > 0
 
