@@ -15,13 +15,33 @@ module WCC::Contentful::ModelMethods
   #              See Model#find
   def resolve(depth: 1, fields: nil, context: {})
     raise ArgumentError, "Depth must be > 0 (was #{depth})" unless depth && depth > 0
+    return if resolved?(depth: depth, fields: fields)
 
     fields = fields.map { |f| f.to_s.camelize(:lower) } if fields.present?
-
     fields ||= self.class::FIELDS
 
     typedef = self.class.content_type_definition
     links = fields.select { |f| %i[Asset Link].include?(typedef.fields[f].type) }
+
+    raw_links =
+      links.any? do |field_name|
+        raw_value = raw.dig('fields', field_name, sys.locale)
+        if raw_value&.is_a? Array
+          raw_value.any? { |v| v&.dig('sys', 'type') == 'Link' }
+        elsif raw_value
+          raw_value.dig('sys', 'type') == 'Link'
+        end
+      end
+    if raw_links
+      # use include param to do resolution
+      raw = self.class.store.find_by(content_type: self.class.content_type,
+                                     filter: { 'sys.id' => id },
+                                     options: { include: [depth, 10].min })
+      raise ResolveError, "Cannot find #{self.class.content_type} with ID #{id}" unless raw
+      @raw = raw.freeze
+      links.each { |f| instance_variable_set('@' + f, raw.dig('fields', f, sys.locale)) }
+    end
+
     links.each { |f| _resolve_field(f, depth, context) }
     self
   end

@@ -27,6 +27,16 @@ RSpec.describe WCC::Contentful::ModelMethods do
     })
   }
 
+  let(:content_type) {
+    {
+      'sys' => {
+        'type' => 'Link',
+        'linkType' => 'ContentType',
+        'id' => 'toJsonTest'
+      }
+    }
+  }
+
   let(:raw) {
     {
       'sys' => {
@@ -90,6 +100,10 @@ RSpec.describe WCC::Contentful::ModelMethods do
     }
   }
 
+  let(:store) {
+    double
+  }
+
   subject {
     WCC::Contentful::Model::ToJsonTest.new(raw)
   }
@@ -97,6 +111,9 @@ RSpec.describe WCC::Contentful::ModelMethods do
   before do
     builder = WCC::Contentful::ModelBuilder.new({ 'toJsonTest' => typedef })
     builder.build_models
+
+    allow(WCC::Contentful::Model).to receive(:store)
+      .and_return(store)
   end
 
   describe '#resolve' do
@@ -107,74 +124,99 @@ RSpec.describe WCC::Contentful::ModelMethods do
     end
 
     it 'resolves links for depth 1' do
-      fake2 = double
-      allow(WCC::Contentful::Model).to receive(:find)
-        .with('2').once
-        .and_return(fake2)
-      allow(WCC::Contentful::Model).to receive(:find)
-        .with('3').once
-        .and_return(nil)
-      fake4 = double
-      allow(WCC::Contentful::Model).to receive(:find)
-        .with('4').once
-        .and_return(fake4)
+      resolved = make_resolved(depth: 1)
+
+      expect(store).to receive(:find_by)
+        .with(content_type: 'toJsonTest',
+              filter: { 'sys.id' => '1' },
+              options: { include: 1 }).once
+        .and_return(resolved)
+
+      expect(WCC::Contentful::Model).to_not receive(:find)
 
       # act
       subject.resolve
 
       # assert
-      expect(WCC::Contentful::Model).to have_received(:find)
-        .with('2')
-      expect(WCC::Contentful::Model).to have_received(:find)
-        .with('3')
-      expect(WCC::Contentful::Model).to have_received(:find)
-        .with('4')
-
-      expect(subject.some_link).to eq(fake2)
-      expect(subject.items).to eq([nil, fake4])
+      expect(subject.some_link.name).to eq('unresolved1.2')
+      expect(subject.items.map(&:name)).to eq(%w[unresolved1.3 unresolved1.4])
     end
 
     it 'recursively resolves links for further depth' do
-      fake2 = double(
-        resolve: nil
-      )
-      allow(WCC::Contentful::Model).to receive(:find)
-        .with('2').once
-        .and_return(fake2)
+      resolved = make_resolved(depth: 10, fields: ['someLink'])
+      deep_resolved = raw.deep_dup
+      deep_resolved['sys']['id'] = '1.2'
+      deep_resolved['fields'].merge!({
+        'items' => nil,
+        'someLink' => { 'en-US' => {
+          'sys' => { 'id' => 'deep1', 'type' => 'Entry', 'contentType' => content_type },
+          'fields' => { 'name' => { 'en-US' => 'number 11' } }
+        } }
+      })
+
+      expect(store).to receive(:find_by)
+        .with(content_type: 'toJsonTest',
+              filter: { 'sys.id' => '1' },
+              options: { include: 10 }).once
+        .and_return(resolved)
+      expect(store).to receive(:find_by)
+        .with(content_type: 'toJsonTest',
+              filter: { 'sys.id' => '1.2' },
+              options: { include: 1 }).once
+        .and_return(deep_resolved)
 
       # act
-      subject.resolve(depth: 2, fields: [:some_link])
+      subject.resolve(depth: 11, fields: [:some_link])
 
       # assert
-      expect(WCC::Contentful::Model).to have_received(:find)
-        .with('2')
-      expect(fake2).to have_received(:resolve)
-        .with(depth: 1, context: { '1' => subject, '2' => fake2 })
+      # walk the whole tree down to number 11
+      links = []
+      current = subject
+      while current = current.some_link
+        links << current.name
+      end
+
+      expect(links).to eq(
+        [
+          'resolved9',
+          'resolved8',
+          'resolved7',
+          'resolved6',
+          'resolved5',
+          'resolved4',
+          'resolved3',
+          'resolved2',
+          'resolved1',
+          'unresolved1.2',
+          'number 11'
+        ]
+      )
     end
 
     it 'stops when it hits a circular reference' do
+      raw['fields']['someLink'] = nil
+
       raw3 = raw.deep_dup
       raw3['sys']['id'] = '3'
       # circular back to 1
-      raw3['fields']['items']['en-US'][0] = { 'sys' => { 'id' => '1' } }
-      test3 = WCC::Contentful::Model::ToJsonTest.new(raw3)
+      raw3['fields']['items']['en-US'] = [
+        { 'sys' => { 'id' => '1' } }
+      ]
 
-      expect(WCC::Contentful::Model).to receive(:find)
-        .with('2').once
-        .and_return(nil)
-      expect(WCC::Contentful::Model).to receive(:find)
-        .with('3').once
-        .and_return(test3)
-      expect(WCC::Contentful::Model).to receive(:find)
-        .with('4').once
-        .and_return(double(resolve: nil))
+      resolved = raw.deep_dup
+      resolved['fields']['items'] = { 'en-US' => [raw3] }
+
+      expect(store).to receive(:find_by)
+        .with(content_type: 'toJsonTest',
+              filter: { 'sys.id' => '1' },
+              options: { include: 10 }).once
+        .and_return(resolved)
 
       # act
       subject.resolve(depth: 99)
 
       # assert
-      expect(subject.items[0]).to equal(test3)
-      expect(test3.items[0]).to equal(subject)
+      expect(subject.items[0].items[0]).to equal(subject)
     end
 
     it 'instantiates a model class for an already resolved raw value' do
@@ -216,6 +258,20 @@ RSpec.describe WCC::Contentful::ModelMethods do
       expect(subject.items[0].name).to eq('raw3')
       expect(subject.items[1]).to be_nil
     end
+
+    it 'exits early if already resolved to depth' do
+      link = double(resolved?: true)
+      subject.instance_variable_set('@someLink_resolved', link)
+      subject.instance_variable_set('@items_resolved', [link, link])
+
+      expect(WCC::Contentful::Model).to_not receive(:find)
+
+      # act
+      subject.resolve(depth: 2)
+
+      # assert
+      expect(link).to have_received(:resolved?).exactly(3).times.with(depth: 1)
+    end
   end
 
   describe '#resolved?' do
@@ -236,6 +292,17 @@ RSpec.describe WCC::Contentful::ModelMethods do
     it 'returns true when broken links are nil' do
       raw['fields']['someLink']['en-US'] = nil
       raw['fields']['items']['en-US'] = [nil, nil]
+
+      # act
+      result = subject.resolved?
+
+      # assert
+      expect(result).to be true
+    end
+
+    it 'returns true when no links in array' do
+      raw['fields']['someLink']['en-US'] = nil
+      raw['fields']['items']['en-US'] = []
 
       # act
       result = subject.resolved?
@@ -347,17 +414,13 @@ RSpec.describe WCC::Contentful::ModelMethods do
     end
 
     it 'writes resolved links' do
-      fake2 = double({ to_h: { 'sys' => { 'type' => 'double', 'id' => 'fake2' } } })
-      allow(WCC::Contentful::Model).to receive(:find)
-        .with('2').once
-        .and_return(fake2)
-      allow(WCC::Contentful::Model).to receive(:find)
-        .with('3').once
-        .and_return(nil)
-      fake4 = double({ to_h: { 'sys' => { 'type' => 'double', 'id' => 'fake4' } } })
-      allow(WCC::Contentful::Model).to receive(:find)
-        .with('4').once
-        .and_return(fake4)
+      resolved = make_resolved(depth: 1)
+
+      expect(store).to receive(:find_by)
+        .with(content_type: 'toJsonTest',
+              filter: { 'sys.id' => '1' },
+              options: { include: 1 }).once
+        .and_return(resolved)
 
       subject.resolve
 
@@ -365,41 +428,38 @@ RSpec.describe WCC::Contentful::ModelMethods do
       json = JSON.parse(subject.to_json)
 
       # assert
-      expect(json.dig('fields', 'someLink')).to eq({
-        'sys' => {
-          'type' => 'double',
-          'id' => 'fake2'
-        }
+      expect(json.dig('fields', 'someLink', 'fields')).to eq({
+        'name' => 'unresolved1.2',
+        'blob' => { 'some' => { 'data' => 3 } },
+        'someLink' => { 'sys' => { 'type' => 'Link', 'linkType' => 'Entry', 'id' => '2' } },
+        'items' => []
       })
-      expect(json.dig('fields', 'items')).to eq(
-        [
-          nil,
-          {
-            'sys' => {
-              'type' => 'double',
-              'id' => 'fake4'
-            }
-          }
-        ]
-      )
+      expect(json.dig('fields', 'items', 1, 'fields')).to eq({
+        'name' => 'unresolved1.4',
+        'blob' => { 'some' => { 'data' => 3 } },
+        'someLink' => { 'sys' => { 'type' => 'Link', 'linkType' => 'Entry', 'id' => '2' } },
+        'items' => []
+      })
     end
 
     it 'raises circular reference exception' do
+      raw['fields']['someLink'] = nil
+
       raw3 = raw.deep_dup
       raw3['sys']['id'] = '3'
       # circular back to 1
-      raw3['fields']['items']['en-US'][0] = { 'sys' => { 'id' => '1' } }
-      test3 = WCC::Contentful::Model::ToJsonTest.new(raw3)
+      raw3['fields']['items']['en-US'] = [
+        { 'sys' => { 'id' => '1' } }
+      ]
 
-      expect(WCC::Contentful::Model).to receive(:find)
-        .with('2').once
-        .and_return(nil)
-      expect(WCC::Contentful::Model).to receive(:find)
-        .with('3').once
-        .and_return(test3)
-      expect(WCC::Contentful::Model).to receive(:find)
-        .with('4').once
-        .and_return(double(resolve: nil))
+      resolved = raw.deep_dup
+      resolved['fields']['items'] = { 'en-US' => [raw3] }
+
+      expect(store).to receive(:find_by)
+        .with(content_type: 'toJsonTest',
+              filter: { 'sys.id' => '1' },
+              options: { include: 10 }).once
+        .and_return(resolved)
 
       subject.resolve(depth: 99)
 
@@ -473,5 +533,39 @@ RSpec.describe WCC::Contentful::ModelMethods do
         )
       }.to raise_error(ArgumentError)
     end
+  end
+
+  def make_resolved(depth: 1, fields: %w[someLink items])
+    resolved = raw.deep_dup
+    resolved['sys']['id'] = "resolved#{depth}"
+
+    if depth > 1
+      link = make_resolved(depth: depth - 1, fields: fields) if fields.include?('someLink')
+      items =
+        if fields.include?('items')
+          1.upto(2).map do
+            make_resolved(depth: depth - 1, fields: fields)
+          end
+        end
+    else
+      link = unresolved("#{depth}.2") if fields.include?('someLink')
+      items =
+        ([unresolved("#{depth}.3"), unresolved("#{depth}.4")] if fields.include?('items'))
+    end
+
+    resolved['fields'].merge!({
+      'name' => { 'en-US' => "resolved#{depth}" },
+      'someLink' => { 'en-US' => link },
+      'items' => { 'en-US' => items }
+    })
+    resolved
+  end
+
+  def unresolved(id)
+    fake = raw.deep_dup
+    fake['sys']['id'] = id
+    fake['fields']['name']['en-US'] = "unresolved#{id}"
+    fake['fields']['items']['en-US'] = nil
+    fake
   end
 end
