@@ -6,7 +6,6 @@ module WCC::Contentful
   class Services
     include Singleton
 
-    ##
     # Gets the data-store which executes the queries run against the dynamic
     # models in the WCC::Contentful::Model namespace.
     # This is one of the following based on the configured content_delivery method:
@@ -34,6 +33,8 @@ module WCC::Contentful
         end
     end
 
+    # An instance of WCC::Contentful::Store::CDNAdapter which connects to the
+    # Contentful Preview API to return preview content.
     def preview_store
       @preview_store ||=
         ensure_configured do |config|
@@ -46,7 +47,6 @@ module WCC::Contentful
         end
     end
 
-    ##
     # Gets a {CDN Client}[rdoc-ref:WCC::Contentful::SimpleClient::Cdn] which provides
     # methods for getting and paging raw JSON data from the Contentful CDN.
     def client
@@ -62,7 +62,6 @@ module WCC::Contentful
         end
     end
 
-    ##
     # Gets a {CDN Client}[rdoc-ref:WCC::Contentful::SimpleClient::Cdn] which provides
     # methods for getting and paging raw JSON data from the Contentful Preview API.
     def preview_client

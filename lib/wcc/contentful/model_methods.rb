@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
-##
 # This module is included by all models and defines instance
 # methods that are not dynamically generated.
 module WCC::Contentful::ModelMethods
-  ##
   # Resolves all links in an entry to the specified depth.
   #
   # Each link in the entry is recursively retrieved from the store until the given
@@ -28,7 +26,6 @@ module WCC::Contentful::ModelMethods
     self
   end
 
-  ##
   # Turns the current model into a hash representation as though it had been retrieved from
   # the Contentful API.
   #
@@ -55,13 +52,11 @@ module WCC::Contentful::ModelMethods
     }
   end
 
-  ##
   # Dumps the object to a JSON string using the same resolution method as the above `#to_h`
   def to_json
     to_h.to_json
   end
 
-  ##
   # Duplicates the raw hash that produced this entry, optionally overwriting fields
   # with the given field values.
   def raw_dup(fields = nil)
@@ -75,7 +70,6 @@ module WCC::Contentful::ModelMethods
     new_raw
   end
 
-  ##
   # Duplicates the entry by duplicating the underlying raw structure, optionally
   # overwriting fields with the given new values.
   #

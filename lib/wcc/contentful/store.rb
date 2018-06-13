@@ -5,9 +5,28 @@ require_relative 'store/memory_store'
 require_relative 'store/lazy_cache_store'
 require_relative 'store/cdn_adapter'
 
-# required dynamically if they select the 'postgres' store option
-# require_relative 'store/postgres_store'
-
+# The "Store" is the middle layer in the WCC::Contentful gem.  It exposes an API
+# that implements the configured content delivery strategy.
+#
+# The different content delivery strategies require different store implementations.
+#
+# direct:: Uses the WCC::Contentful::Store::CDNAdapter to wrap the Contentful CDN,
+#          providing an API consistent with the other stores.  Any query made to
+#          the CDNAdapter will be immediately passed through to the API.
+#          The CDNAdapter does not implement #index because it does not care about
+#          updates coming from the Sync API.
+#
+# lazy_sync:: Uses the Contentful CDN in combination with an ActiveSupport::Cache
+#             implementation in order to respond with the cached data where possible,
+#             saving your CDN quota.  The cache is kept up-to-date via the Sync API
+#             and the WCC::Contentful::DelayedSyncJob.  It is correct, but not complete.
+#
+# eager_sync:: Uses one of the full store implementations to store the entirety
+#              of the Contentful space locally.  All queries are run against this
+#              local copy, which is kept up to date via the Sync API and the
+#              WCC::Contentful::DelayedSyncJob.  The local store is correct and complete.
+#
+# The currently configured store is available on WCC::Contentful::Services.instance.store
 module WCC::Contentful::Store
   SYNC_STORES = {
     memory: ->(_config) { WCC::Contentful::Store::MemoryStore.new },

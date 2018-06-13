@@ -45,7 +45,6 @@ module WCC::Contentful::ModelValidators
     # rubocop:enable Style/ClassVars
   end
 
-  ##
   # Accepts a block which uses the {dry-validation DSL}[http://dry-rb.org/gems/dry-validation/]
   # to validate the 'fields' object of a content type.
   def validate_fields(&block)
@@ -56,7 +55,6 @@ module WCC::Contentful::ModelValidators
     (validations[ct] ||= []) << dsl
   end
 
-  ##
   # Validates a single field is of the expected type.
   # Type expectations are one of:
   #
@@ -101,7 +99,6 @@ module WCC::Contentful::ModelValidators
     v.reject! { |dsl| dsl.try(:field) == field }
   end
 
-  ##
   # Accepts a content types response from the API and transforms it
   # to be acceptible for the validator.
   def self.transform_content_types_for_validation(content_types)

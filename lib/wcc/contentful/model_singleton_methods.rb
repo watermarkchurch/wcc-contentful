@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-##
 # This module is extended by all models and defines singleton
 # methods that are not dynamically generated.
 module WCC::Contentful::ModelSingletonMethods

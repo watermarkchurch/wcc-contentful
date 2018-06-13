@@ -27,7 +27,6 @@ class WCC::Contentful::SimpleClient::Management < WCC::Contentful::SimpleClient
     resp.assert_ok!
   end
 
-  ##
   # {
   #   "name": "My webhook",
   #   "url": "https://www.example.com/test",

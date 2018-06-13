@@ -3,6 +3,8 @@
 require 'active_job'
 
 module WCC::Contentful
+  # This job uses the Contentful Sync API to update the configured store with
+  # the latest data from Contentful.
   class DelayedSyncJob < ActiveJob::Base
     include WCC::Contentful::ServiceAccessors
 
@@ -19,13 +21,13 @@ module WCC::Contentful
       sync!(up_to_id: up_to_id)
     end
 
-    ##
     # Calls the Contentful Sync API and updates the configured store with the returned
     # data.
     #
-    # up_to_id: An ID that we know has changed and should come back from the sync.
-    #           If we don't find this ID in the sync data, then drop a job to try
-    #           the sync again after a few minutes.
+    # @param [String] up_to_id
+    #  An ID that we know has changed and should come back from the sync.
+    #  If we don't find this ID in the sync data, then drop a job to try
+    #  the sync again after a few minutes.
     #
     def sync!(up_to_id: nil)
       return unless store.respond_to?(:index)
@@ -51,7 +53,6 @@ module WCC::Contentful
       end
     end
 
-    ##
     # Drops an ActiveJob job to invoke WCC::Contentful.sync! after a given amount
     # of time.
     def sync_later!(up_to_id: nil, wait: 10.minutes)
