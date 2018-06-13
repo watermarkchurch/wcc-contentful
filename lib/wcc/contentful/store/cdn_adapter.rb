@@ -67,6 +67,12 @@ module WCC::Contentful::Store
         end
       end
 
+      Base::Query::OPERATORS.each do |op|
+        define_method(op) do |field, expected, context = nil|
+          apply_operator(op, field, expected, context)
+        end
+      end
+
       private
 
       def parameter(field, operator: nil, context: nil, locale: false)
