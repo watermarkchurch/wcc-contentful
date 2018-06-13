@@ -218,6 +218,70 @@ RSpec.describe WCC::Contentful::ModelMethods do
     end
   end
 
+  describe '#resolved?' do
+    it 'raises argument error for depth 0' do
+      expect {
+        subject.resolved?(depth: 0)
+      }.to raise_error(ArgumentError)
+    end
+
+    it 'returns false when links not resolved' do
+      # act
+      result = subject.resolved?
+
+      # assert
+      expect(result).to be false
+    end
+
+    it 'returns true when broken links are nil' do
+      raw['fields']['someLink']['en-US'] = nil
+      raw['fields']['items']['en-US'] = [nil, nil]
+
+      # act
+      result = subject.resolved?
+
+      # assert
+      expect(result).to be true
+    end
+
+    it 'returns false when a single link is not resolved' do
+      subject.instance_variable_set('@items_resolved', [double, double])
+
+      # act
+      result = subject.resolved?
+
+      # assert
+      expect(result).to be false
+    end
+
+    it 'returns true when all links are resolved' do
+      subject.instance_variable_set('@someLink_resolved', double)
+      subject.instance_variable_set('@items_resolved', [double, double])
+
+      # act
+      result = subject.resolved?
+
+      # assert
+      expect(result).to be true
+    end
+
+    it 'calls into sub-links when depth > 1' do
+      link = double
+      item = double
+      subject.instance_variable_set('@someLink_resolved', link)
+      subject.instance_variable_set('@items_resolved', [nil, item])
+
+      expect(link).to receive(:resolved?).with(depth: 1).and_return(true)
+      expect(item).to receive(:resolved?).with(depth: 1).and_return(true)
+
+      # act
+      result = subject.resolved?(depth: 2)
+
+      # assert
+      expect(result).to be true
+    end
+  end
+
   describe '#to_json' do
     it 'writes sys' do
       # act

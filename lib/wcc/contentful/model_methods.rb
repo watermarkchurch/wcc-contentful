@@ -26,6 +26,18 @@ module WCC::Contentful::ModelMethods
     self
   end
 
+  # Determines whether the object has been resolved up to the prescribed depth.
+  def resolved?(depth: 1, fields: nil)
+    raise ArgumentError, "Depth must be > 0 (was #{depth})" unless depth && depth > 0
+
+    fields = fields.map { |f| f.to_s.camelize(:lower) } if fields.present?
+    fields ||= self.class::FIELDS
+
+    typedef = self.class.content_type_definition
+    links = fields.select { |f| %i[Asset Link].include?(typedef.fields[f].type) }
+    links.all? { |f| _resolved_field?(f, depth) }
+  end
+
   # Turns the current model into a hash representation as though it had been retrieved from
   # the Contentful API.
   #
@@ -115,6 +127,17 @@ module WCC::Contentful::ModelMethods
     # end
 
     instance_variable_set(var_name + '_resolved', val)
+  end
+
+  def _resolved_field?(field_name, depth = 1)
+    var_name = '@' + field_name
+    raw = instance_variable_get(var_name)
+    return true if raw.nil? || (raw.is_a?(Array) && raw.all?(&:nil?))
+    return false unless val = instance_variable_get(var_name + '_resolved')
+    return true if depth <= 1
+
+    return val.resolved?(depth: depth - 1) unless val.is_a? Array
+    val.all? { |i| i.nil? || i.resolved?(depth: depth - 1) }
   end
 
   def _try_map(val, &block)
