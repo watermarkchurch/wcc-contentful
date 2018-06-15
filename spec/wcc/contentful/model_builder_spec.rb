@@ -246,6 +246,23 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     expect(main_menu.hamburger.items[0].link.title).to eq('About')
   end
 
+  it 'stores backreference on linked type context' do
+    @schema = subject.build_models
+
+    # act
+    main_menu = WCC::Contentful::Model::Menu.find('FNlqULSV0sOy4IoGmyWOW')
+
+    # assert
+    hamburger = main_menu.hamburger
+    expect(hamburger.sys.context.backlinks).to eq([main_menu])
+
+    button = hamburger.items[0]
+    expect(button.sys.context.backlinks).to eq([hamburger, main_menu])
+
+    page = button.link
+    expect(page.sys.context.backlinks).to eq([button, hamburger, main_menu])
+  end
+
   it 'handles nil linked types' do
     @schema = subject.build_models
 

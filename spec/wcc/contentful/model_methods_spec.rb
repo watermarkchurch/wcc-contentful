@@ -272,6 +272,30 @@ RSpec.describe WCC::Contentful::ModelMethods do
       # assert
       expect(link).to have_received(:resolved?).exactly(3).times.with(depth: 1)
     end
+
+    it 'keeps track of backlinks' do
+      resolved = make_resolved(depth: 2)
+
+      expect(store).to receive(:find_by)
+        .with(content_type: 'toJsonTest',
+              filter: { 'sys.id' => '1' },
+              options: { include: 1 }).once
+        .and_return(resolved)
+
+      expect(WCC::Contentful::Model).to_not receive(:find)
+
+      # act
+      subject.resolve
+
+      # assert
+      expect(subject.some_link.sys.context.backlinks[0]).to equal(subject)
+      expect(subject.items[0].sys.context.backlinks[0]).to equal(subject)
+
+      expect(subject.some_link.some_link.sys.context.backlinks[0])
+        .to equal(subject.some_link)
+      expect(subject.some_link.some_link.sys.context.backlinks[1])
+        .to equal(subject)
+    end
   end
 
   describe '#resolved?' do

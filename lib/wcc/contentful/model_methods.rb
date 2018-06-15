@@ -121,21 +121,24 @@ module WCC::Contentful::ModelMethods
     var_name = '@' + field_name
     return unless val = instance_variable_get(var_name)
 
-    context[id] ||= self
+    context = sys.context.to_h.merge(context)
     load =
       ->(raw) {
         id = raw.dig('sys', 'id')
-        return context[id] if context.key?(id)
-        m = context[id] =
-              if raw.dig('sys', 'type') == 'Link'
-                WCC::Contentful::Model.find(id)
-              else
-                content_type = content_type_from_raw(raw)
-                const = WCC::Contentful::Model.resolve_constant(content_type)
-                const.new(raw, context)
-              end
+        already_resolved = context[:backlinks]&.find { |m| m.id == id }
+        return already_resolved if already_resolved
 
-        m.resolve(depth: depth - 1, context: context) if m && depth > 1
+        new_context = context.merge({ backlinks: [self, *context[:backlinks]].freeze })
+        m =
+          if raw.dig('sys', 'type') == 'Link'
+            WCC::Contentful::Model.find(id, new_context)
+          else
+            content_type = content_type_from_raw(raw)
+            const = WCC::Contentful::Model.resolve_constant(content_type)
+            const.new(raw, new_context)
+          end
+
+        m.resolve(depth: depth - 1, context: new_context) if m && depth > 1
         m
       }
 

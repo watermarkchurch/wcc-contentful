@@ -49,20 +49,18 @@ module WCC::Contentful
             end
             @raw = raw.freeze
 
-            locale = context[:locale] if context.present?
-            locale ||= 'en-US'
-
             created_at = raw.dig('sys', 'createdAt')
             created_at = Time.parse(created_at) if created_at.present?
             updated_at = raw.dig('sys', 'updatedAt')
             updated_at = Time.parse(updated_at) if updated_at.present?
             @sys = WCC::Contentful::Sys.new(
               raw.dig('sys', 'id'),
-              locale,
+              raw.dig('sys', 'locale') || context.try(:[], :locale) || 'en-US',
               raw.dig('sys', 'space', 'sys', 'id'),
               created_at,
               updated_at,
-              raw.dig('sys', 'revision')
+              raw.dig('sys', 'revision'),
+              OpenStruct.new(context).freeze
             )
 
             typedef.fields.each_value do |f|
