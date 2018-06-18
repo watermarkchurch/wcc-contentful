@@ -135,11 +135,12 @@ RSpec.describe WCC::Contentful::ModelMethods do
       expect(WCC::Contentful::Model).to_not receive(:find)
 
       # act
-      subject.resolve
+      result = subject.resolve
 
       # assert
       expect(subject.some_link.name).to eq('unresolved1.2')
       expect(subject.items.map(&:name)).to eq(%w[unresolved1.3 unresolved1.4])
+      expect(result).to equal(subject)
     end
 
     it 'recursively resolves links for further depth' do
@@ -267,10 +268,11 @@ RSpec.describe WCC::Contentful::ModelMethods do
       expect(WCC::Contentful::Model).to_not receive(:find)
 
       # act
-      subject.resolve(depth: 2)
+      resolved = subject.resolve(depth: 2)
 
       # assert
       expect(link).to have_received(:resolved?).exactly(3).times.with(depth: 1)
+      expect(resolved).to equal(subject)
     end
 
     it 'keeps track of backlinks' do

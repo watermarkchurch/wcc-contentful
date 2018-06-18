@@ -15,7 +15,7 @@ module WCC::Contentful::ModelMethods
   #              See Model#find
   def resolve(depth: 1, fields: nil, context: {})
     raise ArgumentError, "Depth must be > 0 (was #{depth})" unless depth && depth > 0
-    return if resolved?(depth: depth, fields: fields)
+    return self if resolved?(depth: depth, fields: fields)
 
     fields = fields.map { |f| f.to_s.camelize(:lower) } if fields.present?
     fields ||= self.class::FIELDS
