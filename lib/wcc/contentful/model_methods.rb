@@ -143,11 +143,6 @@ module WCC::Contentful::ModelMethods
       }
 
     val = _try_map(val) { |v| load.call(v) if v }
-    # if val.is_a? Array
-    #   val.map { |v| load.call(v) if v }
-    # elsif val
-    #   load.call(val)
-    # end
 
     instance_variable_set(var_name + '_resolved', val)
   end

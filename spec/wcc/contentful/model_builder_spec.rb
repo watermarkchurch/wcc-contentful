@@ -246,6 +246,16 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     expect(main_menu.hamburger.items[0].link.title).to eq('About')
   end
 
+  it 'makes ID of linked types accessible' do
+    @schema = subject.build_models
+
+    # act
+    main_menu = WCC::Contentful::Model::Menu.find('FNlqULSV0sOy4IoGmyWOW')
+
+    # assert
+    expect(main_menu.hamburger_id).to eq('6y9DftpiYoA4YiKg2CgoUU')
+  end
+
   it 'stores backreference on linked type context' do
     @schema = subject.build_models
 

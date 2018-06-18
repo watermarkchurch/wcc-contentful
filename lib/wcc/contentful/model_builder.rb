@@ -102,6 +102,12 @@ module WCC::Contentful
 
                 _resolve_field(name)
               end
+
+              id_method_name = "#{name}_id"
+              define_method(id_method_name) do
+                instance_variable_get(var_name)&.dig('sys', 'id')
+              end
+              alias_method id_method_name.underscore, id_method_name
             when :Coordinates
               define_method(name) do
                 val = instance_variable_get(var_name)
@@ -127,6 +133,7 @@ module WCC::Contentful
                 instance_variable_get(var_name)
               end
             end
+
             alias_method name.underscore, name
           end
         end)
