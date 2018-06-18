@@ -89,32 +89,6 @@ module WCC::Contentful::ModelMethods
     to_h.to_json
   end
 
-  # Duplicates the raw hash that produced this entry, optionally overwriting fields
-  # with the given field values.
-  def raw_dup(fields = nil)
-    new_raw = raw.deep_dup
-    fields&.each do |(k, v)|
-      k = k.to_s.camelize(:lower)
-      raise ArgumentError, "Field #{k} does not exist" unless self.class::FIELDS.include?(k)
-      v = _try_map(v) { |i| i&.try(:raw) || i }
-      new_raw['fields'][k][sys.locale] = v
-    end
-    new_raw
-  end
-
-  # Duplicates the entry by duplicating the underlying raw structure, optionally
-  # overwriting fields with the given new values.
-  #
-  # Fields must be provided as a hash, as in the following example:
-  #
-  #    foo.dup(
-  #      title: 'New Title',
-  #      some_link: another_model
-  #    )
-  def dup(fields = nil)
-    self.class.new(raw_dup(fields))
-  end
-
   private
 
   def _resolve_field(field_name, depth = 1, context = {})
