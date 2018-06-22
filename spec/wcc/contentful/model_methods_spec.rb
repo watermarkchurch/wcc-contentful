@@ -302,6 +302,59 @@ RSpec.describe WCC::Contentful::ModelMethods do
       expect(subject.some_link.some_link.name).to eq('unresolved1.2')
     end
 
+    it 're-resolves circular reference further down the tree' do
+      expect(WCC::Contentful::Model).to_not receive(:find)
+
+      resolved1 = raw.deep_dup
+      # another reference that was resolved
+      raw2 = raw.deep_dup
+      raw2['sys']['id'] = '2'
+      raw2['fields']['items'] = nil
+      raw2['fields']['someLink']['en-US'] = { 'sys' => { 'type' => 'Link', 'id' => '4' } }
+      resolved1['fields']['someLink']['en-US'] = raw2
+
+      raw3 = raw.deep_dup
+      raw3['sys']['id'] = '3'
+      raw3['fields']['someLink'] = nil
+      # circular back to 1
+      raw3['fields']['items']['en-US'] = [
+        { 'sys' => { 'type' => 'Link', 'id' => '1' } }
+      ]
+      resolved1['fields']['items'] = { 'en-US' => [raw3] }
+
+      # subject now has two children:
+      #   someLink => '2'
+      #   items[0] => '3'
+      subject = WCC::Contentful::Model::ToJsonTest.new(resolved1).resolve(depth: 1)
+      expect(subject.some_link.id).to eq('2')
+      expect(subject.some_link.resolved?).to be false
+
+      resolved3 = raw3.deep_dup
+      # a resolved circular ref back to '1'
+      raw3['fields']['items']['en-US'] = [
+        resolved1
+      ]
+
+      # this happens in the call to #resolve on items[0]
+      expect(store).to receive(:find_by)
+        .with(content_type: 'toJsonTest',
+              filter: { 'sys.id' => '3' },
+              options: { include: 1 }).once
+        .and_return(resolved3)
+
+      # act
+      # the entry with ID '3' gets resolved here -
+      # level 1 resolves items[0] on '3' back to subject which is in the backlinks
+      # level 2 was resolved earlier on subject
+      # level 3 resolves some_link on '2' which points to '4'
+      subject.items[0].resolve(depth: 3)
+
+      # assert
+      expect(subject.items[0].items[0].some_link.id).to eq('2')
+      expect(subject.items[0].items[0].some_link.resolved?).to be true
+      expect(subject.items[0].items[0].some_link.some_link.id).to eq('4')
+    end
+
     it 'keeps track of backlinks' do
       resolved = make_resolved(depth: 2)
 
