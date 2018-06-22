@@ -97,10 +97,9 @@ module WCC::Contentful::ModelMethods
       ->(raw) {
         id = raw.dig('sys', 'id')
         already_resolved = context[:backlinks]&.find { |m| m.id == id }
-        return already_resolved if already_resolved
 
         new_context = context.merge({ backlinks: [self, *context[:backlinks]].freeze })
-        m =
+        m = already_resolved ||
           if raw.dig('sys', 'type') == 'Link'
             WCC::Contentful::Model.find(id, new_context)
           else

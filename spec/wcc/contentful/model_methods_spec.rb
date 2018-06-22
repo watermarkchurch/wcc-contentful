@@ -304,6 +304,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
 
     it 're-resolves circular reference further down the tree' do
       expect(WCC::Contentful::Model).to_not receive(:find)
+      expect(store).to_not receive(:find)
 
       resolved1 = raw.deep_dup
       # another reference that was resolved
@@ -327,7 +328,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
       #   items[0] => '3'
       subject = WCC::Contentful::Model::ToJsonTest.new(resolved1).resolve(depth: 1)
       expect(subject.some_link.id).to eq('2')
-      expect(subject.some_link.resolved?).to be false
+      expect(subject.some_link).to_not be_resolved
 
       resolved3 = raw3.deep_dup
       # a resolved circular ref back to '1'
@@ -336,11 +337,19 @@ RSpec.describe WCC::Contentful::ModelMethods do
       ]
 
       # this happens in the call to #resolve on items[0]
-      expect(store).to receive(:find_by)
-        .with(content_type: 'toJsonTest',
-              filter: { 'sys.id' => '3' },
-              options: { include: 1 }).once
+      allow(store).to receive(:find_by)
+        .with(hash_including(content_type: 'toJsonTest',
+                             filter: { 'sys.id' => '3' })).once
         .and_return(resolved3)
+
+      # this happens when the link from '2' => '4' gets resolved
+      resolved2 = raw2.deep_dup
+      raw2['fields']['someLink']['en-US'] =
+        { 'sys' => { 'type' => 'Entry', 'id' => '4', 'contentType' => content_type } }
+      allow(store).to receive(:find_by)
+        .with(hash_including(content_type: 'toJsonTest',
+                             filter: { 'sys.id' => '2' })).once
+        .and_return(resolved2)
 
       # act
       # the entry with ID '3' gets resolved here -
@@ -351,7 +360,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
 
       # assert
       expect(subject.items[0].items[0].some_link.id).to eq('2')
-      expect(subject.items[0].items[0].some_link.resolved?).to be true
+      expect(subject.items[0].items[0].some_link).to be_resolved
       expect(subject.items[0].items[0].some_link.some_link.id).to eq('4')
     end
 
