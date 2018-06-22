@@ -79,8 +79,8 @@ module WCC::Contentful::ModelMethods
       end
 
     {
-      sys: { 'locale' => @sys.locale }.merge!(@raw['sys']),
-      fields: fields
+      'sys' => { 'locale' => @sys.locale }.merge!(@raw['sys']),
+      'fields' => fields
     }
   end
 

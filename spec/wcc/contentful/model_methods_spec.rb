@@ -496,6 +496,34 @@ RSpec.describe WCC::Contentful::ModelMethods do
     end
   end
 
+  describe '#to_h' do
+    it 'makes a json-equivalent hash' do
+      resolved = make_resolved(depth: 1)
+
+      expect(store).to receive(:find_by)
+        .with(content_type: 'toJsonTest',
+              filter: { 'sys.id' => '1' },
+              options: { include: 1 }).once
+        .and_return(resolved)
+
+      subject.resolve
+
+      # act
+      h = subject.to_h
+
+      # assert
+      expect(h.dig('fields', 'someLink', 'fields')).to eq({
+        'name' => 'unresolved1.2',
+        'blob' => { 'some' => { 'data' => 3 } },
+        'someLink' => { 'sys' => { 'type' => 'Link', 'linkType' => 'Entry', 'id' => '2' } },
+        'items' => []
+      })
+
+      round_trip = JSON.parse(h.to_json)
+      expect(h).to eql(round_trip)
+    end
+  end
+
   def make_resolved(depth: 1, fields: %w[someLink items])
     resolved = raw.deep_dup
     resolved['sys']['id'] = "resolved#{depth}"
