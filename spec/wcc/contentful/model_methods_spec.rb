@@ -213,6 +213,8 @@ RSpec.describe WCC::Contentful::ModelMethods do
               options: { include: 10 }).once
         .and_return(resolved)
 
+      expect(WCC::Contentful::Model).to_not receive(:find)
+
       # act
       subject.resolve(depth: 99)
 
@@ -273,6 +275,31 @@ RSpec.describe WCC::Contentful::ModelMethods do
       # assert
       expect(link).to have_received(:resolved?).exactly(3).times.with(depth: 1)
       expect(resolved).to equal(subject)
+    end
+
+    it 're-resolves to deeper depth' do
+      resolved = make_resolved(depth: 1, fields: 'someLink')
+      expect(store).to receive(:find_by)
+        .with(content_type: 'toJsonTest',
+              filter: { 'sys.id' => '1' },
+              options: { include: 1 }).once
+        .and_return(resolved)
+
+      second_resolved = make_resolved(depth: 1, fields: 'someLink')
+      expect(store).to receive(:find_by)
+        .with(content_type: 'toJsonTest',
+              filter: { 'sys.id' => '1.2' },
+              options: { include: 1 }).once
+        .and_return(second_resolved)
+
+      expect(WCC::Contentful::Model).to_not receive(:find)
+      subject.resolve(depth: 1)
+
+      # act
+      subject.resolve(depth: 2)
+
+      # assert
+      expect(subject.some_link.some_link.name).to eq('unresolved1.2')
     end
 
     it 'keeps track of backlinks' do
