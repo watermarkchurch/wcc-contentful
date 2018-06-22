@@ -1,19 +1,28 @@
 # frozen_string_literal: true
 
 module WCC::Contentful::Store
+  # This is the base class for stores which implement #index, and therefore
+  # must be kept up-to-date via the Sync API.
   class Base
+    # Finds an entry by it's ID.  The returned entry is a JSON hash
     def find(_id)
       raise NotImplementedError, "#{self.class} does not implement #find"
     end
 
+    # Sets the value of the entry with the given ID in the store.
     def set(_id, _value)
       raise NotImplementedError, "#{self.class} does not implement #set"
     end
 
+    # Removes the entry by ID from the store.
     def delete(_id)
       raise NotImplementedError, "#{self.class} does not implement #delete"
     end
 
+    # Processes a data point received via the Sync API.  This can be a published
+    # entry or asset, or a 'DeletedEntry' or 'DeletedAsset'.  The default
+    # implementation calls into #set and #delete to perform the appropriate
+    # operations in the store.
     def index(json)
       # Subclasses can override to do this in a more performant thread-safe way.
       # Example: postgres_store could do this in a stored procedure for speed
@@ -42,6 +51,13 @@ module WCC::Contentful::Store
       end
     end
 
+    # Finds the first entry matching the given filter.  A content type is required.
+    #
+    # @param [String] content_type The ID of the content type to search for.
+    # @param [Hash] filter A set of key-value pairs defining filter operations.
+    #  See WCC::Contentful::Store::Base::Query
+    # @param [Hash] options An optional set of additional parameters to the query
+    #  defining for example include depth.  Not all store implementations respect all options.
     def find_by(content_type:, filter: nil, options: nil)
       # default implementation - can be overridden
       q = find_all(content_type: content_type, options: options)
@@ -49,6 +65,12 @@ module WCC::Contentful::Store
       q.first
     end
 
+    # Finds all entries of the given content type.  A content type is required.
+    #
+    # @param [String] content_type The ID of the content type to search for.
+    # @param [Hash] options An optional set of additional parameters to the query
+    #  defining for example include depth.  Not all store implementations respect all options.
+    # @returns [Query] A query object that exposes methods to apply filters
     # rubocop:disable Lint/UnusedMethodArgument
     def find_all(content_type:, options: nil)
       raise NotImplementedError, "#{self.class} does not implement find_all"
@@ -63,6 +85,9 @@ module WCC::Contentful::Store
 
     attr_reader :mutex
 
+    # The base class for query objects returned by find_all.  Subclasses should
+    # override the #result method to return an array-like containing the query
+    # results.
     class Query
       delegate :first, to: :result
       delegate :map, to: :result
@@ -114,7 +139,7 @@ module WCC::Contentful::Store
 
       protected
 
-      ## naiive implementation
+      # naive implementation
       def resolve_includes(entry, depth)
         return entry unless entry && depth && depth > 0 && fields = entry['fields']
 

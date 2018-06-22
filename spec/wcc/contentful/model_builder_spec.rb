@@ -246,6 +246,33 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     expect(main_menu.hamburger.items[0].link.title).to eq('About')
   end
 
+  it 'makes ID of linked types accessible' do
+    @schema = subject.build_models
+
+    # act
+    main_menu = WCC::Contentful::Model::Menu.find('FNlqULSV0sOy4IoGmyWOW')
+
+    # assert
+    expect(main_menu.hamburger_id).to eq('6y9DftpiYoA4YiKg2CgoUU')
+  end
+
+  it 'stores backreference on linked type context' do
+    @schema = subject.build_models
+
+    # act
+    main_menu = WCC::Contentful::Model::Menu.find('FNlqULSV0sOy4IoGmyWOW')
+
+    # assert
+    hamburger = main_menu.hamburger
+    expect(hamburger.sys.context.backlinks).to eq([main_menu])
+
+    button = hamburger.items[0]
+    expect(button.sys.context.backlinks).to eq([hamburger, main_menu])
+
+    page = button.link
+    expect(page.sys.context.backlinks).to eq([button, hamburger, main_menu])
+  end
+
   it 'handles nil linked types' do
     @schema = subject.build_models
 
@@ -501,6 +528,27 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
       # assert
       expect(button).to be_a(WCC::Contentful::Model::MenuButton)
+    end
+
+    it 'does not use loaded class if it does not exist' do
+      expect(Object).to receive(:const_missing).with('MenuButton')
+        .and_raise(NameError, 'uninitialized constant MenuButton')
+
+      # act
+      button = WCC::Contentful::Model.find('5NBhDw3i2kUqSwqYok4YQO')
+
+      # assert
+      expect(button).to be_a(WCC::Contentful::Model::MenuButton)
+    end
+
+    it 're-raises NameError if the class def itself raises a name error' do
+      expect(Object).to receive(:const_missing).with('MenuButton')
+        .and_raise(NameError, 'uninitialized constant FooBar')
+
+      # act
+      expect {
+        WCC::Contentful::Model.find('5NBhDw3i2kUqSwqYok4YQO')
+      }.to raise_error(NameError)
     end
   end
 end

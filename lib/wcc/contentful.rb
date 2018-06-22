@@ -18,19 +18,16 @@ require 'wcc/contentful/model_methods'
 require 'wcc/contentful/model_singleton_methods'
 require 'wcc/contentful/model_builder'
 
-##
 # The root namespace of the wcc-contentful gem
 #
 # Initialize the gem with the `configure` and `init` methods inside your
 # initializer.
 module WCC::Contentful
   class << self
-    ##
     # Gets the current configuration, after calling WCC::Contentful.configure
     attr_reader :configuration
   end
 
-  ##
   # Configures the WCC::Contentful gem to talk to a Contentful space.
   # This must be called first in your initializer, before #init! or accessing the
   # client.
@@ -43,7 +40,6 @@ module WCC::Contentful
     configuration
   end
 
-  ##
   # Initializes the WCC::Contentful model-space and backing store.
   # This populates the WCC::Contentful::Model namespace with Ruby classes
   # that represent content types in the configured Contentful space.
@@ -51,7 +47,7 @@ module WCC::Contentful
   # These content types can be queried directly:
   #   WCC::Contentful::Model::Page.find('1xab...')
   # Or you can inherit from them in your own app:
-  #   class Page < WCC::Contentful::Model.page; end
+  #   class Page < WCC::Contentful::Model::Page; end
   #   Page.find_by(slug: 'about-us')
   def self.init!
     raise ArgumentError, 'Please first call WCC:Contentful.configure' if configuration.nil?
@@ -87,7 +83,6 @@ module WCC::Contentful
     require_relative 'client_ext' if defined?(::Contentful)
   end
 
-  ##
   # Runs validations over the content types returned from the Contentful API.
   # Validations are configured on predefined model classes using the
   # `validate_field` directive.  Example:

@@ -4,9 +4,14 @@ require_relative 'simple_client/response'
 require_relative 'simple_client/management'
 
 module WCC::Contentful
-  ##
   # The SimpleClient accesses the Contentful CDN to get JSON responses,
-  # returning the raw JSON data as a parsed hash.
+  # returning the raw JSON data as a parsed hash.  This is the bottom layer of
+  # the WCC::Contentful gem.
+  #
+  # Note: Do not create this directly, instead create one of
+  # WCC::Contentful::SimpleClient::Cdn, WCC::Contentful::SimpleClient::Preview,
+  # WCC::Contentful::SimpleClient::Management
+  #
   # It can be configured to access any API url and exposes only a single method,
   # `get`.  This method returns a WCC::Contentful::SimpleClient::Response
   # that handles paging automatically.
@@ -17,6 +22,16 @@ module WCC::Contentful
     attr_reader :api_url
     attr_reader :space
 
+    # Creates a new SimpleClient with the given configuration.
+    #
+    # @param api_url [String] the base URL of the Contentful API to connect to
+    # @param space [String] The Space ID to access
+    # @param access_token [String] A Contentful Access Token to be sent in the Authorization header
+    # @param adapter [Symbol, Object] (Optional) The Adapter to use to make requests.
+    #  Auto-discovered based on what gems are installed if this is not provided.
+    # @param default_locale [String] (Optional) The locale query param to set by default.
+    # @param environment [String] (Optional) The contentful environment to access. Defaults to 'master'.
+    # @param no_follow_redirects [Boolean] (Optional) If true, do not follow 300 level redirects.
     def initialize(api_url:, space:, access_token:, **options)
       @api_url = URI.join(api_url, '/spaces/', space + '/')
       @space = space
@@ -32,6 +47,9 @@ module WCC::Contentful
       @api_url = URI.join(@api_url, 'environments/', options[:environment] + '/')
     end
 
+    # performs an HTTP GET request to the specified path within the configured
+    # space and environment.  Query parameters are merged with the defaults and
+    # appended to the request.
     def get(path, query = {})
       url = URI.join(@api_url, path)
 
@@ -91,7 +109,6 @@ module WCC::Contentful
       resp
     end
 
-    ##
     # The CDN SimpleClient accesses 'https://cdn.contentful.com' to get raw
     # JSON responses.  It exposes methods to query entries, assets, and content_types.
     # The responses are instances of WCC::Contentful::SimpleClient::Response
@@ -110,42 +127,36 @@ module WCC::Contentful
         'cdn'
       end
 
-      ##
       # Gets an entry by ID
       def entry(key, query = {})
         resp = get("entries/#{key}", query)
         resp.assert_ok!
       end
 
-      ##
       # Queries entries with optional query parameters
       def entries(query = {})
         resp = get('entries', query)
         resp.assert_ok!
       end
 
-      ##
       # Gets an asset by ID
       def asset(key, query = {})
         resp = get("assets/#{key}", query)
         resp.assert_ok!
       end
 
-      ##
       # Queries assets with optional query parameters
       def assets(query = {})
         resp = get('assets', query)
         resp.assert_ok!
       end
 
-      ##
       # Queries content types with optional query parameters
       def content_types(query = {})
         resp = get('content_types', query)
         resp.assert_ok!
       end
 
-      ##
       # Accesses the Sync API to get a list of items that have changed since
       # the last sync.
       #

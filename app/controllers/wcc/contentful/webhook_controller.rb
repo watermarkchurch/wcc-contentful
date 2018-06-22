@@ -3,6 +3,9 @@
 require_dependency 'wcc/contentful/application_controller'
 
 module WCC::Contentful
+  # The WebhookController is mounted by the WCC::Contentful::Engine to receive
+  # webhook events from Contentful.  It passes these webhook events to
+  # the jobs configured in WCC::Contentful::Configuration.webhook_jobs.
   class WebhookController < ApplicationController
     before_action :authorize_contentful
     protect_from_forgery unless: -> { request.format.json? }

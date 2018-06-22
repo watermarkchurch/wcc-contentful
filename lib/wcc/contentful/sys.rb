@@ -7,7 +7,8 @@ WCC::Contentful::Sys =
     :space,
     :created_at,
     :updated_at,
-    :revision
+    :revision,
+    :context
   ) do
 
     ATTRIBUTES = %i[
@@ -17,6 +18,7 @@ WCC::Contentful::Sys =
       created_at
       updated_at
       revision
+      context
     ].freeze
 
     undef []=

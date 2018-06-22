@@ -40,4 +40,7 @@ module WCC::Contentful
 
   class CircularReferenceError < StandardError
   end
+
+  class ResolveError < StandardError
+  end
 end

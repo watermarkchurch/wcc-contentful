@@ -68,8 +68,7 @@ Metrics/ClassLength:
   Enabled: false
 
 Metrics/ModuleLength:
-  Exclude:
-   - 'spec/**/*.rb'
+  Enabled: false
 
 Performance/UnfreezeString:
   Exclude:

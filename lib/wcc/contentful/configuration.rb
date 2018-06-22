@@ -18,7 +18,6 @@ class WCC::Contentful::Configuration
   ].freeze
   attr_accessor(*ATTRIBUTES)
 
-  ##
   # Defines the method by which content is downloaded from the Contentful CDN.
   #
   # [:direct] `config.content_delivery = :direct`
@@ -64,7 +63,6 @@ class WCC::Contentful::Configuration
 
   attr_reader :content_delivery_params
 
-  ##
   # Directly sets the adapter layer for communicating with Contentful
   def store=(value)
     @content_delivery = :custom
