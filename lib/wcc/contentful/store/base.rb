@@ -139,7 +139,7 @@ module WCC::Contentful::Store
 
       protected
 
-      # naiive implementation
+      # naive implementation
       def resolve_includes(entry, depth)
         return entry unless entry && depth && depth > 0 && fields = entry['fields']
 

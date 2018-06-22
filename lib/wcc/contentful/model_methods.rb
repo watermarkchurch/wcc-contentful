@@ -84,10 +84,7 @@ module WCC::Contentful::ModelMethods
     }
   end
 
-  # Dumps the object to a JSON string using the same resolution method as the above `#to_h`
-  def to_json
-    to_h.to_json
-  end
+  delegate :to_json, to: :to_h
 
   private
 
