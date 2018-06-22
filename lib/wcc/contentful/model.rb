@@ -61,10 +61,15 @@ class WCC::Contentful::Model
   def self.find(id, context = nil)
     return unless raw = store.find(id)
 
+    new_from_raw(raw, context)
+  end
+
+  # Creates a new initialized instance of the appropriate model type for the
+  # given raw value.  The raw value must be the same format as returned from one
+  # of the stores for a given object.
+  def self.new_from_raw(raw, context = nil)
     content_type = content_type_from_raw(raw)
-
     const = resolve_constant(content_type)
-
     const.new(raw, context)
   end
 

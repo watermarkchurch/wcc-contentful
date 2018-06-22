@@ -104,9 +104,7 @@ module WCC::Contentful::ModelMethods
           if raw.dig('sys', 'type') == 'Link'
             WCC::Contentful::Model.find(id, new_context)
           else
-            content_type = content_type_from_raw(raw)
-            const = WCC::Contentful::Model.resolve_constant(content_type)
-            const.new(raw, new_context)
+            WCC::Contentful::Model.new_from_raw(raw, new_context)
           end
 
         m.resolve(depth: depth - 1, context: new_context) if m && depth > 1
