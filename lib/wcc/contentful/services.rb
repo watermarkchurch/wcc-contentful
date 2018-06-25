@@ -114,6 +114,22 @@ module WCC::Contentful
     end
   end
 
+  # Include this module to define accessors for every method defined on the
+  # {Services} singleton.
+  #
+  # @example
+  #   class MyJob < ApplicationJob
+  #     include WCC::Contentful::ServiceAccessors
+  #
+  #     def perform
+  #       Page.find(...)
+  #
+  #       store.find(...)
+  #
+  #       client.entries(...)
+  #     end
+  #   end
+  # @see Services
   module ServiceAccessors
     SERVICES = (WCC::Contentful::Services.instance_methods -
       Object.instance_methods -

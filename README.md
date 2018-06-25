@@ -187,8 +187,8 @@ class PagesController < ApplicationController
 end
 ```
 
-The WCC::Contentful::Services singleton gives access to the other configured services.
-You can also include the WCC::Contentful::ServiceAccessors concern to define these
+The {WCC::Contentful::Services} singleton gives access to the other configured services.
+You can also include the {WCC::Contentful::ServiceAccessors} concern to define these
 services as attributes in a class.
 
 ```ruby
