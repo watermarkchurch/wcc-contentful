@@ -11,10 +11,10 @@ module WCC::Contentful::ModelMethods
   # depth is satisfied.  Depth resolution is unlimited, circular references will
   # be resolved to the same object.
   #
-  # @param [Fixnum] :depth how far to recursively resolve.  Must be >= 1
-  # @param [Array<String, Symbol>] :fields (optional) A subset of fields whose
+  # @param [Fixnum] depth how far to recursively resolve.  Must be >= 1
+  # @param [Array<String, Symbol>] fields (optional) A subset of fields whose
   #   links should be resolved.  Defaults to all fields.
-  # @param [Hash] :context passed to the resolved model's `new` function to provide
+  # @param [Hash] context passed to the resolved model's `new` function to provide
   #   contextual information ex. current locale.
   #   See {WCC::Contentful::Model#find}, {WCC::Contentful::Sys#context}
   def resolve(depth: 1, fields: nil, context: {})

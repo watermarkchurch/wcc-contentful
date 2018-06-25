@@ -81,7 +81,7 @@ module WCC::Contentful::Store
     # @param [String] content_type The ID of the content type to search for.
     # @param [Hash] options An optional set of additional parameters to the query
     #  defining for example include depth.  Not all store implementations respect all options.
-    # @returns [Query] A query object that exposes methods to apply filters
+    # @return [Query] A query object that exposes methods to apply filters
     # rubocop:disable Lint/UnusedMethodArgument
     def find_all(content_type:, options: nil)
       raise NotImplementedError, "#{self.class} does not implement find_all"

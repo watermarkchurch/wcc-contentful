@@ -26,14 +26,15 @@ module WCC::Contentful
 
     # Creates a new SimpleClient with the given configuration.
     #
-    # @param api_url [String] the base URL of the Contentful API to connect to
-    # @param space [String] The Space ID to access
-    # @param access_token [String] A Contentful Access Token to be sent in the Authorization header
-    # @param adapter [Symbol, Object] (Optional) The Adapter to use to make requests.
-    #  Auto-discovered based on what gems are installed if this is not provided.
-    # @param default_locale [String] (Optional) The locale query param to set by default.
-    # @param environment [String] (Optional) The contentful environment to access. Defaults to 'master'.
-    # @param no_follow_redirects [Boolean] (Optional) If true, do not follow 300 level redirects.
+    # @param [String] api_url the base URL of the Contentful API to connect to
+    # @param [String] space The Space ID to access
+    # @param [String] access_token A Contentful Access Token to be sent in the Authorization header
+    # @param [Hash] options The remaining optional parameters, defined below
+    # @option options [Symbol, Object] adapter The Adapter to use to make requests.
+    #   Auto-discovered based on what gems are installed if this is not provided.
+    # @option options [String] default_locale The locale query param to set by default.
+    # @option options [String] environment The contentful environment to access. Defaults to 'master'.
+    # @option options [Boolean] no_follow_redirects If true, do not follow 300 level redirects.
     def initialize(api_url:, space:, access_token:, **options)
       @api_url = URI.join(api_url, '/spaces/', space + '/')
       @space = space
