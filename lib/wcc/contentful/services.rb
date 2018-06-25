@@ -10,16 +10,16 @@ module WCC::Contentful
     # models in the WCC::Contentful::Model namespace.
     # This is one of the following based on the configured content_delivery method:
     #
-    # [:direct] an instance of WCC::Contentful::Store::CDNAdapter with a
-    #           {CDN Client}[rdoc-ref:WCC::Contentful::SimpleClient::Cdn] to access the CDN.
+    # [:direct] an instance of {WCC::Contentful::Store::CDNAdapter} with a
+    #           {WCC::Contentful::SimpleClient::Cdn CDN Client} to access the CDN.
     #
-    # [:lazy_sync] an instance of WCC::Contentful::Store::LazyCacheStore
+    # [:lazy_sync] an instance of {WCC::Contentful::Store::LazyCacheStore}
     #              with the configured ActiveSupport::Cache implementation and a
-    #              {CDN Client}[rdoc-ref:WCC::Contentful::SimpleClient::Cdn] for when data
+    #              {WCC::Contentful::SimpleClient::Cdn CDN Client} for when data
     #              cannot be found in the cache.
     #
     # [:eager_sync] an instance of the configured Store type, defined by
-    #               WCC::Contentful::Configuration.sync_store
+    #               {WCC::Contentful::Configuration#sync_store}
     #
     # @api Store
     def store
@@ -34,7 +34,7 @@ module WCC::Contentful
         end
     end
 
-    # An instance of WCC::Contentful::Store::CDNAdapter which connects to the
+    # An instance of {WCC::Contentful::Store::CDNAdapter} which connects to the
     # Contentful Preview API to return preview content.
     #
     # @api Store
@@ -50,7 +50,7 @@ module WCC::Contentful
         end
     end
 
-    # Gets a {CDN Client}[rdoc-ref:WCC::Contentful::SimpleClient::Cdn] which provides
+    # Gets a {WCC::Contentful::SimpleClient::Cdn CDN Client} which provides
     # methods for getting and paging raw JSON data from the Contentful CDN.
     #
     # @api Client
@@ -67,7 +67,7 @@ module WCC::Contentful
         end
     end
 
-    # Gets a {CDN Client}[rdoc-ref:WCC::Contentful::SimpleClient::Cdn] which provides
+    # Gets a {WCC::Contentful::SimpleClient::Cdn CDN Client} which provides
     # methods for getting and paging raw JSON data from the Contentful Preview API.
     #
     # @api Client
@@ -85,6 +85,8 @@ module WCC::Contentful
         end
     end
 
+    # Gets a {WCC::Contentful::SimpleClient::Management Management Client} which provides
+    # methods for updating data via the Contentful Management API
     #
     # @api Client
     def management_client

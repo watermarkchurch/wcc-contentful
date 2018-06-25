@@ -63,13 +63,13 @@ preview_redirect_object.href
 # => 'http://www.somesite.com/slug-for-redirect'
 ```
 
+See the {WCC::Contentful::Model} documentation for more details.
+
 ### Store API
 
 The Store layer is used by the Model API to access Contentful data in a raw form.
 The Store layer returns entries as hashes parsed from JSON, conforming to the
 object structure returned from the Contentful CDN.
-
-See the WCC::Contentful::Store documentation for more details.
 
 The following examples show how to use the Store API to retrieve raw data from
 the store:
@@ -103,13 +103,13 @@ query.result.force
 # => [{"sys"=> ...}, {"sys"=> ...}, ...]
 ```
 
+See the {WCC::Contentful::Store} documentation for more details.
+
 ### Direct CDN API (SimpleClient)
 
 The SimpleClient is the bottom layer, and is used to get raw data directly from
 the Contentful CDN.  It handles response parsing and paging, but does not resolve
 links or transform the result into a Model class.
-
-See the WCC::Contentful::SimpleClient documentation for more details.
 
 The following examples show how to use the SimpleClient to retrieve data directly
 from the Contentful CDN:
@@ -163,6 +163,8 @@ through to the API to set the page size.
 Entries included via the `include` parameter are made available on the #includes
 field.  This is a hash of `<entry ID> => <raw entry>` and makes it easy to grab
 links.  This hash is added to lazily as you enumerate the pages.
+
+See the {WCC::Contentful::SimpleClient} documentation for more details.
 
 ### Accessing the APIs within application code
 

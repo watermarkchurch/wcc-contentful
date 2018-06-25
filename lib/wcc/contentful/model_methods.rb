@@ -16,7 +16,7 @@ module WCC::Contentful::ModelMethods
   #   links should be resolved.  Defaults to all fields.
   # @param [Hash] context passed to the resolved model's `new` function to provide
   #   contextual information ex. current locale.
-  #   See {WCC::Contentful::Model#find}, {WCC::Contentful::Sys#context}
+  #   See {WCC::Contentful::ModelSingletonMethods#find Model#find}, {WCC::Contentful::Sys#context}
   def resolve(depth: 1, fields: nil, context: {})
     raise ArgumentError, "Depth must be > 0 (was #{depth})" unless depth && depth > 0
     return self if resolved?(depth: depth, fields: fields)
