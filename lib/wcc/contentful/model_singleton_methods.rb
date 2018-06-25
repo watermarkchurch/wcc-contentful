@@ -2,6 +2,7 @@
 
 # This module is extended by all models and defines singleton
 # methods that are not dynamically generated.
+# @api Model
 module WCC::Contentful::ModelSingletonMethods
   def store(preview = false)
     if preview
@@ -15,12 +16,25 @@ module WCC::Contentful::ModelSingletonMethods
     end
   end
 
+  # Finds an instance of this content type.
+  #
+  # @return [nil, WCC::Contentful::Model] An instance of the appropriate model class
+  #   for this content type, or nil if the ID does not exist in the space.
+  # @example
+  #   WCC::Contentful::Model::Page.find(id)
   def find(id, options: nil)
     options ||= {}
     raw = store(options[:preview]).find(id)
     new(raw, options) if raw.present?
   end
 
+  # Finds all instances of this content type, optionally limiting to those matching
+  # a given filter query.
+  #
+  # @return [Enumerator::Lazy<WCC::Contentful::Model>, <WCC::Contentful::Model>]
+  #   A set of instantiated model objects matching the given query.
+  # @example
+  #   WCC::Contentful::Model::Page.find_all('sys.created_at' => { lte: Date.today })
   def find_all(filter = nil)
     options = filter&.delete(:options) || {}
 
@@ -36,6 +50,12 @@ module WCC::Contentful::ModelSingletonMethods
     query.map { |r| new(r, options) }
   end
 
+  # Finds the first instance of this content type matching the given query.
+  #
+  # @return [nil, WCC::Contentful::Model] A set of instantiated model objects matching
+  #   the given query.
+  # @example
+  #   WCC::Contentful::Model::Page.find_by(slug: '/some-slug')
   def find_by(filter = nil)
     options = filter&.delete(:options) || {}
 

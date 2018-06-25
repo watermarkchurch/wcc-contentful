@@ -21,6 +21,7 @@ module WCC::Contentful
     # [:eager_sync] an instance of the configured Store type, defined by
     #               WCC::Contentful::Configuration.sync_store
     #
+    # @api Store
     def store
       @store ||=
         ensure_configured do |config|
@@ -35,6 +36,8 @@ module WCC::Contentful
 
     # An instance of WCC::Contentful::Store::CDNAdapter which connects to the
     # Contentful Preview API to return preview content.
+    #
+    # @api Store
     def preview_store
       @preview_store ||=
         ensure_configured do |config|
@@ -49,6 +52,8 @@ module WCC::Contentful
 
     # Gets a {CDN Client}[rdoc-ref:WCC::Contentful::SimpleClient::Cdn] which provides
     # methods for getting and paging raw JSON data from the Contentful CDN.
+    #
+    # @api Client
     def client
       @client ||=
         ensure_configured do |config|
@@ -64,6 +69,8 @@ module WCC::Contentful
 
     # Gets a {CDN Client}[rdoc-ref:WCC::Contentful::SimpleClient::Cdn] which provides
     # methods for getting and paging raw JSON data from the Contentful Preview API.
+    #
+    # @api Client
     def preview_client
       @preview_client ||=
         ensure_configured do |config|
@@ -78,6 +85,8 @@ module WCC::Contentful
         end
     end
 
+    #
+    # @api Client
     def management_client
       @management_client ||=
         ensure_configured do |config|

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# @api Store
 module WCC::Contentful::Store
   # This is the base class for stores which implement #index, and therefore
   # must be kept up-to-date via the Sync API.

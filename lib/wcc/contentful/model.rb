@@ -34,6 +34,8 @@
 # be used:
 #
 #    Menu.find_by(name: 'home').buttons.first.linked_page # is a ::Page
+#
+# @api Model
 class WCC::Contentful::Model
   extend WCC::Contentful::Helpers
   extend WCC::Contentful::ModelValidators

@@ -18,6 +18,8 @@ module WCC::Contentful
   #
   # The SimpleClient by default uses 'http' to perform the gets, but any HTTP
   # client can be injected by passing a proc as the `adapter:` option.
+  #
+  # @api Client
   class SimpleClient
     attr_reader :api_url
     attr_reader :space
@@ -113,6 +115,8 @@ module WCC::Contentful
     # JSON responses.  It exposes methods to query entries, assets, and content_types.
     # The responses are instances of WCC::Contentful::SimpleClient::Response
     # which handles paging automatically.
+    #
+    # @api Client
     class Cdn < SimpleClient
       def initialize(space:, access_token:, **options)
         super(
@@ -176,6 +180,7 @@ module WCC::Contentful
       end
     end
 
+    # @api Client
     class Preview < Cdn
       def initialize(space:, preview_token:, **options)
         super(
