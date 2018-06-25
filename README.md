@@ -1,3 +1,8 @@
+[![Gem Version](https://badge.fury.io/rb/wcc-contentful.svg)](https://badge.fury.io/rb/wcc-contentful)
+[![CircleCI](https://circleci.com/gh/watermarkchurch/wcc-contentful.svg?style=svg)](https://circleci.com/gh/watermarkchurch/wcc-contentful)
+
+Full documentation: https://www.rubydoc.info/github/watermarkchurch/wcc-contentful
+
 # WCC::Contentful
 
 ## Installation
