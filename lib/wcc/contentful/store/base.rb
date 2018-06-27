@@ -1,20 +1,29 @@
 # frozen_string_literal: true
 
+# @api Store
 module WCC::Contentful::Store
   # This is the base class for stores which implement #index, and therefore
   # must be kept up-to-date via the Sync API.
+  # @abstract At a minimum subclasses should override {#find}, {#find_all}, {#set},
+  #   and #{delete}. As an alternative to overriding set and delete, the subclass
+  #   can override {#index}.  Index is called when a webhook triggers a sync, to
+  #   update the store.
   class Base
     # Finds an entry by it's ID.  The returned entry is a JSON hash
+    # @abstract Subclasses should implement this at a minimum to provide data
+    #   to the WCC::Contentful::Model API.
     def find(_id)
       raise NotImplementedError, "#{self.class} does not implement #find"
     end
 
     # Sets the value of the entry with the given ID in the store.
+    # @abstract
     def set(_id, _value)
       raise NotImplementedError, "#{self.class} does not implement #set"
     end
 
     # Removes the entry by ID from the store.
+    # @abstract
     def delete(_id)
       raise NotImplementedError, "#{self.class} does not implement #delete"
     end
@@ -67,10 +76,12 @@ module WCC::Contentful::Store
 
     # Finds all entries of the given content type.  A content type is required.
     #
+    # @abstract Subclasses should implement this at a minimum to provide data
+    #   to the {WCC::Contentful::Model} API.
     # @param [String] content_type The ID of the content type to search for.
     # @param [Hash] options An optional set of additional parameters to the query
     #  defining for example include depth.  Not all store implementations respect all options.
-    # @returns [Query] A query object that exposes methods to apply filters
+    # @return [Query] A query object that exposes methods to apply filters
     # rubocop:disable Lint/UnusedMethodArgument
     def find_all(content_type:, options: nil)
       raise NotImplementedError, "#{self.class} does not implement find_all"
@@ -108,6 +119,8 @@ module WCC::Contentful::Store
         match
       ].freeze
 
+      # @abstract Subclasses should provide this in order to fetch the results
+      #   of the query.
       def result
         raise NotImplementedError
       end
@@ -116,6 +129,9 @@ module WCC::Contentful::Store
         @store = store
       end
 
+      # @abstract Subclasses can either override this method to properly respond
+      #   to find_by query objects, or they can define a method for each supported
+      #   operator.  Ex. `#eq`, `#ne`, `#gt`.
       def apply_operator(operator, field, expected, context = nil)
         respond_to?(operator) ||
           raise(ArgumentError, "Operator not implemented: #{operator}")
@@ -123,6 +139,7 @@ module WCC::Contentful::Store
         public_send(operator, field, expected, context)
       end
 
+      # Called with a filter object by {Base#find_by} in order to apply the filter.
       def apply(filter, context = nil)
         filter.reduce(self) do |query, (field, value)|
           if value.is_a?(Hash)
@@ -139,7 +156,12 @@ module WCC::Contentful::Store
 
       protected
 
-      # naive implementation
+      # naive implementation recursively descends the graph to turns links into
+      # the actual entry data.  This calls {Base#find} for each link and so it is
+      # very inefficient.
+      #
+      # @abstract Override this to provide a more efficient implementation for
+      #   a given store.
       def resolve_includes(entry, depth)
         return entry unless entry && depth && depth > 0 && fields = entry['fields']
 

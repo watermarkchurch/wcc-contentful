@@ -9,11 +9,11 @@
 # the "page" content type is represented by a class named WCC::Contentful::Model::Page
 #
 # This WCC::Contentful::Model::Page class exposes the following API methods:
-# * WCC::Contentful::Model::Page.find(id)
+# * {WCC::Contentful::ModelSingletonMethods#find Page.find(id)}
 #   finds a single Page by it's ID
-# * WCC::Contentful::Model::Page.find_by(field: <value>)
+# * {WCC::Contentful::ModelSingletonMethods#find_by Page.find_by(field: <value>)}
 #   finds a single Page with the matching value for the specified field
-# * WCC::Contentful::Model::Page.find_all(field: <value>)
+# * {WCC::Contentful::ModelSingletonMethods#find_all Page.find_all(field: <value>)}
 #   finds all instances of Page with the matching value for the specified field.
 #   It returns a lazy iterator of Page objects.
 #
@@ -34,6 +34,8 @@
 # be used:
 #
 #    Menu.find_by(name: 'home').buttons.first.linked_page # is a ::Page
+#
+# @api Model
 class WCC::Contentful::Model
   extend WCC::Contentful::Helpers
   extend WCC::Contentful::ModelValidators
@@ -56,7 +58,7 @@ class WCC::Contentful::Model
   # Finds an Entry or Asset by ID in the configured contentful space
   # and returns an initialized instance of the appropriate model type.
   #
-  # Makes use of the configured {store}[rdoc-ref:WCC::Contentful::Model.store]
+  # Makes use of the {WCC::Contentful::Services#store configured store}
   # to access the Contentful CDN.
   def self.find(id, context = nil)
     return unless raw = store.find(id)

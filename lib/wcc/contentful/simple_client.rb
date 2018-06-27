@@ -18,20 +18,23 @@ module WCC::Contentful
   #
   # The SimpleClient by default uses 'http' to perform the gets, but any HTTP
   # client can be injected by passing a proc as the `adapter:` option.
+  #
+  # @api Client
   class SimpleClient
     attr_reader :api_url
     attr_reader :space
 
     # Creates a new SimpleClient with the given configuration.
     #
-    # @param api_url [String] the base URL of the Contentful API to connect to
-    # @param space [String] The Space ID to access
-    # @param access_token [String] A Contentful Access Token to be sent in the Authorization header
-    # @param adapter [Symbol, Object] (Optional) The Adapter to use to make requests.
-    #  Auto-discovered based on what gems are installed if this is not provided.
-    # @param default_locale [String] (Optional) The locale query param to set by default.
-    # @param environment [String] (Optional) The contentful environment to access. Defaults to 'master'.
-    # @param no_follow_redirects [Boolean] (Optional) If true, do not follow 300 level redirects.
+    # @param [String] api_url the base URL of the Contentful API to connect to
+    # @param [String] space The Space ID to access
+    # @param [String] access_token A Contentful Access Token to be sent in the Authorization header
+    # @param [Hash] options The remaining optional parameters, defined below
+    # @option options [Symbol, Object] adapter The Adapter to use to make requests.
+    #   Auto-discovered based on what gems are installed if this is not provided.
+    # @option options [String] default_locale The locale query param to set by default.
+    # @option options [String] environment The contentful environment to access. Defaults to 'master'.
+    # @option options [Boolean] no_follow_redirects If true, do not follow 300 level redirects.
     def initialize(api_url:, space:, access_token:, **options)
       @api_url = URI.join(api_url, '/spaces/', space + '/')
       @space = space
@@ -113,6 +116,8 @@ module WCC::Contentful
     # JSON responses.  It exposes methods to query entries, assets, and content_types.
     # The responses are instances of WCC::Contentful::SimpleClient::Response
     # which handles paging automatically.
+    #
+    # @api Client
     class Cdn < SimpleClient
       def initialize(space:, access_token:, **options)
         super(
@@ -176,6 +181,7 @@ module WCC::Contentful
       end
     end
 
+    # @api Client
     class Preview < Cdn
       def initialize(space:, preview_token:, **options)
         super(

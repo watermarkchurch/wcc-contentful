@@ -23,14 +23,14 @@ class WCC::Contentful::Configuration
   # [:direct] `config.content_delivery = :direct`
   #           with the `:direct` method, all queries result in web requests to
   #           'https://cdn.contentful.com' via the
-  #           {SimpleClient}[rdoc-ref:WCC::Contentful::SimpleClient::Cdn]
+  #           {WCC::Contentful::SimpleClient::Cdn SimpleClient}
   #
   # [:eager_sync] `config.content_delivery = :eager_sync, [sync_store], [options]`
   #               with the `:eager_sync` method, the entire content of the Contentful
   #               space is downloaded locally and stored in the
-  #               {Sync Store}[rdoc-ref:WCC::Contentful.store].  The application is responsible
-  #               to periodically call `WCC::Contentful.sync!` to keep the store updated.
-  #               Alternatively, the provided {Engine}[WCC::Contentful::Engine]
+  #               {WCC::Contentful::Services#store configured store}.  The application is
+  #               responsible to periodically call `WCC::Contentful.sync!` to keep the store
+  #               updated. Alternatively, the provided {WCC::Contentful::Engine Engine}
   #               can be mounted to receive a webhook from the Contentful space
   #               on publish events:
   #                 mount WCC::Contentful::Engine, at: '/wcc/contentful'

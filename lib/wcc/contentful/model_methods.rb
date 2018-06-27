@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
-# This module is included by all models and defines instance
+# This module is included by all {WCC::Contentful::Model models} and defines instance
 # methods that are not dynamically generated.
+#
+# @api Model
 module WCC::Contentful::ModelMethods
   # Resolves all links in an entry to the specified depth.
   #
@@ -9,10 +11,12 @@ module WCC::Contentful::ModelMethods
   # depth is satisfied.  Depth resolution is unlimited, circular references will
   # be resolved to the same object.
   #
-  # * :depth - how far to recursively resolve.  Must be >= 1
-  # * :fields - (optional) A subset of fields whose links should be resolved.  Defaults to all fields.
-  # * :context - passed to the resolved model's `new` function to provide ex. current locale.
-  #              See Model#find
+  # @param [Fixnum] depth how far to recursively resolve.  Must be >= 1
+  # @param [Array<String, Symbol>] fields (optional) A subset of fields whose
+  #   links should be resolved.  Defaults to all fields.
+  # @param [Hash] context passed to the resolved model's `new` function to provide
+  #   contextual information ex. current locale.
+  #   See {WCC::Contentful::ModelSingletonMethods#find Model#find}, {WCC::Contentful::Sys#context}
   def resolve(depth: 1, fields: nil, context: {})
     raise ArgumentError, "Depth must be > 0 (was #{depth})" unless depth && depth > 0
     return self if resolved?(depth: depth, fields: fields)

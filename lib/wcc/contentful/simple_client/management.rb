@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# @api Client
 class WCC::Contentful::SimpleClient::Management < WCC::Contentful::SimpleClient
   def initialize(space:, management_token:, **options)
     super(
