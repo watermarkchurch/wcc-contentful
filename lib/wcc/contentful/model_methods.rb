@@ -17,7 +17,7 @@ module WCC::Contentful::ModelMethods
   # @param [Hash] context passed to the resolved model's `new` function to provide
   #   contextual information ex. current locale.
   #   See {WCC::Contentful::ModelSingletonMethods#find Model#find}, {WCC::Contentful::Sys#context}
-  def resolve(depth: 1, fields: nil, context: {})
+  def resolve(depth: 1, fields: nil, context: {}, **options)
     raise ArgumentError, "Depth must be > 0 (was #{depth})" unless depth && depth > 0
     return self if resolved?(depth: depth, fields: fields)
 
@@ -46,7 +46,7 @@ module WCC::Contentful::ModelMethods
       links.each { |f| instance_variable_set('@' + f, raw.dig('fields', f, sys.locale)) }
     end
 
-    links.each { |f| _resolve_field(f, depth, context) }
+    links.each { |f| _resolve_field(f, depth, context, options) }
     self
   end
 
@@ -70,7 +70,7 @@ module WCC::Contentful::ModelMethods
   # as though the entry had been retrieved from the API with `locale={#sys.locale}` rather
   # than `locale=*`.
   def to_h(stack = nil)
-    raise WCC::Contentful::CircularReferenceError, stack.join(' -> ') if stack&.include?(id)
+    raise WCC::Contentful::CircularReferenceError.new(stack, id) if stack&.include?(id)
     stack = [*stack, id]
 
     fields =
@@ -92,17 +92,29 @@ module WCC::Contentful::ModelMethods
 
   private
 
-  def _resolve_field(field_name, depth = 1, context = {})
+  def _resolve_field(field_name, depth = 1, context = {}, options = {})
     var_name = '@' + field_name
     return unless val = instance_variable_get(var_name)
 
     context = sys.context.to_h.merge(context)
+    # load a single link from a raw link or entry, by either finding it via the API
+    # or instantiating it directly from a raw entry
     load =
       ->(raw) {
         id = raw.dig('sys', 'id')
         already_resolved = context[:backlinks]&.find { |m| m.id == id }
 
         new_context = context.merge({ backlinks: [self, *context[:backlinks]].freeze })
+
+        if already_resolved && %i[ignore raise].include?(options[:circular_reference])
+          raise WCC::Contentful::CircularReferenceError.new(
+            new_context[:backlinks].map(&:id).reverse,
+            id
+          )
+        end
+
+        # Use the already resolved circular reference, or resolve a link, or
+        # instantiate from already resolved raw entry data.
         m = already_resolved ||
           if raw.dig('sys', 'type') == 'Link'
             WCC::Contentful::Model.find(id, new_context)
@@ -110,13 +122,17 @@ module WCC::Contentful::ModelMethods
             WCC::Contentful::Model.new_from_raw(raw, new_context)
           end
 
-        m.resolve(depth: depth - 1, context: new_context) if m && depth > 1
+        m.resolve(depth: depth - 1, context: new_context, **options) if m && depth > 1
         m
       }
 
-    val = _try_map(val) { |v| load.call(v) if v }
+    begin
+      val = _try_map(val) { |v| load.call(v) if v }
 
-    instance_variable_set(var_name + '_resolved', val)
+      instance_variable_set(var_name + '_resolved', val)
+    rescue WCC::Contentful::CircularReferenceError => e
+      raise e unless options[:circular_reference] == :ignore
+    end
   end
 
   def _resolved_field?(field_name, depth = 1)

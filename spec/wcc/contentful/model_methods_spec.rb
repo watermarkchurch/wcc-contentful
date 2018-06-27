@@ -222,6 +222,64 @@ RSpec.describe WCC::Contentful::ModelMethods do
       expect(subject.items[0].items[0]).to equal(subject)
     end
 
+    it 'raises on circular reference when given option circular_reference: :raise' do
+      raw['fields']['someLink'] = nil
+
+      raw3 = raw.deep_dup
+      raw3['sys']['id'] = '3'
+      # circular back to 1
+      raw3['fields']['items']['en-US'] = [
+        { 'sys' => { 'id' => '1' } }
+      ]
+
+      resolved = raw.deep_dup
+      resolved['fields']['items'] = { 'en-US' => [raw3] }
+
+      expect(store).to receive(:find_by)
+        .with(content_type: 'toJsonTest',
+              filter: { 'sys.id' => '1' },
+              options: { include: 10 }).once
+        .and_return(resolved)
+
+      expect(WCC::Contentful::Model).to_not receive(:find)
+
+      # act
+      expect {
+        subject.resolve(depth: 99, circular_reference: :raise)
+      }.to raise_error(WCC::Contentful::CircularReferenceError)
+    end
+
+    it 'does not resolve circular reference when given option circular_reference: :ignore' do
+      raw['fields']['someLink'] = nil
+
+      raw3 = raw.deep_dup
+      raw3['sys']['id'] = '3'
+      # circular back to 1
+      raw3['fields']['items']['en-US'] = [
+        { 'sys' => { 'id' => '1' } }
+      ]
+
+      resolved = raw.deep_dup
+      resolved['fields']['items'] = { 'en-US' => [raw3] }
+
+      expect(store).to receive(:find_by)
+        .with(content_type: 'toJsonTest',
+              filter: { 'sys.id' => '1' },
+              options: { include: 10 }).once
+        .and_return(resolved)
+
+      expect(WCC::Contentful::Model).to_not receive(:find)
+
+      # act
+      subject.resolve(depth: 99, circular_reference: :ignore)
+
+      # assert
+      expect(subject.items[0].resolved?(fields: [:items])).to be false
+      expect {
+        subject.to_json
+      }.to_not raise_error
+    end
+
     it 'instantiates a model class for an already resolved raw value' do
       expect(WCC::Contentful::Model).to_not receive(:find)
 
