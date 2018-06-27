@@ -17,6 +17,11 @@ module WCC::Contentful::ModelMethods
   # @param [Hash] context passed to the resolved model's `new` function to provide
   #   contextual information ex. current locale.
   #   See {WCC::Contentful::ModelSingletonMethods#find Model#find}, {WCC::Contentful::Sys#context}
+  # @param [Hash] options The remaining optional parameters, defined below
+  # @option options [Symbol] circular_reference Determines how circular references are
+  #   handled.  `:raise` causes a {WCC::Contentful::CircularReferenceError} to be raised,
+  #   `:ignore` will cause the field to remain unresolved, and any other value (or nil)
+  #   will cause the field to point to the previously resolved ruby object for that ID.
   def resolve(depth: 1, fields: nil, context: {}, **options)
     raise ArgumentError, "Depth must be > 0 (was #{depth})" unless depth && depth > 0
     return self if resolved?(depth: depth, fields: fields)
