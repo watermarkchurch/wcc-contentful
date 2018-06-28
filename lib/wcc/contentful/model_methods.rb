@@ -135,8 +135,8 @@ module WCC::Contentful::ModelMethods
       val = _try_map(val) { |v| load.call(v) if v }
 
       instance_variable_set(var_name + '_resolved', val)
-    rescue WCC::Contentful::CircularReferenceError => e
-      raise e unless options[:circular_reference] == :ignore
+    rescue WCC::Contentful::CircularReferenceError
+      raise unless options[:circular_reference] == :ignore
     end
   end
 
