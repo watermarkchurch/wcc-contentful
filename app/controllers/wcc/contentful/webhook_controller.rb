@@ -50,7 +50,9 @@ module WCC::Contentful
         end
       end
 
-      return if request.content_type == 'application/vnd.contentful.management.v1+json'
+      # 'application/vnd.contentful.management.v1+json' is an alias for the 'application/json'
+      # content-type, so 'request.content_type' will give 'application/json'
+      return if request.headers['Content-Type'] == 'application/vnd.contentful.management.v1+json'
       render json: { msg: 'This endpoint only responds to webhooks from Contentful' }, status: 406
     end
   end
