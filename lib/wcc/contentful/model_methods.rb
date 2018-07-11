@@ -46,7 +46,9 @@ module WCC::Contentful::ModelMethods
       raw = self.class.store.find_by(content_type: self.class.content_type,
                                      filter: { 'sys.id' => id },
                                      options: { include: [depth, 10].min })
-      raise ResolveError, "Cannot find #{self.class.content_type} with ID #{id}" unless raw
+      unless raw
+        raise WCC::Contentful::ResolveError, "Cannot find #{self.class.content_type} with ID #{id}"
+      end
       @raw = raw.freeze
       links.each { |f| instance_variable_set('@' + f, raw.dig('fields', f, sys.locale)) }
     end
