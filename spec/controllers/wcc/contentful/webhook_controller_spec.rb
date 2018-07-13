@@ -30,7 +30,7 @@ RSpec.describe WCC::Contentful::WebhookController, type: :controller do
     end
 
     it 'denies requests without HTTP BASIC auth' do
-      request.headers[:'Content-Type'] = 'application/vnd.contentful.management.v1+json'
+      request.headers['Content-Type'] = 'application/vnd.contentful.management.v1+json'
       post :receive,
         body: body,
         format: :json
@@ -56,6 +56,7 @@ RSpec.describe WCC::Contentful::WebhookController, type: :controller do
 
       # assert
       expect(response).to have_http_status(:not_acceptable)
+      expect(response.headers['Content-Type']).to eq('application/json; charset=utf-8')
     end
 
     it 'denies requests not conforming to contentful object structure' do

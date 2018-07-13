@@ -445,6 +445,75 @@ RSpec.describe WCC::Contentful::ModelMethods do
       expect(subject.some_link.some_link.sys.context.backlinks[1])
         .to equal(subject)
     end
+
+    it 'raises on circular reference discovered through backlinks' do
+      raw2 = raw.deep_dup
+      raw2['fields']['someLink'] = nil
+      raw2['sys']['id'] = '2'
+      # circular back to 1
+      raw2['fields']['items']['en-US'] = [
+        { 'sys' => { 'id' => '1' } }
+      ]
+
+      raw['fields']['items'] = nil
+
+      resolved2 = raw2.deep_dup
+      resolved2['fields']['items'] = { 'en-US' => [
+        raw.deep_dup
+      ] }
+
+      allow(store).to receive(:find_by)
+        .with(content_type: 'toJsonTest',
+              filter: { 'sys.id' => '2' },
+              options: { include: 10 }).once
+        .and_return(resolved2)
+
+      expect(WCC::Contentful::Model).to receive(:find) do |id, ctx|
+        raise ArgumentError unless id == '2'
+        WCC::Contentful::Model::ToJsonTest.new(raw2, ctx)
+      end
+
+      # act
+      # This time, we are calling resolve not on the root of the tree but on a child
+      first_child = subject.some_link
+      expect {
+        first_child.resolve(depth: 1, circular_reference: :raise)
+      }.to raise_error(WCC::Contentful::CircularReferenceError)
+    end
+
+    it 'ignores a circular reference discovered through backlinks' do
+      raw2 = raw.deep_dup
+      raw2['fields']['someLink'] = nil
+      raw2['sys']['id'] = '2'
+      # circular back to 1
+      raw2['fields']['items']['en-US'] = [
+        { 'sys' => { 'id' => '1' } }
+      ]
+
+      raw['fields']['items'] = nil
+
+      resolved2 = raw2.deep_dup
+      resolved2['fields']['items'] = { 'en-US' => [
+        raw.deep_dup
+      ] }
+
+      allow(store).to receive(:find_by)
+        .with(content_type: 'toJsonTest',
+              filter: { 'sys.id' => '2' },
+              options: { include: 10 }).once
+        .and_return(resolved2)
+
+      expect(WCC::Contentful::Model).to receive(:find) do |id, ctx|
+        raise ArgumentError unless id == '2'
+        WCC::Contentful::Model::ToJsonTest.new(raw2, ctx)
+      end
+
+      # act
+      # The resolve call should silently fail to resolve
+      first_child = subject.some_link
+      first_child.resolve(depth: 1, circular_reference: :ignore)
+      expect(first_child).to_not be_resolved
+    end
   end
 
   describe '#resolved?' do
