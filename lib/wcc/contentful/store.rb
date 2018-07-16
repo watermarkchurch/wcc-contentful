@@ -30,9 +30,9 @@ require_relative 'store/cdn_adapter'
 module WCC::Contentful::Store
   SYNC_STORES = {
     memory: ->(_config) { WCC::Contentful::Store::MemoryStore.new },
-    postgres: ->(_config) {
+    postgres: ->(config, *options) {
       require_relative 'store/postgres_store'
-      WCC::Contentful::Store::PostgresStore.new(ENV['POSTGRES_CONNECTION'])
+      WCC::Contentful::Store::PostgresStore.new(config, *options)
     }
   }.freeze
 
@@ -62,8 +62,8 @@ module WCC::Contentful::Store
         public_send("validate_#{cdn_method}", config, *content_delivery_params)
       end
 
-      def build_eager_sync(config, store = nil, *_options)
-        store = SYNC_STORES[store].call(config) if store.is_a?(Symbol)
+      def build_eager_sync(config, store = nil, *options)
+        store = SYNC_STORES[store].call(config, *options) if store.is_a?(Symbol)
         store || MemoryStore.new
       end
 

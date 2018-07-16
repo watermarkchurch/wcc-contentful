@@ -59,7 +59,7 @@ RSpec.describe WCC::Contentful::Configuration do
     context 'eager sync' do
       it 'selects store from symbol' do
         # act
-        config.content_delivery = :eager_sync, :postgres
+        config.content_delivery = :eager_sync, :postgres, ENV['POSTGRES_CONNECTION']
 
         # assert
         expect(config.content_delivery).to eq(:eager_sync)
