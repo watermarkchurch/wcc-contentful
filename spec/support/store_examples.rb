@@ -350,6 +350,27 @@ RSpec.shared_examples 'contentful store' do
       expect(%w[k2 k6 k10]).to include(found.dig('sys', 'id'))
     end
 
+    it 'returns nil when cant find content type' do
+      content_types = %w[test1]
+      data =
+        1.upto(4).map do |i|
+          {
+            'sys' => {
+              'id' => "k#{i}",
+              'contentType' => { 'sys' => { 'id' => content_types[i % content_types.length] } }
+            },
+            'fields' => { 'name' => { 'en-US' => "test#{i}" } }
+          }
+        end
+      data.each { |d| subject.set(d.dig('sys', 'id'), d) }
+
+      # act
+      nonexistent_content_type = subject.find_by(content_type: 'test2')
+
+      # assert
+      expect(nonexistent_content_type).to be nil
+    end
+
     it 'can apply filter object' do
       data =
         1.upto(10).map do |i|
