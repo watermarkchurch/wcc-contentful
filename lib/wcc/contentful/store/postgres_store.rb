@@ -88,7 +88,7 @@ module WCC::Contentful::Store
         return @first if @first
         statement = 'SELECT * FROM contentful_raw ' + @statement + ' LIMIT 1'
         result = @conn.exec(statement, @params)
-        return if result.num_tuples.zero?
+        return if result.num_tuples == 0
         resolve_includes(
           JSON.parse(result.getvalue(0, 1)),
           @options[:include]
