@@ -10,6 +10,30 @@ RSpec.describe WCC::Contentful::Configuration do
       .and_return(config)
   end
 
+  describe '#delayed_sync_job_adapter' do
+    it 'allows setting a custom adapter' do
+      config.delayed_sync_job_adapter = :asdf
+
+      expect(config.delayed_sync_job_adapter).to eq(:asdf)
+    end
+
+    it 'sets default value if delayed_sync_job_adapter is not specified' do
+      expect(config.delayed_sync_job_adapter).to eq(:async)
+    end
+  end
+
+  describe '#delayed_sync_job_queue' do
+    it 'allows setting a custom queue' do
+      config.delayed_sync_job_queue = :asdf
+
+      expect(config.delayed_sync_job_queue).to eq(:asdf)
+    end
+
+    it 'sets default value if delayed_sync_job_queue is not specified' do
+      expect(config.delayed_sync_job_queue).to eq(:default)
+    end
+  end
+
   describe '#content_delivery' do
     it 'raises error when setting invalid content delivery method' do
       expect {
