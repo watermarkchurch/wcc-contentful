@@ -15,6 +15,8 @@ class WCC::Contentful::Configuration
     webhook_username
     webhook_password
     webhook_jobs
+    delayed_sync_job_adapter
+    delayed_sync_job_queue
   ].freeze
   attr_accessor(*ATTRIBUTES)
 
@@ -89,6 +91,8 @@ class WCC::Contentful::Configuration
     @default_locale = nil
     @content_delivery = :direct
     @webhook_jobs = []
+    @delayed_sync_job_adapter = :async
+    @delayed_sync_job_queue = :default
   end
 
   def validate!

@@ -8,8 +8,8 @@ module WCC::Contentful
   class DelayedSyncJob < ActiveJob::Base
     include WCC::Contentful::ServiceAccessors
 
-    self.queue_adapter = :async
-    queue_as :default
+    self.queue_adapter = WCC::Contentful.configuration.delayed_sync_job_adapter
+    queue_as WCC::Contentful.configuration.delayed_sync_job_queue
 
     def self.mutex
       @mutex ||= Mutex.new
