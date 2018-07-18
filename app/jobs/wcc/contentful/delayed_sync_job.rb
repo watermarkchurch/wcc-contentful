@@ -33,7 +33,7 @@ module WCC::Contentful
       return unless store.respond_to?(:index)
 
       self.class.mutex.synchronize do
-        next_sync_token = store.find('sync:token')
+        next_sync_token = store.find('sync:token')&.fetch('token')
         sync_resp = client.sync(sync_token: next_sync_token)
 
         id_found = up_to_id.nil?
@@ -45,7 +45,7 @@ module WCC::Contentful
           store.index(item)
           count += 1
         end
-        store.set('sync:token', sync_resp.next_sync_token)
+        store.set('sync:token', token: sync_resp.next_sync_token)
 
         logger.info "Synced #{count} entries.  Next sync token:\n  #{sync_resp.next_sync_token}"
         sync_later!(up_to_id: up_to_id) unless id_found
