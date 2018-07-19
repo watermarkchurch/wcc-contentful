@@ -91,6 +91,10 @@ module WCC::Contentful::Store
     def initialize
       @mutex = Concurrent::ReentrantReadWriteLock.new
     end
+    
+    def ensure_hash(val)
+      raise ArgumentError, 'Value must be a Hash' unless val.is_a?(Hash)
+    end
 
     protected
 

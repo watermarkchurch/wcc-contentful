@@ -41,6 +41,7 @@ module WCC::Contentful::Store
 
       # we also set deletes in the cache - no need to go hit the API when we know
       # this is a nil object
+      ensure_hash json
       @cache.write(id, json)
 
       case json.dig('sys', 'type')
@@ -52,6 +53,7 @@ module WCC::Contentful::Store
     end
 
     def set(key, value)
+      ensure_hash value
       old = @cache.read(key)
       @cache.write(key, value)
       old

@@ -13,6 +13,7 @@ module WCC::Contentful::Store
     end
 
     def set(key, value)
+      ensure_hash value
       result = @conn.exec_prepared('upsert_entry', [key, value.to_json])
       return if result.num_tuples == 0
       val = result.getvalue(0, 0)
