@@ -146,13 +146,11 @@ RSpec.describe WCC::Contentful::Configuration do
       config.content_delivery = :direct
       config.validate!
 
-      # bad
       config.environment = 'staging'
-      expect {
-        config.content_delivery = :lazy_sync
-        config.validate!
-      }.to raise_error(ArgumentError)
+      config.content_delivery = :lazy_sync
+      config.validate!
 
+      # bad
       expect {
         config.content_delivery = :eager_sync
         config.validate!

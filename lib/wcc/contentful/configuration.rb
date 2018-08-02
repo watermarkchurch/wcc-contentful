@@ -18,6 +18,11 @@ class WCC::Contentful::Configuration
   ].freeze
   attr_accessor(*ATTRIBUTES)
 
+  # Returns true if the currently configured environment is pointing at `master`.
+  def master?
+    !environment.present?
+  end
+
   # Defines the method by which content is downloaded from the Contentful CDN.
   #
   # [:direct] `config.content_delivery = :direct`
@@ -100,7 +105,7 @@ class WCC::Contentful::Configuration
       raise ArgumentError, "The job '#{job}' must be an instance of ActiveJob::Base or respond to :call"
     end
 
-    return unless environment.present? && %i[eager_sync lazy_sync].include?(content_delivery)
+    return unless environment.present? && %i[eager_sync].include?(content_delivery)
     raise ArgumentError, 'The Contentful Sync API currently does not work with environments.  ' \
       'You can use the ":direct" content_delivery method, or provide a custom store implementation.'
   end
