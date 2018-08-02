@@ -25,7 +25,7 @@ module WCC::Contentful::Store
 
     def find_by(content_type:, filter: nil, options: nil)
       # default implementation - can be overridden
-      q = find_all(content_type: content_type, options: options)
+      q = find_all(content_type: content_type, options: { limit: 1 }.merge!(options || {}))
       q = q.apply(filter) if filter
       q.first
     end
