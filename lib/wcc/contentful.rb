@@ -67,7 +67,7 @@ module WCC::Contentful
     @types = indexer.types
 
     store = Services.instance.store
-    if store.respond_to?(:index)
+    if store.respond_to?(:index) && configuration.master?
       # Drop an initial sync
       WCC::Contentful::DelayedSyncJob.perform_later
     end
