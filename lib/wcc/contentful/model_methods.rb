@@ -100,6 +100,7 @@ module WCC::Contentful::ModelMethods
   private
 
   def _resolve_field(field_name, depth = 1, context = {}, options = {})
+    return if depth <= 0
     var_name = '@' + field_name
     return unless val = instance_variable_get(var_name)
 
