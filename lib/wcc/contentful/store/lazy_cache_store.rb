@@ -28,7 +28,15 @@ module WCC::Contentful::Store
     #  figure out how to cache the results of a find_by query, ex:
     #  `find_by('slug' => '/about')`
     def find_by(content_type:, filter: nil, options: nil)
-      q = find_all(content_type: content_type, options: options)
+      if filter.keys == ['sys.id']
+        # Direct ID lookup, like what we do in `WCC::Contentful::ModelMethods.resolve`
+        # We can return just this item.  Stores are not required to implement :include option.
+        if found = @cache.read(filter['sys.id'])
+          return found
+        end
+      end
+
+      q = find_all(content_type: content_type, options: { limit: 1 }.merge!(options || {}))
       q = q.apply(filter) if filter
       q.first
     end

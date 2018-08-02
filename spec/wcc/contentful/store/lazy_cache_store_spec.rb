@@ -170,6 +170,76 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
     end
   end
 
+  describe '#find_by' do
+    let(:body) { load_fixture('contentful/lazy_cache_store/homepage_include_2.json') }
+    let(:body_hash) { JSON.parse(body) }
+    let(:page) { body_hash.dig('items', 0) }
+
+    it 'returns a cached entry if looking up by sys.id' do
+      store.set(page.dig('sys', 'id'), page)
+
+      # act
+      cached_page = store.find_by(content_type: 'page', filter: { 'sys.id' => page.dig('sys', 'id') })
+
+      # assert
+      expect(cached_page).to eq(page)
+    end
+
+    it 'falls back to a query if sys.id does not exist in cache' do
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
+        .with(query: hash_including({
+          locale: '*',
+          content_type: 'page',
+          'sys.id' => page.dig('sys', 'id')
+        }))
+        .to_return(body: body)
+
+      # act
+      queried_page = store.find_by(content_type: 'page', filter: { 'sys.id' => page.dig('sys', 'id') })
+
+      # assert
+      expect(queried_page).to eq(page)
+    end
+
+    it 'stores returned object in cache' do
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
+        .with(query: hash_including({
+          locale: '*',
+          content_type: 'page',
+          'sys.id' => page.dig('sys', 'id')
+        }))
+        .to_return(body: body)
+        .times(1)
+        .then.to_raise('Should not hit the API a second time!')
+
+      # act
+      # store it in the cache and then query again
+      store.find_by(content_type: 'page', filter: { 'sys.id' => page.dig('sys', 'id') })
+      cached_page = store.find_by(content_type: 'page', filter: { 'sys.id' => page.dig('sys', 'id') })
+
+      # assert
+      expect(cached_page).to eq(page)
+    end
+
+    it 'issues a query if looking up by any other field' do
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
+        .with(query: hash_including({
+          locale: '*',
+          content_type: 'page',
+          'fields.slug.en-US' => '/'
+        }))
+        .to_return(body: body)
+
+      store.set(page.dig('sys', 'id'), { 'sys' => { 'type' => 'not a page' } })
+
+      # act - should not read from the cache
+      queried_page = store.find_by(content_type: 'page', filter: { 'fields.slug' => '/' })
+
+      # assert
+      expect(queried_page).to eq(page)
+    end
+  end
+
   describe '#index' do
     let(:entry) {
       JSON.parse(<<~JSON)
