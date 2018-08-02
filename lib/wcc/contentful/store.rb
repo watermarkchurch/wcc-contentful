@@ -2,8 +2,8 @@
 
 require_relative 'store/base'
 require_relative 'store/memory_store'
-require_relative 'store/lazy_cache_store'
 require_relative 'store/cdn_adapter'
+require_relative 'store/lazy_cache_store'
 
 # The "Store" is the middle layer in the WCC::Contentful gem.  It exposes an API
 # that implements the configured content delivery strategy.
