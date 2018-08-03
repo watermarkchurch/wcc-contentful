@@ -6,7 +6,7 @@ class Contentful::Client
   end
 
   def self.get_http(url, query, headers = {}, proxy = {})
-    if override = WCC::Contentful.configuration.http_adapter
+    if override = WCC::Contentful::SimpleClient.load_adapter(WCC::Contentful.configuration.http_adapter)
       override.call(url, query, headers, proxy)
     else
       old_get_http(url, query, headers, proxy)
