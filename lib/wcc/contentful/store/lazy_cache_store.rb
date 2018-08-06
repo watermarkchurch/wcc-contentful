@@ -74,5 +74,9 @@ module WCC::Contentful::Store
         }
       }
     end
+
+    def ensure_hash(val)
+      raise ArgumentError, 'Value must be a Hash' unless val.is_a?(Hash)
+    end
   end
 end
