@@ -10,6 +10,46 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
     )
   }
 
+  let(:asset) {
+    <<~JSON
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "343qxys30lid"
+            }
+          },
+          "id": "3pWma8spR62aegAWAWacyA",
+          "type": "Asset",
+          "createdAt": "2018-02-12T19:53:39.309Z",
+          "updatedAt": "2018-02-12T19:53:39.309Z",
+          "revision": 1
+        },
+        "fields": {
+          "title": {
+            "en-US": "apple-touch-icon"
+          },
+          "file": {
+            "en-US": {
+              "url": "//images.contentful.com/343qxys30lid/3pWma8spR62aegAWAWacyA/1beaebf5b66d2405ff9c9769a74db709/apple-touch-icon.png",
+              "details": {
+                "size": 40832,
+                "image": {
+                  "width": 180,
+                  "height": 180
+                }
+              },
+              "fileName": "apple-touch-icon.png",
+              "contentType": "image/png"
+            }
+          }
+        }
+      }
+    JSON
+  }
+
   describe '#find' do
     it 'finds data by ID' do
       # act
@@ -80,6 +120,26 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
           }
         }
       })
+    end
+
+    it 'follows hint for assets' do
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
+          '/entries/3pWma8spR62aegAWAWacyA')
+        .with(query: hash_including(locale: '*'))
+        .to_raise('Should not hit the Entries endpoint')
+
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
+          '/assets/3pWma8spR62aegAWAWacyA')
+        .with(query: hash_including(locale: '*'))
+        .to_return(status: 200, body: asset)
+
+      # act
+      found = adapter.find('3pWma8spR62aegAWAWacyA', hint: 'Asset')
+
+      # assert
+      expect(found).to be_present
+      expect(found.dig('sys', 'id')).to eq('3pWma8spR62aegAWAWacyA')
+      expect(found.dig('fields', 'title', 'en-US')).to eq('apple-touch-icon')
     end
 
     it 'returns nil when not found' do

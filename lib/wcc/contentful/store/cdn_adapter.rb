@@ -11,12 +11,17 @@ module WCC::Contentful::Store
       @client = client
     end
 
-    def find(key)
+    def find(key, hint: nil, **options)
+      options = { locale: '*' }.merge!(options || {})
       entry =
-        begin
-          client.entry(key, locale: '*')
-        rescue WCC::Contentful::SimpleClient::NotFoundError
-          client.asset(key, locale: '*')
+        if hint
+          client.public_send(hint.underscore, key, options)
+        else
+          begin
+            client.entry(key, options)
+          rescue WCC::Contentful::SimpleClient::NotFoundError
+            client.asset(key, options)
+          end
         end
       entry&.raw
     rescue WCC::Contentful::SimpleClient::NotFoundError
