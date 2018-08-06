@@ -145,7 +145,7 @@ module WCC::Contentful::Store
         CREATE INDEX IF NOT EXISTS contentful_raw_value_type ON contentful_raw ((data->'sys'->>'type'));
         CREATE INDEX IF NOT EXISTS contentful_raw_value_content_type ON contentful_raw ((data->'sys'->'contentType'->'sys'->>'id'));
 
-        DROP FUNCTION IF EXISTS "upsert_entry";
+        DROP FUNCTION IF EXISTS "upsert_entry"(_id varchar, _data jsonb);
         CREATE FUNCTION "upsert_entry"(_id varchar, _data jsonb) RETURNS jsonb AS $$
         DECLARE
           prev jsonb;
