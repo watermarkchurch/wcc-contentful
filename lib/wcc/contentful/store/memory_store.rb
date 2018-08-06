@@ -26,7 +26,7 @@ module WCC::Contentful::Store
       mutex.with_read_lock { @hash.keys }
     end
 
-    def find(key)
+    def find(key, **_options)
       mutex.with_read_lock do
         @hash[key]
       end

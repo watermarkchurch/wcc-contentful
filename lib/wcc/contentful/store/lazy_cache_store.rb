@@ -8,12 +8,12 @@ module WCC::Contentful::Store
       @client = client
     end
 
-    def find(key)
+    def find(key, **options)
       found =
         @cache.fetch(key) do
           # if it's not a contentful ID don't hit the API.
           # Store a nil object if we can't find the object on the CDN.
-          (@cdn.find(key) || nil_obj(key)) if key =~ /^\w+$/
+          (@cdn.find(key, options) || nil_obj(key)) if key =~ /^\w+$/
         end
 
       case found.try(:dig, 'sys', 'type')

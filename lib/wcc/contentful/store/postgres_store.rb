@@ -32,7 +32,7 @@ module WCC::Contentful::Store
       JSON.parse(result.getvalue(0, 1))
     end
 
-    def find(key)
+    def find(key, **_options)
       result = @conn.exec_prepared('select_entry', [key])
       return if result.num_tuples == 0
       JSON.parse(result.getvalue(0, 1))

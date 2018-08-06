@@ -24,8 +24,10 @@ module WCC::Contentful::ModelSingletonMethods
   #   WCC::Contentful::Model::Page.find(id)
   def find(id, options: nil)
     options ||= {}
-    raw = store(options[:preview]).find(id)
-    new(raw, options) if raw.present?
+    context = options.dup
+    raw = store(options.delete(:preview))
+      .find(id, { hint: type }.merge!(options))
+    new(raw, context) if raw.present?
   end
 
   # Finds all instances of this content type, optionally limiting to those matching
@@ -37,6 +39,7 @@ module WCC::Contentful::ModelSingletonMethods
   #   WCC::Contentful::Model::Page.find_all('sys.created_at' => { lte: Date.today })
   def find_all(filter = nil)
     options = filter&.delete(:options) || {}
+    context = options.dup
 
     if filter
       filter.transform_keys! { |k| k.to_s.camelize(:lower) }
@@ -47,7 +50,7 @@ module WCC::Contentful::ModelSingletonMethods
     query = store(options.delete(:preview))
       .find_all(content_type: content_type, options: options)
     query = query.apply(filter) if filter
-    query.map { |r| new(r, options) }
+    query.map { |r| new(r, context) }
   end
 
   # Finds the first instance of this content type matching the given query.
@@ -58,6 +61,7 @@ module WCC::Contentful::ModelSingletonMethods
   #   WCC::Contentful::Model::Page.find_by(slug: '/some-slug')
   def find_by(filter = nil)
     options = filter&.delete(:options) || {}
+    context = options.dup
 
     filter.transform_keys! { |k| k.to_s.camelize(:lower) }
     bad_fields = filter.keys.reject { |k| self::FIELDS.include?(k) }
@@ -66,7 +70,7 @@ module WCC::Contentful::ModelSingletonMethods
     result = store(options.delete(:preview))
       .find_by(content_type: content_type, filter: filter, options: options)
 
-    new(result, options) if result
+    new(result, context) if result
   end
 
   def inherited(subclass)
