@@ -4,7 +4,7 @@ RSpec.shared_examples 'contentful store' do
   describe '#set/#find' do
     describe 'ensures that the stored value is of type Hash' do
       it 'should not raise an error if value is a Hash' do
-        data = {token: 'jenny_8675309'}
+        data = { token: 'jenny_8675309' }
 
         # assert
         expect { subject.set('sync:token', data) }.to_not raise_error
