@@ -53,9 +53,7 @@ module WCC::Contentful::Store
     end
 
     def create_connection_pool(_config, connection_options)
-      if defined?(::ActiveRecord) && defined?(::ActiveRecord::Base)
-        ActiveRecord::Base.connection_pool
-      elsif defined?(::ConnectionPool)
+      if defined?(::ConnectionPool)
         ConnectionPool.new(size: 5, timeout: 5) { PG.connect(connection_options) }
       else
         PG.connect(connection_options)
@@ -63,14 +61,7 @@ module WCC::Contentful::Store
     end
 
     def with_connection_pool
-      if defined?(::ActiveRecord) && defined?(::ActiveRecord::Base) &&
-          ActiveRecord::Base.connection.instance_of?(
-            ActiveRecord::ConnectionAdapters::PostgreSQLAdapter
-          )
-        @connection_pool.with_connection do |conn|
-          yield conn
-        end
-      elsif defined?(::ConnectionPool)
+      if defined?(::ConnectionPool)
         @connection_pool.with do |conn|
           yield conn
         end
