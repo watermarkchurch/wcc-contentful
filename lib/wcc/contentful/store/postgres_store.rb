@@ -8,6 +8,7 @@ module WCC::Contentful::Store
     def initialize(config = nil, connection_options = nil)
       super()
       connection_options ||= { dbname: 'postgres' }
+      puts 'POSTGRES STORE IS INITIALIZING'
       @connection_pool = create_connection_pool(config, connection_options)
       with_connection_pool { |conn| PostgresStore.ensure_schema(conn) }
     end
