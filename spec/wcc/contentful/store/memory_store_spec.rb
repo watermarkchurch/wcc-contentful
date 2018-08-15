@@ -20,4 +20,22 @@ RSpec.describe WCC::Contentful::Store::MemoryStore do
       %w[1234 5678 8888 9999]
     )
   end
+
+  it 'can find string key with indifferent access' do
+    data = { value: 1 }
+
+    subject.set('test', data)
+
+    expect(subject.find(:test)).to eq(data)
+    expect(subject.find('test')).to eq(data)
+  end
+
+  it 'can find symbol key with indifferent access' do
+    data = { value: 1 }
+
+    subject.set(:test, data)
+
+    expect(subject.find(:test)).to eq(data)
+    expect(subject.find('test')).to eq(data)
+  end
 end

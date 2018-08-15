@@ -4,7 +4,7 @@ module WCC::Contentful::Store
   class MemoryStore < Base
     def initialize
       super
-      @hash = {}
+      @hash = {}.with_indifferent_access
     end
 
     def set(key, value)
