@@ -54,7 +54,7 @@ module WCC::Contentful::Store
 
     def create_connection_pool(_config, connection_options)
       if defined?(::ConnectionPool)
-        ConnectionPool.new(size: 5, timeout: 5) { PG.connect(connection_options) }
+        ConnectionPool.new(size: 20, timeout: 5) { PG.connect(connection_options) }
       else
         PG.connect(connection_options)
       end
