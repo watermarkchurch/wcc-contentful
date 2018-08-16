@@ -128,4 +128,19 @@ RSpec.describe WCC::Contentful::DelayedSyncJob, type: :job do
       })
     end
   end
+
+  describe 'sync_later!' do
+    it 'drops another job with the given ID in 10 minutes' do
+      configured_job = double
+
+      expect(described_class).to receive(:set)
+        .with(wait: 10.minutes)
+        .and_return(configured_job)
+      expect(configured_job).to receive(:perform_later)
+        .with(up_to_id: 'foobar')
+
+      # act
+      job.sync_later!(up_to_id: 'foobar')
+    end
+  end
 end
