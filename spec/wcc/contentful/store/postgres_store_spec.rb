@@ -5,7 +5,7 @@ require 'wcc/contentful/store/postgres_store'
 RSpec.describe WCC::Contentful::Store::PostgresStore do
   subject {
     WCC::Contentful::Store::PostgresStore.new(double('Configuration'),
-      ENV['POSTGRES_CONNECTION'])
+      ENV['POSTGRES_CONNECTION'], size: 5)
   }
 
   before :each do
