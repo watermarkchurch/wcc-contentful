@@ -5,49 +5,72 @@ require 'pg'
 
 module WCC::Contentful::Store
   class PostgresStore < Base
-    def initialize(_config = nil, connection_options = nil)
+    def initialize(config = nil, connection_options = nil)
       super()
       connection_options ||= { dbname: 'postgres' }
-      @conn = PG.connect(connection_options)
-      PostgresStore.ensure_schema(@conn)
+      puts 'POSTGRES STORE IS INITIALIZING'
+      PostgresConnectionPool.create_connection_pool(config, connection_options)
+      PostgresConnectionPool.with_connection_pool { |conn| PostgresStore.ensure_schema(conn) }
     end
 
     def set(key, value)
       ensure_hash value
-      result = @conn.exec_prepared('upsert_entry', [key, value.to_json])
+      result = PostgresConnectionPool.with_connection_pool { |conn| conn.exec_prepared('upsert_entry', [key, value.to_json]) }
       return if result.num_tuples == 0
       val = result.getvalue(0, 0)
       JSON.parse(val) if val
     end
 
     def keys
-      result = @conn.exec_prepared('select_ids')
+      result = PostgresConnectionPool.with_connection_pool { |conn| conn.exec_prepared('select_ids') }
       arr = []
       result.each { |r| arr << r['id'].strip }
       arr
     end
 
     def delete(key)
-      result = @conn.exec_prepared('delete_by_id', [key])
+      result = PostgresConnectionPool.with_connection_pool { |conn| conn.exec_prepared('delete_by_id', [key]) }
       return if result.num_tuples == 0
       JSON.parse(result.getvalue(0, 1))
     end
 
     def find(key)
-      result = @conn.exec_prepared('select_entry', [key])
+      result = PostgresConnectionPool.with_connection_pool { |conn| conn.exec_prepared('select_entry', [key]) }
       return if result.num_tuples == 0
       JSON.parse(result.getvalue(0, 1))
     end
 
     def find_all(content_type:, options: nil)
       statement = "WHERE data->'sys'->'contentType'->'sys'->>'id' = $1"
-      Query.new(
-        self,
-        @conn,
-        statement,
-        [content_type],
-        options
-      )
+      PostgresConnectionPool.with_connection_pool do |conn|
+        Query.new(
+          self,
+          conn,
+          statement,
+          [content_type],
+          options
+        )
+      end
+    end
+
+    class PostgresConnectionPool
+      def self.create_connection_pool(_config, connection_options)
+        if defined?(::ConnectionPool)
+          @@pool = ConnectionPool.new(size: 20, timeout: 5) { PG.connect(connection_options) }
+        else
+          @@pool = PG.connect(connection_options)
+        end
+      end
+
+      def self.with_connection_pool
+        if defined?(::ConnectionPool)
+          @@pool.with do |conn|
+            yield conn
+          end
+        else
+          yield @@pool
+        end
+      end
     end
 
     class Query < Base::Query
