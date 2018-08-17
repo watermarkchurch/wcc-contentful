@@ -57,7 +57,7 @@ module WCC::Contentful
     # of time.
     def sync_later!(up_to_id: nil, wait: 10.minutes)
       WCC::Contentful::DelayedSyncJob.set(wait: wait)
-        .perform_later(up_to_id)
+        .perform_later(up_to_id: up_to_id)
     end
   end
 end
