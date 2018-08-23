@@ -130,7 +130,7 @@ RSpec.describe WCC::Contentful::Configuration do
   end
 
   describe '#validate!' do
-    it 'errors when non-master environment combined with sync delivery strategy' do
+    it 'permits non-master environment combined with sync delivery strategy' do
       config.space = 'test_space'
       config.access_token = 'test_token'
 
@@ -146,17 +146,12 @@ RSpec.describe WCC::Contentful::Configuration do
       config.content_delivery = :direct
       config.validate!
 
-      # bad
       config.environment = 'staging'
-      expect {
-        config.content_delivery = :lazy_sync
-        config.validate!
-      }.to raise_error(ArgumentError)
+      config.content_delivery = :lazy_sync
+      config.validate!
 
-      expect {
-        config.content_delivery = :eager_sync
-        config.validate!
-      }.to raise_error(ArgumentError)
+      config.content_delivery = :eager_sync
+      config.validate!
     end
 
     require 'active_job'
