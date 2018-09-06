@@ -46,21 +46,19 @@ module WCC::Contentful::Store
 
     def find_all(content_type:, options: nil)
       statement = "WHERE data->'sys'->'contentType'->'sys'->>'id' = $1"
-      @connection_pool.with do |conn|
-        Query.new(
-          self,
-          conn,
-          statement,
-          [content_type],
-          options
-        )
-      end
+      Query.new(
+        self,
+        @connection_pool,
+        statement,
+        [content_type],
+        options
+      )
     end
 
     class Query < Base::Query
-      def initialize(store, conn, statement = nil, params = nil, options = nil)
+      def initialize(store, connection_pool, statement = nil, params = nil, options = nil)
         super(store)
-        @conn = conn
+        @connection_pool = connection_pool
         @statement = statement ||
           "WHERE data->'sys'->>'id' IS NOT NULL"
         @params = params || []
@@ -78,7 +76,7 @@ module WCC::Contentful::Store
 
         Query.new(
           @store,
-          @conn,
+          @connection_pool,
           statement,
           params,
           @options
@@ -88,14 +86,14 @@ module WCC::Contentful::Store
       def count
         return @count if @count
         statement = 'SELECT count(*) FROM contentful_raw ' + @statement
-        result = @conn.exec(statement, @params)
+        result = @connection_pool.with { |conn| conn.exec(statement, @params) }
         @count = result.getvalue(0, 0).to_i
       end
 
       def first
         return @first if @first
         statement = 'SELECT * FROM contentful_raw ' + @statement + ' LIMIT 1'
-        result = @conn.exec(statement, @params)
+        result = @connection_pool.with { |conn| conn.exec(statement, @params) }
         return if result.num_tuples == 0
         resolve_includes(
           JSON.parse(result.getvalue(0, 1)),
@@ -135,7 +133,7 @@ module WCC::Contentful::Store
       def resolve
         return @resolved if @resolved
         statement = 'SELECT * FROM contentful_raw ' + @statement
-        @resolved = @conn.exec(statement, @params)
+        @resolved = @connection_pool.with { |conn| conn.exec(statement, @params) }
       end
 
       def push_param(param, params)
