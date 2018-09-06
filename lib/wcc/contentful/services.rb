@@ -79,7 +79,8 @@ module WCC::Contentful
               preview_token: config.preview_token,
               space: config.space,
               default_locale: config.default_locale,
-              adapter: config.http_adapter
+              adapter: config.http_adapter,
+              environment: config.environment
             )
           end
         end
