@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 require 'wcc/contentful/store/postgres_store'
+require 'concurrency_helper'
 
 RSpec.describe WCC::Contentful::Store::PostgresStore do
+  include ConcurrencyHelper
+
   subject {
     WCC::Contentful::Store::PostgresStore.new(double('Configuration'),
       ENV['POSTGRES_CONNECTION'], size: 5)
@@ -34,5 +37,16 @@ RSpec.describe WCC::Contentful::Store::PostgresStore do
     expect(keys.sort).to eq(
       %w[1234 5678 8888 9999]
     )
+  end
+
+  it 'can be used in concurrent threads' do
+    data = { 'key' => 'val' }
+    subject.set('foo', data)
+
+    # act
+    results = do_in_threads(3) { subject.find('foo') }
+
+    # assert
+    expect(results).to eq([data, data, data])
   end
 end
