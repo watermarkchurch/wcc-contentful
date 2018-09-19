@@ -113,8 +113,14 @@ module WCC::Contentful
               end
 
               id_method_name = "#{name}_id"
-              define_method(id_method_name) do
-                instance_variable_get(var_name)&.dig('sys', 'id')
+              if f.array
+                define_method(id_method_name) do
+                  instance_variable_get(var_name)&.map { |link| link.dig('sys', 'id') }
+                end
+              else
+                define_method(id_method_name) do
+                  instance_variable_get(var_name)&.dig('sys', 'id')
+                end
               end
               alias_method id_method_name.underscore, id_method_name
             when :Coordinates

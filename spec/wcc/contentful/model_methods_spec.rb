@@ -90,7 +90,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
             {
               'sys' => {
                 'type' => 'Link',
-                'linkType' => 'Asset',
+                'linkType' => 'Entry',
                 'id' => '4'
               }
             }
@@ -701,7 +701,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
           {
             'sys' => {
               'type' => 'Link',
-              'linkType' => 'Asset',
+              'linkType' => 'Entry',
               'id' => '4'
             }
           }
@@ -791,6 +791,23 @@ RSpec.describe WCC::Contentful::ModelMethods do
 
       round_trip = JSON.parse(h.to_json)
       expect(h).to eql(round_trip)
+    end
+
+    it 'calls into the defined methods on the subclass to get data' do
+      TO_H_TEST_1 =
+        Class.new(WCC::Contentful::Model::ToJsonTest) do
+          def name
+            'to-h-test-1:' + super
+          end
+        end
+
+      subject = TO_H_TEST_1.new(raw)
+
+      # act
+      h = subject.to_h
+
+      # assert
+      expect(h.dig('fields', 'name')).to eq('to-h-test-1:asdf')
     end
   end
 

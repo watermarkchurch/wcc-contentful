@@ -81,14 +81,31 @@ module WCC::Contentful::ModelMethods
     raise WCC::Contentful::CircularReferenceError.new(stack, id) if stack&.include?(id)
 
     stack = [*stack, id]
-
+    typedef = self.class.content_type_definition
     fields =
-      self.class::FIELDS.each_with_object({}) do |field, h|
-        if val = instance_variable_get('@' + field + '_resolved')
-          val = _try_map(val) { |v| v ? v.to_h(stack) : v }
+      typedef.fields.each_with_object({}) do |(name, field_def), h|
+        if field_def.type == :Link || field_def.type == :Asset
+          if _resolved_field?(name, 0)
+            val = public_send(name)
+            val = _try_map(val) { |v| v ? v.to_h(stack) : v }
+          else
+            val =
+              _try_map(public_send("#{name}_id")) do |id|
+                {
+                  'sys' => {
+                    'type' => 'Link',
+                    'linkType' => field_def.type == :Asset ? 'Asset' : 'Entry',
+                    'id' => id
+                  }
+                }
+              end
+          end
+        else
+          val = public_send(name)
+          val = val.to_h.stringify_keys! if val.respond_to?(:to_h)
         end
 
-        h[field] = val || instance_variable_get('@' + field)
+        h[name] = val
       end
 
     {
