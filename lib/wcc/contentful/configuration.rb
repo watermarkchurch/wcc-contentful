@@ -102,6 +102,7 @@ class WCC::Contentful::Configuration
 
     webhook_jobs&.each do |job|
       next if job.respond_to?(:call) || job.respond_to?(:perform_later)
+
       raise ArgumentError, "The job '#{job}' must be an instance of ActiveJob::Base or respond to :call"
     end
     return unless environment.present? && %i[eager_sync lazy_sync].include?(content_delivery)

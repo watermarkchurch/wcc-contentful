@@ -470,6 +470,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
 
       expect(WCC::Contentful::Model).to receive(:find) do |id, ctx|
         raise ArgumentError unless id == '2'
+
         WCC::Contentful::Model::ToJsonTest.new(raw2, ctx)
       end
 
@@ -505,6 +506,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
 
       expect(WCC::Contentful::Model).to receive(:find) do |id, ctx|
         raise ArgumentError unless id == '2'
+
         WCC::Contentful::Model::ToJsonTest.new(raw2, ctx)
       end
 

@@ -16,6 +16,7 @@ module WCC::Contentful::Store
       ensure_hash value
       result = @conn.exec_prepared('upsert_entry', [key, value.to_json])
       return if result.num_tuples == 0
+
       val = result.getvalue(0, 0)
       JSON.parse(val) if val
     end
@@ -30,12 +31,14 @@ module WCC::Contentful::Store
     def delete(key)
       result = @conn.exec_prepared('delete_by_id', [key])
       return if result.num_tuples == 0
+
       JSON.parse(result.getvalue(0, 1))
     end
 
     def find(key, **_options)
       result = @conn.exec_prepared('select_entry', [key])
       return if result.num_tuples == 0
+
       JSON.parse(result.getvalue(0, 1))
     end
 
@@ -80,6 +83,7 @@ module WCC::Contentful::Store
 
       def count
         return @count if @count
+
         statement = 'SELECT count(*) FROM contentful_raw ' + @statement
         result = @conn.exec(statement, @params)
         @count = result.getvalue(0, 0).to_i
@@ -87,9 +91,11 @@ module WCC::Contentful::Store
 
       def first
         return @first if @first
+
         statement = 'SELECT * FROM contentful_raw ' + @statement + ' LIMIT 1'
         result = @conn.exec(statement, @params)
         return if result.num_tuples == 0
+
         resolve_includes(
           JSON.parse(result.getvalue(0, 1)),
           @options[:include]
@@ -127,6 +133,7 @@ module WCC::Contentful::Store
 
       def resolve
         return @resolved if @resolved
+
         statement = 'SELECT * FROM contentful_raw ' + @statement
         @resolved = @conn.exec(statement, @params)
       end

@@ -24,6 +24,7 @@ class WCC::Contentful::SimpleClient
 
     def next_page?
       return unless raw.key? 'items'
+
       raw['items'].length + raw['skip'] < raw['total']
     end
 
@@ -48,6 +49,7 @@ class WCC::Contentful::SimpleClient
 
     def assert_ok!
       return self if code >= 200 && code < 300
+
       raise ApiError[code], self
     end
 
@@ -84,6 +86,7 @@ class WCC::Contentful::SimpleClient
 
     def first
       raise ArgumentError, 'Not a collection response' unless raw['items']
+
       raw['items'].first
     end
 
@@ -94,6 +97,7 @@ class WCC::Contentful::SimpleClient
         end || {}
 
       return @includes unless @next_page
+
       # This could be more efficient - maybe not worth worrying about
       @includes.merge(@next_page.includes)
     end

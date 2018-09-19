@@ -59,6 +59,7 @@ module WCC::Contentful::Store
         end
 
         return unless respond_to?("validate_#{cdn_method}")
+
         public_send("validate_#{cdn_method}", config, *content_delivery_params)
       end
 
@@ -85,6 +86,7 @@ module WCC::Contentful::Store
       def build_custom(config, *options)
         store = config.store
         return store unless store&.respond_to?(:new)
+
         store.new(config, options)
       end
 
@@ -92,6 +94,7 @@ module WCC::Contentful::Store
         return unless store.is_a?(Symbol)
 
         return if SYNC_STORES.key?(store)
+
         raise ArgumentError, "Please use one of #{SYNC_STORES.keys}"
       end
     end

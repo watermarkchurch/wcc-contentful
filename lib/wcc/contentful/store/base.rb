@@ -187,6 +187,7 @@ module WCC::Contentful::Store
       def resolve_link(val, depth)
         return val unless val.is_a?(Hash) && val.dig('sys', 'type') == 'Link'
         return val unless included = @store.find(val.dig('sys', 'id'))
+
         resolve_includes(included, depth - 1)
       end
 

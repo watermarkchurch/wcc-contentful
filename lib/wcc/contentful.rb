@@ -51,6 +51,7 @@ module WCC::Contentful
   #   Page.find_by(slug: 'about-us')
   def self.init!
     raise ArgumentError, 'Please first call WCC:Contentful.configure' if configuration.nil?
+
     @mutex ||= Mutex.new
 
     # we want as much as possible the raw JSON from the API so use the management

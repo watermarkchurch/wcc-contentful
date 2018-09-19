@@ -47,6 +47,7 @@ module WCC::Contentful
       @query_defaults[:locale] = @options[:default_locale] if @options[:default_locale]
 
       return unless options[:environment].present?
+
       @api_url = URI.join(@api_url, 'environments/', options[:environment] + '/')
     end
 

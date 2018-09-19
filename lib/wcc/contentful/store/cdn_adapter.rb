@@ -49,6 +49,7 @@ module WCC::Contentful::Store
 
       def result
         return response.items unless @options[:include]
+
         response.items.map { |e| resolve_includes(e, @options[:include]) }
       end
 
@@ -94,6 +95,7 @@ module WCC::Contentful::Store
 
       def response
         return @response if @response
+
         @response ||=
           if @relation[:content_type] == 'Asset'
             @client.assets(
@@ -107,6 +109,7 @@ module WCC::Contentful::Store
       def resolve_link(val, depth)
         return val unless val.is_a?(Hash) && val.dig('sys', 'type') == 'Link'
         return val unless included = response.includes[val.dig('sys', 'id')]
+
         resolve_includes(included, depth - 1)
       end
 

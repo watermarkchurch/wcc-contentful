@@ -88,6 +88,7 @@ class WCC::Contentful::Model
       return const if const && const < WCC::Contentful::Model
     rescue NameError => e
       raise e unless e.message =~ /uninitialized constant #{const_name}/
+
       nil
     end
 
@@ -116,6 +117,7 @@ class WCC::Contentful::Model
   def self.register_for_content_type(content_type = nil, klass: nil)
     klass ||= self
     raise ArgumentError, "#{klass} must be a class constant!" unless klass.respond_to?(:new)
+
     content_type ||= content_type_from_constant(klass)
 
     @@registry[content_type] = klass
@@ -124,6 +126,7 @@ class WCC::Contentful::Model
   # Returns the current registry of content type names to constants.
   def self.registry
     return {} unless @@registry
+
     @@registry.dup.freeze
   end
 

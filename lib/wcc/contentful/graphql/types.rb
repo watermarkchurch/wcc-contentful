@@ -16,6 +16,7 @@ module WCC::Contentful::Graphql::Types
         return value if value.is_a? Array
         return value.to_h if value.respond_to?(:to_h)
         return JSON.parse(value) if value.is_a? String
+
         raise ArgumentError, "Cannot coerce value '#{value}' to a hash"
       }
     end

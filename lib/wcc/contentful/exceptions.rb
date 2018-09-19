@@ -56,6 +56,7 @@ module WCC::Contentful
 
     def message
       return super unless stack
+
       super + "\n  " \
         "#{stack.last} points to #{id} which is also it's ancestor\n  " +
         stack.join('->')
