@@ -63,8 +63,7 @@ module WCC::Contentful
     end
 
     def jobs
-      jobs = []
-      jobs.push(WCC::Contentful::DelayedSyncJob) if WCC::Contentful.configuration.master?
+      jobs = [WCC::Contentful::DelayedSyncJob]
       jobs.push(*WCC::Contentful.configuration.webhook_jobs)
     end
   end

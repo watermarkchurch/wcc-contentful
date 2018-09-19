@@ -121,13 +121,13 @@ RSpec.describe WCC::Contentful::WebhookController, type: :controller do
       expect(response).to have_http_status(:no_content)
     end
 
-    it 'does not run a sync if not in master environment' do
+    it 'runs a sync even in master environment' do
       WCC::Contentful.configure do |config|
         config.environment = 'staging'
       end
 
       # expect
-      expect(WCC::Contentful::DelayedSyncJob).to_not receive(:perform_later)
+      expect(WCC::Contentful::DelayedSyncJob).to receive(:perform_later)
 
       # act
       post :receive,
