@@ -13,6 +13,7 @@ module WCC::Contentful::Store
     end
 
     def set(key, value)
+      ensure_hash value
       result = @conn.exec_prepared('upsert_entry', [key, value.to_json])
       return if result.num_tuples == 0
       val = result.getvalue(0, 0)
@@ -145,7 +146,7 @@ module WCC::Contentful::Store
         CREATE INDEX IF NOT EXISTS contentful_raw_value_type ON contentful_raw ((data->'sys'->>'type'));
         CREATE INDEX IF NOT EXISTS contentful_raw_value_content_type ON contentful_raw ((data->'sys'->'contentType'->'sys'->>'id'));
 
-        DROP FUNCTION IF EXISTS "upsert_entry";
+        DROP FUNCTION IF EXISTS "upsert_entry"(_id varchar, _data jsonb);
         CREATE FUNCTION "upsert_entry"(_id varchar, _data jsonb) RETURNS jsonb AS $$
         DECLARE
           prev jsonb;

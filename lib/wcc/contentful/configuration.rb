@@ -104,9 +104,6 @@ class WCC::Contentful::Configuration
       next if job.respond_to?(:call) || job.respond_to?(:perform_later)
       raise ArgumentError, "The job '#{job}' must be an instance of ActiveJob::Base or respond to :call"
     end
-
-    return unless environment.present? && %i[eager_sync].include?(content_delivery)
-    raise ArgumentError, 'The Contentful Sync API currently does not work with environments.  ' \
-      'You can use the ":direct" content_delivery method, or provide a custom store implementation.'
+    return unless environment.present? && %i[eager_sync lazy_sync].include?(content_delivery)
   end
 end

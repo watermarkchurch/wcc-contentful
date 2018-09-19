@@ -31,7 +31,7 @@ RSpec.describe WCC::Contentful::DelayedSyncJob, type: :job do
                       ))
 
         expect(WCC::Contentful::Services.instance.store).to receive(:set)
-          .with('sync:token', 'test')
+          .with('sync:token', { token: 'test' })
         expect(WCC::Contentful::Services.instance.store).to_not receive(:index)
 
         # act
@@ -44,7 +44,7 @@ RSpec.describe WCC::Contentful::DelayedSyncJob, type: :job do
       it 'updates the store with the latest data' do
         allow(store).to receive(:find)
           .with('sync:token')
-          .and_return('test1')
+          .and_return({ 'token' => 'test1' })
 
         allow(client).to receive(:sync)
           .with(sync_token: 'test1')
@@ -55,7 +55,7 @@ RSpec.describe WCC::Contentful::DelayedSyncJob, type: :job do
 
         items = next_sync['items']
         expect(WCC::Contentful::Services.instance.store).to receive(:set)
-          .with('sync:token', 'test2')
+          .with('sync:token', { token: 'test2' })
         expect(WCC::Contentful::Services.instance.store).to receive(:index)
           .exactly(items.count).times
 
@@ -126,6 +126,21 @@ RSpec.describe WCC::Contentful::DelayedSyncJob, type: :job do
           'id' => 'testId1'
         }
       })
+    end
+  end
+
+  describe 'sync_later!' do
+    it 'drops another job with the given ID in 10 minutes' do
+      configured_job = double
+
+      expect(described_class).to receive(:set)
+        .with(wait: 10.minutes)
+        .and_return(configured_job)
+      expect(configured_job).to receive(:perform_later)
+        .with(up_to_id: 'foobar')
+
+      # act
+      job.sync_later!(up_to_id: 'foobar')
     end
   end
 end

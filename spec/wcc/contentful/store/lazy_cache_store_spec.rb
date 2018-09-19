@@ -81,14 +81,30 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
       expect(token).to be_nil
     end
 
+    describe 'ensures that the stored value is of type Hash' do
+      it 'should not raise an error if value is a Hash' do
+        data = { token: 'jenny_8675309' }
+
+        # assert
+        expect { subject.set('sync:token', data) }.to_not raise_error
+      end
+
+      it 'should raise an error if the value is not a Hash' do
+        data = 'jenny_8675309'
+        expect { subject.set('sync:token', data) }.to raise_error(ArgumentError)
+      end
+    end
+
     it 'returns stored token if it exists in the cache' do
-      store.set('sync:343qxys30lid:token', 'asdf')
+      data = { token: 'jenny_8675309' }
+
+      store.set('sync:343qxys30lid:token', data)
 
       # act
       token = store.find('sync:343qxys30lid:token')
 
       # assert
-      expect(token).to eq('asdf')
+      expect(token).to eq(data)
     end
   end
 

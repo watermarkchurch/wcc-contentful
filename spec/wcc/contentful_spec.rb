@@ -145,6 +145,18 @@ RSpec.describe WCC::Contentful, :vcr do
         expect(config.default_locale).to eq(valid_contentful_default_locale)
         expect(config.nil?).to eq(false)
       end
+
+      it 'should not raise error when trying to use sync with environments' do
+        expect {
+          WCC::Contentful.configure do |config|
+            config.access_token = valid_contentful_access_token
+            config.space = valid_contentful_space_id
+
+            config.content_delivery = :eager_sync
+            config.environment = 'specs'
+          end
+        }.to_not raise_error(ArgumentError)
+      end
     end
 
     context 'invalid config' do
@@ -162,18 +174,6 @@ RSpec.describe WCC::Contentful, :vcr do
           WCC::Contentful.configure do |config|
             config.access_token = nil
             config.space = valid_contentful_space_id
-          end
-        }.to raise_error(ArgumentError)
-      end
-
-      it 'should error when trying to use sync with environments' do
-        expect {
-          WCC::Contentful.configure do |config|
-            config.access_token = valid_contentful_access_token
-            config.space = valid_contentful_space_id
-
-            config.content_delivery = :eager_sync
-            config.environment = 'specs'
           end
         }.to raise_error(ArgumentError)
       end

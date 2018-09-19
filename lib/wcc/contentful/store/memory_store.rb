@@ -9,6 +9,7 @@ module WCC::Contentful::Store
 
     def set(key, value)
       value = value.deep_dup.freeze
+      ensure_hash value
       mutex.with_write_lock do
         old = @hash[key]
         @hash[key] = value

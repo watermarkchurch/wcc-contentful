@@ -80,7 +80,7 @@ module WCC::Contentful
       require file if File.exist?(file)
     end
 
-    require_relative 'client_ext' if defined?(::Contentful)
+    require_relative 'contentful/client_ext' if defined?(::Contentful)
   end
 
   # Runs validations over the content types returned from the Contentful API.
