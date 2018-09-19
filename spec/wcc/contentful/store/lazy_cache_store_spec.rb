@@ -106,6 +106,19 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
       # assert
       expect(token).to eq(data)
     end
+
+    it 'passes options to backing CDN adapter' do
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
+        '/entries/47PsST8EicKgWIWwK2AsW6')
+        .with(query: hash_including({ 'locale' => '*', 'include' => '2' }))
+        .to_return(body: load_fixture('contentful/lazy_cache_store/page_about.json'))
+
+      # act
+      page = store.find('47PsST8EicKgWIWwK2AsW6', include: 2, hint: 'Entry')
+
+      # assert
+      expect(page.dig('fields', 'heroText', 'en-US')).to eq('Some test hero text')
+    end
   end
 
   describe '#find_all' do
@@ -113,6 +126,7 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
         .with(query: hash_including({
           locale: '*',
+          include: '2',
           content_type: 'menu',
           'fields.name.en-US' => 'Main Menu'
         }))
@@ -120,13 +134,13 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
         .times(2)
 
       # act
-      main_menu = store.find_all(content_type: 'menu')
+      main_menu = store.find_all(content_type: 'menu', options: { include: 2 })
         .apply(name: 'Main Menu')
         .first
 
       # assert
       expect(main_menu.dig('sys', 'id')).to eq('FNlqULSV0sOy4IoGmyWOW')
-      main_menu2 = store.find_all(content_type: 'menu')
+      main_menu2 = store.find_all(content_type: 'menu', options: { include: 2 })
         .apply(name: 'Main Menu')
         .first
       expect(main_menu2).to eq(main_menu)

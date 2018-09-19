@@ -109,10 +109,7 @@ module WCC::Contentful::Store
       protected
 
       def response
-        # rubocop:disable Naming/MemoizedInstanceVariableName
-        # I don't want to conflict with the memoized @response in super
-        @response_wrapper ||= ResponseWrapper.new(super, @cache)
-        # rubocop:enable Naming/MemoizedInstanceVariableName
+        @response ||= ResponseWrapper.new(super, @cache)
       end
 
       ResponseWrapper =
