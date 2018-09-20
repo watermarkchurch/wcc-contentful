@@ -14,6 +14,11 @@ RSpec.describe WCC::Contentful::ModelMethods do
           name: 'blob',
           type: :Json
         },
+        'tags' => {
+          name: 'tags',
+          type: :String,
+          array: true
+        },
         'someLink' => {
           name: 'someLink',
           type: :Link
@@ -68,6 +73,9 @@ RSpec.describe WCC::Contentful::ModelMethods do
           'en-US' => {
             'some' => { 'data' => 3 }
           }
+        },
+        'tags' => {
+          'en-US' => %w[a b c]
         },
         'someLink' => {
           'en-US' => {
@@ -727,12 +735,14 @@ RSpec.describe WCC::Contentful::ModelMethods do
       expect(json.dig('fields', 'someLink', 'fields')).to eq({
         'name' => 'unresolved1.2',
         'blob' => { 'some' => { 'data' => 3 } },
+        'tags' => %w[a b c],
         'someLink' => { 'sys' => { 'type' => 'Link', 'linkType' => 'Entry', 'id' => '2' } },
         'items' => []
       })
       expect(json.dig('fields', 'items', 1, 'fields')).to eq({
         'name' => 'unresolved1.4',
         'blob' => { 'some' => { 'data' => 3 } },
+        'tags' => %w[a b c],
         'someLink' => { 'sys' => { 'type' => 'Link', 'linkType' => 'Entry', 'id' => '2' } },
         'items' => []
       })
@@ -785,6 +795,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
       expect(h.dig('fields', 'someLink', 'fields')).to eq({
         'name' => 'unresolved1.2',
         'blob' => { 'some' => { 'data' => 3 } },
+        'tags' => %w[a b c],
         'someLink' => { 'sys' => { 'type' => 'Link', 'linkType' => 'Entry', 'id' => '2' } },
         'items' => []
       })
