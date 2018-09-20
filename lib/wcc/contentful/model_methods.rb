@@ -81,14 +81,33 @@ module WCC::Contentful::ModelMethods
     raise WCC::Contentful::CircularReferenceError.new(stack, id) if stack&.include?(id)
 
     stack = [*stack, id]
-
+    typedef = self.class.content_type_definition
     fields =
-      self.class::FIELDS.each_with_object({}) do |field, h|
-        if val = instance_variable_get('@' + field + '_resolved')
-          val = _try_map(val) { |v| v ? v.to_h(stack) : v }
+      typedef.fields.each_with_object({}) do |(name, field_def), h|
+        if field_def.type == :Link || field_def.type == :Asset
+          if _resolved_field?(name, 0)
+            val = public_send(name)
+            val =
+              _try_map(val) { |v| v.to_h(stack) }
+          else
+            ids = field_def.array ? public_send("#{name}_ids") : public_send("#{name}_id")
+            val =
+              _try_map(ids) do |id|
+                {
+                  'sys' => {
+                    'type' => 'Link',
+                    'linkType' => field_def.type == :Asset ? 'Asset' : 'Entry',
+                    'id' => id
+                  }
+                }
+              end
+          end
+        else
+          val = public_send(name)
+          val = val.to_h.stringify_keys! if val.respond_to?(:to_h)
         end
 
-        h[field] = val || instance_variable_get('@' + field)
+        h[name] = val
       end
 
     {
@@ -138,7 +157,7 @@ module WCC::Contentful::ModelMethods
       }
 
     begin
-      val = _try_map(val) { |v| load.call(v) if v }
+      val = _try_map(val) { |v| load.call(v) }
 
       instance_variable_set(var_name + '_resolved', val)
     rescue WCC::Contentful::CircularReferenceError
@@ -158,9 +177,13 @@ module WCC::Contentful::ModelMethods
     val.all? { |i| i.nil? || i.resolved?(depth: depth - 1) }
   end
 
-  def _try_map(val, &block)
-    return val&.map(&block) if val.is_a? Array
+  def _try_map(val)
+    if val.is_a? Array
+      return val&.map do |item|
+        yield item unless item.nil?
+      end
+    end
 
-    yield val
+    yield val unless val.nil?
   end
 end

@@ -253,7 +253,25 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     main_menu = WCC::Contentful::Model::Menu.find('FNlqULSV0sOy4IoGmyWOW')
 
     # assert
+    expect(store).to_not receive(:find)
     expect(main_menu.hamburger_id).to eq('6y9DftpiYoA4YiKg2CgoUU')
+  end
+
+  it 'makes all IDs of a linked array accessible' do
+    @schema = subject.build_models
+
+    # act
+    side_menu = WCC::Contentful::Model::Menu.find('6y9DftpiYoA4YiKg2CgoUU')
+
+    # assert
+    expect(store).to_not receive(:find)
+    expect(side_menu.items_ids).to eq(
+      %w[
+        1IJEXB4AKEqQYEm4WuceG2
+        5NBhDw3i2kUqSwqYok4YQO
+        4tMhra8IAwcEoKS6QSQYcc
+      ]
+    )
   end
 
   it 'stores backreference on linked type context' do

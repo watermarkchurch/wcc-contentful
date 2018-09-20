@@ -90,7 +90,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
             {
               'sys' => {
                 'type' => 'Link',
-                'linkType' => 'Asset',
+                'linkType' => 'Entry',
                 'id' => '4'
               }
             }
@@ -701,7 +701,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
           {
             'sys' => {
               'type' => 'Link',
-              'linkType' => 'Asset',
+              'linkType' => 'Entry',
               'id' => '4'
             }
           }
@@ -791,6 +791,51 @@ RSpec.describe WCC::Contentful::ModelMethods do
 
       round_trip = JSON.parse(h.to_json)
       expect(h).to eql(round_trip)
+    end
+
+    it 'calls into the defined methods on the subclass to get data' do
+      TO_H_TEST_1 =
+        Class.new(WCC::Contentful::Model::ToJsonTest) do
+          def name
+            'to-h-test-1:' + super
+          end
+        end
+
+      subject = TO_H_TEST_1.new(raw)
+
+      # act
+      h = subject.to_h
+
+      # assert
+      expect(h.dig('fields', 'name')).to eq('to-h-test-1:asdf')
+    end
+
+    it 'does not include raw fields ("en-US") if original source raw is resolved deeper than model' do
+      resolved_raw = make_resolved(depth: 2)
+      subject = WCC::Contentful::Model::ToJsonTest.new(resolved_raw)
+      subject.resolve(depth: 1)
+
+      # act
+      h = subject.to_h
+
+      # resolved_raw has raw fields down to depth 2, but we should only see down
+      # to depth 1 because that's all that the model has resolved.
+      link = h.dig('fields', 'someLink')
+      expect(link.dig('sys', 'type')).to eq('Entry')
+      expect(link.dig('fields', 'someLink', 'sys', 'type')).to eq('Link')
+      expect(link.dig('fields', 'someLink', 'sys', 'linkType')).to eq('Entry')
+      expect(link.dig('fields', 'someLink', 'sys', 'id')).to eq('1.2')
+      expect(link.dig('fields', 'someLink', 'fields')).to be nil
+
+      items = h.dig('fields', 'items')
+      expect(items.length).to eq(2)
+      items.each do |item|
+        expect(item.dig('sys', 'type')).to eq('Entry')
+        expect(item.dig('fields', 'items', 1, 'sys', 'type')).to eq('Link')
+        expect(item.dig('fields', 'items', 1, 'sys', 'linkType')).to eq('Entry')
+        expect(item.dig('fields', 'items', 1, 'sys', 'id')).to_not be nil
+        expect(item.dig('fields', 'items', 1, 'fields')).to be nil
+      end
     end
   end
 
