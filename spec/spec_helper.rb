@@ -37,7 +37,7 @@ RSpec.configure do |config|
   config.include FixturesHelper
   config.include_context 'Contentful config'
 
-  config.after(:each) do
+  config.before(:each) do
     WCC::Contentful.instance_variable_set('@configuration', nil)
     WCC::Contentful::Services.instance_variable_set(:@singleton__instance__, nil)
 
