@@ -24,10 +24,9 @@ module WCC::Contentful::ModelSingletonMethods
   #   WCC::Contentful::Model::Page.find(id)
   def find(id, options: nil)
     options ||= {}
-    context = options.dup
     raw = store(options[:preview])
       .find(id, { hint: type }.merge!(options.except(:preview)))
-    new(raw, context) if raw.present?
+    new(raw, options) if raw.present?
   end
 
   # Finds all instances of this content type, optionally limiting to those matching
@@ -40,7 +39,6 @@ module WCC::Contentful::ModelSingletonMethods
   def find_all(filter = nil)
     filter = filter&.dup
     options = filter&.delete(:options) || {}
-    context = options.dup
 
     if filter.present?
       filter.transform_keys! { |k| k.to_s.camelize(:lower) }
@@ -51,7 +49,7 @@ module WCC::Contentful::ModelSingletonMethods
     query = store(options[:preview])
       .find_all(content_type: content_type, options: options.except(:preview))
     query = query.apply(filter) if filter.present?
-    query.map { |r| new(r, context) }
+    query.map { |r| new(r, options) }
   end
 
   # Finds the first instance of this content type matching the given query.
@@ -63,7 +61,6 @@ module WCC::Contentful::ModelSingletonMethods
   def find_by(filter = nil)
     filter = filter&.dup
     options = filter&.delete(:options) || {}
-    context = options.dup
 
     if filter.present?
       filter.transform_keys! { |k| k.to_s.camelize(:lower) }
@@ -74,7 +71,7 @@ module WCC::Contentful::ModelSingletonMethods
     result = store(options[:preview])
       .find_by(content_type: content_type, filter: filter, options: options.except(:preview))
 
-    new(result, context) if result
+    new(result, options) if result
   end
 
   def inherited(subclass)
