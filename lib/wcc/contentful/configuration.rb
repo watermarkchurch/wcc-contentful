@@ -105,6 +105,5 @@ class WCC::Contentful::Configuration
 
       raise ArgumentError, "The job '#{job}' must be an instance of ActiveJob::Base or respond to :call"
     end
-    return unless environment.present? && %i[eager_sync lazy_sync].include?(content_delivery)
   end
 end
