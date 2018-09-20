@@ -25,8 +25,8 @@ module WCC::Contentful::ModelSingletonMethods
   def find(id, options: nil)
     options ||= {}
     context = options.dup
-    raw = store(options.delete(:preview))
-      .find(id, { hint: type }.merge!(options))
+    raw = store(options[:preview])
+      .find(id, { hint: type }.merge!(options.except(:preview)))
     new(raw, context) if raw.present?
   end
 
@@ -38,18 +38,19 @@ module WCC::Contentful::ModelSingletonMethods
   # @example
   #   WCC::Contentful::Model::Page.find_all('sys.created_at' => { lte: Date.today })
   def find_all(filter = nil)
+    filter = filter&.dup
     options = filter&.delete(:options) || {}
     context = options.dup
 
-    if filter
+    if filter.present?
       filter.transform_keys! { |k| k.to_s.camelize(:lower) }
       bad_fields = filter.keys.reject { |k| self::FIELDS.include?(k) }
       raise ArgumentError, "These fields do not exist: #{bad_fields}" unless bad_fields.empty?
     end
 
-    query = store(options.delete(:preview))
-      .find_all(content_type: content_type, options: options)
-    query = query.apply(filter) if filter
+    query = store(options[:preview])
+      .find_all(content_type: content_type, options: options.except(:preview))
+    query = query.apply(filter) if filter.present?
     query.map { |r| new(r, context) }
   end
 
@@ -60,15 +61,18 @@ module WCC::Contentful::ModelSingletonMethods
   # @example
   #   WCC::Contentful::Model::Page.find_by(slug: '/some-slug')
   def find_by(filter = nil)
+    filter = filter&.dup
     options = filter&.delete(:options) || {}
     context = options.dup
 
-    filter.transform_keys! { |k| k.to_s.camelize(:lower) }
-    bad_fields = filter.keys.reject { |k| self::FIELDS.include?(k) }
-    raise ArgumentError, "These fields do not exist: #{bad_fields}" unless bad_fields.empty?
+    if filter.present?
+      filter.transform_keys! { |k| k.to_s.camelize(:lower) }
+      bad_fields = filter.keys.reject { |k| self::FIELDS.include?(k) }
+      raise ArgumentError, "These fields do not exist: #{bad_fields}" unless bad_fields.empty?
+    end
 
-    result = store(options.delete(:preview))
-      .find_by(content_type: content_type, filter: filter, options: options)
+    result = store(options[:preview])
+      .find_by(content_type: content_type, filter: filter, options: options.except(:preview))
 
     new(result, context) if result
   end
