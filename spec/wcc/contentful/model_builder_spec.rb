@@ -265,11 +265,13 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
     # assert
     expect(store).to_not receive(:find)
-    expect(side_menu.items_id).to eq(%w[
-                                       1IJEXB4AKEqQYEm4WuceG2
-                                       5NBhDw3i2kUqSwqYok4YQO
-                                       4tMhra8IAwcEoKS6QSQYcc
-                                     ])
+    expect(side_menu.items_ids).to eq(
+      %w[
+        1IJEXB4AKEqQYEm4WuceG2
+        5NBhDw3i2kUqSwqYok4YQO
+        4tMhra8IAwcEoKS6QSQYcc
+      ]
+    )
   end
 
   it 'stores backreference on linked type context' do

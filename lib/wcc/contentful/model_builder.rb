@@ -114,6 +114,7 @@ module WCC::Contentful
 
               id_method_name = "#{name}_id"
               if f.array
+                id_method_name = "#{name}_ids"
                 define_method(id_method_name) do
                   instance_variable_get(var_name)&.map { |link| link.dig('sys', 'id') }
                 end
