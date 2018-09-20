@@ -122,6 +122,11 @@ RSpec.describe WCC::Contentful::WebhookController, type: :controller do
     end
 
     it 'runs a sync even in master environment' do
+      request.headers.merge!(
+        'Authorization': basic_auth('tester1', 'password1'),
+        'Content-Type': 'application/vnd.contentful.management.v1+json'
+      )
+
       WCC::Contentful.configure do |config|
         config.environment = 'staging'
       end
@@ -132,6 +137,9 @@ RSpec.describe WCC::Contentful::WebhookController, type: :controller do
       # act
       post :receive,
         body: body
+
+      # assert
+      expect(response).to have_http_status(:no_content)
     end
 
     it 'runs configured jobs on success' do
