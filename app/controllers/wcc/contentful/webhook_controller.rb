@@ -7,6 +7,8 @@ module WCC::Contentful
   # webhook events from Contentful.  It passes these webhook events to
   # the jobs configured in {WCC::Contentful::Configuration WCC::Contentful::Configuration#webhook_jobs}
   class WebhookController < ApplicationController
+    include WCC::Contentful::ServiceAccessors
+
     before_action :authorize_contentful
     protect_from_forgery unless: -> { request.format.json? }
 
@@ -15,11 +17,12 @@ module WCC::Contentful
     end
 
     def receive
-      jobs = [WCC::Contentful::DelayedSyncJob, *WCC::Contentful.configuration.webhook_jobs]
-
       event = params.require('webhook').permit!
       event.require('sys').require(%w[id type])
       event = event.to_h
+
+      # Immediately update the store, we may update again later using DelayedSyncJob.
+      store.index(event) if store.respond_to?(:index)
 
       jobs.each do |job|
         begin
@@ -37,6 +40,8 @@ module WCC::Contentful
       end
     end
 
+    private
+
     def authorize_contentful
       config = WCC::Contentful.configuration
 
@@ -53,7 +58,13 @@ module WCC::Contentful
       # 'application/vnd.contentful.management.v1+json' is an alias for the 'application/json'
       # content-type, so 'request.content_type' will give 'application/json'
       return if request.headers['Content-Type'] == 'application/vnd.contentful.management.v1+json'
+
       render json: { msg: 'This endpoint only responds to webhooks from Contentful' }, status: 406
+    end
+
+    def jobs
+      jobs = [WCC::Contentful::DelayedSyncJob]
+      jobs.push(*WCC::Contentful.configuration.webhook_jobs)
     end
   end
 end

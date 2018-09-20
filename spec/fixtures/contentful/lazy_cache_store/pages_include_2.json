@@ -1,0 +1,310 @@
+{
+  "sys": {
+    "type": "Array"
+  },
+  "total": 56,
+  "skip": 0,
+  "limit": 5,
+  "items": [
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "7yx6ovlj39n5"
+          }
+        },
+        "id": "1fmEP24Q4eGGeK8QuoAG48",
+        "type": "Entry",
+        "createdAt": "2018-06-22T15:25:48.299Z",
+        "updatedAt": "2018-06-22T15:57:13.403Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "revision": 2,
+        "contentType": {
+          "sys": {
+            "type": "Link",
+            "linkType": "ContentType",
+            "id": "page"
+          }
+        }
+      },
+      "fields": {
+        "title": {
+          "en-US": "Podcasts"
+        },
+        "slug": {
+          "en-US": "/equipping/real_truth_real_quick"
+        }
+      }
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "7yx6ovlj39n5"
+          }
+        },
+        "id": "seWfV3nIdiuyOasOO6eiS",
+        "type": "Entry",
+        "createdAt": "2018-06-13T18:06:37.260Z",
+        "updatedAt": "2018-06-20T21:07:03.437Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "revision": 3,
+        "contentType": {
+          "sys": {
+            "type": "Link",
+            "linkType": "ContentType",
+            "id": "page"
+          }
+        }
+      },
+      "fields": {
+        "title": {
+          "en-US": "re:generation recovery Hotels & Parking "
+        },
+        "slug": {
+          "en-US": "/conferences/regeneration/hotels"
+        },
+        "sections": {
+          "en-US": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "5olavbPVWo44KsGC8WgeCu"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "7yx6ovlj39n5"
+          }
+        },
+        "id": "XOMXbYxNK0uGEQyeyC2CG",
+        "type": "Entry",
+        "createdAt": "2018-06-12T21:00:18.915Z",
+        "updatedAt": "2018-07-16T16:49:08.649Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "revision": 3,
+        "contentType": {
+          "sys": {
+            "type": "Link",
+            "linkType": "ContentType",
+            "id": "page"
+          }
+        }
+      },
+      "fields": {
+        "title": {
+          "en-US": "Hotels and Parking"
+        },
+        "slug": {
+          "en-US": "/ctc/hotels"
+        },
+        "sections": {
+          "en-US": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "5olavbPVWo44KsGC8WgeCu"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "7yx6ovlj39n5"
+          }
+        },
+        "id": "6nsLma2sEwI8e6MiA8qmu6",
+        "type": "Entry",
+        "createdAt": "2018-06-05T19:19:24.366Z",
+        "updatedAt": "2018-07-16T16:44:54.681Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "revision": 6,
+        "contentType": {
+          "sys": {
+            "type": "Link",
+            "linkType": "ContentType",
+            "id": "page"
+          }
+        }
+      },
+      "fields": {
+        "title": {
+          "en-US": "Materials"
+        },
+        "slug": {
+          "en-US": "/ministries/regen/materials"
+        },
+        "sections": {
+          "en-US": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "38ijVyGafC6ESQyk6uy2kw"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "7yx6ovlj39n5"
+          }
+        },
+        "id": "5N7jjx5IzuwqKu4gGIsisK",
+        "type": "Entry",
+        "createdAt": "2018-06-22T15:26:13.442Z",
+        "updatedAt": "2018-06-22T15:26:21.154Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "revision": 2,
+        "contentType": {
+          "sys": {
+            "type": "Link",
+            "linkType": "ContentType",
+            "id": "page"
+          }
+        }
+      },
+      "fields": {
+        "title": {
+          "en-US": "Church Leaders Podcast"
+        },
+        "slug": {
+          "en-US": "/equipping/church_leaders_podcast"
+        }
+      }
+    }
+  ],
+  "includes": {
+    "Entry": [
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "38ijVyGafC6ESQyk6uy2kw",
+          "type": "Entry",
+          "createdAt": "2018-06-05T19:19:18.089Z",
+          "updatedAt": "2018-06-05T19:24:45.279Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 3,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "section-product-list"
+            }
+          }
+        },
+        "fields": {
+          "collectionId": {
+            "en-US": "Z2lk..."
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "5olavbPVWo44KsGC8WgeCu",
+          "type": "Entry",
+          "createdAt": "2018-04-19T15:52:45.951Z",
+          "updatedAt": "2018-07-02T21:37:02.437Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 5,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "section-block-text"
+            }
+          }
+        },
+        "fields": {
+          "internalTitle": {
+            "en-US": "WCC Dallas Hotels and Parking "
+          },
+          "body": {
+            "en-US": "# Hotels\nThe [Westin Park Central](http://www.westindallasparkcentral.com/) is within walking distance to the church. To make a reservation at the Westin for this conference, you can [book online](http://www.starwoodhotels.com/westin/rates/rate.html?propertyID=472&rp=SN:430499,,,&language=en_US&EM=oneclickURL_430499_SETWATWD_BOOK_WI_472_NAD).\n\nThe Residence Inn Park Central is also within walking distance to the church. To make a reservation at The Residence Inn, you can call (972) 503-1333. Be sure to mention you are with Watermark’s Marriage Ministry Training Conference.\n\n\n# Parking\n[Learn more about Watermark’s location](http://www.watermark.org/dallas/about/contact-us).\n\n![11 parking map final2017-with-East-Tower](//images.ctfassets.net/7yx6ovlj39n5/21fiko9ujeI0aQGYA2ocOO/92b39a05989fa3f4e9747389b3ce1aa1/11_parking_map_final2017-with-East-Tower.jpg)\n\nUber and Lyft are available in Dallas and both are a great option for transportation to and from the airport.\n\nPlease contact [resources@watermark.org](mailto:resources@watermark.org) with any questions."
+          }
+        }
+      }
+    ]
+  }
+}

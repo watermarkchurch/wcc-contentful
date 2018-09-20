@@ -18,6 +18,11 @@ class WCC::Contentful::Configuration
   ].freeze
   attr_accessor(*ATTRIBUTES)
 
+  # Returns true if the currently configured environment is pointing at `master`.
+  def master?
+    !environment.present?
+  end
+
   # Defines the method by which content is downloaded from the Contentful CDN.
   #
   # [:direct] `config.content_delivery = :direct`
@@ -97,6 +102,7 @@ class WCC::Contentful::Configuration
 
     webhook_jobs&.each do |job|
       next if job.respond_to?(:call) || job.respond_to?(:perform_later)
+
       raise ArgumentError, "The job '#{job}' must be an instance of ActiveJob::Base or respond to :call"
     end
   end

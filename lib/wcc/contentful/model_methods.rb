@@ -49,6 +49,7 @@ module WCC::Contentful::ModelMethods
       unless raw
         raise WCC::Contentful::ResolveError, "Cannot find #{self.class.content_type} with ID #{id}"
       end
+
       @raw = raw.freeze
       links.each { |f| instance_variable_set('@' + f, raw.dig('fields', f, sys.locale)) }
     end
@@ -78,6 +79,7 @@ module WCC::Contentful::ModelMethods
   # than `locale=*`.
   def to_h(stack = nil)
     raise WCC::Contentful::CircularReferenceError.new(stack, id) if stack&.include?(id)
+
     stack = [*stack, id]
 
     fields =
@@ -100,6 +102,8 @@ module WCC::Contentful::ModelMethods
   private
 
   def _resolve_field(field_name, depth = 1, context = {}, options = {})
+    return if depth <= 0
+
     var_name = '@' + field_name
     return unless val = instance_variable_get(var_name)
 
@@ -150,11 +154,13 @@ module WCC::Contentful::ModelMethods
     return true if depth <= 1
 
     return val.resolved?(depth: depth - 1) unless val.is_a? Array
+
     val.all? { |i| i.nil? || i.resolved?(depth: depth - 1) }
   end
 
   def _try_map(val, &block)
     return val&.map(&block) if val.is_a? Array
+
     yield val
   end
 end

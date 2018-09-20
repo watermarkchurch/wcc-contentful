@@ -10,6 +10,7 @@ class WCC::Contentful::Model::MenuButton < WCC::Contentful::Model
   # Example usage: `<%= link_to button.title, button.href %>`
   def href
     return external_link if external_link
+
     link&.try(:slug) || link&.try(:url)
   end
 end

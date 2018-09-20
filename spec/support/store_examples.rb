@@ -1,6 +1,82 @@
 # frozen_string_literal: true
 
 RSpec.shared_examples 'contentful store' do
+  let(:entry) {
+    JSON.parse(<<~JSON)
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "343qxys30lid"
+            }
+          },
+          "id": "1qLdW7i7g4Ycq6i4Cckg44",
+          "type": "Entry",
+          "createdAt": "2018-03-09T23:39:27.737Z",
+          "updatedAt": "2018-03-09T23:39:27.737Z",
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "redirect"
+            }
+          }
+        },
+        "fields": {
+          "slug": {
+            "en-US": "redirect-with-slug-and-url"
+          },
+          "url": {
+            "en-US": "http://www.google.com"
+          }
+        }
+      }
+    JSON
+  }
+
+  let(:asset) {
+    JSON.parse(<<~JSON)
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "343qxys30lid"
+            }
+          },
+          "id": "3pWma8spR62aegAWAWacyA",
+          "type": "Asset",
+          "createdAt": "2018-02-12T19:53:39.309Z",
+          "updatedAt": "2018-02-12T19:53:39.309Z",
+          "revision": 1
+        },
+        "fields": {
+          "title": {
+            "en-US": "apple-touch-icon"
+          },
+          "file": {
+            "en-US": {
+              "url": "//images.contentful.com/343qxys30lid/3pWma8spR62aegAWAWacyA/1beaebf5b66d2405ff9c9769a74db709/apple-touch-icon.png",
+              "details": {
+                "size": 40832,
+                "image": {
+                  "width": 180,
+                  "height": 180
+                }
+              },
+              "fileName": "apple-touch-icon.png",
+              "contentType": "image/png"
+            }
+          }
+        }
+      }
+    JSON
+  }
+
   describe '#set/#find' do
     describe 'ensures that the stored value is of type Hash' do
       it 'should not raise an error if value is a Hash' do
@@ -36,6 +112,19 @@ RSpec.shared_examples 'contentful store' do
 
       # assert
       expect(found).to be_nil
+    end
+
+    it 'find accepts hint param' do
+      subject.set('1qLdW7i7g4Ycq6i4Cckg44', entry)
+      subject.set('3pWma8spR62aegAWAWacyA', asset)
+
+      # act
+      found_entry = subject.find('1qLdW7i7g4Ycq6i4Cckg44', hint: 'Entry')
+      found_asset = subject.find('3pWma8spR62aegAWAWacyA', hint: 'Asset')
+
+      # assert
+      expect(found_entry.dig('sys', 'id')).to eq(entry.dig('sys', 'id'))
+      expect(found_asset.dig('sys', 'id')).to eq(asset.dig('sys', 'id'))
     end
 
     it 'set returns prior value if exists' do
@@ -80,82 +169,6 @@ RSpec.shared_examples 'contentful store' do
   end
 
   describe '#index' do
-    let(:entry) {
-      JSON.parse(<<~JSON)
-        {
-          "sys": {
-            "space": {
-              "sys": {
-                "type": "Link",
-                "linkType": "Space",
-                "id": "343qxys30lid"
-              }
-            },
-            "id": "1qLdW7i7g4Ycq6i4Cckg44",
-            "type": "Entry",
-            "createdAt": "2018-03-09T23:39:27.737Z",
-            "updatedAt": "2018-03-09T23:39:27.737Z",
-            "revision": 1,
-            "contentType": {
-              "sys": {
-                "type": "Link",
-                "linkType": "ContentType",
-                "id": "redirect"
-              }
-            }
-          },
-          "fields": {
-            "slug": {
-              "en-US": "redirect-with-slug-and-url"
-            },
-            "url": {
-              "en-US": "http://www.google.com"
-            }
-          }
-        }
-      JSON
-    }
-
-    let(:asset) {
-      JSON.parse(<<~JSON)
-        {
-          "sys": {
-            "space": {
-              "sys": {
-                "type": "Link",
-                "linkType": "Space",
-                "id": "343qxys30lid"
-              }
-            },
-            "id": "3pWma8spR62aegAWAWacyA",
-            "type": "Asset",
-            "createdAt": "2018-02-12T19:53:39.309Z",
-            "updatedAt": "2018-02-12T19:53:39.309Z",
-            "revision": 1
-          },
-          "fields": {
-            "title": {
-              "en-US": "apple-touch-icon"
-            },
-            "file": {
-              "en-US": {
-                "url": "//images.contentful.com/343qxys30lid/3pWma8spR62aegAWAWacyA/1beaebf5b66d2405ff9c9769a74db709/apple-touch-icon.png",
-                "details": {
-                  "size": 40832,
-                  "image": {
-                    "width": 180,
-                    "height": 180
-                  }
-                },
-                "fileName": "apple-touch-icon.png",
-                "contentType": "image/png"
-              }
-            }
-          }
-        }
-      JSON
-    }
-
     let(:deleted_entry) {
       JSON.parse(<<~JSON)
         {
@@ -220,7 +233,7 @@ RSpec.shared_examples 'contentful store' do
 
       # assert
       expect(prev).to eq(entry)
-      expect(subject.find('1qLdW7i7g4Ycq6i4Cckg44')).to eq(entry)
+      expect(subject.find('1qLdW7i7g4Ycq6i4Cckg44', hint: 'Entry')).to eq(entry)
     end
 
     it 'updates an "Entry" when exists' do
@@ -257,7 +270,7 @@ RSpec.shared_examples 'contentful store' do
 
       # assert
       expect(latest).to eq(asset)
-      expect(subject.find('3pWma8spR62aegAWAWacyA')).to eq(asset)
+      expect(subject.find('3pWma8spR62aegAWAWacyA', hint: 'Asset')).to eq(asset)
     end
 
     it 'updates an "Asset" when exists' do

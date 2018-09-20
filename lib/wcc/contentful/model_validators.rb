@@ -49,6 +49,7 @@ module WCC::Contentful::ModelValidators
   # to validate the 'fields' object of a content type.
   def validate_fields(&block)
     raise ArgumentError, 'validate_fields requires a block' unless block_given?
+
     dsl = ProcDsl.new(Proc.new(&block))
 
     ct = try(:content_type) || name.demodulize.camelize(:lower)

@@ -33,6 +33,14 @@ module WCC::Contentful
           const_set('ATTRIBUTES', typedef.fields.keys.map(&:to_sym).freeze)
           const_set('FIELDS', typedef.fields.keys.freeze)
 
+          # Magic type in their system which has a separate endpoint
+          # but we represent in the same model space
+          if const == 'Asset'
+            define_singleton_method(:type) { 'Asset' }
+          else
+            define_singleton_method(:type) { 'Entry' }
+          end
+
           define_singleton_method(:content_type) do
             typedef.content_type
           end
@@ -55,6 +63,7 @@ module WCC::Contentful
             updated_at = Time.parse(updated_at) if updated_at.present?
             @sys = WCC::Contentful::Sys.new(
               raw.dig('sys', 'id'),
+              raw.dig('sys', 'type'),
               raw.dig('sys', 'locale') || context.try(:[], :locale) || 'en-US',
               raw.dig('sys', 'space', 'sys', 'id'),
               created_at,

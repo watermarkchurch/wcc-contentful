@@ -111,6 +111,7 @@ module WCC::Contentful
       if WCC::Contentful.configuration.nil?
         raise StandardError, 'WCC::Contentful has not yet been configured!'
       end
+
       yield WCC::Contentful.configuration
     end
   end

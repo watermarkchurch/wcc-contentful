@@ -69,7 +69,7 @@ module WCC::Contentful::Store
     #  defining for example include depth.  Not all store implementations respect all options.
     def find_by(content_type:, filter: nil, options: nil)
       # default implementation - can be overridden
-      q = find_all(content_type: content_type, options: options)
+      q = find_all(content_type: content_type, options: { limit: 1 }.merge!(options || {}))
       q = q.apply(filter) if filter
       q.first
     end
@@ -187,6 +187,7 @@ module WCC::Contentful::Store
       def resolve_link(val, depth)
         return val unless val.is_a?(Hash) && val.dig('sys', 'type') == 'Link'
         return val unless included = @store.find(val.dig('sys', 'id'))
+
         resolve_includes(included, depth - 1)
       end
 

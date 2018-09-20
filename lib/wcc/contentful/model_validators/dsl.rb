@@ -103,6 +103,7 @@ module WCC::Contentful::ModelValidators
       when :link_to
         link_to_proc = parse_field_link_to(option_arg)
         return link_to_proc unless @type.to_s.camelize == 'Array'
+
         proc {
           required('items').schema do
             required('type').value(eql?: 'Link')

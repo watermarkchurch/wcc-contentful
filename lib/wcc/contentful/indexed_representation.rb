@@ -15,6 +15,7 @@ module WCC::Contentful
 
     def []=(id, value)
       raise ArgumentError unless value.is_a?(ContentType)
+
       @types[id] = value
     end
 
@@ -39,6 +40,7 @@ module WCC::Contentful
     def ==(other)
       my_keys = keys
       return false unless my_keys == other.keys
+
       my_keys.all? { |k| self[k] == other[k] }
     end
 
@@ -54,6 +56,7 @@ module WCC::Contentful
       def initialize(hash_or_id = nil)
         @fields = {}
         return unless hash_or_id
+
         if hash_or_id.is_a?(String)
           @name = hash_or_id
           return
@@ -108,11 +111,13 @@ module WCC::Contentful
         unless TYPES.include?(raw_type)
           raise ArgumentError, "Unknown type #{raw_type}, expected one of: #{TYPES}"
         end
+
         @type = raw_type
       end
 
       def initialize(hash_or_id = nil)
         return unless hash_or_id
+
         if hash_or_id.is_a?(String)
           @name = hash_or_id
           return
@@ -128,6 +133,7 @@ module WCC::Contentful
           unless TYPES.include?(raw_type)
             raise ArgumentError, "Unknown type #{raw_type}, expected one of: #{TYPES}"
           end
+
           @type = raw_type
         end
 

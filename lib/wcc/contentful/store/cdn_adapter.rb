@@ -11,12 +11,17 @@ module WCC::Contentful::Store
       @client = client
     end
 
-    def find(key)
+    def find(key, hint: nil, **options)
+      options = { locale: '*' }.merge!(options || {})
       entry =
-        begin
-          client.entry(key, locale: '*')
-        rescue WCC::Contentful::SimpleClient::NotFoundError
-          client.asset(key, locale: '*')
+        if hint
+          client.public_send(hint.underscore, key, options)
+        else
+          begin
+            client.entry(key, options)
+          rescue WCC::Contentful::SimpleClient::NotFoundError
+            client.asset(key, options)
+          end
         end
       entry&.raw
     rescue WCC::Contentful::SimpleClient::NotFoundError
@@ -25,13 +30,18 @@ module WCC::Contentful::Store
 
     def find_by(content_type:, filter: nil, options: nil)
       # default implementation - can be overridden
-      q = find_all(content_type: content_type, options: options)
+      q = find_all(content_type: content_type, options: { limit: 1 }.merge!(options || {}))
       q = q.apply(filter) if filter
       q.first
     end
 
     def find_all(content_type:, options: nil)
-      Query.new(self, @client, { content_type: content_type }, options)
+      Query.new(
+        store: self,
+        client: @client,
+        relation: { content_type: content_type },
+        options: options
+      )
     end
 
     class Query < Base::Query
@@ -39,10 +49,11 @@ module WCC::Contentful::Store
 
       def result
         return response.items unless @options[:include]
+
         response.items.map { |e| resolve_includes(e, @options[:include]) }
       end
 
-      def initialize(store, client, relation, options = nil)
+      def initialize(store:, client:, relation:, options: nil, **extra)
         raise ArgumentError, 'Client cannot be nil' unless client.present?
         raise ArgumentError, 'content_type must be provided' unless relation[:content_type].present?
 
@@ -50,13 +61,20 @@ module WCC::Contentful::Store
         @client = client
         @relation = relation
         @options = options || {}
+        @extra = extra || {}
       end
 
       def apply_operator(operator, field, expected, context = nil)
         op = operator == :eq ? nil : operator
         param = parameter(field, operator: op, context: context, locale: true)
 
-        Query.new(@store, @client, @relation.merge(param => expected), @options)
+        self.class.new(
+          store: @store,
+          client: @client,
+          relation: @relation.merge(param => expected),
+          options: @options,
+          **@extra
+        )
       end
 
       def nested_conditions(field, conditions, context)
@@ -74,6 +92,24 @@ module WCC::Contentful::Store
       end
 
       private
+
+      def response
+        @response ||=
+          if @relation[:content_type] == 'Asset'
+            @client.assets(
+              { locale: '*' }.merge!(@relation.reject { |k| k == :content_type }).merge!(@options)
+            )
+          else
+            @client.entries({ locale: '*' }.merge!(@relation).merge!(@options))
+          end
+      end
+
+      def resolve_link(val, depth)
+        return val unless val.is_a?(Hash) && val.dig('sys', 'type') == 'Link'
+        return val unless included = response.includes[val.dig('sys', 'id')]
+
+        resolve_includes(included, depth - 1)
+      end
 
       def parameter(field, operator: nil, context: nil, locale: false)
         if sys?(field)
@@ -101,24 +137,6 @@ module WCC::Contentful::Store
 
       def nested?(field)
         field.to_s.include?('.')
-      end
-
-      def response
-        return @response if @response
-        @response ||=
-          if @relation[:content_type] == 'Asset'
-            @client.assets(
-              { locale: '*' }.merge!(@relation.reject { |k| k == :content_type }).merge!(@options)
-            )
-          else
-            @client.entries({ locale: '*' }.merge!(@relation).merge!(@options))
-          end
-      end
-
-      def resolve_link(val, depth)
-        return val unless val.is_a?(Hash) && val.dig('sys', 'type') == 'Link'
-        return val unless included = response.includes[val.dig('sys', 'id')]
-        resolve_includes(included, depth - 1)
       end
     end
   end

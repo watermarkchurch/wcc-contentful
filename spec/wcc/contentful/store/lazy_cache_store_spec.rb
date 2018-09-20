@@ -106,29 +106,168 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
       # assert
       expect(token).to eq(data)
     end
+
+    it 'passes options to backing CDN adapter' do
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
+        '/entries/47PsST8EicKgWIWwK2AsW6')
+        .with(query: hash_including({ 'locale' => '*', 'include' => '2' }))
+        .to_return(body: load_fixture('contentful/lazy_cache_store/page_about.json'))
+
+      # act
+      page = store.find('47PsST8EicKgWIWwK2AsW6', include: 2, hint: 'Entry')
+
+      # assert
+      expect(page.dig('fields', 'heroText', 'en-US')).to eq('Some test hero text')
+    end
   end
 
-  it 'delegates #find_all to the API and does not cache them' do
-    stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
-      .with(query: hash_including({
-        locale: '*',
-        content_type: 'menu',
-        'fields.name.en-US' => 'Main Menu'
-      }))
-      .to_return(body: load_fixture('contentful/lazy_cache_store/query_main_menu.json'))
-      .times(2)
+  describe '#find_all' do
+    it 'does not read from cache for second hit' do
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
+        .with(query: hash_including({
+          locale: '*',
+          include: '2',
+          content_type: 'menu',
+          'fields.name.en-US' => 'Main Menu'
+        }))
+        .to_return(body: load_fixture('contentful/lazy_cache_store/query_main_menu.json'))
+        .times(2)
 
-    # act
-    main_menu = store.find_all(content_type: 'menu')
-      .apply(name: 'Main Menu')
-      .first
+      # act
+      main_menu = store.find_all(content_type: 'menu', options: { include: 2 })
+        .apply(name: 'Main Menu')
+        .first
 
-    # assert
-    expect(main_menu.dig('sys', 'id')).to eq('FNlqULSV0sOy4IoGmyWOW')
-    main_menu2 = store.find_all(content_type: 'menu')
-      .apply(name: 'Main Menu')
-      .first
-    expect(main_menu2).to eq(main_menu)
+      # assert
+      expect(main_menu.dig('sys', 'id')).to eq('FNlqULSV0sOy4IoGmyWOW')
+      main_menu2 = store.find_all(content_type: 'menu', options: { include: 2 })
+        .apply(name: 'Main Menu')
+        .first
+      expect(main_menu2).to eq(main_menu)
+    end
+
+    it 'caches all response items' do
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
+        .with(query: hash_including({
+          locale: '*',
+          content_type: 'menu',
+          'fields.name.en-US' => 'Main Menu'
+        }))
+        .to_return(body: load_fixture('contentful/lazy_cache_store/query_main_menu.json'))
+
+      # act
+      main_menu = store.find_all(content_type: 'menu')
+        .apply(name: 'Main Menu')
+        .first
+
+      # assert
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
+          '/entries/FNlqULSV0sOy4IoGmyWOW')
+        .with(query: hash_including({
+          locale: '*'
+        }))
+        .to_raise('Should not hit the API a second time!')
+      main_menu2 = store.find('FNlqULSV0sOy4IoGmyWOW')
+      expect(main_menu2).to eq(main_menu)
+    end
+
+    it 'caches all response includes' do
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
+        .with(query: hash_including({
+          locale: '*',
+          content_type: 'page'
+        }))
+        .to_return(body: load_fixture('contentful/lazy_cache_store/pages_include_2.json'))
+
+      # act
+      found = store.find_all(content_type: 'page', options: {
+        limit: 5,
+        include: 2
+      })
+      _pages = found.result.take(5).force
+
+      # assert
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
+          '/entries/38ijVyGafC6ESQyk6uy2kw')
+        .with(query: hash_including({
+          locale: '*'
+        }))
+        .to_raise('Should not hit the API a second time!')
+      cached_product_list = store.find('38ijVyGafC6ESQyk6uy2kw')
+      expect(cached_product_list.dig('sys', 'id')).to eq('38ijVyGafC6ESQyk6uy2kw')
+      expect(cached_product_list.dig('sys', 'type')).to eq('Entry')
+      expect(cached_product_list.dig('fields', 'collectionId', 'en-US')).to eq('Z2lk...')
+    end
+  end
+
+  describe '#find_by' do
+    let(:body) { load_fixture('contentful/lazy_cache_store/homepage_include_2.json') }
+    let(:body_hash) { JSON.parse(body) }
+    let(:page) { body_hash.dig('items', 0) }
+
+    it 'returns a cached entry if looking up by sys.id' do
+      store.set(page.dig('sys', 'id'), page)
+
+      # act
+      cached_page = store.find_by(content_type: 'page', filter: { 'sys.id' => page.dig('sys', 'id') })
+
+      # assert
+      expect(cached_page).to eq(page)
+    end
+
+    it 'falls back to a query if sys.id does not exist in cache' do
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
+        .with(query: hash_including({
+          locale: '*',
+          content_type: 'page',
+          'sys.id' => page.dig('sys', 'id')
+        }))
+        .to_return(body: body)
+
+      # act
+      queried_page = store.find_by(content_type: 'page', filter: { 'sys.id' => page.dig('sys', 'id') })
+
+      # assert
+      expect(queried_page).to eq(page)
+    end
+
+    it 'stores returned object in cache' do
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
+        .with(query: hash_including({
+          locale: '*',
+          content_type: 'page',
+          'sys.id' => page.dig('sys', 'id')
+        }))
+        .to_return(body: body)
+        .times(1)
+        .then.to_raise('Should not hit the API a second time!')
+
+      # act
+      # store it in the cache and then query again
+      store.find_by(content_type: 'page', filter: { 'sys.id' => page.dig('sys', 'id') })
+      cached_page = store.find_by(content_type: 'page', filter: { 'sys.id' => page.dig('sys', 'id') })
+
+      # assert
+      expect(cached_page).to eq(page)
+    end
+
+    it 'issues a query if looking up by any other field' do
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
+        .with(query: hash_including({
+          locale: '*',
+          content_type: 'page',
+          'fields.slug.en-US' => '/'
+        }))
+        .to_return(body: body)
+
+      store.set(page.dig('sys', 'id'), { 'sys' => { 'type' => 'not a page' } })
+
+      # act - should not read from the cache
+      queried_page = store.find_by(content_type: 'page', filter: { 'fields.slug' => '/' })
+
+      # assert
+      expect(queried_page).to eq(page)
+    end
   end
 
   describe '#index' do

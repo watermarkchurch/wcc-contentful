@@ -84,6 +84,25 @@ RSpec.describe WCC::Contentful::WebhookController, type: :controller do
       expect(response).to have_http_status(:no_content)
     end
 
+    it 'immediately updates the store on success' do
+      request.headers.merge!(
+        'Authorization': basic_auth('tester1', 'password1'),
+        'Content-Type': 'application/vnd.contentful.management.v1+json'
+      )
+
+      # expect
+      store = double
+      expect(store).to receive(:index)
+        .with(hash_including(JSON.parse(body)))
+      allow(WCC::Contentful::Services.instance)
+        .to receive(:store)
+        .and_return(store)
+
+      # act
+      post :receive,
+        body: body
+    end
+
     it 'runs a sync on success' do
       request.headers.merge!(
         'Authorization': basic_auth('tester1', 'password1'),
@@ -93,6 +112,27 @@ RSpec.describe WCC::Contentful::WebhookController, type: :controller do
 
       expect(WCC::Contentful::DelayedSyncJob).to receive(:perform_later)
         .with(hash_including(JSON.parse(body)))
+
+      # act
+      post :receive,
+        body: body
+
+      # assert
+      expect(response).to have_http_status(:no_content)
+    end
+
+    it 'runs a sync even in master environment' do
+      request.headers.merge!(
+        'Authorization': basic_auth('tester1', 'password1'),
+        'Content-Type': 'application/vnd.contentful.management.v1+json'
+      )
+
+      WCC::Contentful.configure do |config|
+        config.environment = 'staging'
+      end
+
+      # expect
+      expect(WCC::Contentful::DelayedSyncJob).to receive(:perform_later)
 
       # act
       post :receive,

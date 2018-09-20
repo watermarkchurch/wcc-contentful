@@ -37,7 +37,7 @@ RSpec.configure do |config|
   config.include FixturesHelper
   config.include_context 'Contentful config'
 
-  config.after(:each) do
+  config.before(:each) do
     WCC::Contentful.instance_variable_set('@configuration', nil)
     WCC::Contentful::Services.instance_variable_set(:@singleton__instance__, nil)
 
@@ -58,7 +58,7 @@ VCR.configure do |c|
   c.cassette_library_dir = 'spec/fixtures/vcr_cassettes'
   c.ignore_localhost = true
   c.hook_into :webmock
-  c.default_cassette_options = { record: :once }
+  c.default_cassette_options = { record: :none }
   c.filter_sensitive_data('<CONTENTFUL_ACCESS_TOKEN>') { ENV['CONTENTFUL_ACCESS_TOKEN'] || 'test1234' }
   c.filter_sensitive_data('<CONTENTFUL_SPACE_ID>') { ENV['CONTENTFUL_SPACE_ID'] || 'test1xab' }
   c.filter_sensitive_data('<CONTENTFUL_MANAGEMENT_TOKEN>') {

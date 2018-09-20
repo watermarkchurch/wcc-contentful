@@ -3,6 +3,7 @@
 WCC::Contentful::Sys =
   Struct.new(
     :id,
+    :type,
     :locale,
     :space,
     :created_at,
@@ -13,6 +14,7 @@ WCC::Contentful::Sys =
 
     ATTRIBUTES = %i[
       id
+      type
       locale
       space
       created_at

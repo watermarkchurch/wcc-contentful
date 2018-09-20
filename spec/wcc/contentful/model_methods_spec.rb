@@ -470,6 +470,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
 
       expect(WCC::Contentful::Model).to receive(:find) do |id, ctx|
         raise ArgumentError unless id == '2'
+
         WCC::Contentful::Model::ToJsonTest.new(raw2, ctx)
       end
 
@@ -505,6 +506,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
 
       expect(WCC::Contentful::Model).to receive(:find) do |id, ctx|
         raise ArgumentError unless id == '2'
+
         WCC::Contentful::Model::ToJsonTest.new(raw2, ctx)
       end
 
@@ -513,6 +515,58 @@ RSpec.describe WCC::Contentful::ModelMethods do
       first_child = subject.some_link
       first_child.resolve(depth: 1, circular_reference: :ignore)
       expect(first_child).to_not be_resolved
+    end
+
+    it 'can still resolve even if store doesnt implement :include option' do
+      raw['fields']['items'] = nil
+
+      linked_item_for_id =
+        ->(id) {
+          linked = raw.deep_dup
+          linked['sys']['id'] = id
+          linked['fields']['someLink']['en-US']['sys']['id'] = (id.to_i + 1).to_s
+          linked
+        }
+
+      allow(store).to receive(:find_by) do |args|
+        id = args.dig(:filter, 'sys.id')
+        if id == '1'
+          raw
+        else
+          linked_item_for_id.call(id)
+        end
+      end
+
+      allow(store).to receive(:find) do |id|
+        linked_item_for_id.call(id)
+      end
+
+      # act
+      subject.resolve(depth: 11, fields: [:some_link])
+
+      # assert
+      # walk the resolved object tree down to number 11
+      links = []
+      current = subject
+      while current.resolved?(fields: [:some_link]) && current = current.some_link
+        links << current.id
+      end
+
+      expect(links).to eq(
+        %w[
+          2
+          3
+          4
+          5
+          6
+          7
+          8
+          9
+          10
+          11
+          12
+        ]
+      )
     end
   end
 
