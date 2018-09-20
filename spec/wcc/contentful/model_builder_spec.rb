@@ -192,16 +192,13 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     expect(faq.num_faqs_float).to eq(2.1)
   end
 
-  it 'resolves date times and json blobs' do
+  it 'resolves json blobs' do
     @schema = subject.build_models
 
     # act
     migration = WCC::Contentful::Model::MigrationHistory.find_all.first
 
     # assert
-    expect(migration.started).to eq(Time.zone.parse('2018-02-22T21:12:45.621Z'))
-    expect(migration.completed).to eq(Time.zone.parse('2018-02-22T21:12:46.699Z'))
-
     expect(migration.detail).to be_instance_of(Array)
     expect(migration.detail[0]).to be_instance_of(OpenStruct)
     expect(migration.detail.dig(0, 'intent', 'intents')).to include(
@@ -220,6 +217,18 @@ RSpec.describe WCC::Contentful::ModelBuilder do
         }
       }
     )
+  end
+
+  # Note: see code comment inside model_builder.rb for why we do not parse DateTime objects
+  it 'does not parse date times' do
+    @schema = subject.build_models
+
+    # act
+    faq = WCC::Contentful::Model::Faq.find('1nzrZZShhWQsMcey28uOUQ')
+
+    # assert
+    expect(faq.date_of_faq).to be_a String
+    expect(faq.date_of_faq).to eq('2018-02-01')
   end
 
   it 'resolves coordinates' do
