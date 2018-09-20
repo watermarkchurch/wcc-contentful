@@ -106,10 +106,13 @@ module WCC::Contentful::Store
         @cache = cache
       end
 
-      protected
+      private
 
       def response
-        @response ||= ResponseWrapper.new(super, @cache)
+        # Disabling because the superclass already took `@response`
+        # rubocop:disable Naming/MemoizedInstanceVariableName
+        @wrapped_response ||= ResponseWrapper.new(super, @cache)
+        # rubocop:enable Naming/MemoizedInstanceVariableName
       end
 
       ResponseWrapper =

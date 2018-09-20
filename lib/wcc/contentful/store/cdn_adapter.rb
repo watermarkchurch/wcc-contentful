@@ -91,11 +91,9 @@ module WCC::Contentful::Store
         end
       end
 
-      protected
+      private
 
       def response
-        return @response if @response
-
         @response ||=
           if @relation[:content_type] == 'Asset'
             @client.assets(
@@ -112,8 +110,6 @@ module WCC::Contentful::Store
 
         resolve_includes(included, depth - 1)
       end
-
-      private
 
       def parameter(field, operator: nil, context: nil, locale: false)
         if sys?(field)
