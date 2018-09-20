@@ -76,8 +76,18 @@ module WCC::Contentful
               raw_value = raw.dig('fields', f.name, @sys.locale)
               if raw_value.present?
                 case f.type
-                when :DateTime
-                  raw_value = Time.parse(raw_value).localtime
+                # DateTime is intentionally not parsed!
+                #  a DateTime can be '2018-09-28', '2018-09-28T17:00:00', or '2018-09-28T17:00:00Z'
+                #  depending entirely on the editor interface in Contentful.  Trying to parse this
+                #  requires an assumption of the correct time zone to place them in.  At this point
+                #  in the code we don't have that knowledge, so we're punting to app-defined models.
+                #
+                #  As an example, a user enters '2018-09-28' into Contentful.  That date is parsed as
+                #  '2018-09-28T00:00:00Z' when system time is UTC (ex. on Heroku), but translating that
+                #  date to US Central results in '2018-09-27' which is not what the user intentded.
+                #
+                # when :DateTime
+                #   raw_value = Time.parse(raw_value).localtime
                 when :Int
                   raw_value = Integer(raw_value)
                 when :Float
