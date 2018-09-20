@@ -104,7 +104,7 @@ module WCC::Contentful::ModelMethods
           end
         else
           val = public_send(name)
-          val = val.to_h.stringify_keys! if val.respond_to?(:to_h)
+          val = _try_map(val) { |v| v.respond_to?(:to_h) ? v.to_h.stringify_keys! : v }
         end
 
         h[name] = val

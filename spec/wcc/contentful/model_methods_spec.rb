@@ -837,6 +837,31 @@ RSpec.describe WCC::Contentful::ModelMethods do
         expect(item.dig('fields', 'items', 1, 'fields')).to be nil
       end
     end
+
+    it 'handles blobs' do
+      # act
+      h = subject.to_h
+
+      # assert
+      expect(h.dig('fields', 'blob')).to eq({ 'some' => { 'data' => 3 } })
+    end
+
+    it 'handles json arrays' do
+      raw['fields']['blob']['en-US'] = [
+        { 'data' => 1 },
+        { 'data' => 2 }
+      ]
+      # act
+      h = subject.to_h
+
+      # assert
+      expect(h.dig('fields', 'blob')).to eq(
+        [
+          { 'data' => 1 },
+          { 'data' => 2 }
+        ]
+      )
+    end
   end
 
   def make_resolved(depth: 1, fields: %w[someLink items])
