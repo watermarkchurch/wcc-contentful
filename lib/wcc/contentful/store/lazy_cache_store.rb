@@ -24,7 +24,7 @@ module WCC::Contentful::Store
       end
     end
 
-    # TODO: https://zube.io/watermarkchurch/development/c/2265
+    # TODO: https://github.com/watermarkchurch/wcc-contentful/issues/18
     #  figure out how to cache the results of a find_by query, ex:
     #  `find_by('slug' => '/about')`
     def find_by(content_type:, filter: nil, options: nil)
