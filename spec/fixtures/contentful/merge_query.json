@@ -1,0 +1,2394 @@
+{
+  "sys": {
+    "type": "Array"
+  },
+  "total": 1,
+  "skip": 0,
+  "limit": 1,
+  "items": [
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "7yx6ovlj39n5"
+          }
+        },
+        "id": "2uGKHRP2ryoyGi2oyEgE8a",
+        "type": "Entry",
+        "createdAt": "2018-06-05T19:38:34.486Z",
+        "updatedAt": "2018-09-13T21:43:36.296Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "revision": 17,
+        "contentType": {
+          "sys": {
+            "type": "Link",
+            "linkType": "ContentType",
+            "id": "page"
+          }
+        }
+      },
+      "fields": {
+        "title": {
+          "en-US": "Overview"
+        },
+        "slug": {
+          "en-US": "/ministries/merge"
+        },
+        "header": {
+          "en-US": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "1l8ZpAi8HqGAqa8gCiC2kS"
+            }
+          }
+        },
+        "sections": {
+          "en-US": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "2hMBQzXKu8U8Ks2a4IU8OC"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "13hhhCKeVAOI4uWokMIcEA"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "7v4d4KEQveWCEUoaAUYI4E"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "52icikcNC8UeOoCUWCwwuQ"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "440cW9PwOkmg6egay02KeE"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "1jHNV9tCgCaq6qkwmsYOEQ"
+              }
+            }
+          ]
+        },
+        "subpages": {
+          "en-US": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "6CB19ElndC2cQAMgcwcEYG"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "JP4bWR4aYwG42csM0YmeW"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "2x4kbH3IOkM4IYwCm8yUsE"
+              }
+            }
+          ]
+        },
+        "domainObject": {
+          "en-US": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "5AV1HUXQ7mUuAO6qyCmMg6"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "includes": {
+    "Entry": [
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "13hhhCKeVAOI4uWokMIcEA",
+          "type": "Entry",
+          "createdAt": "2018-06-05T19:43:43.225Z",
+          "updatedAt": "2018-08-27T14:08:37.636Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 12,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "section-ministry-details"
+            }
+          }
+        },
+        "fields": {
+          "detailedDescription": {
+            "en-US": "# Why should you start Merge at your church?\n\n1. Merge premarital ministry allows for churches to __play offense rather than defense__. Rather than responding to or fixing problems once they arrive in marriages, Merge encourages couples to start fighting the battle for their marriage before it even begins.\n\n2. Merge helps staff __get upstream from issues__. It becomes possible to get to couples before severe hurt has occured. Sometimes the best thing Merge can do is cause couples to reassess their reasons for wanting to get married. Ended or postponed relationships do not have to be bad things. They can be key to the growth of the couples.\n\n3. Merge opens a __side door into your church__. Couples will show up at your church for premarital prep who might never walk through the front door of your church on a Sunday morning. Merge provides a unique opportunity to share the gospel with couples who don’t have a personal relationship with Jesus Christ.\n\n4. Merge encourages churches to __plant an orchard__. The environment of Merge creates intergenerational relationships that can grow intentional connections. The biblically centered marriages arising in Merge will provide a solid pool of leaders from which to draw from later on."
+          },
+          "sampleMaterialsButton": {
+            "en-US": {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "4lwRkquj0IeIcEScISI6o0"
+              }
+            }
+          },
+          "message": {
+            "en-US": {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "3fh95skRgQi2GqM0EuYAIq"
+              }
+            }
+          },
+          "domainObject": {
+            "en-US": {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "5AV1HUXQ7mUuAO6qyCmMg6"
+              }
+            }
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "1GYvYPgPSk6c22Ieqggs04",
+          "type": "Entry",
+          "createdAt": "2018-06-20T22:37:06.003Z",
+          "updatedAt": "2018-08-10T21:30:52.335Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 3,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "testimonial"
+            }
+          }
+        },
+        "fields": {
+          "name": {
+            "en-US": "Robert Parish"
+          },
+          "miniBio": {
+            "en-US": "Pastor of Family Ministries\nOakwood Church, New Braunfels TX"
+          },
+          "quote": {
+            "en-US": "\"Typically, every engaged couple is required to get premarital counseling. This presents the unique opportunity to lay a Biblical foundation for marriage and present the gospel to people who may not even attend church. Merge does this better than anything I've ever seen.\""
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "1dXSuH1rLSmKYesgOyCcMs",
+          "type": "Entry",
+          "createdAt": "2018-07-02T16:02:33.713Z",
+          "updatedAt": "2018-08-17T18:54:48.157Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 3,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "menuButton"
+            }
+          }
+        },
+        "fields": {
+          "text": {
+            "en-US": "Learn More"
+          },
+          "link": {
+            "en-US": {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "WvVdsSRyKq4Mi2mYUCYEu"
+              }
+            }
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "1fpTSw2yM6Ya8kOioiaymm",
+          "type": "Entry",
+          "createdAt": "2018-06-20T22:37:33.240Z",
+          "updatedAt": "2018-08-13T14:04:03.168Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 4,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "testimonial"
+            }
+          }
+        },
+        "fields": {
+          "name": {
+            "en-US": "Gordon Knapp"
+          },
+          "miniBio": {
+            "en-US": "Marriage and Parenting Pastor\nPathway Community Church, Fort Wayne IN"
+          },
+          "quote": {
+            "en-US": "\"The Merge material is a biblical and powerful tool for our lay leaders. We've used it to increase premarital discipleship exponentially as couples are equipped to lead Christ centered marriages. Relationships are moving towards full devotion and are turning from the pitfalls of today’s culture. We are so thankful for what God is doing through Merge.\""
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "1imWCIClRwQoegIaosKmMo",
+          "type": "Entry",
+          "createdAt": "2018-06-05T19:45:24.380Z",
+          "updatedAt": "2018-07-20T17:04:17.222Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "menuButton"
+            }
+          }
+        },
+        "fields": {
+          "text": {
+            "en-US": "Order Materials"
+          },
+          "link": {
+            "en-US": {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "2x4kbH3IOkM4IYwCm8yUsE"
+              }
+            }
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "1jHNV9tCgCaq6qkwmsYOEQ",
+          "type": "Entry",
+          "createdAt": "2018-09-13T21:43:33.450Z",
+          "updatedAt": "2018-09-13T21:43:33.450Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "section-location-map"
+            }
+          }
+        },
+        "fields": {
+          "internalTitle": {
+            "en-US": "Merge Location Map"
+          },
+          "domainObject": {
+            "en-US": {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "5AV1HUXQ7mUuAO6qyCmMg6"
+              }
+            }
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "1l8ZpAi8HqGAqa8gCiC2kS",
+          "type": "Entry",
+          "createdAt": "2018-06-05T19:38:52.854Z",
+          "updatedAt": "2018-06-05T19:39:40.160Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "section-domain-object-header"
+            }
+          }
+        },
+        "fields": {
+          "name": {
+            "en-US": "Merge Header"
+          },
+          "domainObject": {
+            "en-US": {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "5AV1HUXQ7mUuAO6qyCmMg6"
+              }
+            }
+          },
+          "secondaryNav": {
+            "en-US": {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "3Yc0kDJ3xScQk4UUEcscmW"
+              }
+            }
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "22vBAKGHOMc4qCcSsWGEyi",
+          "type": "Entry",
+          "createdAt": "2018-06-05T19:39:20.194Z",
+          "updatedAt": "2018-09-13T21:43:45.685Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 3,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "menuButton"
+            }
+          }
+        },
+        "fields": {
+          "text": {
+            "en-US": "Overview"
+          },
+          "link": {
+            "en-US": {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "2uGKHRP2ryoyGi2oyEgE8a"
+              }
+            }
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "2GSWwfIJDyIcACM8Ckw0GM",
+          "type": "Entry",
+          "createdAt": "2018-07-19T21:35:23.858Z",
+          "updatedAt": "2018-08-17T20:06:08.051Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 3,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "faq"
+            }
+          }
+        },
+        "fields": {
+          "question": {
+            "en-US": "What are the differences between the 8-week Merge class and the weekend Merge class?"
+          },
+          "answer": {
+            "en-US": "The 8-week class is our preferred option. It provides weekly accountability and allows more time for discussion and relationship buildling with other couples. Merge covers topics such as communication, conflict, finances, sexual intimacy, in-laws, and expectations. \n\nThe Merge weekend class is specifically designed for couples who cannot attend the 8-week class. The weekend version is for couples who either live out of town, consistently travel for work, or have other related conflicts.\n"
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "2SdHbGIxgkEocg2y8qOg6u",
+          "type": "Entry",
+          "createdAt": "2018-06-06T20:54:08.512Z",
+          "updatedAt": "2018-08-17T16:53:19.424Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 3,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "resourceSet"
+            }
+          }
+        },
+        "fields": {
+          "title": {
+            "en-US": "Launch Resources"
+          },
+          "blurb": {
+            "en-US": "Launch guide, Merge logos, and other resources needed before starting a Merge class."
+          },
+          "resources": {
+            "en-US": [
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "6FlvWpGxNYaC4oYyuakUe4"
+                }
+              },
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "6v1fQrJVT24ku6U0I88C6Q"
+                }
+              },
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "3Q3LiiGp4cOyAeQ8uGw4U"
+                }
+              },
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "1fac4zM408gU4yAwKsiAk4"
+                }
+              },
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "7azEdzoQV2Kc6wOoW2UaKW"
+                }
+              },
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "1RmBfztF9a8qOMSAiYGKuK"
+                }
+              },
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "33nG4CmxV684KkQogUW8Qg"
+                }
+              },
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "6DW5ngsEQEYaSYcMK0OIim"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "2hMBQzXKu8U8Ks2a4IU8OC",
+          "type": "Entry",
+          "createdAt": "2018-06-20T21:48:28.700Z",
+          "updatedAt": "2018-09-07T17:26:58.129Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 8,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "section-intro"
+            }
+          }
+        },
+        "fields": {
+          "intro": {
+            "en-US": "### Healthy marriages start long before the wedding\nMerge is an premarital discipleship ministry designed for engaged and seriously dating couples. It's a chance to seek wisdom and receive counsel about marriage in a safe, fun, and authentic environment. \n\nMerge addresses common questions and challenges from a biblical perspective. Class dynamics include: large group teaching, small group discussion with mentors, and weekly homework. "
+          },
+          "testimonialStyle": {
+            "en-US": "dark"
+          },
+          "callToAction": {
+            "en-US": {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "76LdWNibKMSaweaq2eiGgu"
+              }
+            }
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "2x4kbH3IOkM4IYwCm8yUsE",
+          "type": "Entry",
+          "createdAt": "2018-06-05T19:44:47.610Z",
+          "updatedAt": "2018-08-07T20:04:32.892Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 3,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "page"
+            }
+          }
+        },
+        "fields": {
+          "title": {
+            "en-US": "Materials"
+          },
+          "slug": {
+            "en-US": "/ministries/merge/materials"
+          },
+          "sections": {
+            "en-US": [
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "3XCbJcjghqWm6A6gAE0GW4"
+                }
+              }
+            ]
+          },
+          "minimumSecurityLevel": {
+            "en-US": "Church Admin"
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "3OE7OOKmcEEYMikwSWcAGg",
+          "type": "Entry",
+          "createdAt": "2018-06-06T21:07:20.897Z",
+          "updatedAt": "2018-08-16T14:42:00.793Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 4,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "resourceTree"
+            }
+          }
+        },
+        "fields": {
+          "title": {
+            "en-US": "Program Elements "
+          },
+          "blurb": {
+            "en-US": "Everything you need to run the Merge premarital class. Includes worksheets, handouts, presentation slides, and videos."
+          },
+          "branches": {
+            "en-US": [
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "1TuBwK493emGKi4kQyyi2G"
+                }
+              },
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "3wQ1r71my4Yk6GSuwgwKay"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "3XCbJcjghqWm6A6gAE0GW4",
+          "type": "Entry",
+          "createdAt": "2018-06-05T19:44:43.092Z",
+          "updatedAt": "2018-09-06T16:29:31.146Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 7,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "section-product-list"
+            }
+          }
+        },
+        "fields": {
+          "collectionId": {
+            "en-US": "Z2lkOi8vc2hvcGlmeS9Db2xsZWN0aW9uLzU2NjMxMTY0OTk0"
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "3Yc0kDJ3xScQk4UUEcscmW",
+          "type": "Entry",
+          "createdAt": "2018-06-05T19:39:01.266Z",
+          "updatedAt": "2018-09-13T21:43:49.307Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 8,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "menu"
+            }
+          }
+        },
+        "fields": {
+          "name": {
+            "en-US": "Merge Ministry Navigation"
+          },
+          "items": {
+            "en-US": [
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "22vBAKGHOMc4qCcSsWGEyi"
+                }
+              },
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "ProXAtsoMe2KWqcEKi6mQ"
+                }
+              },
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "5yHKZaKvvOcGIC68s0Y8Y8"
+                }
+              },
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "1imWCIClRwQoegIaosKmMo"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "3fh95skRgQi2GqM0EuYAIq",
+          "type": "Entry",
+          "createdAt": "2018-04-19T21:15:33.859Z",
+          "updatedAt": "2018-08-10T15:54:12.684Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 10,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "callToAction"
+            }
+          }
+        },
+        "fields": {
+          "title": {
+            "en-US": "Marriage Ministry Training Conference"
+          },
+          "text": {
+            "en-US": "Join us in Dallas, TX for our next __Marriage Ministry Training Conference__ . Follow this link to check it out!"
+          },
+          "style": {
+            "en-US": "default"
+          },
+          "actionButtons": {
+            "en-US": [
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "1dXSuH1rLSmKYesgOyCcMs"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "440cW9PwOkmg6egay02KeE",
+          "type": "Entry",
+          "createdAt": "2018-06-20T22:39:11.644Z",
+          "updatedAt": "2018-09-13T21:44:37.341Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "section-partner-churches"
+            }
+          }
+        },
+        "fields": {
+          "tag": {
+            "en-US": "Churches using Merge"
+          },
+          "text": {
+            "en-US": "## Many Communities, One Church"
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "4KERxj4rzOkmYM4iSs4ci2",
+          "type": "Entry",
+          "createdAt": "2018-06-06T20:48:08.365Z",
+          "updatedAt": "2018-08-16T14:26:19.067Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "resourceSet"
+            }
+          }
+        },
+        "fields": {
+          "title": {
+            "en-US": "Leader Training "
+          },
+          "blurb": {
+            "en-US": "Handouts and supplemental audio for training Merge table leaders."
+          },
+          "resources": {
+            "en-US": [
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "51iRG4SPiMecig44eCKo0a"
+                }
+              },
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "6fFApZVKPCaoWGguKSskWc"
+                }
+              },
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "2IkS1ddzLOeA8IoOoCgUoW"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "4KX1zQtGowAOmws6eUe80e",
+          "type": "Entry",
+          "createdAt": "2018-07-19T21:27:06.750Z",
+          "updatedAt": "2018-08-17T20:03:38.414Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "faq"
+            }
+          }
+        },
+        "fields": {
+          "question": {
+            "en-US": "What does a typical session of Merge look like? "
+          },
+          "answer": {
+            "en-US": "Typically, premarried couples arrive and sit at their assigned round table with their trained, mentor couple. Each session consists of a combination of large group teaching on topics such as communication, money, and intimacy, followed by small group discussion. A few times in the class we split into men and women for gender-specific teaching and conversation.\n"
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "4lwRkquj0IeIcEScISI6o0",
+          "type": "Entry",
+          "createdAt": "2018-06-20T21:51:58.040Z",
+          "updatedAt": "2018-08-23T15:23:29.990Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 6,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "menuButton"
+            }
+          }
+        },
+        "fields": {
+          "text": {
+            "en-US": "Merge Outline and Lesson 2"
+          },
+          "externalLink": {
+            "en-US": "https://www.watermarkresources.com/ministries/merge/resources/6DW5ngsEQEYaSYcMK0OIim"
+          },
+          "ionIcon": {
+            "en-US": "ion-download"
+          },
+          "style": {
+            "en-US": "oval-border"
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "4oxM36Y9y00mKWwWsC8syc",
+          "type": "Entry",
+          "createdAt": "2018-06-14T16:00:06.925Z",
+          "updatedAt": "2018-06-14T16:00:06.925Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "section-resource-list"
+            }
+          }
+        },
+        "fields": {
+          "name": {
+            "en-US": "Merge Resource List"
+          },
+          "domainObject": {
+            "en-US": {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "5AV1HUXQ7mUuAO6qyCmMg6"
+              }
+            }
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "52icikcNC8UeOoCUWCwwuQ",
+          "type": "Entry",
+          "createdAt": "2018-06-20T22:38:14.205Z",
+          "updatedAt": "2018-08-09T21:49:41.883Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "section-testimonials"
+            }
+          }
+        },
+        "fields": {
+          "name": {
+            "en-US": "Merge Church Testimonials"
+          },
+          "testimonials": {
+            "en-US": [
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "1GYvYPgPSk6c22Ieqggs04"
+                }
+              },
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "1fpTSw2yM6Ya8kOioiaymm"
+                }
+              }
+            ]
+          },
+          "style": {
+            "en-US": "default"
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "58UOpH2es8gSAc4qGUYUGG",
+          "type": "Entry",
+          "createdAt": "2018-07-19T21:36:06.980Z",
+          "updatedAt": "2018-08-30T20:00:34.274Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 3,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "faq"
+            }
+          }
+        },
+        "fields": {
+          "question": {
+            "en-US": "How can I start Merge at my church?"
+          },
+          "answer": {
+            "en-US": "Please read the Merge Launch Guide for more information. If you have a question not covered by the Launch Guide, please [email us](mailto:resources@watermark.org \"Email Watermark Resources\") or get in contact below!"
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "5AV1HUXQ7mUuAO6qyCmMg6",
+          "type": "Entry",
+          "createdAt": "2018-06-05T19:38:04.763Z",
+          "updatedAt": "2018-08-17T19:48:12.921Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 25,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "ministry"
+            }
+          }
+        },
+        "fields": {
+          "title": {
+            "en-US": "Merge"
+          },
+          "abstractTitle": {
+            "en-US": "Premarital Ministry"
+          },
+          "thumbnail": {
+            "en-US": {
+              "sys": {
+                "type": "Link",
+                "linkType": "Asset",
+                "id": "18J6xhixMIuGsuM8mOsOMW"
+              }
+            }
+          },
+          "logo": {
+            "en-US": {
+              "sys": {
+                "type": "Link",
+                "linkType": "Asset",
+                "id": "fm1hHqu3kcKgyYwMUio6U"
+              }
+            }
+          },
+          "backgroundColor": {
+            "en-US": "#f78f26"
+          },
+          "foregroundColor": {
+            "en-US": "#ffffff"
+          },
+          "homepage": {
+            "en-US": {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "2uGKHRP2ryoyGi2oyEgE8a"
+              }
+            }
+          },
+          "details": {
+            "en-US": [
+              {
+                "key": "PROGRAM LENGTH",
+                "value": "8 Weekly Sessions or 1 Weekend Class"
+              },
+              {
+                "key": "AUDIENCE ",
+                "value": "Seriously Dating and Engaged Couples"
+              },
+              {
+                "key": "TIME",
+                "value": "2 hours, once per week"
+              },
+              {
+                "key": "LEADER STRUCTURE",
+                "value": "1 Leader Couple to 3-4 Participant Couples"
+              }
+            ]
+          },
+          "tags": {
+            "en-US": [
+              "engaged",
+              "dating",
+              "premarital",
+              "merge",
+              "engagement"
+            ]
+          },
+          "publicResources": {
+            "en-US": {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "6H4U2mdLqMKGoIi08mgUGa"
+              }
+            }
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "5iC34IsDugw6aIiWoGCQ8I",
+          "type": "Entry",
+          "createdAt": "2018-06-20T20:13:21.978Z",
+          "updatedAt": "2018-06-20T20:13:21.978Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "formField"
+            }
+          }
+        },
+        "fields": {
+          "title": {
+            "en-US": "Email"
+          },
+          "inputType": {
+            "en-US": "email"
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "5rQT3x8ZuEoOIcUOkgQKY2",
+          "type": "Entry",
+          "createdAt": "2018-06-20T20:13:44.711Z",
+          "updatedAt": "2018-08-08T14:59:07.878Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 6,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "section-contact-us"
+            }
+          }
+        },
+        "fields": {
+          "text": {
+            "en-US": "# Didn't answer all of your questions? \nFill out this contact form to let us know how we can best help you and one of our team members will reply as soon as possible."
+          },
+          "fields": {
+            "en-US": [
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "L1jkRM5lgkesUY0WWskgg"
+                }
+              },
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "5iC34IsDugw6aIiWoGCQ8I"
+                }
+              },
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "5yy91vhpiEm8sIG8UeauKI"
+                }
+              },
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "OVNPPJqZEWaE4EMg8CWAO"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "5yHKZaKvvOcGIC68s0Y8Y8",
+          "type": "Entry",
+          "createdAt": "2018-06-14T16:00:21.471Z",
+          "updatedAt": "2018-06-14T16:00:21.471Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "menuButton"
+            }
+          }
+        },
+        "fields": {
+          "text": {
+            "en-US": "Leader Resources"
+          },
+          "link": {
+            "en-US": {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "JP4bWR4aYwG42csM0YmeW"
+              }
+            }
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "5yy91vhpiEm8sIG8UeauKI",
+          "type": "Entry",
+          "createdAt": "2018-04-19T20:43:58.925Z",
+          "updatedAt": "2018-04-19T20:43:58.925Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "formField"
+            }
+          }
+        },
+        "fields": {
+          "title": {
+            "en-US": "Phone Number"
+          },
+          "inputType": {
+            "en-US": "text"
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "6CB19ElndC2cQAMgcwcEYG",
+          "type": "Entry",
+          "createdAt": "2018-06-21T20:01:09.925Z",
+          "updatedAt": "2018-08-17T18:10:38.810Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 6,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "page"
+            }
+          }
+        },
+        "fields": {
+          "title": {
+            "en-US": "Details"
+          },
+          "slug": {
+            "en-US": "/ministries/merge/details"
+          },
+          "header": {
+            "en-US": {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "1l8ZpAi8HqGAqa8gCiC2kS"
+              }
+            }
+          },
+          "sections": {
+            "en-US": [
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "6mPzvSE6YgyMEW62KWgIOY"
+                }
+              },
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "6uu8SeJgtOy2y2oCIAwSA"
+                }
+              },
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "5rQT3x8ZuEoOIcUOkgQKY2"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "6H4U2mdLqMKGoIi08mgUGa",
+          "type": "Entry",
+          "createdAt": "2018-06-07T15:21:10.660Z",
+          "updatedAt": "2018-06-07T15:21:10.660Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "resourceTree"
+            }
+          }
+        },
+        "fields": {
+          "title": {
+            "en-US": "Merge Administrator Tree"
+          },
+          "branches": {
+            "en-US": [
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "4KERxj4rzOkmYM4iSs4ci2"
+                }
+              },
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "2SdHbGIxgkEocg2y8qOg6u"
+                }
+              },
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "3OE7OOKmcEEYMikwSWcAGg"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "6mPzvSE6YgyMEW62KWgIOY",
+          "type": "Entry",
+          "createdAt": "2018-06-21T20:03:44.697Z",
+          "updatedAt": "2018-09-13T20:05:34.602Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 7,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "section-faq"
+            }
+          }
+        },
+        "fields": {
+          "name": {
+            "en-US": "Merge Details FAQ"
+          },
+          "text": {
+            "en-US": "# Get to know Merge\nCheck out these answers to some of our most frequently asked questions."
+          },
+          "faqs": {
+            "en-US": [
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "AYYR4XPAJMim464YOiuAA"
+                }
+              },
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "jnvDIvNTWgiaq68MMaCWE"
+                }
+              },
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "4KX1zQtGowAOmws6eUe80e"
+                }
+              },
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "2GSWwfIJDyIcACM8Ckw0GM"
+                }
+              },
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "58UOpH2es8gSAc4qGUYUGG"
+                }
+              }
+            ]
+          },
+          "style": {
+            "en-US": "default"
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "6uu8SeJgtOy2y2oCIAwSA",
+          "type": "Entry",
+          "createdAt": "2018-06-21T20:04:02.923Z",
+          "updatedAt": "2018-08-22T18:48:39.880Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 11,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "section-block-text"
+            }
+          }
+        },
+        "fields": {
+          "internalTitle": {
+            "en-US": "Merge Text FAQ"
+          },
+          "body": {
+            "en-US": "# Other Frequently Asked Questions\n__How are churches using the Merge ministry and curriculum?__\nThere are five options for formatting Merge:\n\n1.\t__Large group class.__ Eight weeks long. Meets at tables of 2-4 couples along-with a mentor couple. Teaching occurs as a large group and then tables divide up to discuss. This is the ideal design and aimed at groups with more than 10 couples. \n2.\t__Weekend class.__ The goal is to fit much as you can in a Friday night and a Saturday. This is designed for couples where one or both of them live out of town. Typically, churches will use this format for the initial attempt at Merge as it is easier to pull off. Weekend class is seen to be not as effective with less opportunity for couples to process curriculum and do homework. \n3.\t__Small group class.__ Designed for groups of 3-10 couples. The content is still eight weeks. Groups would meet in a mentor couples home. Leaders then either teach material themselves or assign audio teaching for homework. \n4.\t__Two-on-two.__ One couple is led through curriculum by pastor or lay leader couple. Would still meet for eight weeks. Typically, would listen to audio teaching for homework and then meet in person to discuss homework with pastor or lay leader. \n5.\t__Combine with re|engage.__ Participating couples will go to a re|engage Large Group, then break off into a Merge specific small group to discuss Merge curriculum.\n\n__What do you mean by \"seriously dating”?__\nSeriously dating couples are moving towards engagement. Seriously dating couples tend to be more open handed and are more willing to discuss hard questions before they spend money on a ring or start wedding planning.\n\n__Where do you find leaders?__\nGreat Merge leaders are all around you. Look for couples who love Jesus, love each other, care about the design and institution of marriage, and are willing to have hard conversations. When you see consistency in their faithfulness and willingness to step into conflict, you may have found a new leader. Don’t use just anyone to fill a need. A Merge ministry will rise and fall on the quality of its leaders. Typically, couples should be married 2+ years before leading Merge.\n\n__How do you train leaders?__\nThere is typically 2.5 hour initial training. We also provide a weekly leader meeting before every Merge class where leaders can connect, ask questions, share best practices, and recieve additional training. Leaders also receive an equipping email each week. Leaders are encouraged to reach out to Merge leadership if they have questions. \n\n__What are the differences between the Watermark version of the Merge curriculum and the generic, or non-Watermark, version of the curriculum?__\n99% of the curriculum is exaclty the same. The generic version does not have Watermark’s Marriage, Divorce and Remarriage Statement. This is referred to and a link is provided, but the actual text of the Marriage, Divorce, and Remarriage Statement is not included. Also, it will not refer to Watermark specific ministries. Both versions still include links to sermons by a variety of pastors.\n\n__Do couples need to register in advance?__\nTypically yes. Pre-registration allows for the small groups to be assigned based on age, life-stage, and couple demographics.\n\n__Where can my church be trained?__\nMarriage Ministry Church Conference:\nThe Marriage Ministry at Watermark Community Church will host an annual two-day training conference for all church leaders who are partnering or interested in partnering with our Marriage ministries. Our next conference will be October 17-18, 2018. At the conference, you will connect with other ministry leaders and walk away with the vision, resources and tools needed to build and sustain a healthy pre-marital ministry. For a schedule and registration visit our conference page. Contact us with questions at resources@watermark.org. \n"
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "76LdWNibKMSaweaq2eiGgu",
+          "type": "Entry",
+          "createdAt": "2018-08-23T14:43:17.306Z",
+          "updatedAt": "2018-08-23T14:43:17.306Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "callToAction"
+            }
+          }
+        },
+        "fields": {
+          "title": {
+            "en-US": "Use Merge At Your Church!"
+          },
+          "text": {
+            "en-US": "Want to use Merge at your church? Take your first step by filling out this interest form."
+          },
+          "style": {
+            "en-US": "default"
+          },
+          "actionButtons": {
+            "en-US": [
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "QykW590lYQagqgiqiYIsi"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "7v4d4KEQveWCEUoaAUYI4E",
+          "type": "Entry",
+          "createdAt": "2018-06-20T22:36:08.308Z",
+          "updatedAt": "2018-08-16T19:23:28.521Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "section-testimonials"
+            }
+          }
+        },
+        "fields": {
+          "name": {
+            "en-US": "Merge Testimonials"
+          },
+          "testimonials": {
+            "en-US": [
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "dpI6Ofaa5yAwYSyikCsqY"
+                }
+              }
+            ]
+          },
+          "style": {
+            "en-US": "jumbo"
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "AYYR4XPAJMim464YOiuAA",
+          "type": "Entry",
+          "createdAt": "2018-06-21T20:03:21.497Z",
+          "updatedAt": "2018-08-17T19:53:47.517Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 4,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "faq"
+            }
+          }
+        },
+        "fields": {
+          "question": {
+            "en-US": "When did Merge start?"
+          },
+          "answer": {
+            "en-US": "Watermark began offering marriage preparation for couples in 2000. The name of the ministry officially became \"Merge\" in 2010. "
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "JP4bWR4aYwG42csM0YmeW",
+          "type": "Entry",
+          "createdAt": "2018-06-14T16:00:17.996Z",
+          "updatedAt": "2018-08-07T20:04:21.360Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 4,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "page"
+            }
+          }
+        },
+        "fields": {
+          "title": {
+            "en-US": "Leader Resources"
+          },
+          "slug": {
+            "en-US": "/ministries/merge/leader-resources"
+          },
+          "sections": {
+            "en-US": [
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "4oxM36Y9y00mKWwWsC8syc"
+                }
+              }
+            ]
+          },
+          "minimumSecurityLevel": {
+            "en-US": "Mentor"
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "L1jkRM5lgkesUY0WWskgg",
+          "type": "Entry",
+          "createdAt": "2018-06-12T17:40:05.522Z",
+          "updatedAt": "2018-06-12T17:40:05.522Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "formField"
+            }
+          }
+        },
+        "fields": {
+          "title": {
+            "en-US": "First and Last Name"
+          },
+          "inputType": {
+            "en-US": "text"
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "OVNPPJqZEWaE4EMg8CWAO",
+          "type": "Entry",
+          "createdAt": "2018-06-20T20:13:37.787Z",
+          "updatedAt": "2018-06-20T20:13:37.787Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "formField"
+            }
+          }
+        },
+        "fields": {
+          "title": {
+            "en-US": "Question"
+          },
+          "inputType": {
+            "en-US": "textarea"
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "ProXAtsoMe2KWqcEKi6mQ",
+          "type": "Entry",
+          "createdAt": "2018-06-21T20:01:16.954Z",
+          "updatedAt": "2018-06-21T20:01:26.214Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "menuButton"
+            }
+          }
+        },
+        "fields": {
+          "text": {
+            "en-US": "Details"
+          },
+          "link": {
+            "en-US": {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "6CB19ElndC2cQAMgcwcEYG"
+              }
+            }
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "QykW590lYQagqgiqiYIsi",
+          "type": "Entry",
+          "createdAt": "2018-08-23T14:39:50.317Z",
+          "updatedAt": "2018-08-23T14:39:50.317Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "menuButton"
+            }
+          }
+        },
+        "fields": {
+          "text": {
+            "en-US": "Apply Here"
+          },
+          "externalLink": {
+            "en-US": "https://watermark.formstack.com/forms/resources_interest_form"
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "dpI6Ofaa5yAwYSyikCsqY",
+          "type": "Entry",
+          "createdAt": "2018-06-21T20:55:45.506Z",
+          "updatedAt": "2018-09-06T21:15:38.081Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 4,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "testimonial"
+            }
+          }
+        },
+        "fields": {
+          "name": {
+            "en-US": "Lance Sisco"
+          },
+          "miniBio": {
+            "en-US": "Watermark Community Church\nDallas, TX"
+          },
+          "photo": {
+            "en-US": {
+              "sys": {
+                "type": "Link",
+                "linkType": "Asset",
+                "id": "1uEGJg6tlOmwwEKC4UAWqA"
+              }
+            }
+          },
+          "quote": {
+            "en-US": "Merge prepares couples for more than just a wedding day. It creates a safe environment where they can learn about God’s design for marriage and process next steps and grow to a new level in their relationship. Merge provides leaders with an opportunity for evangelism and discipleship. Merge is a place where leaders can use their gifts to encourage couples in their future marriages, all while strengthening their own."
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "jnvDIvNTWgiaq68MMaCWE",
+          "type": "Entry",
+          "createdAt": "2018-06-21T20:03:37.405Z",
+          "updatedAt": "2018-09-14T18:30:37.185Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 4,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "faq"
+            }
+          }
+        },
+        "fields": {
+          "question": {
+            "en-US": "What's the meaning behind the name?"
+          },
+          "answer": {
+            "en-US": "Merge helps couples explore what marriage really means in a safe and informative environment. Often for the first time, couples get to see the practicalities of merging together two very different lives. Two sets of expectations, now merging together. Two bank accounts, now merging together. Two pairs of inlaws, now merging together. The name Merge came about because that is what marriage is: the joining together of what was previously separate."
+          }
+        }
+      }
+    ],
+    "Asset": [
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "18J6xhixMIuGsuM8mOsOMW",
+          "type": "Asset",
+          "createdAt": "2018-08-07T22:11:09.762Z",
+          "updatedAt": "2018-08-23T16:18:12.878Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 3
+        },
+        "fields": {
+          "title": {
+            "en-US": "Merge Logo Only"
+          },
+          "file": {
+            "en-US": {
+              "url": "//images.ctfassets.net/7yx6ovlj39n5/18J6xhixMIuGsuM8mOsOMW/4e8c84570a9d797087a7823708dba47d/WMResources_400x400px24.jpg",
+              "details": {
+                "size": 23349,
+                "image": {
+                  "width": 400,
+                  "height": 400
+                }
+              },
+              "fileName": "WMResources 400x400px24.jpg",
+              "contentType": "image/jpeg"
+            }
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "1uEGJg6tlOmwwEKC4UAWqA",
+          "type": "Asset",
+          "createdAt": "2018-08-16T17:42:03.241Z",
+          "updatedAt": "2018-08-16T19:23:18.554Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 3
+        },
+        "fields": {
+          "title": {
+            "en-US": "Lance Sisco"
+          },
+          "description": {
+            "en-US": "Lance Sisco"
+          },
+          "file": {
+            "en-US": {
+              "url": "//images.ctfassets.net/7yx6ovlj39n5/1uEGJg6tlOmwwEKC4UAWqA/8af74a28057996088e2dd82476fd01b4/0-AsQtCw.jpg",
+              "details": {
+                "size": 26848,
+                "image": {
+                  "width": 500,
+                  "height": 500
+                }
+              },
+              "fileName": "0-AsQtCw.jpg",
+              "contentType": "image/jpeg"
+            }
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "fm1hHqu3kcKgyYwMUio6U",
+          "type": "Asset",
+          "createdAt": "2018-08-07T22:15:45.911Z",
+          "updatedAt": "2018-08-07T22:15:45.911Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1
+        },
+        "fields": {
+          "title": {
+            "en-US": "Merge Logo With Name"
+          },
+          "file": {
+            "en-US": {
+              "url": "//images.ctfassets.net/7yx6ovlj39n5/fm1hHqu3kcKgyYwMUio6U/51dbde881e877bef3f8f2ed1b00ad0f0/WMResources_400x400px_Merge_Color.jpg",
+              "details": {
+                "size": 94777,
+                "image": {
+                  "width": 400,
+                  "height": 400
+                }
+              },
+              "fileName": "WMResources 400x400px Merge Color.jpg",
+              "contentType": "image/jpeg"
+            }
+          }
+        }
+      }
+    ]
+  }
+}
