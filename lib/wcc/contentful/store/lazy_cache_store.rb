@@ -143,7 +143,8 @@ module WCC::Contentful::Store
       IncludesWrapper =
         Struct.new(:response, :cache) do
           def [](id)
-            item = response.includes[id]
+            return unless item = response.includes[id]
+
             prev = cache.read(id)
             unless (prev_rev = prev&.dig('sys', 'revision')) &&
                 (next_rev = item.dig('sys', 'revision')) &&

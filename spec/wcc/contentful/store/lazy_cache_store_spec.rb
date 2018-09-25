@@ -268,6 +268,120 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
       # assert
       expect(queried_page).to eq(page)
     end
+
+    it 'grabs included values when include parameter supplied' do
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
+        .with(query: hash_including({
+          locale: '*',
+          content_type: 'page',
+          'fields.slug.en-US' => '/'
+        }))
+        .to_return(body: body)
+
+      # act
+      queried_page = store.find_by(content_type: 'page',
+                                   filter: { 'fields.slug' => '/' },
+                                   options: { include: 2 })
+
+      # assert
+      section0 = queried_page.dig('fields', 'sections', 'en-US', 0)
+      expect(section0.dig('sys', 'type')).to eq('Entry')
+      bg_img = section0.dig('fields', 'backgroundImage', 'en-US')
+      expect(bg_img.dig('sys', 'type')).to eq('Asset')
+      expect(bg_img.dig('fields', 'title', 'en-US')).to eq('bg-watermark-mainpage-hero')
+    end
+
+    it 'does not resolve a missing link' do
+      # Delete the section from the includes array - simulates it being unpublished
+      section0_id = page.dig('fields', 'sections', 'en-US', 0, 'sys', 'id')
+      includes_arr = body_hash.dig('includes', 'Entry')
+      includes_arr.delete_at(includes_arr.find_index { |e| e.dig('sys', 'id') == section0_id })
+
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
+        .with(query: hash_including({
+          locale: '*',
+          content_type: 'page',
+          'fields.slug.en-US' => '/'
+        }))
+        .to_return(body: body_hash.to_json)
+
+      # act
+      queried_page = store.find_by(content_type: 'page',
+                                   filter: { 'fields.slug' => '/' },
+                                   options: { include: 2 })
+
+      # assert
+      section0 = queried_page.dig('fields', 'sections', 'en-US', 0)
+      expect(section0.dig('sys', 'type')).to eq('Link')
+      section1 = queried_page.dig('fields', 'sections', 'en-US', 1)
+      expect(section1.dig('sys', 'type')).to eq('Entry')
+    end
+
+    it 'overwrites included item in the cache' do
+      section0_id = page.dig('fields', 'sections', 'en-US', 0, 'sys', 'id')
+      includes_arr = body_hash.dig('includes', 'Entry')
+      includes_arr.delete_at(includes_arr.find_index { |e| e.dig('sys', 'id') == section0_id })
+
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
+        .with(query: hash_including({
+          locale: '*',
+          content_type: 'page',
+          'fields.slug.en-US' => '/'
+        }))
+        .to_return(body: body_hash.to_json)
+
+      store.set(section0_id, {
+        'sys' => {
+          'id' => section0_id,
+          'revision' => 1
+        }
+      })
+
+      # act
+      _queried_page = store.find_by(content_type: 'page',
+                                    filter: { 'fields.slug' => '/' },
+                                    options: { include: 2 })
+
+      # assert
+      cached_section0 = store.find(section0_id)
+      expect(cached_section0).to eq({
+        'sys' => {
+          'id' => section0_id,
+          'revision' => 1
+        }
+      })
+    end
+
+    it 'does not overwrite included item if it is missing' do
+      # Delete the section from the includes array - simulates it being unpublished
+      section0_id = page.dig('fields', 'sections', 'en-US', 0, 'sys', 'id')
+      includes_arr = body_hash.dig('includes', 'Entry')
+      section0 = includes_arr.find { |e| e.dig('sys', 'id') == section0_id }
+
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
+        .with(query: hash_including({
+          locale: '*',
+          content_type: 'page',
+          'fields.slug.en-US' => '/'
+        }))
+        .to_return(body: body_hash.to_json)
+
+      store.set(section0_id, {
+        'sys' => {
+          'id' => section0_id,
+          'revision' => 1
+        }
+      })
+
+      # act
+      _queried_page = store.find_by(content_type: 'page',
+                                    filter: { 'fields.slug' => '/' },
+                                    options: { include: 2 })
+
+      # assert
+      cached_section0 = store.find(section0_id)
+      expect(cached_section0).to eq(section0)
+    end
   end
 
   describe '#index' do

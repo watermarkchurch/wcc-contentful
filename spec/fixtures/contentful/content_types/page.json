@@ -1,0 +1,186 @@
+{
+  "sys": {
+    "space": {
+      "sys": {
+        "type": "Link",
+        "linkType": "Space",
+        "id": "7yx6ovlj39n5"
+      }
+    },
+    "id": "page",
+    "type": "ContentType",
+    "createdAt": "2018-04-16T18:36:22.087Z",
+    "updatedAt": "2018-08-03T15:34:19.701Z",
+    "environment": {
+      "sys": {
+        "id": "master",
+        "type": "Link",
+        "linkType": "Environment"
+      }
+    },
+    "createdBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "0SUbYs2vZlXjVR6bH6o83O"
+      }
+    },
+    "updatedBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "2Rw3pZANDXJEtKNoPuE40I"
+      }
+    },
+    "publishedCounter": 10,
+    "version": 20,
+    "publishedBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "2Rw3pZANDXJEtKNoPuE40I"
+      }
+    },
+    "publishedVersion": 19,
+    "firstPublishedAt": "2018-04-16T18:36:22.291Z",
+    "publishedAt": "2018-08-03T15:34:19.701Z"
+  },
+  "displayField": "internalTitle",
+  "name": "Page",
+  "description": "A page describes a collection of sections that correspondto a URL slug",
+  "fields": [
+    {
+      "id": "internalTitle",
+      "name": "Internal Title (Contentful Only)",
+      "type": "Symbol",
+      "localized": false,
+      "required": true,
+      "validations": [],
+      "disabled": false,
+      "omitted": true
+    },
+    {
+      "id": "title",
+      "name": "Title",
+      "type": "Symbol",
+      "localized": false,
+      "required": true,
+      "validations": [],
+      "disabled": false,
+      "omitted": false
+    },
+    {
+      "id": "slug",
+      "name": "Slug",
+      "type": "Symbol",
+      "localized": false,
+      "required": true,
+      "validations": [
+        {
+          "unique": true
+        },
+        {
+          "regexp": {
+            "pattern": "\\/(?:[\\w#!:.?+=&%@!\\-]\\/?)*$"
+          },
+          "message": "The slug must look like the path part of a URL and begin with a forward slash, example: '/my-page-slug'"
+        }
+      ],
+      "disabled": false,
+      "omitted": false
+    },
+    {
+      "id": "header",
+      "name": "Header",
+      "type": "Link",
+      "localized": false,
+      "required": false,
+      "validations": [
+        {
+          "linkContentType": [
+            "section-hero",
+            "section-domain-object-header"
+          ]
+        }
+      ],
+      "disabled": false,
+      "omitted": false,
+      "linkType": "Entry"
+    },
+    {
+      "id": "sections",
+      "name": "Sections",
+      "type": "Array",
+      "localized": false,
+      "required": false,
+      "validations": [],
+      "disabled": false,
+      "omitted": false,
+      "items": {
+        "type": "Link",
+        "validations": [],
+        "linkType": "Entry"
+      }
+    },
+    {
+      "id": "subpages",
+      "name": "Subpages",
+      "type": "Array",
+      "localized": false,
+      "required": false,
+      "validations": [],
+      "disabled": false,
+      "omitted": false,
+      "items": {
+        "type": "Link",
+        "validations": [
+          {
+            "linkContentType": [
+              "page"
+            ]
+          }
+        ],
+        "linkType": "Entry"
+      }
+    },
+    {
+      "id": "domainObject",
+      "name": "Associated Ministry or Conference",
+      "type": "Link",
+      "localized": false,
+      "required": false,
+      "validations": [
+        {
+          "linkContentType": [
+            "ministry",
+            "conference"
+          ],
+          "message": "This can be a Ministry or Conference."
+        }
+      ],
+      "disabled": false,
+      "omitted": false,
+      "linkType": "Entry"
+    },
+    {
+      "id": "minimumSecurityLevel",
+      "name": "Minimum Required Security Level",
+      "type": "Symbol",
+      "localized": false,
+      "required": false,
+      "validations": [
+        {
+          "in": [
+            "Anonymous",
+            "Mentor",
+            "Lay Leader",
+            "Church Admin",
+            "WMR Admin"
+          ]
+        }
+      ],
+      "disabled": false,
+      "omitted": false
+    }
+  ]
+}
