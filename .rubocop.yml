@@ -18,10 +18,10 @@ AllCops:
     
     # generator templates
     - '**/templates/**/*'
-    - 'tmp/**/*'
+    - '*/tmp/**/*'
 
     # dummy app for testing
-    - 'spec/dummy/**/*'
+    - '*/spec/dummy/**/*'
 
 Style/Documentation:
   Enabled: false
@@ -29,14 +29,14 @@ Style/Documentation:
 Style/BlockDelimiters:
   Exclude:
     # we like the `let(:foo) {}` syntax in specs
-    - 'spec/**/*.rb'
+    - '*/spec/**/*.rb'
 
 Style/ClassAndModuleChildren:
   EnforcedStyle: compact
   Exclude:
-    - 'lib/wcc/contentful/version.rb'
+    - '*/lib/wcc/contentful/version.rb'
     # Generators need to define the "Wcc" module so it doesnt get underscored.
-    - 'lib/generators/**/*.rb'
+    - '*/lib/generators/**/*.rb'
 
 Style/FormatStringToken:
   EnforcedStyle: template
@@ -44,9 +44,9 @@ Style/FormatStringToken:
 Metrics/BlockLength:
   Exclude:
     # config files where we expect long blocks
-    - 'danger-wcc.gemspec'
+    - '*.gemspec'
     # spec files that might have a big describe
-    - 'spec/**/*.rb'
+    - '*/spec/**/*.rb'
     # dsl files https://stackoverflow.com/a/41187163
 
 Metrics/CyclomaticComplexity:
@@ -72,7 +72,7 @@ Metrics/ModuleLength:
 
 Performance/UnfreezeString:
   Exclude:
-    - 'spec/**/*.rb'
+    - '*/spec/**/*.rb'
 
 Style/BracesAroundHashParameters:
   Enabled: false
@@ -82,7 +82,7 @@ Lint/AssignmentInCondition:
 
 Lint/AmbiguousBlockAssociation:
   Exclude:
-    - 'spec/generators/**/*.rb'
+    - '*/spec/generators/**/*.rb'
 
 Style/EmptyMethod:
   EnforcedStyle: expanded
@@ -172,8 +172,7 @@ Style/DocumentationMethod:
   Description: 'Public methods.'
   Enabled: false
   Exclude:
-    - 'spec/**/*'
-    - 'test/**/*'
+    - '*/spec/**/*'
 
 Style/ImplicitRuntimeError:
   Description: >-
@@ -199,7 +198,7 @@ Style/MethodCalledOnDoEndBlock:
   StyleGuide: '#single-line-blocks'
   Enabled: true
   Exclude:
-    - 'spec/**/*'
+    - '*/spec/**/*'
 
 Style/MissingElse:
   Description: >-
@@ -231,7 +230,7 @@ Style/Send:
   StyleGuide: '#prefer-public-send'
   Enabled: true
   Exclude:
-   - 'spec/**/*'
+   - '*/spec/**/*'
 
 Style/StringMethods:
   Description: 'Checks if configured preferred methods are used over non-preferred.'

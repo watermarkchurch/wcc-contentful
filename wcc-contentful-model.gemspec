@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
-lib = File.expand_path('lib', __dir__)
+lib = File.expand_path('wcc-contentful-model/lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'wcc/contentful/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'wcc-contentful'
+  spec.name          = 'wcc-contentful-model'
   spec.version       = WCC::Contentful::VERSION
   spec.authors       = ['Watermark Dev']
   spec.email         = ['dev@watermark.org']
 
-  spec.summary       = File.readlines('README.md').join
-  spec.description   = 'Contentful API wrapper library for Watermark apps'
-  spec.homepage      = 'https://github.com/watermarkchurch/wcc-contentful'
+  spec.summary       = File.readlines(File.join('wcc-contentful-model', 'README.md')).join
+  spec.description   = 'Contentful API wrapper library exposing an ActiveRecord-like interface'
+  spec.homepage      = 'https://github.com/watermarkchurch/wcc-contentful/wcc-contentful-model'
   spec.license       = 'MIT'
 
   spec.required_ruby_version = '>= 2.3'
