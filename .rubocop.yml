@@ -34,7 +34,7 @@ Style/BlockDelimiters:
 Style/ClassAndModuleChildren:
   EnforcedStyle: compact
   Exclude:
-    - '*/lib/wcc/contentful/version.rb'
+    - '**/version.rb'
     # Generators need to define the "Wcc" module so it doesnt get underscored.
     - '*/lib/generators/**/*.rb'
 
@@ -44,7 +44,7 @@ Style/FormatStringToken:
 Metrics/BlockLength:
   Exclude:
     # config files where we expect long blocks
-    - '*.gemspec'
+    - '*/*.gemspec'
     # spec files that might have a big describe
     - '*/spec/**/*.rb'
     # dsl files https://stackoverflow.com/a/41187163
@@ -71,6 +71,10 @@ Metrics/ModuleLength:
   Enabled: false
 
 Performance/UnfreezeString:
+  Exclude:
+    - '*/spec/**/*.rb'
+
+Performance/HashEachMethods:
   Exclude:
     - '*/spec/**/*.rb'
 
@@ -150,10 +154,6 @@ Layout/MultilineAssignmentLayout:
   Description: 'Check for a newline after the assignment operator in multi-line assignments.'
   StyleGuide: '#indent-conditional-assignment'
   Enabled: true
-
-Lint/MissingCopEnableDirective:
-  Exclude:
-    - 'spec/fixtures/**/*'
 
 Style/AutoResourceCleanup:
   Description: 'Suggests the usage of an auto resource cleanup version of a method (if available).'
