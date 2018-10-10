@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module WCC::Contentful
-
   class SyncError < StandardError
   end
 

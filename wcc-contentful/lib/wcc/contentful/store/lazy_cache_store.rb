@@ -110,7 +110,6 @@ module WCC::Contentful::Store
 
       def response
         # Disabling because the superclass already took `@response`
-        # rubocop:disable Naming/MemoizedInstanceVariableName
         @wrapped_response ||= ResponseWrapper.new(super, @cache)
         # rubocop:enable Naming/MemoizedInstanceVariableName
       end

@@ -28,7 +28,7 @@ RSpec.describe WCC::Contentful::DelayedSyncJob, type: :job do
           .and_return(double(
                         items: [],
                         next_sync_token: 'test'
-                      ))
+          ))
 
         expect(WCC::Contentful::Services.instance.store).to receive(:set)
           .with('sync:token', { token: 'test' })
@@ -51,7 +51,7 @@ RSpec.describe WCC::Contentful::DelayedSyncJob, type: :job do
           .and_return(double(
                         items: next_sync['items'],
                         next_sync_token: 'test2'
-                      ))
+          ))
 
         items = next_sync['items']
         expect(WCC::Contentful::Services.instance.store).to receive(:set)
@@ -70,7 +70,7 @@ RSpec.describe WCC::Contentful::DelayedSyncJob, type: :job do
           .and_return(double(
                         items: next_sync['items'],
                         next_sync_token: 'test2'
-                      ))
+          ))
 
         expect(ActiveJob::Base.queue_adapter).to_not receive(:enqueue)
         expect(ActiveJob::Base.queue_adapter).to_not receive(:enqueue_at)
@@ -85,7 +85,7 @@ RSpec.describe WCC::Contentful::DelayedSyncJob, type: :job do
         .and_return(double(
                       items: next_sync['items'],
                       next_sync_token: 'test2'
-                    ))
+        ))
 
       # expect
       expect(job).to receive(:sync_later!)

@@ -25,6 +25,8 @@ module WCC::Contentful
   class << self
     # Gets the current configuration, after calling WCC::Contentful.configure
     attr_reader :configuration
+
+    attr_reader :types
   end
 
   # Configures the WCC::Contentful gem to talk to a Contentful space.
@@ -51,8 +53,6 @@ module WCC::Contentful
   def self.init!
     raise ArgumentError, 'Please first call WCC:Contentful.configure' if configuration.nil?
 
-    @mutex ||= Mutex.new
-
     # we want as much as possible the raw JSON from the API so use the management
     # client if possible
     client = Services.instance.management_client ||
@@ -73,12 +73,6 @@ module WCC::Contentful
     end
 
     WCC::Contentful::ModelBuilder.new(@types).build_models
-
-    # Extend all model types w/ validation & extra fields
-    @types.each_value do |t|
-      file = File.dirname(__FILE__) + "/contentful/model/#{t.name.underscore}.rb"
-      require file if File.exist?(file)
-    end
 
     require_relative 'contentful/client_ext' if defined?(::Contentful)
   end

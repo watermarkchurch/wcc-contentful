@@ -167,7 +167,7 @@ module WCC::Contentful::Store
         END;
         $$ LANGUAGE 'plpgsql';
       HEREDOC
-               )
+      )
 
       conn.prepare('upsert_entry', 'SELECT * FROM upsert_entry($1,$2)')
       conn.prepare('select_entry', 'SELECT * FROM contentful_raw WHERE id = $1')

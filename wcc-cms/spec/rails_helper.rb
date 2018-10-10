@@ -15,4 +15,3 @@ require 'rspec/rails'
 
 # require dummy rails app for engine related specs
 require File.expand_path('dummy/config/environment.rb', __dir__)
-

@@ -6,6 +6,13 @@ require 'httplog'
 
 Dir['./spec/support/**/*.rb'].sort.each { |f| require f }
 
+RSpec.shared_context 'Contentful config' do
+  let(:contentful_access_token) { ENV['CONTENTFUL_ACCESS_TOKEN'] || 'test1234' }
+  let(:contentful_management_token) { ENV['CONTENTFUL_MANAGEMENT_TOKEN'] || 'CFPAT-test1234' }
+  let(:contentful_preview_token) { ENV['CONTENTFUL_PREVIEW_TOKEN'] || 'test123456' }
+  let(:contentful_space_id) { ENV['CONTENTFUL_SPACE_ID'] || 'test1xab' }
+end
+
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = '.rspec_status'
@@ -17,7 +24,8 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 
-  config.filter_run_excluding bench: true
+  config.include FixturesHelper
+  config.include_context 'Contentful config'
 end
 
 HttpLog.configure do |config|
