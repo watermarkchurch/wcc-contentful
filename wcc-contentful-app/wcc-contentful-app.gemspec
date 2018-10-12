@@ -33,6 +33,11 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'vcr', '~> 4.0'
   spec.add_development_dependency 'webmock', '~> 3.0'
 
+  # Makes testing easy via `bundle exec guard`
+  spec.add_development_dependency 'guard', '~> 2.14'
+  spec.add_development_dependency 'guard-rspec', '~> 4.7'
+  spec.add_development_dependency 'guard-rubocop', '~> 1.3.0'
+
   # for generators
   spec.add_development_dependency 'generator_spec', '~> 0.9.4'
   spec.add_development_dependency 'rails', '~> 5.1'
