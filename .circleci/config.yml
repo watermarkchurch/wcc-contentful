@@ -34,11 +34,6 @@ defaults: &defaults
     #   command: |
     #     bundle exec danger
 
-    # run rubocop
-    - type: shell
-      command: |
-        bundle exec rubocop
-
     # Run rspec in parallel
     - type: shell
       command: |
@@ -55,11 +50,20 @@ defaults: &defaults
     # Save test results for timing analysis
     - store_test_results:
         path: test_results
+
+    # run rubocop
+    - type: shell
+      command: |
+        bundle exec rubocop $GEMDIR
 jobs:
   build-wcc-contentful:
     <<: *defaults
     environment:
       GEMDIR: ./wcc-contentful
+  build-wcc-contentful-app:
+    <<: *defaults
+    environment:
+      GEMDIR: ./wcc-contentful-app
       
 
 workflows:
@@ -67,3 +71,4 @@ workflows:
   build:
     jobs:
       - build-wcc-contentful
+      - build-wcc-contentful-app
