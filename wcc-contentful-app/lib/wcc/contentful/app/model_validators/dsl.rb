@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module WCC::Contentful::ModelValidators
+module WCC::Contentful::App::ModelValidators
   class ProcDsl
     def to_proc
       @proc

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module WCC::Contentful
+module WCC::Contentful::App
   # Raised by {WCC::Contentful.validate_models!} if a content type in the space
   # does not match the validation defined on the associated model.
   class ValidationError < StandardError

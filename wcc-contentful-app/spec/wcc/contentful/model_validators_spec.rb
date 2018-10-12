@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe(WCC::Contentful::ModelValidators) do
+RSpec.describe(WCC::Contentful::App::ModelValidators) do
   let(:content_types) {
     JSON.parse(load_fixture('contentful/content_types_mgmt_api.json'))
   }

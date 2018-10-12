@@ -2,11 +2,11 @@
 
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'wcc/cms/version'
+require 'wcc/contentful/app/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'wcc-cms'
-  spec.version       = WCC::Cms::VERSION
+  spec.name          = 'wcc-contentful-app'
+  spec.version       = WCC::Contentful::App::VERSION
   spec.authors       = ['Watermark Dev']
   spec.email         = ['dev@watermark.org']
 

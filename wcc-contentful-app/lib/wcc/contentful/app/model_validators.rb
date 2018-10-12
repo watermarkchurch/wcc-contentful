@@ -4,7 +4,7 @@ require 'dry-validation'
 
 require_relative 'model_validators/dsl'
 
-module WCC::Contentful::ModelValidators
+module WCC::Contentful::App::ModelValidators
   def schema
     return if validations.nil? || validations.empty?
 
