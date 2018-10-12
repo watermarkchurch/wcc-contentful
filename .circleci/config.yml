@@ -73,6 +73,7 @@ jobs:
           mkdir ~/.gem
           echo -e "---\n:rubygems_api_key: $RUBYGEMS_API_KEY" > ~/.gem/credentials
           chmod 0600 ~/.gem/credentials
+      - run: bundle install && rake check
       - run:
           name: Publish to Rubygems
           command: |
@@ -82,7 +83,7 @@ jobs:
             pushd wcc-contentful-app
             gem build wcc-contentful-app.gemspec
             popd
-            find . -type f -name "*.gem" | xargs gem push
+            find . -type f -name "*.gem" -exec gem push {} \;
 
 workflows:
   version: 2
