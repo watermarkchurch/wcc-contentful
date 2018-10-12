@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'bump/tasks'
 
 task :check do
@@ -5,7 +7,7 @@ task :check do
   require_relative 'wcc-contentful-app/lib/wcc/contentful/app/version'
 
   unless WCC::Contentful::App::VERSION == WCC::Contentful::VERSION
-    raise "Versions are not synchronized!  Please update wcc-contentful-app/lib/wcc/contentful/app/version.rb"
+    raise 'Versions are not synchronized!  Please update wcc-contentful-app/lib/wcc/contentful/app/version.rb'
   end
 end
 
@@ -18,7 +20,7 @@ end
 
 # After each version bump task, sync the versions of the gems
 namespace :bump do
-  (Bump::Bump::BUMPS).each do |bump|
+  Bump::Bump::BUMPS.each do |bump|
     task bump do
       sync_versions
     end

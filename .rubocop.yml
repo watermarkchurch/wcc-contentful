@@ -12,6 +12,7 @@ AllCops:
     # Config files
     - 'Guardfile'
     - 'Dangerfile'
+    - 'Rakefile'
 
     # 3rd party
     - 'vendor/**/*'
