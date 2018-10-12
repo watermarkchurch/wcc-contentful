@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'wcc/contentful/rails'
+
 require_relative './app/exceptions'
 require_relative './app/model_validators'
 require_relative './ext/model'
