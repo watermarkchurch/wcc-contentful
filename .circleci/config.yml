@@ -1,51 +1,69 @@
 version: 2
+defaults: &defaults
+  docker:
+    - image: circleci/ruby:2.3.3-node
+      environment: &rubyenv
+        RAILS_ENV: test
+        POSTGRES_CONNECTION: postgresql://ubuntu:@127.0.0.1:5432/circle_ruby_test
+    - image: postgres:10
+      environment:
+      - POSTGRES_USER: ubuntu
+      - POSTGRES_DB: circle_ruby_test
+  steps: &rubysteps
+    - checkout
+    # Restore bundle cache
+    - run: cp "$GEMDIR/$GEMDIR.gemspec" tmp.gemspec
+    - restore_cache:
+        key: rails-{{ checksum "tmp.gemspec" }}
+
+    # Bundle install dependencies
+    - run: |
+        bundle install --path /tmp/vendor/bundle
+        pushd $GEMDIR
+        bundle install --path /tmp/vendor/bundle
+        popd
+
+    # Store bundle cache
+    - save_cache:
+        key: rails-{{ checksum "tmp.gemspec" }}
+        paths:
+          - /tmp/vendor/bundle
+
+    # run Danger
+    # - type: shell
+    #   command: |
+    #     bundle exec danger
+
+    # run rubocop
+    - type: shell
+      command: |
+        bundle exec rubocop
+
+    # Run rspec in parallel
+    - type: shell
+      command: |
+        pushd $GEMDIR
+        echo `pwd`
+        bundle exec rspec --profile 10 \
+                          --format RspecJunitFormatter \
+                          --out test_results/rspec.xml \
+                          --format documentation \
+                          --order rand \
+                          $(circleci tests glob "*/spec/**/*_spec.rb" | circleci tests split --split-by=timings)
+        popd
+
+    # Save test results for timing analysis
+    - store_test_results:
+        path: test_results
 jobs:
+  build-wcc-contentful:
+    <<: *defaults
+    environment:
+      GEMDIR: ./wcc-contentful
+      
+
+workflows:
+  version: 2
   build:
-    docker:
-      - image: circleci/ruby:2.3.3-node
-        environment:
-          RAILS_ENV: test
-          POSTGRES_CONNECTION: postgresql://ubuntu:@127.0.0.1:5432/circle_ruby_test
-      - image: postgres:10
-        environment:
-        - POSTGRES_USER: ubuntu
-        - POSTGRES_DB: circle_ruby_test
-    steps:
-      - checkout
-      # Restore bundle cache
-      - restore_cache:
-          key: rails-{{ checksum "wcc-contentful.gemspec" }}
-
-      # Bundle install dependencies
-      - run: bundle install --path /tmp/vendor/bundle
-
-      # Store bundle cache
-      - save_cache:
-          key: rails-{{ checksum "wcc-contentful.gemspec" }}
-          paths:
-            - /tmp/vendor/bundle
-
-      # run Danger
-      # - type: shell
-      #   command: |
-      #     bundle exec danger
-
-      # run rubocop
-      - type: shell
-        command: |
-          bundle exec rubocop
-
-      # Run rspec in parallel
-      - type: shell
-        command: |
-          bundle exec rspec --profile 10 \
-                            --format RspecJunitFormatter \
-                            --out test_results/rspec.xml \
-                            --format documentation \
-                            --order rand \
-                            $(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
-
-      # Save test results for timing analysis
-      - store_test_results:
-          path: test_results
-
+    jobs:
+      - build-wcc-contentful
