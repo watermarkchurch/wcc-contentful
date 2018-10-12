@@ -64,10 +64,44 @@ jobs:
     <<: *defaults
     environment:
       GEMDIR: ./wcc-contentful-app
+  publish:
+    docker:
+      - image: circleci/ruby:2.3.3-node
+    steps:
+      - checkout
+      - run: |
+          mkdir ~/.gem
+          echo -e "---\n:rubygems_api_key: $RUBYGEMS_API_KEY" > ~/.gem/credentials
+          chmod 0600 ~/.gem/credentials
+      - run:
+          name: Publish to Rubygems
+          command: |
+            pushd wcc-contentful
+            gem build wcc-contentful.gemspec
+            popd
+            pushd wcc-contentful-app
+            gem build wcc-contentful-app.gemspec
+            popd
+            find . -type f -name "*.gem" | xargs gem push
 
 workflows:
   version: 2
-  build:
+  build_and_deploy:
     jobs:
-      - build-wcc-contentful
-      - build-wcc-contentful-app
+      - build-wcc-contentful:
+          filters:
+            tags:
+              only: /.*/
+      - build-wcc-contentful-app:
+          filters:
+            tags:
+              only: /.*/
+      - publish:
+          requires:
+            - build-wcc-contentful
+            - build-wcc-contentful-app
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/

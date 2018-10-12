@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Watermark Dev']
   spec.email         = ['dev@watermark.org']
 
-  spec.summary       = File.readlines(File.join('README.md')).join
+  spec.summary       = File.readlines(File.expand_path('README.md', __dir__)).join
   spec.description   = 'Contentful API wrapper library exposing an ActiveRecord-like interface'
   spec.homepage      = 'https://github.com/watermarkchurch/wcc-contentful/wcc-cms'
   spec.license       = 'MIT'
