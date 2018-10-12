@@ -1,0 +1,1 @@
+../wcc-contentful/lib/wcc/contentful/version.rb

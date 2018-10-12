@@ -64,7 +64,6 @@ jobs:
     <<: *defaults
     environment:
       GEMDIR: ./wcc-contentful-app
-      
 
 workflows:
   version: 2
