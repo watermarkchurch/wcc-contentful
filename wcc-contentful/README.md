@@ -1,5 +1,6 @@
 [![Gem Version](https://badge.fury.io/rb/wcc-contentful.svg)](https://badge.fury.io/rb/wcc-contentful)
 [![CircleCI](https://circleci.com/gh/watermarkchurch/wcc-contentful.svg?style=svg)](https://circleci.com/gh/watermarkchurch/wcc-contentful)
+[![Coverage Status](https://coveralls.io/repos/github/watermarkchurch/wcc-contentful/badge.svg?branch=master)](https://coveralls.io/github/watermarkchurch/wcc-contentful?branch=master)
 
 Full documentation: https://www.rubydoc.info/github/watermarkchurch/wcc-contentful
 

@@ -1,6 +1,8 @@
 The home of multiple gems that Watermark Community Church uses to integrate with
 Contentful.
 
+[![Coverage Status](https://coveralls.io/repos/github/watermarkchurch/wcc-contentful/badge.svg?branch=master)](https://coveralls.io/github/watermarkchurch/wcc-contentful?branch=master)
+
 * [wcc-contentful](./wcc-contentful)
 
 ## Deployment instructions:
