@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.email         = ['dev@watermark.org']
 
   spec.summary       = File.readlines(File.expand_path('README.md', __dir__)).join
-  spec.description   = 'Models, Controllers, and Views common to Watermark Church apps that use Contentful'
+  spec.description   = 'Models, Controllers, and Views common to Watermark Church apps'
   spec.homepage      = 'https://github.com/watermarkchurch/wcc-contentful/wcc-cms'
   spec.license       = 'MIT'
 
