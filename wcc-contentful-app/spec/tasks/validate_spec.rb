@@ -1,8 +1,19 @@
 # frozen_string_literal: true
 
+require 'rake'
 require 'rails_helper'
+require 'csv'
 
-RSpec.describe WCC::Contentful do
+RSpec.describe 'tasks/validate' do
+  Rake::Task.define_task(:environment)
+  Rake.application.rake_require 'tasks/validate'
+
+  def act
+    Rake::Task['wcc_contentful:validate'].invoke
+    Rake::Task['wcc_contentful:validate'].reenable
+  end
+
+  # TODO: https://github.com/watermarkchurch/wcc-contentful/issues/40
   # describe '.validate_models!' do
   #   let(:content_types) {
   #     raw = JSON.parse(load_fixture('contentful/content_types_mgmt_api.json'))
