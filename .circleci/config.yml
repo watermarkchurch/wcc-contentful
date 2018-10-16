@@ -29,10 +29,9 @@ defaults: &defaults
         paths:
           - /tmp/vendor/bundle
 
-    # run Danger
-    # - type: shell
-    #   command: |
-    #     bundle exec danger
+    - type: shell
+      command: |
+        bundle exec danger
 
     # Run rspec in parallel
     - type: shell
