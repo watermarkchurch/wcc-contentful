@@ -12,4 +12,5 @@ group :development, :test do
   gem 'guard-rubocop'
   gem 'rake', '~> 12.3'
   gem 'rubocop'
+  gem 'coveralls', require: false
 end
