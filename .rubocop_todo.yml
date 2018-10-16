@@ -10,7 +10,7 @@
 # Cop supports --auto-correct.
 Layout/ClosingParenthesisIndentation:
   Exclude:
-    - 'lib/wcc/contentful/store/postgres_store.rb'
+    - '*/lib/wcc/contentful/store/postgres_store.rb'
 
 # Offense count: 239
 # Configuration parameters: AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.
