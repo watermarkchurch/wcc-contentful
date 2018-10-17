@@ -1,4 +1,6 @@
-# v0.3.0
+# Changelog
+
+## v0.3.0
 
 * Now neccesary to require the engine in a Gemfile when using in Rails:
 
@@ -145,21 +147,21 @@
 * #33 Raise ArgumentError if client uses preview without proper configuration @rorJeremy merged 2018-05-02
   Right now, if a user makes a 'find_by' call to the preview api using the gem without having first configured the gem with a contentful preview token, you'll get a 500 NoMethodError that says you can't use find_by on Nil. This PR just raises an error for that scenario that explains the situation a little more clear.
 
-# v0.2.2
+## v0.2.2
 
 * Add preview_client for doing contentful calls to their preview api
 * 'find_by' can now receive a preview param set to a boolean value 
 * Can configure your preview_api by passing a preview_token to configure block
 * The Redirect model provides a 'href' method that will give you the url it points to
 
-# v0.2.0
+## v0.2.0
 
 * Application models can be registered to be instantiated for a given content type
 * New 'lazy sync' delivery method acts as a cache that is kept up to date by the sync API
 * 'eager sync' is now hooked up to a webhook which can be mounted to receive publish events
 * Major changes to configuration methods
 
-# v0.1.0
+## v0.1.0
 
 * Models are built dynamically from downloading the content_types via Contentful CDN
 * 'Menu' and 'MenuItem' are defined and their structures are enforced via validation
