@@ -1,0 +1,27 @@
+<% return '' unless item
+  classes ||= []
+  classes.push('active') if item_active?(item) %>
+<% if dropdown?(item) %>
+  <% if item.label %>
+    <%= render_button(item.label, class: classes) %>
+  <% else %>
+    <a class="<%= classes %>"><%= item.name %></a>
+  <% end %>
+
+  <ul class='dropdown__list'>
+    <% item.items.each do |dropdown_item| %>
+      <li class='dropdown__list__link' tabindex="-1">
+        <%= render 'components/menu-item',
+              item: dropdown_item %>
+      </li>
+    <% end %>
+  </ul>
+<% elsif dynamic_button?(item) %>
+  <%= render "components/#{item.class.name.underscore.dasherize}", button: item %>
+<% elsif item.respond_to?(:href) %>
+  <%= render_button(item, class: classes) %>
+<% else %>
+  <%# divider %>
+  <span class="divider <%= item.style %>">
+  </span>
+<% end %>
