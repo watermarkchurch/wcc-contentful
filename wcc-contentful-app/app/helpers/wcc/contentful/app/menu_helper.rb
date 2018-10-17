@@ -1,32 +1,8 @@
 # frozen_string_literal: true
 
 module WCC::Contentful::App::MenuHelper
-  extend self
-  DYNAMIC_BUTTONS = %w[loginButton cartButton].freeze
-
-  def main_navigation
-    global_site_config.main_navigation
-  end
-
-  def utility_navigation
-    global_site_config.utility_menu
-  end
-
-  def brand_button
-    global_site_config.brand
-  end
-
-  def side_bar_menu
-    global_site_config.side_bar_menu
-  end
-
   def dropdown?(item)
     item.respond_to?(:items)
-  end
-
-  def dynamic_button?(button)
-    return unless defined?(button.class.content_type)
-    WCC::Contentful::App::MenuHelper::DYNAMIC_BUTTONS.include?(button.class.content_type)
   end
 
   def item_active?(item)
@@ -36,13 +12,7 @@ module WCC::Contentful::App::MenuHelper
     false
   end
 
-  def icon_or_ion_icon(icon, ion_icon)
-    render_button_icon(icon) || render_button_ion_icon(ion_icon)
-  end
-
   def render_button(button, options = {}, &block)
-    return unless button_permitted?(button)
-
     html = render_button_inner_html(button, options, &block)
 
     if button.external?
@@ -53,13 +23,15 @@ module WCC::Contentful::App::MenuHelper
 
     push_class(button.style, options) if button.style
 
-    return link_to(html, button.href, options) if button.href
+    href = button.href
+    href = hash_only(href) if href.present? && local?(href)
+    return link_to(html, href, options) if href.present?
     content_tag(:a, html, options)
   end
 
   def render_button_inner_html(button, options = {}, &block)
     html = render_button_icon(button.icon, options.delete(:icon)) ||
-      render_button_ion_icon(button.ion_icon) + button.text
+      render_button_material_icon(button.material_icon) + content_tag(:span, button.text)
 
     html += capture(&block) if block_given?
     html
@@ -72,20 +44,31 @@ module WCC::Contentful::App::MenuHelper
     options = {
       alt: icon.description || icon.title,
       width: icon.file.dig('details', 'image', 'width'),
-      height: icon.file.dig('details', 'image', 'height')
+      height: icon.file.dig('details', 'image', 'height'),
     }.merge!(options || {})
     image_tag(icon&.file&.url, options)
   end
 
-  def render_button_ion_icon(ion_icon)
-    content_tag(:i, '', class: ['icon', ion_icon])
+  def render_button_material_icon(material_icon)
+    content_tag(:i, material_icon&.downcase, class: ['material-icons'])
   end
 
   def push_class(classes, options)
     options[:class] = [*classes].push(*options[:class])
   end
 
-  def button_permitted?(button)
-    button.link.blank? || can?(:read, button.link)
+  def hash_only(href)
+    url = URI(href)
+    '#' + url.fragment if url.fragment.present?
+  end
+
+  # An href is local if it points to a part of the page
+  def local?(href)
+    return true if href =~ /^#/
+    url = URI(href)
+    return false unless url.fragment.present?
+    fragment = url.fragment
+    url.fragment = nil
+    current_page?(url.to_s)
   end
 end
