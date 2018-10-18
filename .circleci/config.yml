@@ -6,6 +6,7 @@ jobs:
         environment:
           RAILS_ENV: test
           POSTGRES_CONNECTION: postgresql://ubuntu:@127.0.0.1:5432/circle_ruby_test
+          DANGER_GITHUB_API_TOKEN: 731ceccb8c30e6027eff8eb2379df7e0264789ad
       - image: postgres:10
         environment:
         - POSTGRES_USER: ubuntu
