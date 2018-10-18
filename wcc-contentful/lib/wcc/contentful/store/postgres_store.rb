@@ -1,20 +1,25 @@
 # frozen_string_literal: true
 
 gem 'pg', '~> 1.0'
+gem 'connection_pool', '~> 2.2'
 require 'pg'
+require 'connection_pool'
 
 module WCC::Contentful::Store
   class PostgresStore < Base
-    def initialize(_config = nil, connection_options = nil)
+    attr_reader :connection_pool
+
+    def initialize(_config = nil, connection_options = nil, pool_options = nil)
       super()
+      @schema_ensured = false
       connection_options ||= { dbname: 'postgres' }
-      @conn = PG.connect(connection_options)
-      PostgresStore.ensure_schema(@conn)
+      pool_options ||= {}
+      @connection_pool = build_connection_pool(connection_options, pool_options)
     end
 
     def set(key, value)
       ensure_hash value
-      result = @conn.exec_prepared('upsert_entry', [key, value.to_json])
+      result = @connection_pool.with { |conn| conn.exec_prepared('upsert_entry', [key, value.to_json]) }
       return if result.num_tuples == 0
 
       val = result.getvalue(0, 0)
@@ -22,21 +27,21 @@ module WCC::Contentful::Store
     end
 
     def keys
-      result = @conn.exec_prepared('select_ids')
+      result = @connection_pool.with { |conn| conn.exec_prepared('select_ids') }
       arr = []
       result.each { |r| arr << r['id'].strip }
       arr
     end
 
     def delete(key)
-      result = @conn.exec_prepared('delete_by_id', [key])
+      result = @connection_pool.with { |conn| conn.exec_prepared('delete_by_id', [key]) }
       return if result.num_tuples == 0
 
       JSON.parse(result.getvalue(0, 1))
     end
 
     def find(key, **_options)
-      result = @conn.exec_prepared('select_entry', [key])
+      result = @connection_pool.with { |conn| conn.exec_prepared('select_entry', [key]) }
       return if result.num_tuples == 0
 
       JSON.parse(result.getvalue(0, 1))
@@ -46,7 +51,7 @@ module WCC::Contentful::Store
       statement = "WHERE data->'sys'->'contentType'->'sys'->>'id' = $1"
       Query.new(
         self,
-        @conn,
+        @connection_pool,
         statement,
         [content_type],
         options
@@ -54,9 +59,9 @@ module WCC::Contentful::Store
     end
 
     class Query < Base::Query
-      def initialize(store, conn, statement = nil, params = nil, options = nil)
+      def initialize(store, connection_pool, statement = nil, params = nil, options = nil)
         super(store)
-        @conn = conn
+        @connection_pool = connection_pool
         @statement = statement ||
           "WHERE data->'sys'->>'id' IS NOT NULL"
         @params = params || []
@@ -74,7 +79,7 @@ module WCC::Contentful::Store
 
         Query.new(
           @store,
-          @conn,
+          @connection_pool,
           statement,
           params,
           @options
@@ -85,7 +90,7 @@ module WCC::Contentful::Store
         return @count if @count
 
         statement = 'SELECT count(*) FROM contentful_raw ' + @statement
-        result = @conn.exec(statement, @params)
+        result = @connection_pool.with { |conn| conn.exec(statement, @params) }
         @count = result.getvalue(0, 0).to_i
       end
 
@@ -93,7 +98,7 @@ module WCC::Contentful::Store
         return @first if @first
 
         statement = 'SELECT * FROM contentful_raw ' + @statement + ' LIMIT 1'
-        result = @conn.exec(statement, @params)
+        result = @connection_pool.with { |conn| conn.exec(statement, @params) }
         return if result.num_tuples == 0
 
         resolve_includes(
@@ -135,7 +140,7 @@ module WCC::Contentful::Store
         return @resolved if @resolved
 
         statement = 'SELECT * FROM contentful_raw ' + @statement
-        @resolved = @conn.exec(statement, @params)
+        @resolved = @connection_pool.with { |conn| conn.exec(statement, @params) }
       end
 
       def push_param(param, params)
@@ -168,11 +173,27 @@ module WCC::Contentful::Store
         $$ LANGUAGE 'plpgsql';
       HEREDOC
       )
+    end
 
+    def self.prepare_statements(conn)
       conn.prepare('upsert_entry', 'SELECT * FROM upsert_entry($1,$2)')
       conn.prepare('select_entry', 'SELECT * FROM contentful_raw WHERE id = $1')
       conn.prepare('select_ids', 'SELECT id FROM contentful_raw')
       conn.prepare('delete_by_id', 'DELETE FROM contentful_raw WHERE id = $1 RETURNING *')
+    end
+
+    private
+
+    def build_connection_pool(connection_options, pool_options)
+      ConnectionPool.new(pool_options) do
+        PG.connect(connection_options).tap do |conn|
+          unless @schema_ensured
+            PostgresStore.ensure_schema(conn)
+            @schema_ensured = true
+          end
+          PostgresStore.prepare_statements(conn)
+        end
+      end
     end
   end
 end
