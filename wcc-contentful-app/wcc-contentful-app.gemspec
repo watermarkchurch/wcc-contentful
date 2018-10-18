@@ -24,6 +24,7 @@ Gem::Specification.new do |spec|
 
   spec.require_paths = ['lib']
 
+  spec.add_development_dependency 'capybara', '~> 3.9'
   spec.add_development_dependency 'coveralls'
   spec.add_development_dependency 'dotenv', '~> 2.2'
   spec.add_development_dependency 'httplog', '~> 1.0'
