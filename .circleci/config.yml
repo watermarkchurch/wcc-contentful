@@ -6,7 +6,6 @@ jobs:
         environment:
           RAILS_ENV: test
           POSTGRES_CONNECTION: postgresql://ubuntu:@127.0.0.1:5432/circle_ruby_test
-          DANGER_GITHUB_API_TOKEN: 731ceccb8c30e6027eff8eb2379df7e0264789ad
       - image: postgres:10
         environment:
         - POSTGRES_USER: ubuntu
@@ -67,41 +66,3 @@ jobs:
       - type: shell
         command: |
           bundle exec rubocop
-
-  publish:
-    docker:
-      - image: circleci/ruby:2.3.3-node
-    steps:
-      - checkout
-      - run: |
-          mkdir ~/.gem
-          echo -e "---\n:rubygems_api_key: $RUBYGEMS_API_KEY" > ~/.gem/credentials
-          chmod 0600 ~/.gem/credentials
-      - run: bundle install && rake check
-      - run:
-          name: Publish to Rubygems
-          command: |
-            pushd wcc-contentful
-            gem build wcc-contentful.gemspec
-            popd
-            pushd wcc-contentful-app
-            gem build wcc-contentful-app.gemspec
-            popd
-            find . -type f -name "*.gem" -exec gem push {} \;
-
-workflows:
-  version: 2
-  build_and_deploy:
-    jobs:
-      - build:
-          filters:
-            tags:
-              only: /.*/
-      - publish:
-          requires:
-            - build
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /v[0-9]+(\.[0-9]+).*/
