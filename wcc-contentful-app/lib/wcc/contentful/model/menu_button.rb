@@ -5,6 +5,8 @@ class WCC::Contentful::Model::MenuButton < WCC::Contentful::Model
   validate_field :icon, :Asset, :optional
   validate_field :external_link, :String, :optional
   validate_field :link, :Link, :optional, link_to: 'page'
+  validate_field :section_link, :Link, :optional
+  validate_field :style, :String, :required
 
   def external_uri
     @external_url ||= URI(external_link) if external_link.present?
