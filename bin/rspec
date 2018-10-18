@@ -1,3 +1,10 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-bundle exec rspec $*
+set -e
+
+pushd wcc-contentful
+bundle exec rspec "$@"
+popd
+pushd wcc-contentful-app
+bundle exec rspec "$@"
+popd
