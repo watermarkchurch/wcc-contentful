@@ -340,6 +340,27 @@
           "omitted": false
         },
         {
+          "id": "styles",
+          "name": "Styles",
+          "type": "Array",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Symbol",
+            "validations": [
+              {
+                "in": [
+                  "rounded",
+                  "vertical"
+                ]
+              }
+            ]
+          }
+        },
+        {
           "id": "youtubeLink",
           "name": "youtubeLink",
           "type": "Symbol",
@@ -1347,6 +1368,23 @@
           "type": "Text",
           "localized": false,
           "required": false,
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "style",
+          "name": "Style",
+          "type": "Text",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "in": [
+                "default",
+                "light"
+              ]
+            }
+          ],
           "disabled": false,
           "omitted": false
         },

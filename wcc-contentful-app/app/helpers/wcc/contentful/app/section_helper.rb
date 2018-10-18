@@ -20,4 +20,9 @@ module WCC::Contentful::App::SectionHelper
     end
     section_styles
   end
+
+  def section_id(section)
+    title = section.try(:bookmark_title) || section.try(:title)
+    CGI.escape(title.gsub(/\W+/, '-')) if title.present?
+  end
 end
