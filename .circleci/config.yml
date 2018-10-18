@@ -98,8 +98,7 @@ workflows:
               only: /.*/
       - publish:
           requires:
-            - build-wcc-contentful
-            - build-wcc-contentful-app
+            - build
           filters:
             branches:
               ignore: /.*/
