@@ -211,6 +211,66 @@ class MyJob < ApplicationJob
 end
 ```
 
+## Test Helpers
+
+To use the test helpers, include the following in your rails_helper.rb:
+
+```ruby
+require 'wcc/contentful/rspec'
+```
+
+This adds the following helpers to all your specs:
+
+```ruby
+##
+# Builds a in-memory instance of the Contentful model for the given content_type.
+# All attributes that are known to be required fields on the content type
+# will return a default value based on the field type.
+instance = contentful_create('my-content-type', my_field: 'some-value')
+# => #<WCC::Contentful::Model::MyContentType:0x0000000005c71a78 @created_at=2018-04-16 18:41:17 UTC...>
+
+instance.my_field
+# => "some-value"
+
+instance.other_required_field
+# => "default-value"
+
+instance.other_optional_field
+# => nil
+
+instance.not_a_field
+# NoMethodError: undefined method `not_a_field' for #<Menu:0x00007fbac81ee490>
+
+##
+# Builds a rspec double of the Contentful model for the given content_type.
+# All attributes that are known to be required fields on the content type
+# will return a default value based on the field type.
+dbl = contentful_double('my-content-type', my_field: 'other-value')
+# => #<Double (anonymous)>
+
+dbl.my_field
+# => "other-value"
+
+dbl.not_a_field
+# => #<Double (anonymous)> received unexpected message :not_a_field with (no args)
+
+##
+# Builds out a fake Contentful entry for the given content type, and then
+# stubs the Model API to return that content type for `.find` and `.find_by`
+# query methods.
+stubbed = contentful_stub('my-content-type', id: '1234', my_field: 'test')
+
+WCC::Contentful::Model.find('1234') == stubbed
+# => true
+
+MyContentType.find('1234') == stubbed
+# => true
+
+MyContentType.find_by(my_field: 'test') == stubbed
+# => true
+```
+
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
