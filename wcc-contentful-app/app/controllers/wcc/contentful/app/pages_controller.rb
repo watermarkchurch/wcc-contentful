@@ -5,6 +5,6 @@ class WCC::Contentful::App::PagesController < ApplicationController
 
   def show
     @page = WCC::Contentful::Model::Page.find_by(slug: '/' + params[:slug], options: { include: 3 })
-    raise ::Exceptions::PageNotFoundError, '/' + params[:slug] unless @page
+    raise WCC::Contentful::App::PageNotFoundError, '/' + params[:slug] unless @page
   end
 end

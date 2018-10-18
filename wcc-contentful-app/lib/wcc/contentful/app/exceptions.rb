@@ -33,4 +33,13 @@ module WCC::Contentful::App
       ret.flatten(1)
     end
   end
+
+  class PageNotFoundError < StandardError
+    attr_reader :slug
+
+    def initialize(slug)
+      super("Page not found: '#{slug}'")
+      @slug = slug
+    end
+  end
 end

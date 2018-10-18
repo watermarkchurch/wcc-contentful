@@ -12,4 +12,13 @@ RSpec.describe WCC::Contentful::App::PagesController, type: :controller do
 
     expect(assigns(:page)).to eq(page)
   end
+
+  it 'raises exception when page not found' do
+    expect(WCC::Contentful::Model::Page).to receive(:find_by)
+      .and_return(nil)
+
+    expect {
+      get :show, params: { slug: 'not-found' }
+    }.to raise_error(WCC::Contentful::App::PageNotFoundError)
+  end
 end
