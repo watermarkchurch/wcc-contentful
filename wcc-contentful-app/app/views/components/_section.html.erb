@@ -1,0 +1,7 @@
+<%
+  styles ||= []
+  styles.push(*section_styles(section))
+%>
+<%= content_tag(:section, class: styles) do %>
+  <%= render("sections/#{section_template_name(section)}", section: section) %>
+<% end %>
