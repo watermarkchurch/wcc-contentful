@@ -1,11 +1,23 @@
 # frozen_string_literal: true
 
 class WCC::Contentful::Model::MenuButton < WCC::Contentful::Model
-  validate_field :text, :String, :required
+  validate_field :text, :String
   validate_field :icon, :Asset, :optional
+  validate_field :material_icon, :String
   validate_field :external_link, :String, :optional
-  validate_field :link, :Link, :optional, link_to: 'page'
-  validate_field :section_link, :Link, :optional
+  validate_field :link, :Link, :optional, link_to: %w[page page-v2]
+  validate_field :section_link, :Link, :optional,
+    link_to: %w[
+      section-conference-speakers
+      section-email-signup
+      section-event-schedule
+      section-faq
+      section-hero
+      section-hotels
+      section-pricing
+      section-social-links
+      section-video-about
+    ]
   validate_field :style, :String, :required
 
   def external_uri
