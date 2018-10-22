@@ -23,6 +23,9 @@ namespace :bump do
   Bump::Bump::BUMPS.each do |bump|
     task bump do
       sync_versions
+
+      system('find . -type f -name version.rb | xargs git add')
+      system("git commit -m 'Release v#{Bump::Bump.current}'")
     end
   end
 end
