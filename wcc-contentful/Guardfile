@@ -3,6 +3,39 @@
 
 # To run, use `bundle exec guard`.
 
+def watch_async(regexp)
+  raise ArgumentError, "No block given" unless block_given?
+  match_queue = Queue.new
+  
+  watch(regexp) do |match|
+    # Producer - add matches to the match queue
+    match_queue << match
+    nil
+  end
+
+  # Consumer - process matches as a batch
+  Thread.new do
+    loop do
+      matches = []
+      matches << match_queue.pop
+
+      loop do
+        begin
+          matches << match_queue.pop(true)
+        rescue ThreadError
+          break
+        end
+      end
+
+      begin
+        yield matches if matches.length > 0
+      rescue StandardError => ex
+        STDERR.puts "Error! #{ex}"
+      end
+    end
+  end
+end
+
 group :red_green_refactor, halt_on_fail: true do
   guard :rspec, cmd: 'bundle exec rspec' do
     require 'guard/rspec/dsl'
@@ -45,6 +78,16 @@ group :red_green_refactor, halt_on_fail: true do
   guard :rubocop, cli: ['--display-cop-names'] do
     watch(%r{.+\.rb$})
     watch(%r{(?:.+/)?\.rubocop(?:_todo)?\.yml$}) { |m| File.dirname(m[0]) }
+  end
+
+  guard :shell, all_on_start: false do
+    watch_async(%r{app/views/(.+\.html.*\.erb)}) { |matches|
+      
+      matches = matches.map { |m| File.absolute_path(m[0]) }
+      Dir.chdir('..') {
+        system("bundle exec erblint #{matches.join(' ')}")
+      }
+    }
   end
 end
 
