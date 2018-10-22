@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class WCC::Contentful::Model::Menuitem < WCC::Contentful::Model
+class WCC::Contentful::Model::MenuItem < WCC::Contentful::Model
   validate_field :title, :String, :required
   validate_field :submenu, :Array, link_to: %w[submenu]
   validate_field :url, :String, :required

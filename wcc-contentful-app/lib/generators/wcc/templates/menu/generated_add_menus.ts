@@ -283,9 +283,9 @@ export = function(migration: Migration, { makeRequest, spaceId, accessToken }) {
   dropdownmenu.changeEditorInterface('items', 'entryLinksEditor');
   dropdownmenu.changeEditorInterface('internalTitle', 'singleLine');
 
-  var menuitem = migration.createContentType('MenuItem', {
+  var menuitem = migration.createContentType('menuItem', {
     displayField: 'title',
-    name: 'MenuItem',
+    name: 'Menu Item',
     description: ''
   });
 
