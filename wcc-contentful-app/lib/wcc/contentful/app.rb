@@ -11,9 +11,6 @@ module WCC::Contentful::App
   def self.init!
     raise ArgumentError, 'Please first call WCC::Contentful.init!' unless WCC::Contentful.types
 
-    # TODO: figure out why MenuHelper isn't autoloading
-    ActionView::Base.__send__ :include, MenuHelper
-
     # Extend all model types w/ validation & extra fields
     WCC::Contentful.types.each_value do |t|
       file = File.dirname(__FILE__) + "/model/#{t.name.underscore}.rb"
