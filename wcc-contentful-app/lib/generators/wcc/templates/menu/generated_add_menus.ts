@@ -40,7 +40,7 @@ export = function(migration: Migration, { makeRequest, spaceId, accessToken }) {
       type: 'Link',
       validations: [
         {
-          linkContentType: ['dropdownMenu', 'dynamicButton', 'menuButton'],
+          linkContentType: ['dropdownMenu', 'menuButton'],
           message: 'The items must be either buttons or drop-down menus.'
         }
       ],
@@ -148,7 +148,7 @@ export = function(migration: Migration, { makeRequest, spaceId, accessToken }) {
     required: false,
     validations: [
       {
-        linkContentType: ['page', 'page-v2'],
+        linkContentType: ['page'],
         message: 'The Page Link must be a link to a Page which has a slug.'
       }
     ],
@@ -248,7 +248,7 @@ export = function(migration: Migration, { makeRequest, spaceId, accessToken }) {
     required: false,
     validations: [
       {
-        linkContentType: ['dynamicButton', 'menuButton']
+        linkContentType: ['menuButton']
       }
     ],
     disabled: false,
@@ -268,7 +268,7 @@ export = function(migration: Migration, { makeRequest, spaceId, accessToken }) {
       type: 'Link',
       validations: [
         {
-          linkContentType: ['dynamicButton', 'menuButton']
+          linkContentType: ['menuButton']
         }
       ],
       linkType: 'Entry'
@@ -282,84 +282,6 @@ export = function(migration: Migration, { makeRequest, spaceId, accessToken }) {
   dropdownmenu.changeEditorInterface('label', 'entryLinkEditor');
   dropdownmenu.changeEditorInterface('items', 'entryLinksEditor');
   dropdownmenu.changeEditorInterface('internalTitle', 'singleLine');
-
-  var menuitem = migration.createContentType('menuItem', {
-    displayField: 'title',
-    name: 'Menu Item',
-    description: ''
-  });
-
-  menuitem.createField('title', {
-    name: 'Title',
-    type: 'Symbol',
-    localized: false,
-    required: true,
-    validations: [{ unique: true }],
-    disabled: false,
-    omitted: false
-  });
-
-  menuitem.createField('submenu', {
-    name: 'Submenu',
-    type: 'Array',
-    localized: false,
-    required: false,
-    validations: [],
-    disabled: false,
-    omitted: false,
-    items: {
-      type: 'Link',
-      validations: [
-        {
-          linkContentType: ['submenu']
-        }
-      ],
-      linkType: 'Entry'
-    }
-  });
-
-  menuitem.createField('url', {
-    name: 'URL',
-    type: 'Symbol',
-    localized: false,
-    required: true,
-    validations: [],
-    disabled: false,
-    omitted: false
-  });
-
-  menuitem.createField('page', {
-    name: 'Page',
-    type: 'Link',
-    localized: false,
-    required: false,
-    validations: [
-      {
-        linkContentType: ['blog', 'event', 'location', 'page']
-      }
-    ],
-    disabled: false,
-    omitted: false,
-    linkType: 'Entry'
-  });
-
-  menuitem.createField('order', {
-    name: 'Order',
-    type: 'Integer',
-    localized: false,
-    required: false,
-    validations: [],
-    disabled: false,
-    omitted: false
-  });
-
-  menuitem.changeEditorInterface('title', 'singleLine');
-  menuitem.changeEditorInterface('submenu', 'entryCardsEditor', {
-    bulkEditing: false
-  });
-  menuitem.changeEditorInterface('url', 'singleLine');
-  menuitem.changeEditorInterface('page', 'entryLinkEditor');
-  menuitem.changeEditorInterface('order', 'numberEditor');
 
   var divider = migration.createContentType('divider', {
     displayField: 'style',
