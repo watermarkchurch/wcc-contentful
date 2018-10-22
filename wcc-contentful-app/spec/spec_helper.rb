@@ -50,5 +50,4 @@ end
 
 HttpLog.configure do |config|
   config.compact_log = true
-  config.color = true
 end
