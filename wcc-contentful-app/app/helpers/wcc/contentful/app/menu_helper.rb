@@ -9,6 +9,7 @@ module WCC::Contentful::App::MenuHelper
     return true if item.try(:label) && item_active?(item.label)
     return item.items.any? { |i| item_active?(i) } if item.respond_to?(:items)
     return current_page?(item.href) if item.try(:href)
+
     false
   end
 
@@ -26,6 +27,7 @@ module WCC::Contentful::App::MenuHelper
     href = button.href
     href = hash_only(href) if href.present? && local?(href)
     return link_to(html, href, options) if href.present?
+
     content_tag(:a, html, options)
   end
 
@@ -44,7 +46,7 @@ module WCC::Contentful::App::MenuHelper
     options = {
       alt: icon.description || icon.title,
       width: icon.file.dig('details', 'image', 'width'),
-      height: icon.file.dig('details', 'image', 'height'),
+      height: icon.file.dig('details', 'image', 'height')
     }.merge!(options || {})
     image_tag(icon&.file&.url, options)
   end
@@ -65,9 +67,10 @@ module WCC::Contentful::App::MenuHelper
   # An href is local if it points to a part of the page
   def local?(href)
     return true if href =~ /^#/
+
     url = URI(href)
     return false unless url.fragment.present?
-    fragment = url.fragment
+
     url.fragment = nil
     current_page?(url.to_s)
   end

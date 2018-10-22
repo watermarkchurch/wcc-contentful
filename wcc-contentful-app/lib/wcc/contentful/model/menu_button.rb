@@ -33,8 +33,10 @@ class WCC::Contentful::Model::MenuButton < WCC::Contentful::Model
   # Example usage: `<%= link_to button.title, button.href %>`
   def href
     return external_link if external_link
+
     url = (link&.try(:slug) || link&.try(:url))
     return url unless fragment.present?
+
     url = URI(url || '')
     url.fragment = fragment
     url.to_s
@@ -42,6 +44,7 @@ class WCC::Contentful::Model::MenuButton < WCC::Contentful::Model
 
   def fragment
     return unless (section = section_link&.try(:bookmark_title) || section_link&.try(:title)).present?
-    CGI.escape(section.gsub(/\W+/,'-'))
+
+    CGI.escape(section.gsub(/\W+/, '-'))
   end
 end
