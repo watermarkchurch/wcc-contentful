@@ -2,6 +2,6 @@
 
 module WCC
   module Contentful
-    VERSION = '0.4.0-beta'
+    VERSION = '0.4.0-rc'
   end
 end
