@@ -1,107 +1,68 @@
 version: 2
-defaults: &defaults
-  docker:
-    - image: circleci/ruby:2.3.3-node
-      environment: &rubyenv
-        RAILS_ENV: test
-        POSTGRES_CONNECTION: postgresql://ubuntu:@127.0.0.1:5432/circle_ruby_test
-    - image: postgres:10
-      environment:
-      - POSTGRES_USER: ubuntu
-      - POSTGRES_DB: circle_ruby_test
-  steps: &rubysteps
-    - checkout
-    # Restore bundle cache
-    - run: cp "$GEMDIR/$GEMDIR.gemspec" tmp.gemspec
-    - restore_cache:
-        key: rails-{{ checksum "tmp.gemspec" }}
-
-    # Bundle install dependencies
-    - run: |
-        bundle install --path /tmp/vendor/bundle
-        pushd $GEMDIR
-        bundle install --path /tmp/vendor/bundle
-        popd
-
-    # Store bundle cache
-    - save_cache:
-        key: rails-{{ checksum "tmp.gemspec" }}
-        paths:
-          - /tmp/vendor/bundle
-
-    - type: shell
-      command: |
-        bundle exec danger
-
-    # Run rspec in parallel
-    - type: shell
-      command: |
-        pushd $GEMDIR
-        echo `pwd`
-        bundle exec rspec --profile 10 \
-                          --format RspecJunitFormatter \
-                          --out ../test_results/rspec.xml \
-                          --format documentation \
-                          --order rand \
-                          $(circleci tests glob "*/spec/**/*_spec.rb" | circleci tests split --split-by=timings)
-        popd
-
-    # Save test results for timing analysis
-    - store_test_results:
-        path: test_results
-
-    # run rubocop
-    - type: shell
-      command: |
-        bundle exec rubocop $GEMDIR
 jobs:
-  build-wcc-contentful:
-    <<: *defaults
-    environment:
-      GEMDIR: ./wcc-contentful
-  build-wcc-contentful-app:
-    <<: *defaults
-    environment:
-      GEMDIR: ./wcc-contentful-app
-  publish:
+  build:
     docker:
       - image: circleci/ruby:2.3.3-node
+        environment:
+          RAILS_ENV: test
+          POSTGRES_CONNECTION: postgresql://ubuntu:@127.0.0.1:5432/circle_ruby_test
+      - image: postgres:10
+        environment:
+        - POSTGRES_USER: ubuntu
+        - POSTGRES_DB: circle_ruby_test
     steps:
       - checkout
-      - run: |
-          mkdir ~/.gem
-          echo -e "---\n:rubygems_api_key: $RUBYGEMS_API_KEY" > ~/.gem/credentials
-          chmod 0600 ~/.gem/credentials
-      - run: bundle install && rake check
-      - run:
-          name: Publish to Rubygems
-          command: |
-            pushd wcc-contentful
-            gem build wcc-contentful.gemspec
-            popd
-            pushd wcc-contentful-app
-            gem build wcc-contentful-app.gemspec
-            popd
-            find . -type f -name "*.gem" -exec gem push {} \;
+      # Restore bundle cache
+      - restore_cache:
+          key: rails-{{ checksum "wcc-contentful/wcc-contentful.gemspec" }}-{{ checksum "wcc-contentful-app/wcc-contentful-app.gemspec" }}
 
-workflows:
-  version: 2
-  build_and_deploy:
-    jobs:
-      - build-wcc-contentful:
-          filters:
-            tags:
-              only: /.*/
-      - build-wcc-contentful-app:
-          filters:
-            tags:
-              only: /.*/
-      - publish:
-          requires:
-            - build-wcc-contentful
-            - build-wcc-contentful-app
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /v[0-9]+(\.[0-9]+).*/
+      # Bundle install dependencies
+      - run: |
+          bundle install --path /tmp/vendor/bundle
+          pushd wcc-contentful
+          bundle install --path /tmp/vendor/bundle
+          popd
+          pushd wcc-contentful-app
+          bundle install --path /tmp/vendor/bundle
+          popd
+
+      # Store bundle cache
+      - save_cache:
+          key: rails-{{ checksum "wcc-contentful/wcc-contentful.gemspec" }}-{{ checksum "wcc-contentful-app/wcc-contentful-app.gemspec" }}
+          paths:
+            - /tmp/vendor/bundle
+
+      - type: shell
+        command: |
+          bundle exec danger
+
+      # Run rspec in parallel
+      - type: shell
+        command: |
+          export COVERALLS_PARALLEL=true
+          pushd wcc-contentful
+          bundle exec rspec --profile 10 \
+                            --format RspecJunitFormatter \
+                            --out ../test_results/rspec.xml \
+                            --format documentation \
+                            --order rand \
+                            $(circleci tests glob "*/spec/**/*_spec.rb" | circleci tests split --split-by=timings)
+          popd
+          pushd wcc-contentful-app
+          bundle exec rspec --profile 10 \
+                            --format RspecJunitFormatter \
+                            --out ../test_results/rspec.xml \
+                            --format documentation \
+                            --order rand \
+                            $(circleci tests glob "*/spec/**/*_spec.rb" | circleci tests split --split-by=timings)
+          popd
+          curl -k https://coveralls.io/webhook?repo_token=$COVERALLS_REPO_TOKEN -d "payload[build_num]=$CIRCLE_BUILD_NUM&payload[status]=done"
+
+      # Save test results for timing analysis
+      - store_test_results:
+          path: test_results
+
+      # run rubocop
+      - type: shell
+        command: |
+          bundle exec rubocop
