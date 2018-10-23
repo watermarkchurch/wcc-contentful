@@ -1,0 +1,36 @@
+<div class="row">
+  <div class="col-md-6 col-md-offset-3 col-xs-10 col-xs-offset-1">
+    <h2 class="section-faq__header float-right safe-line-break"><%= safe_line_break(section.title) %></h2>
+  </div>
+</div>
+
+<% visible, hidden =
+    split_content_for_mobile_view(section.number_of_faqs_before_fold || 3, section.faqs) %>
+<% visible.each_with_index do |faq, index| %>
+  <%= render partial: 'components/faq_row', locals: { faq: faq } %>
+<% end %>
+<div class="collapse" id="faq-hidden-collapse">
+  <% hidden.each_with_index do |faq, index| %>
+    <%= render partial: 'components/faq_row', locals: { faq: faq } %>
+  <% end %>
+</div>
+
+<% unless section.number_of_faqs_before_fold.nil? %>
+  <% if section.faqs && section.faqs.count > section.number_of_faqs_before_fold %>
+    <div class="row section-faq__show-more">
+      <div class="col-md-3 col-md-offset-7 col-xs-12">
+        <a class="section-faq__show-more-button"
+          data-toggle="collapse" href="#faq-hidden-collapse"
+          role="button"
+          aria-expanded="false">
+          <span class="section-faq__show-more-button__expanded">
+            <%= section.fold_button_hide_text || 'SEE LESS' %> <%= image_tag('up-arrow-primary.svg') %>
+          </span>
+          <span class="section-faq__show-more-button__collapsed">
+            <%= section.fold_button_show_text || 'SEE MORE' %> <%= image_tag('down-arrow-primary.svg') %>
+          </span>
+        </a>
+      </div>
+    </div>
+  <% end %>
+<% end %>

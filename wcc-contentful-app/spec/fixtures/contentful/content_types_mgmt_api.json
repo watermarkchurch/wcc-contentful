@@ -187,7 +187,10 @@
             "type": "Link",
             "validations": [
               {
-                "linkContentType": ["dropdownMenu", "menuButton"],
+                "linkContentType": [
+                  "dropdownMenu",
+                  "menuButton"
+                ],
                 "message": "The Menu groups must contain only sub-Menus or MenuButtons"
               }
             ],
@@ -267,7 +270,9 @@
           "required": false,
           "validations": [
             {
-              "linkContentType": ["menuButton"]
+              "linkContentType": [
+                "menuButton"
+              ]
             }
           ],
           "disabled": false,
@@ -289,7 +294,9 @@
             "type": "Link",
             "validations": [
               {
-                "linkContentType": ["menuButton"]
+                "linkContentType": [
+                  "menuButton"
+                ]
               }
             ],
             "linkType": "Entry"
@@ -396,7 +403,9 @@
           "required": false,
           "validations": [
             {
-              "linkMimetypeGroup": ["video"]
+              "linkMimetypeGroup": [
+                "video"
+              ]
             }
           ],
           "disabled": false,
@@ -411,7 +420,9 @@
           "required": false,
           "validations": [
             {
-              "linkContentType": ["theme"]
+              "linkContentType": [
+                "theme"
+              ]
             }
           ],
           "disabled": false,
@@ -426,73 +437,56 @@
           "sys": {
             "type": "Link",
             "linkType": "Space",
-            "id": "343qxys30lid"
+            "id": "4gyidsb2jx1u"
           }
         },
         "id": "faq",
         "type": "ContentType",
-        "createdAt": "2018-02-14T18:32:15.872Z",
-        "updatedAt": "2018-02-23T16:36:13.245Z",
+        "createdAt": "2017-09-21T20:03:36.356Z",
+        "updatedAt": "2017-09-21T20:03:37.337Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
         "createdBy": {
           "sys": {
             "type": "Link",
             "linkType": "User",
-            "id": "0SUbYs2vZlXjVR6bH6o83O"
+            "id": "49x3q2YqBkpAasHXDVZbJY"
           }
         },
         "updatedBy": {
           "sys": {
             "type": "Link",
             "linkType": "User",
-            "id": "0SUbYs2vZlXjVR6bH6o83O"
+            "id": "49x3q2YqBkpAasHXDVZbJY"
           }
         },
-        "publishedCounter": 2,
-        "version": 4,
+        "publishedCounter": 1,
+        "version": 2,
         "publishedBy": {
           "sys": {
             "type": "Link",
             "linkType": "User",
-            "id": "0SUbYs2vZlXjVR6bH6o83O"
+            "id": "49x3q2YqBkpAasHXDVZbJY"
           }
         },
-        "publishedVersion": 3,
-        "firstPublishedAt": "2018-02-14T18:32:16.249Z",
-        "publishedAt": "2018-02-23T16:36:13.245Z"
+        "publishedVersion": 1,
+        "firstPublishedAt": "2017-09-21T20:03:37.320Z",
+        "publishedAt": "2017-09-21T20:03:37.320Z"
       },
-      "displayField": "question",
+      "displayField": "questions",
       "name": "FAQ",
       "description": "",
       "fields": [
         {
-          "id": "question",
-          "name": "Question",
-          "type": "Symbol",
-          "localized": false,
-          "required": true,
-          "validations": [
-
-          ],
-          "disabled": false,
-          "omitted": false
-        },
-        {
-          "id": "answer",
-          "name": "Answer",
+          "id": "questions",
+          "name": "Questions",
           "type": "Text",
           "localized": false,
-          "required": true,
-          "validations": [
-
-          ],
-          "disabled": false,
-          "omitted": false
-        },
-        {
-          "id": "numFaqs",
-          "name": "numFaqs",
-          "type": "Integer",
-          "localized": false,
           "required": false,
           "validations": [
 
@@ -501,45 +495,9 @@
           "omitted": false
         },
         {
-          "id": "numFaqsFloat",
-          "name": "numFaqsFloat",
-          "type": "Number",
-          "localized": false,
-          "required": false,
-          "validations": [
-
-          ],
-          "disabled": false,
-          "omitted": false
-        },
-        {
-          "id": "dateOfFaq",
-          "name": "DateOfFaq",
-          "type": "Date",
-          "localized": false,
-          "required": false,
-          "validations": [
-
-          ],
-          "disabled": false,
-          "omitted": false
-        },
-        {
-          "id": "truthyOrFalsy",
-          "name": "TruthyOrFalsy",
-          "type": "Boolean",
-          "localized": false,
-          "required": false,
-          "validations": [
-
-          ],
-          "disabled": false,
-          "omitted": false
-        },
-        {
-          "id": "placeOfFaq",
-          "name": "PlaceOfFaq",
-          "type": "Location",
+          "id": "answers",
+          "name": "Answers",
+          "type": "Text",
           "localized": false,
           "required": false,
           "validations": [
@@ -715,7 +673,9 @@
             "type": "Link",
             "validations": [
               {
-                "linkMimetypeGroup": ["image"]
+                "linkMimetypeGroup": [
+                  "image"
+                ]
               },
               {
                 "assetFileSize": {
@@ -735,7 +695,9 @@
           "required": false,
           "validations": [
             {
-              "linkContentType": ["menu"]
+              "linkContentType": [
+                "menu"
+              ]
             }
           ],
           "disabled": false,
@@ -750,7 +712,9 @@
           "required": false,
           "validations": [
             {
-              "linkMimetypeGroup": ["image"]
+              "linkMimetypeGroup": [
+                "image"
+              ]
             }
           ],
           "disabled": false,
@@ -784,7 +748,9 @@
             "type": "Link",
             "validations": [
               {
-                "linkContentType": ["menuButton"]
+                "linkContentType": [
+                  "menuButton"
+                ]
               }
             ],
             "linkType": "Entry"
@@ -820,7 +786,7 @@
               {
                 "linkContentType": [
                   "section-CardSearch",
-                  "section-Faq",
+                  "section-faq",
                   "section-Testimonials",
                   "section-VideoHighlight"
                 ]
@@ -1130,7 +1096,9 @@
           "required": true,
           "validations": [
             {
-              "linkMimetypeGroup": ["image"]
+              "linkMimetypeGroup": [
+                "image"
+              ]
             }
           ],
           "disabled": false,
@@ -1268,7 +1236,7 @@
               {
                 "linkContentType": [
                   "section-CardSearch",
-                  "section-Faq",
+                  "section-faq",
                   "section-Testimonials",
                   "section-VideoHighlight"
                 ]
@@ -1396,48 +1364,67 @@
           "sys": {
             "type": "Link",
             "linkType": "Space",
-            "id": "343qxys30lid"
+            "id": "4gyidsb2jx1u"
           }
         },
-        "id": "section-Faq",
+        "id": "section-faq",
         "type": "ContentType",
-        "createdAt": "2018-02-12T19:13:59.267Z",
-        "updatedAt": "2018-02-14T18:32:40.782Z",
+        "createdAt": "2018-09-07T21:33:17.667Z",
+        "updatedAt": "2018-09-07T21:33:32.258Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
         "createdBy": {
           "sys": {
             "type": "Link",
             "linkType": "User",
-            "id": "0SUbYs2vZlXjVR6bH6o83O"
+            "id": "2SGEbzNLW9vNhYefhYrx1w"
           }
         },
         "updatedBy": {
           "sys": {
             "type": "Link",
             "linkType": "User",
-            "id": "0SUbYs2vZlXjVR6bH6o83O"
+            "id": "2SGEbzNLW9vNhYefhYrx1w"
           }
         },
-        "publishedCounter": 8,
-        "version": 16,
+        "publishedCounter": 2,
+        "version": 4,
         "publishedBy": {
           "sys": {
             "type": "Link",
             "linkType": "User",
-            "id": "0SUbYs2vZlXjVR6bH6o83O"
+            "id": "2SGEbzNLW9vNhYefhYrx1w"
           }
         },
-        "publishedVersion": 15,
-        "firstPublishedAt": "2018-02-12T19:13:59.422Z",
-        "publishedAt": "2018-02-14T18:32:40.782Z"
+        "publishedVersion": 3,
+        "firstPublishedAt": "2018-09-07T21:33:17.801Z",
+        "publishedAt": "2018-09-07T21:33:32.258Z"
       },
-      "displayField": "helpText",
+      "displayField": "internalTitle",
       "name": "Section: FAQ",
-      "description": "The Content Type for the FAQ section",
+      "description": "(v2) A section containing a number of expandable frequently asked questions",
       "fields": [
         {
-          "id": "helpText",
-          "name": "Help Text",
-          "type": "Text",
+          "id": "internalTitle",
+          "name": "Internal Title (Contentful Only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [
+
+          ],
+          "disabled": false,
+          "omitted": true
+        },
+        {
+          "id": "title",
+          "name": "Title",
+          "type": "Symbol",
           "localized": false,
           "required": false,
           "validations": [
@@ -1449,50 +1436,37 @@
         {
           "id": "bookmarkTitle",
           "name": "Bookmark Title",
-          "type": "Text",
-          "localized": false,
-          "required": false,
-          "disabled": false,
-          "omitted": false
-        },
-        {
-          "id": "style",
-          "name": "Style",
-          "type": "Text",
+          "type": "Symbol",
           "localized": false,
           "required": false,
           "validations": [
-            {
-              "in": [
-                "default",
-                "light"
-              ]
-            }
+
           ],
           "disabled": false,
           "omitted": false
         },
         {
-          "id": "contactButton",
-          "name": "Contact Button",
-          "type": "Link",
+          "id": "numberOfFaqsBeforeFold",
+          "name": "Number of Faqs Before Fold",
+          "type": "Integer",
           "localized": false,
           "required": false,
           "validations": [
             {
-              "linkContentType": ["menuButton"]
+              "range": {
+                "min": 1
+              }
             }
           ],
           "disabled": false,
-          "omitted": false,
-          "linkType": "Entry"
+          "omitted": false
         },
         {
           "id": "faqs",
           "name": "FAQs",
           "type": "Array",
           "localized": false,
-          "required": false,
+          "required": true,
           "validations": [
 
           ],
@@ -1502,26 +1476,37 @@
             "type": "Link",
             "validations": [
               {
-                "linkContentType": ["faq"]
+                "linkContentType": [
+                  "faq"
+                ]
               }
             ],
             "linkType": "Entry"
           }
         },
         {
-          "id": "theme",
-          "name": "Theme",
-          "type": "Link",
+          "id": "foldButtonHideText",
+          "name": "Fold Button Show Less Text",
+          "type": "Symbol",
           "localized": false,
           "required": false,
           "validations": [
-            {
-              "linkContentType": ["theme"]
-            }
+
           ],
           "disabled": false,
-          "omitted": false,
-          "linkType": "Entry"
+          "omitted": false
+        },
+        {
+          "id": "foldButtonShowText",
+          "name": "Fold Button Show More Text",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [
+
+          ],
+          "disabled": false,
+          "omitted": false
         }
       ]
     },
@@ -1596,7 +1581,9 @@
             "type": "Link",
             "validations": [
               {
-                "linkContentType": ["testimonial"]
+                "linkContentType": [
+                  "testimonial"
+                ]
               }
             ],
             "linkType": "Entry"
@@ -1711,7 +1698,12 @@
             "type": "Symbol",
             "validations": [
               {
-                "in": ["rounded", "faded when not active", "external", "custom"]
+                "in": [
+                  "rounded",
+                  "faded when not active",
+                  "external",
+                  "custom"
+                ]
               }
             ]
           }
