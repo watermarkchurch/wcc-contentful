@@ -8,6 +8,7 @@ require 'wcc/contentful'
 require 'webmock/rspec'
 require 'vcr'
 require 'httplog'
+require 'wcc/contentful/rspec'
 
 Dir['./spec/support/**/*.rb'].sort.each { |f| require f }
 

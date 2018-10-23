@@ -4,18 +4,6 @@ require 'spec_helper'
 
 ENV['RAILS_ENV'] ||= 'test'
 
-# require rails libraries:
-#   railtie includes rails + framework middleware
-#   active_job for any job specs
-require 'action_controller/railtie'
-require 'active_job'
-
-# require rails specific code
-require 'wcc/contentful/rails'
-
-# require rspec-rails to simulate framework behavior in specs
-require 'rspec/rails'
-
 # require dummy rails app for engine related specs
 
 WebMock.stub_request(:get, 'https://api.contentful.com/spaces/' \
@@ -26,4 +14,20 @@ WebMock.stub_request(:get, 'https://api.contentful.com/spaces/' \
   ))
 require File.expand_path('dummy/config/environment.rb', __dir__)
 
+# require rails specific code
+require 'wcc/contentful/app/rails'
+
+# require rspec-rails to simulate framework behavior in specs
+# require 'rails-controller-testing'
+require 'rspec/rails'
+# require 'capybara/rspec'
+# require 'capybara/rails'
+
 ENGINE_RAILS_ROOT = File.join(File.dirname(__FILE__), '../')
+
+RSpec.configure do |config|
+  config.infer_spec_type_from_file_location!
+  config.filter_rails_from_backtrace!
+
+  config.use_transactional_fixtures = true
+end
