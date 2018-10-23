@@ -68,9 +68,7 @@
           "required": true,
           "validations": [
             {
-              "linkMimetypeGroup": [
-                "image"
-              ]
+              "linkMimetypeGroup": ["image"]
             }
           ],
           "disabled": false,
@@ -181,10 +179,7 @@
             "type": "Link",
             "validations": [
               {
-                "linkContentType": [
-                  "dropdownMenu",
-                  "menuButton"
-                ],
+                "linkContentType": ["dropdownMenu", "menuButton"],
                 "message": "The Menu groups must contain only sub-Menus or MenuButtons"
               }
             ],
@@ -262,9 +257,7 @@
           "required": false,
           "validations": [
             {
-              "linkContentType": [
-                "menuButton"
-              ]
+              "linkContentType": ["menuButton"]
             }
           ],
           "disabled": false,
@@ -284,9 +277,7 @@
             "type": "Link",
             "validations": [
               {
-                "linkContentType": [
-                  "menuButton"
-                ]
+                "linkContentType": ["menuButton"]
               }
             ],
             "linkType": "Entry"
@@ -366,9 +357,7 @@
           "required": false,
           "validations": [
             {
-              "linkMimetypeGroup": [
-                "video"
-              ]
+              "linkMimetypeGroup": ["video"]
             }
           ],
           "disabled": false,
@@ -383,9 +372,7 @@
           "required": false,
           "validations": [
             {
-              "linkContentType": [
-                "theme"
-              ]
+              "linkContentType": ["theme"]
             }
           ],
           "disabled": false,
@@ -663,9 +650,7 @@
             "type": "Link",
             "validations": [
               {
-                "linkMimetypeGroup": [
-                  "image"
-                ]
+                "linkMimetypeGroup": ["image"]
               },
               {
                 "assetFileSize": {
@@ -685,9 +670,7 @@
           "required": false,
           "validations": [
             {
-              "linkContentType": [
-                "menu"
-              ]
+              "linkContentType": ["menu"]
             }
           ],
           "disabled": false,
@@ -702,9 +685,7 @@
           "required": false,
           "validations": [
             {
-              "linkMimetypeGroup": [
-                "image"
-              ]
+              "linkMimetypeGroup": ["image"]
             }
           ],
           "disabled": false,
@@ -734,9 +715,7 @@
             "type": "Link",
             "validations": [
               {
-                "linkContentType": [
-                  "menuButton"
-                ]
+                "linkContentType": ["menuButton"]
               }
             ],
             "linkType": "Entry"
@@ -1066,9 +1045,7 @@
           "required": true,
           "validations": [
             {
-              "linkMimetypeGroup": [
-                "image"
-              ]
+              "linkMimetypeGroup": ["image"]
             }
           ],
           "disabled": false,
@@ -1155,8 +1132,7 @@
           "type": "Symbol",
           "localized": false,
           "required": true,
-          "validations": [
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -1186,8 +1162,7 @@
           "type": "Array",
           "localized": false,
           "required": false,
-          "validations": [
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false,
           "items": {
@@ -1211,17 +1186,14 @@
           "type": "Array",
           "localized": false,
           "required": false,
-          "validations": [
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false,
           "items": {
             "type": "Link",
             "validations": [
               {
-                "linkContentType": [
-                  "page"
-                ]
+                "linkContentType": ["page"]
               }
             ],
             "linkType": "Entry"
@@ -1295,9 +1267,7 @@
           "required": true,
           "validations": [
             {
-              "linkMimetypeGroup": [
-                "image"
-              ]
+              "linkMimetypeGroup": ["image"]
             }
           ],
           "disabled": false,
@@ -1372,6 +1342,15 @@
           "omitted": false
         },
         {
+          "id": "bookmarkTitle",
+          "name": "Bookmark Title",
+          "type": "Text",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false
+        },
+        {
           "id": "contactButton",
           "name": "Contact Button",
           "type": "Link",
@@ -1379,9 +1358,7 @@
           "required": false,
           "validations": [
             {
-              "linkContentType": [
-                "menuButton"
-              ]
+              "linkContentType": ["menuButton"]
             }
           ],
           "disabled": false,
@@ -1401,9 +1378,7 @@
             "type": "Link",
             "validations": [
               {
-                "linkContentType": [
-                  "faq"
-                ]
+                "linkContentType": ["faq"]
               }
             ],
             "linkType": "Entry"
@@ -1417,9 +1392,7 @@
           "required": false,
           "validations": [
             {
-              "linkContentType": [
-                "theme"
-              ]
+              "linkContentType": ["theme"]
             }
           ],
           "disabled": false,
@@ -1495,9 +1468,7 @@
             "type": "Link",
             "validations": [
               {
-                "linkContentType": [
-                  "testimonial"
-                ]
+                "linkContentType": ["testimonial"]
               }
             ],
             "linkType": "Entry"
@@ -1608,12 +1579,7 @@
             "type": "Symbol",
             "validations": [
               {
-                "in": [
-                  "rounded",
-                  "faded when not active",
-                  "external",
-                  "custom"
-                ]
+                "in": ["rounded", "faded when not active", "external", "custom"]
               }
             ]
           }
@@ -1665,10 +1631,23 @@
           "required": false,
           "validations": [
             {
-              "linkContentType": [
-                "page"
-              ],
+              "linkContentType": ["page"],
               "message": "The Link must be a link to a Page which has a Slug.  Example: '/ministries'"
+            }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        },
+        {
+          "id": "sectionLink",
+          "name": "Section Link",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "message": "If provided, this will link the user to the specific section on a page.  You must use this in combination with Page Link."
             }
           ],
           "disabled": false,
@@ -1763,9 +1742,7 @@
           "required": false,
           "validations": [
             {
-              "linkContentType": [
-                "page"
-              ]
+              "linkContentType": ["page"]
             }
           ],
           "disabled": false,
