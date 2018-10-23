@@ -56,7 +56,9 @@
           "type": "Symbol",
           "localized": false,
           "required": true,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false
         },
@@ -68,7 +70,9 @@
           "required": true,
           "validations": [
             {
-              "linkMimetypeGroup": ["image"]
+              "linkMimetypeGroup": [
+                "image"
+              ]
             }
           ],
           "disabled": false,
@@ -162,7 +166,9 @@
           "type": "Symbol",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false
         },
@@ -172,7 +178,9 @@
           "type": "Array",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false,
           "items": {
@@ -245,7 +253,9 @@
           "type": "Symbol",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false
         },
@@ -270,7 +280,9 @@
           "type": "Array",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false,
           "items": {
@@ -335,7 +347,9 @@
           "type": "Text",
           "localized": false,
           "required": true,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false
         },
@@ -345,7 +359,9 @@
           "type": "Array",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false,
           "items": {
@@ -366,7 +382,9 @@
           "type": "Symbol",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false
         },
@@ -452,7 +470,9 @@
           "type": "Symbol",
           "localized": false,
           "required": true,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false
         },
@@ -462,7 +482,9 @@
           "type": "Text",
           "localized": false,
           "required": true,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false
         },
@@ -472,7 +494,9 @@
           "type": "Integer",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false
         },
@@ -482,7 +506,9 @@
           "type": "Number",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false
         },
@@ -492,7 +518,9 @@
           "type": "Date",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false
         },
@@ -502,7 +530,9 @@
           "type": "Boolean",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false
         },
@@ -512,7 +542,9 @@
           "type": "Location",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false
         }
@@ -568,7 +600,9 @@
           "type": "Symbol",
           "localized": false,
           "required": true,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false
         },
@@ -578,7 +612,9 @@
           "type": "Date",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false
         },
@@ -588,7 +624,9 @@
           "type": "Date",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false
         },
@@ -598,7 +636,9 @@
           "type": "Object",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false
         }
@@ -654,7 +694,9 @@
           "type": "Symbol",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false
         },
@@ -664,7 +706,9 @@
           "type": "Array",
           "localized": false,
           "required": true,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false,
           "items": {
@@ -719,7 +763,9 @@
           "type": "Text",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false
         },
@@ -729,7 +775,9 @@
           "type": "Array",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false,
           "items": {
@@ -748,7 +796,9 @@
           "type": "Link",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false,
           "linkType": "Entry"
@@ -759,7 +809,9 @@
           "type": "Array",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false,
           "items": {
@@ -783,7 +835,9 @@
           "type": "Link",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false,
           "linkType": "Entry"
@@ -840,7 +894,9 @@
           "type": "Symbol",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false
         },
@@ -968,7 +1024,9 @@
           "type": "Symbol",
           "localized": false,
           "required": true,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false
         },
@@ -978,12 +1036,16 @@
           "type": "Array",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false,
           "items": {
             "type": "Link",
-            "validations": [],
+            "validations": [
+
+            ],
             "linkType": "Entry"
           }
         },
@@ -993,7 +1055,9 @@
           "type": "Link",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false,
           "linkType": "Entry"
@@ -1079,12 +1143,16 @@
           "type": "Array",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false,
           "items": {
             "type": "Symbol",
-            "validations": []
+            "validations": [
+
+            ]
           }
         },
         {
@@ -1093,12 +1161,16 @@
           "type": "Array",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false,
           "items": {
             "type": "Symbol",
-            "validations": []
+            "validations": [
+
+            ]
           }
         }
       ]
@@ -1153,7 +1225,9 @@
           "type": "Symbol",
           "localized": false,
           "required": true,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false
         },
@@ -1183,7 +1257,9 @@
           "type": "Array",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false,
           "items": {
@@ -1207,14 +1283,18 @@
           "type": "Array",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false,
           "items": {
             "type": "Link",
             "validations": [
               {
-                "linkContentType": ["page"]
+                "linkContentType": [
+                  "page"
+                ]
               }
             ],
             "linkType": "Entry"
@@ -1301,7 +1381,9 @@
           "type": "Link",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false,
           "linkType": "Entry"
@@ -1358,7 +1440,9 @@
           "type": "Text",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false
         },
@@ -1409,7 +1493,9 @@
           "type": "Array",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false,
           "items": {
@@ -1489,7 +1575,9 @@
           "type": "Symbol",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false
         },
@@ -1499,7 +1587,9 @@
           "type": "Array",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false,
           "items": {
@@ -1581,7 +1671,9 @@
           "type": "Link",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false,
           "linkType": "Asset"
@@ -1610,7 +1702,9 @@
           "type": "Array",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false,
           "items": {
@@ -1628,7 +1722,9 @@
           "type": "Array",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false,
           "items": {
@@ -1839,7 +1935,86 @@
           "type": "Symbol",
           "localized": false,
           "required": true,
-          "validations": [],
+          "validations": [
+
+          ],
+          "disabled": false,
+          "omitted": false
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "7yx6ovlj39n5"
+          }
+        },
+        "id": "section-block-text",
+        "type": "ContentType",
+        "createdAt": "2018-04-16T18:36:52.993Z",
+        "updatedAt": "2018-05-18T19:51:21.723Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "publishedCounter": 9,
+        "version": 18,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "publishedVersion": 17,
+        "firstPublishedAt": "2018-04-16T18:36:53.212Z",
+        "publishedAt": "2018-05-18T19:51:21.723Z"
+      },
+      "displayField": "internalTitle",
+      "name": "Section: Block Text",
+      "description": "Markdown free-text block",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [
+
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "body",
+          "name": "Body",
+          "type": "Text",
+          "localized": false,
+          "required": true,
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false
         }
