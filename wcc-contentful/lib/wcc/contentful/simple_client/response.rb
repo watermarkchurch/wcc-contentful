@@ -19,7 +19,13 @@ class WCC::Contentful::SimpleClient
     alias_method :to_json, :raw
 
     def error_message
-      raw.dig('message') || "#{code}: #{raw_response.message}"
+      parsed_message =
+        begin
+          raw.dig('message')
+        rescue JSON::ParserError
+          nil
+        end
+      parsed_message || "#{code}: #{raw_response.body}"
     end
 
     def next_page?
