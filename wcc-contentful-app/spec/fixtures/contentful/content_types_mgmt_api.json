@@ -1778,8 +1778,8 @@
           "omitted": true
         },
         {
-          "id": "name",
-          "name": "Section Name (contentful only)",
+          "id": "bookmarkTitle",
+          "name": "Bookmark Title",
           "type": "Symbol",
           "localized": false,
           "required": true,

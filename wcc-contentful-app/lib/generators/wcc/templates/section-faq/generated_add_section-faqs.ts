@@ -131,6 +131,8 @@ export = function(migration : Migration, { makeRequest, spaceId, accessToken }) 
 
   sectionFaq.changeEditorInterface('faqs', 'entryLinksEditor')
 
-  sectionFaq.changeEditorInterface('foldButtonText', 'singleLine')
+  sectionFaq.changeEditorInterface('foldButtonShowText', 'singleLine')
+
+  sectionFaq.changeEditorInterface('foldButtonHideText', 'singleLine')
 
 } as MigrationFunction

@@ -23,8 +23,8 @@ export = function(migration : Migration, { makeRequest, spaceId, accessToken }) 
     omitted: true
   })
 
-  sectionTestimonials.createField('name', {
-    name: 'Section Name (contentful only)',
+  sectionTestimonials.createField('bookmarkTitle', {
+    name: 'Bookmark Title',
     type: 'Symbol',
     localized: false,
     required: true,
@@ -64,7 +64,7 @@ export = function(migration : Migration, { makeRequest, spaceId, accessToken }) 
     omitted: false
   })
 
-  sectionTestimonials.changeEditorInterface('name', 'singleLine')
+  sectionTestimonials.changeEditorInterface('bookmarkTitle', 'singleLine')
 
   sectionTestimonials.changeEditorInterface('testimonials', 'entryLinksEditor')
 

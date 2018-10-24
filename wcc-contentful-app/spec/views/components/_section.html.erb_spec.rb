@@ -15,8 +15,8 @@ RSpec.describe 'components/section' do
   end
 
   it 'renders the given section with an ID' do
-    testimonials = contentful_create('section-Testimonials',
-      title: 'Testimonials for Jesus!')
+    testimonials = contentful_create('section-testimonials',
+      bookmark_title: 'Testimonials for Jesus!')
     stub_template 'sections/_testimonials.html.erb' => '<Testimonials />'
 
     render partial: 'components/section', locals: { section: testimonials }
