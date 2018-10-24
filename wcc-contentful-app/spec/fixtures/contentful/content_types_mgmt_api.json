@@ -1752,7 +1752,9 @@
           "type": "Symbol",
           "localized": false,
           "required": true,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": true
         },
@@ -2294,6 +2296,115 @@
           "disabled": false,
           "omitted": false,
           "linkType": "Asset"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "7yx6ovlj39n5"
+          }
+        },
+        "id": "section-marquee-text",
+        "type": "ContentType",
+        "createdAt": "2018-05-18T19:51:14.968Z",
+        "updatedAt": "2018-06-29T21:21:40.656Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedCounter": 3,
+        "version": 6,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedVersion": 5,
+        "firstPublishedAt": "2018-05-18T19:51:15.155Z",
+        "publishedAt": "2018-06-29T21:21:40.656Z"
+      },
+      "displayField": "internalTitle",
+      "name": "Section: Marquee Text",
+      "description": "Display a large section title and an enlarged single paragraph along with an optional tagline at the top.",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title (Contentful Only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [
+
+          ],
+          "disabled": false,
+          "omitted": true
+        },
+        {
+          "id": "tag",
+          "name": "Tag",
+          "type": "Symbol",
+          "localized": true,
+          "required": false,
+          "validations": [
+            {
+              "size": {
+                "max": 50
+              }
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "title",
+          "name": "Title",
+          "type": "Symbol",
+          "localized": true,
+          "required": true,
+          "validations": [
+            {
+              "size": {
+                "max": 150
+              }
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "body",
+          "name": "Body",
+          "type": "Text",
+          "localized": true,
+          "required": false,
+          "validations": [
+
+          ],
+          "disabled": false,
+          "omitted": false
         }
       ]
     }
