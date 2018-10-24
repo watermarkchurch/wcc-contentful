@@ -72,10 +72,10 @@ module WCC::Contentful::Test::Factory
   end
 
   def default_raw(model, id = nil)
-    { sys: sys(model, id), fields: fields(model) }.as_json
+    { sys: contentful_sys(model, id), fields: contentful_fields(model) }.as_json
   end
 
-  def sys(model, id = nil)
+  def contentful_sys(model, id = nil)
     {
       space: {
         sys: {
@@ -107,7 +107,7 @@ module WCC::Contentful::Test::Factory
     }
   end
 
-  def fields(model)
+  def contentful_fields(model)
     WCC::Contentful::Test::Attributes.defaults(model).each_with_object({}) do |(k, v), h|
       h[k] = { 'en-US' => v }
     end
