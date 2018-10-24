@@ -27,7 +27,6 @@ linters:
         Enabled: false
       Layout/TrailingBlankLines:
         Enabled: false
-      # TODO:
       Naming/FileName:
         Enabled: false
       Lint/UselessAssignment:
