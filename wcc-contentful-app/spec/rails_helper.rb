@@ -18,10 +18,10 @@ require File.expand_path('dummy/config/environment.rb', __dir__)
 require 'wcc/contentful/app/rails'
 
 # require rspec-rails to simulate framework behavior in specs
-# require 'rails-controller-testing'
+require 'rails-controller-testing'
 require 'rspec/rails'
-# require 'capybara/rspec'
-# require 'capybara/rails'
+require 'capybara/rspec'
+require 'capybara/rails'
 
 ENGINE_RAILS_ROOT = File.join(File.dirname(__FILE__), '../')
 

@@ -1,4 +1,5 @@
 <% return '' unless item
+
    classes ||= ['nav-item']
    classes.push('active') if item_active?(item)
    classes.push('dropdown') if dropdown?(item) %>
@@ -12,11 +13,13 @@
 
     <div class='dropdown-menu'>
       <% item.items.each do |dropdown_item| %>
-        <%= render_button(dropdown_item, class: 'dropdown-item', data: { toggle: "collapse", target: "#navbar" }) %>
+        <%= render_button(dropdown_item,
+              class: 'dropdown-item',
+              data: { toggle: 'collapse', target: '#navbar' }) %>
       <% end %>
     </div>
   <% elsif item.respond_to?(:href) %>
-    <%= render_button(item, class: 'nav-link', data: { toggle: "collapse", target: "#navbar" }) %>
+    <%= render_button(item, class: 'nav-link', data: { toggle: 'collapse', target: '#navbar' }) %>
   <% else %>
     <%# divider %>
     <span class="divider <%= item.style %>">

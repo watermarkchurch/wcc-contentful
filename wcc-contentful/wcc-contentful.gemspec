@@ -26,6 +26,7 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency 'coveralls'
   spec.add_development_dependency 'dotenv', '~> 2.2'
+  spec.add_development_dependency 'erb_lint', '~> 0.0.26'
   spec.add_development_dependency 'httplog', '~> 1.0'
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
@@ -39,6 +40,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'guard', '~> 2.14'
   spec.add_development_dependency 'guard-rspec', '~> 4.7'
   spec.add_development_dependency 'guard-rubocop', '~> 1.3.0'
+  spec.add_development_dependency 'guard-shell', '~> 0.7.1'
 
   # for generators
   spec.add_development_dependency 'generator_spec', '~> 0.9.4'

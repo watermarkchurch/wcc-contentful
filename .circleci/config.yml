@@ -66,3 +66,4 @@ jobs:
       - type: shell
         command: |
           bundle exec rubocop
+      - run: bundle exec erblint '*/app/views/**/*.erb'

@@ -1,0 +1,33 @@
+---
+exclude:
+  # SVG images rendered in erb templates
+  # Special script that needs to break the rules
+linters:
+  AllowedScriptType:
+    enabled: true
+    disallow_inline_scripts: true
+  ErbSafety:
+    enabled: true
+  FinalNewline:
+    enabled: true
+  NoJavascriptTagHelper:
+    enabled: true
+  RightTrim:
+    enabled: true
+  SpaceAroundErbTag:
+    enabled: true
+  Rubocop:
+    enabled: true
+    rubocop_config:
+      inherit_from:
+        - .rubocop.yml
+      Style/FrozenStringLiteralComment:
+        Enabled: false
+      Layout/InitialIndentation:
+        Enabled: false
+      Layout/TrailingBlankLines:
+        Enabled: false
+      Naming/FileName:
+        Enabled: false
+      Lint/UselessAssignment:
+        Enabled: false
