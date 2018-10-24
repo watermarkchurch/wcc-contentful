@@ -5,11 +5,10 @@ module Wcc
     source_root File.expand_path('templates', __dir__)
     argument :model, type: :string
 
-    VALID_MODELS = %w[
-      menu
-      page
-      section-block-text
-    ].freeze
+    VALID_MODELS =
+      Dir.glob("#{__dir__}/templates/*")
+        .select { |f| File.directory? f }
+        .map { |f| File.basename f }
 
     def initialize(*)
       super
