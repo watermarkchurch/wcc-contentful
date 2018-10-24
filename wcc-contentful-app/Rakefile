@@ -93,6 +93,26 @@ namespace :app do
         # end
       end
     HEREDOC
+
+    view_name = const.demodulize.underscore.sub('section_', '')
+    FileUtils.touch("app/views/sections/_#{view_name}.html.erb")
+    File.write("spec/views/sections/_#{view_name}.html.erb_spec.rb", <<~HEREDOC)
+      # frozen_string_literal: true
+
+      require 'rails_helper'
+      
+      RSpec.describe 'sections/#{view_name}' do
+        helper WCC::Contentful::App::SectionHelper
+
+        it 'renders successfully' do
+          section = contentful_create('#{model}')
+      
+          render partial: 'components/section', locals: { section: section }
+      
+          expect(rendered).to have_css('section.#{model}.default')
+        end
+      end
+    HEREDOC
   end
 end
 
