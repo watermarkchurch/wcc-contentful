@@ -9,13 +9,15 @@ module Wcc
       Dir.glob("#{__dir__}/templates/*")
         .select { |f| File.directory? f }
         .map { |f| File.basename f }
+        .sort
+        .freeze
 
     def initialize(*)
       super
 
       return if VALID_MODELS.include?(singular)
 
-      raise ArgumentError, "Model must be #{VALID_MODELS.to_sentence}"
+      raise ArgumentError, "Model must be one of #{VALID_MODELS.to_sentence}"
     end
 
     def ensure_migration_tools_installed
