@@ -12,13 +12,20 @@
           "sys": {
             "type": "Link",
             "linkType": "Space",
-            "id": "343qxys30lid"
+            "id": "7yx6ovlj39n5"
           }
         },
         "id": "testimonial",
         "type": "ContentType",
-        "createdAt": "2018-02-12T19:47:57.690Z",
-        "updatedAt": "2018-02-12T19:47:57.856Z",
+        "createdAt": "2018-04-16T18:37:13.823Z",
+        "updatedAt": "2018-07-13T21:47:33.809Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
         "createdBy": {
           "sys": {
             "type": "Link",
@@ -30,26 +37,38 @@
           "sys": {
             "type": "Link",
             "linkType": "User",
-            "id": "0SUbYs2vZlXjVR6bH6o83O"
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
           }
         },
-        "publishedCounter": 1,
-        "version": 2,
+        "publishedCounter": 8,
+        "version": 16,
         "publishedBy": {
           "sys": {
             "type": "Link",
             "linkType": "User",
-            "id": "0SUbYs2vZlXjVR6bH6o83O"
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
           }
         },
-        "publishedVersion": 1,
-        "firstPublishedAt": "2018-02-12T19:47:57.856Z",
-        "publishedAt": "2018-02-12T19:47:57.856Z"
+        "publishedVersion": 15,
+        "firstPublishedAt": "2018-04-16T18:37:14.044Z",
+        "publishedAt": "2018-07-13T21:47:33.809Z"
       },
-      "displayField": "name",
+      "displayField": "internalTitle",
       "name": "Testimonial",
-      "description": "A Testimonial contains a user's photo, a short bio, and their testimonial about the service",
+      "description": "A Testimonial must be attached to a Testimonial Section to be displayed.",
       "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title (Contentful Only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [
+
+          ],
+          "disabled": false,
+          "omitted": true
+        },
         {
           "id": "name",
           "name": "Name",
@@ -63,16 +82,45 @@
           "omitted": false
         },
         {
+          "id": "miniBio",
+          "name": "Mini Bio",
+          "type": "Text",
+          "localized": false,
+          "required": false,
+          "validations": [
+
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
           "id": "photo",
           "name": "Photo",
           "type": "Link",
           "localized": false,
-          "required": true,
+          "required": false,
           "validations": [
             {
               "linkMimetypeGroup": [
                 "image"
               ]
+            },
+            {
+              "assetImageDimensions": {
+                "width": {
+                  "min": 480
+                },
+                "height": {
+                  "min": 480
+                }
+              },
+              "message": "Your image needs to be bigger!  Lots of people have high resolution displays.  Please submit an image at least 480 by 480 pixels."
+            },
+            {
+              "assetFileSize": {
+                "max": 1048576
+              },
+              "message": "Your image needs to be compressed!  Typically, large high quality images should be kept between 100 and 60 Kilobytes. Smaller images should be closer to 30 Kilobytes and lower.  Think of the poor souls who only get 1GB/mo of 3G!"
             }
           ],
           "disabled": false,
@@ -80,36 +128,42 @@
           "linkType": "Asset"
         },
         {
-          "id": "shortBio",
-          "name": "Short Bio",
+          "id": "quote",
+          "name": "Quote",
           "type": "Text",
           "localized": false,
-          "required": false,
+          "required": true,
           "validations": [
-            {
-              "size": {
-                "min": null,
-                "max": 100
-              },
-              "message": "The Short Bio is intended to be short.  Please keep it under 100 characters."
-            }
+
           ],
           "disabled": false,
           "omitted": false
         },
         {
-          "id": "testimonial",
-          "name": "Testimonial",
-          "type": "Text",
+          "id": "linkedVideo",
+          "name": "Linked Video",
+          "type": "Link",
           "localized": false,
           "required": false,
           "validations": [
             {
-              "size": {
-                "max": 400
-              },
-              "message": "Please limit the Testimonial to no more than 400 characters"
+              "linkContentType": [
+                "video"
+              ]
             }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        },
+        {
+          "id": "linkText",
+          "name": "Link Text",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [
+
           ],
           "disabled": false,
           "omitted": false
@@ -1666,13 +1720,20 @@
           "sys": {
             "type": "Link",
             "linkType": "Space",
-            "id": "343qxys30lid"
+            "id": "7yx6ovlj39n5"
           }
         },
-        "id": "section-Testimonials",
+        "id": "section-testimonials",
         "type": "ContentType",
-        "createdAt": "2018-02-12T19:17:55.075Z",
-        "updatedAt": "2018-02-12T19:48:08.620Z",
+        "createdAt": "2018-04-16T18:37:10.413Z",
+        "updatedAt": "2018-06-29T21:20:51.338Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
         "createdBy": {
           "sys": {
             "type": "Link",
@@ -1684,32 +1745,44 @@
           "sys": {
             "type": "Link",
             "linkType": "User",
-            "id": "0SUbYs2vZlXjVR6bH6o83O"
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
           }
         },
-        "publishedCounter": 6,
-        "version": 12,
+        "publishedCounter": 4,
+        "version": 8,
         "publishedBy": {
           "sys": {
             "type": "Link",
             "linkType": "User",
-            "id": "0SUbYs2vZlXjVR6bH6o83O"
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
           }
         },
-        "publishedVersion": 11,
-        "firstPublishedAt": "2018-02-12T19:17:55.556Z",
-        "publishedAt": "2018-02-12T19:48:08.620Z"
+        "publishedVersion": 7,
+        "firstPublishedAt": "2018-04-16T18:37:10.680Z",
+        "publishedAt": "2018-06-29T21:20:51.338Z"
       },
-      "displayField": "title",
+      "displayField": "internalTitle",
       "name": "Section: Testimonials",
-      "description": "The Testimonials section shows a set of testimonials with associated photo and text.",
+      "description": "A Testimonials section can show one or many Testimonials written by leaders, partners, or members who have participated in the Ministry or Conference.",
       "fields": [
         {
-          "id": "title",
-          "name": "Title",
+          "id": "internalTitle",
+          "name": "Internal Title (Contentful Only)",
           "type": "Symbol",
           "localized": false,
-          "required": false,
+          "required": true,
+          "validations": [
+
+          ],
+          "disabled": false,
+          "omitted": true
+        },
+        {
+          "id": "name",
+          "name": "Section Name (contentful only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
           "validations": [
 
           ],
@@ -1721,7 +1794,7 @@
           "name": "Testimonials",
           "type": "Array",
           "localized": false,
-          "required": false,
+          "required": true,
           "validations": [
 
           ],
@@ -1738,6 +1811,23 @@
             ],
             "linkType": "Entry"
           }
+        },
+        {
+          "id": "style",
+          "name": "Style",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "in": [
+                "default",
+                "jumbo"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false
         }
       ]
     },

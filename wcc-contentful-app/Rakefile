@@ -35,7 +35,7 @@ namespace :app do
     all_models.each do |model_id|
       content_type = client.content_type(model_id).raw
 
-      if index = content_types['items'].find_index { |ct| ct.dig('sys', 'id') == model_id }
+      if index = content_types['items'].find_index { |ct| ct.dig('sys', 'id').casecmp(model_id) == 0 }
         content_types['items'][index] = content_type
       else
         content_types['items'].push(content_type)
@@ -100,15 +100,15 @@ namespace :app do
       # frozen_string_literal: true
 
       require 'rails_helper'
-      
+
       RSpec.describe 'sections/#{view_name}' do
         helper WCC::Contentful::App::SectionHelper
 
         it 'renders successfully' do
           section = contentful_create('#{model}')
-      
+
           render partial: 'components/section', locals: { section: section }
-      
+
           expect(rendered).to have_css('section.#{model}.default')
         end
       end
