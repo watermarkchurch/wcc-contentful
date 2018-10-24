@@ -1,0 +1,12 @@
+<div class="row justify-content-center">
+  <div class="col col-lg-10">
+    <div class="section-video-content">
+      <% if section.title.present? %>
+        <h2 class="section-video-content__title"><%= section.title %></h2>
+      <% end %>
+      <div class="section-video-content__video video-responsive">
+        <%= raw section.embed_code %>
+      </div>
+    </div>
+  </div>
+</div>
