@@ -1550,6 +1550,24 @@
           "omitted": false
         },
         {
+          "id": "style",
+          "name": "Style",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "in": [
+                "default",
+                "light",
+                "dark"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
           "id": "bookmarkTitle",
           "name": "Bookmark Title",
           "type": "Symbol",
