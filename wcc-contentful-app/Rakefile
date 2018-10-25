@@ -6,10 +6,11 @@ require 'fileutils'
 require 'wcc/contentful'
 
 # rubocop:disable Metrics/LineLength
+# Disabling line length for contentful-schema-diff backtick execution
 
 namespace :app do
   desc "Imports a set of models from a space as a single template for the ModelGenerator.\n" \
-    "Usage: rake wcc:import_model[content-type-id,space-id?,extra-content-type-1,extra-content-type-2...]"
+    'Usage: rake wcc:import_model[content-type-id,space-id?,extra-content-type-1,extra-content-type-2...]'
   task :import_model, [:model, :space] do |_t, args|
     raise ArgumentError, 'Must give a content type' unless model = args[:model]
 
