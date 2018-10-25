@@ -23,6 +23,11 @@ class WCC::Contentful::SimpleClient::Management < WCC::Contentful::SimpleClient
     resp.assert_ok!
   end
 
+  def content_type(key, query = {})
+    resp = get("content_types/#{key}", query)
+    resp.assert_ok!
+  end
+
   def webhook_definitions(**query)
     resp = get("/spaces/#{space}/webhook_definitions", query)
     resp.assert_ok!

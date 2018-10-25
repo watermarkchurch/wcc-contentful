@@ -1,0 +1,21 @@
+<div class="row justify-content-center section-faq__row">
+  <div class="col-md-6 col-xs-8 section-faq__faq"
+    data-toggle="collapse" data-target="#faq-section-<%= faq.id %>">
+    <div class="section-faq__faq-question safe-line-break"><%= safe_line_break(faq.questions) %></div>
+
+    <div class="section-faq__faq-answer collapse" id="faq-section-<%= faq.id %>">
+      <%= markdown(faq.answers) if faq.answers.present? %>
+    </div>
+  </div>
+  <div class="col-md-1 col-xs-1 section-faq__expander">
+    <a href="#faq-section-<%= faq.id %>" id="faq-section-<%= faq.id %>-expander"
+        role="button"
+        data-toggle="collapse"
+        aria-expanded="false"></a>
+  </div>
+</div>
+<div class="row justify-content-center">
+  <div class="col-md-8 col-xs-10">
+    <div class="horizontal-line"></div>
+  </div>
+</div>

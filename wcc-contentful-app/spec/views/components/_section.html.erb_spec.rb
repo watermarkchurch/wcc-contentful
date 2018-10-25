@@ -6,7 +6,7 @@ RSpec.describe 'components/section' do
   helper WCC::Contentful::App::SectionHelper
 
   it 'renders the given section with empty styles' do
-    faq = contentful_create('section-Faq')
+    faq = contentful_create('section-faq')
     stub_template 'sections/_faq.html.erb' => '<FAQ />'
 
     render partial: 'components/section', locals: { section: faq }
@@ -15,8 +15,8 @@ RSpec.describe 'components/section' do
   end
 
   it 'renders the given section with an ID' do
-    testimonials = contentful_create('section-Testimonials',
-      title: 'Testimonials for Jesus!')
+    testimonials = contentful_create('section-testimonials',
+      bookmark_title: 'Testimonials for Jesus!')
     stub_template 'sections/_testimonials.html.erb' => '<Testimonials />'
 
     render partial: 'components/section', locals: { section: testimonials }
@@ -25,7 +25,7 @@ RSpec.describe 'components/section' do
   end
 
   it 'renders the section style' do
-    faq = contentful_create('section-Faq',
+    faq = contentful_create('section-faq',
       style: 'light')
     stub_template 'sections/_faq.html.erb' => '<FAQ />'
 
@@ -36,7 +36,7 @@ RSpec.describe 'components/section' do
   end
 
   it 'renders additional styles' do
-    faq = contentful_create('section-Faq',
+    faq = contentful_create('section-faq',
       style: 'light')
     stub_template 'sections/_faq.html.erb' => '<FAQ />'
 
@@ -67,7 +67,7 @@ RSpec.describe 'components/section' do
 
   context 'section_prefixes given' do
     it 'renders the section from the section_prefixes directory when exists' do
-      faq = contentful_create('section-Faq')
+      faq = contentful_create('section-faq')
 
       stub_template 'sections-v2/_faq.html.erb' => '<FAQ-v2 />'
 
@@ -80,7 +80,7 @@ RSpec.describe 'components/section' do
     end
 
     it "renders from the gem's sections directory when doesn't exist in section_prefixes" do
-      faq = contentful_create('section-Faq')
+      faq = contentful_create('section-faq')
 
       stub_template 'sections/_faq.html.erb' => '<FAQ-gem />'
 

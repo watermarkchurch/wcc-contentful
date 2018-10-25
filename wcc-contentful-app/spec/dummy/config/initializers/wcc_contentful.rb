@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'wcc/contentful/rails'
+require 'wcc/contentful/app/rails'
 
 WCC::Contentful.configure do |config|
   # Required
@@ -20,5 +20,4 @@ end
 
 # Download content types, build models, and sync content
 WCC::Contentful.init!
-
-WCC::Contentful.validate_models! if !defined?(Rails) || Rails.env.production?
+WCC::Contentful::App.init!

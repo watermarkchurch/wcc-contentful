@@ -8,6 +8,10 @@ linters:
     disallow_inline_scripts: true
   ErbSafety:
     enabled: true
+    exclude:
+      # TODO: find a better way to generate the HTML
+      # https://github.com/watermarkchurch/wcc-contentful/issues/104
+      - '**/app/views/sections/_video*.html.erb'
   FinalNewline:
     enabled: true
   NoJavascriptTagHelper:

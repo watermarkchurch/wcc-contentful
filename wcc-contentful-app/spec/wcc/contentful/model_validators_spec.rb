@@ -46,7 +46,7 @@ RSpec.describe(WCC::Contentful::App::ModelValidators) do
 
     it 'should error when validation fails' do
       _my_class =
-        Class.new(base_class('faq')) do
+        Class.new(base_class('fake-faq')) do
           validate_fields do
             required('numFaqs').schema do
               required('type').value(eql?: 'Symbol')
@@ -60,13 +60,13 @@ RSpec.describe(WCC::Contentful::App::ModelValidators) do
 
       # assert
       expect(result).to_not be_success
-      expect(result.errors['faq']['fields']['numFaqs']['type'])
+      expect(result.errors['fake-faq']['fields']['numFaqs']['type'])
         .to eq(['must be equal to Symbol'])
     end
 
     it 'should run multiple validations in sequence' do
       _my_class =
-        Class.new(base_class('faq')) do
+        Class.new(base_class('fake-faq')) do
           validate_fields do
             required('numFaqs').schema do
               required('type').value(eql?: 'Number')
@@ -85,15 +85,15 @@ RSpec.describe(WCC::Contentful::App::ModelValidators) do
 
       # assert
       expect(result).to_not be_success
-      expect(result.errors.dig('faq', 'fields', 'numFaqs', 'type'))
+      expect(result.errors.dig('fake-faq', 'fields', 'numFaqs', 'type'))
         .to eq(['must be equal to Number'])
-      expect(result.errors.dig('faq', 'fields', 'answer', 'type'))
+      expect(result.errors.dig('fake-faq', 'fields', 'answer', 'type'))
         .to eq(['must be equal to Boolean'])
     end
 
     it 'overwrites earlier validations of a field' do
       _my_class =
-        Class.new(base_class('faq')) do
+        Class.new(base_class('fake-faq')) do
           validate_fields do
             required('numFaqs').schema do
               required('type').value(eql?: 'Number')
@@ -144,7 +144,7 @@ RSpec.describe(WCC::Contentful::App::ModelValidators) do
 
     it 'should validate Integer as int' do
       _my_class =
-        Class.new(base_class('faq')) do
+        Class.new(base_class('fake-faq')) do
           validate_field :num_faqs, :Int
         end
 
@@ -157,7 +157,7 @@ RSpec.describe(WCC::Contentful::App::ModelValidators) do
 
     it 'should validate Float as float' do
       _my_class =
-        Class.new(base_class('faq')) do
+        Class.new(base_class('fake-faq')) do
           validate_field :num_faqs_float, :Float
         end
 
@@ -183,7 +183,7 @@ RSpec.describe(WCC::Contentful::App::ModelValidators) do
 
     it 'should validate Boolean as bool' do
       _my_class =
-        Class.new(base_class('faq')) do
+        Class.new(base_class('fake-faq')) do
           validate_field :truthy_or_falsy, :Boolean
         end
 
@@ -212,7 +212,7 @@ RSpec.describe(WCC::Contentful::App::ModelValidators) do
 
     it 'should error when field is not of expected type' do
       _my_class =
-        Class.new(base_class('faq')) do
+        Class.new(base_class('fake-faq')) do
           validate_field :num_faqs_float, :String
         end
 
@@ -221,7 +221,7 @@ RSpec.describe(WCC::Contentful::App::ModelValidators) do
 
       # assert
       expect(result).to_not be_success
-      expect(result.errors.dig('faq', 'fields', 'numFaqsFloat', 'type')).to eq(
+      expect(result.errors.dig('fake-faq', 'fields', 'numFaqsFloat', 'type')).to eq(
         ['must be one of: Symbol, Text']
       )
     end
@@ -449,7 +449,7 @@ RSpec.describe(WCC::Contentful::App::ModelValidators) do
   context 'multiple model validations' do
     it 'validation failures' do
       _my_class =
-        Class.new(base_class('faq')) do
+        Class.new(base_class('fake-faq')) do
           validate_field :num_faqs, :Json
         end
       _my_class2 =
@@ -463,7 +463,7 @@ RSpec.describe(WCC::Contentful::App::ModelValidators) do
       # assert
       expect(result).to_not be_success
       expect(result.errors).to eq({
-        'faq' => { 'fields' => { 'numFaqs' => { 'type' => ['must be equal to Json'] } } },
+        'fake-faq' => { 'fields' => { 'numFaqs' => { 'type' => ['must be equal to Json'] } } },
         'page' => { 'fields' => { 'title' => { 'type' => ['must be equal to Boolean'] } } }
       })
     end

@@ -1,0 +1,38 @@
+<div class="row">
+  <div class="column">
+    <% section.testimonials&.each do |testimonial|
+      next unless testimonial %>
+      <div class="section-testimonials__item">
+        <% if testimonial.photo %>
+          <div class="section-testimonials__item-sidebar"
+            style="background-image: url(<%= testimonial.photo.file.url %>);">
+          </div>
+        <% end %>
+        <div class="section-testimonials__item-card">
+          <% if testimonial.quote.present? %>
+            <div
+              class="section-testimonials__item-card-quote
+                safe-line-break"><%= safe_line_break(testimonial.quote) %></div>
+          <% end %>
+          <div class="section-testimonials__item-card-meta">
+            <% if testimonial.photo %>
+              <%= image_tag(testimonial.photo.file.url,
+                    alt: testimonial.photo.description || testimonial.photo.title,
+                    class: 'section-testimonials__item-card-meta-photo') %>
+            <% end %>
+
+            <h3 class="section-testimonials__item-card-meta-name">
+              <%= testimonial.name %>
+            </h3>
+            <% if testimonial.mini_bio %>
+              <div class="section-testimonials__item-card-meta-bio">
+                <%= markdown(testimonial.mini_bio) %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div><!--quotation-->
+
+    <% end %>
+  </div><!--column-->
+</div><!--row-->
