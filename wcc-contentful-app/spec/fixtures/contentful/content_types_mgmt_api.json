@@ -2939,9 +2939,55 @@
       ]
     },
     {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "4gyidsb2jx1u"
+          }
+        },
+        "id": "redirect",
+        "type": "ContentType",
+        "createdAt": "2018-02-16T20:24:11.613Z",
+        "updatedAt": "2018-10-25T17:31:51.470Z",
+        "environment": {
+          "sys": {
+            "id": "gburgett",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "publishedCounter": 7,
+        "version": 14,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "publishedVersion": 13,
+        "firstPublishedAt": "2018-02-16T20:24:11.821Z",
+        "publishedAt": "2018-10-25T17:31:51.470Z"
+      },
+      "displayField": "slug",
       "name": "Redirect",
       "description": "",
-      "displayField": "slug",
       "fields": [
         {
           "id": "slug",
@@ -3005,58 +3051,14 @@
           "type": "Link",
           "localized": false,
           "required": false,
-          "validations": [],
+          "validations": [
+
+          ],
           "disabled": false,
           "omitted": false,
           "linkType": "Entry"
         }
-      ],
-      "sys": {
-        "space": {
-          "sys": {
-            "type": "Link",
-            "linkType": "Space",
-            "id": "4gyidsb2jx1u"
-          }
-        },
-        "id": "redirect",
-        "type": "ContentType",
-        "createdAt": "2018-02-16T20:24:11.613Z",
-        "updatedAt": "2018-10-25T17:31:51.470Z",
-        "environment": {
-          "sys": {
-            "id": "gburgett",
-            "type": "Link",
-            "linkType": "Environment"
-          }
-        },
-        "createdBy": {
-          "sys": {
-            "type": "Link",
-            "linkType": "User",
-            "id": "0SUbYs2vZlXjVR6bH6o83O"
-          }
-        },
-        "updatedBy": {
-          "sys": {
-            "type": "Link",
-            "linkType": "User",
-            "id": "0SUbYs2vZlXjVR6bH6o83O"
-          }
-        },
-        "publishedCounter": 7,
-        "version": 14,
-        "publishedBy": {
-          "sys": {
-            "type": "Link",
-            "linkType": "User",
-            "id": "0SUbYs2vZlXjVR6bH6o83O"
-          }
-        },
-        "publishedVersion": 13,
-        "firstPublishedAt": "2018-02-16T20:24:11.821Z",
-        "publishedAt": "2018-10-25T17:31:51.470Z"
-      }
+      ]
     }
   ]
 }

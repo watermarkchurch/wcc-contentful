@@ -30,6 +30,7 @@ namespace :app do
 
     client = WCC::Contentful::SimpleClient::Management.new(
       space: space.split('/').first,
+      environment: space.split('/')[1],
       management_token: mgmt_token
     )
 
