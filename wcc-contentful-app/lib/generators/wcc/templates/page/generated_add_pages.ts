@@ -47,4 +47,79 @@ export = function (migration: Migration) {
       ]
     })
 
+  /************  redirect  ******************/
+
+  var redirect = migration.createContentType('redirect', {
+    displayField: 'slug',
+    name: 'Redirect',
+    description: ''
+  })
+
+  redirect.createField('slug', {
+    name: 'Slug',
+    type: 'Symbol',
+    localized: false,
+    required: true,
+    validations:
+      [{ unique: true },
+      {
+        regexp:
+        {
+          pattern: '\\/(?:[\\w#!:.?+=&%@!\\-]\\/?)*$',
+          flags: null
+        },
+        message: 'The slug must look like the path part of a URL and begin with a forward slash, example: \'/my-page-slug\''
+      }],
+    disabled: false,
+    omitted: false
+  })
+
+  redirect.createField('externalLink', {
+    name: 'External Link',
+    type: 'Symbol',
+    localized: false,
+    required: false,
+    validations:
+      [{
+        regexp:
+        {
+          pattern: '^([^\\s\\:]+):(\\/\\/)?(\\w+:{0,1}\\w*@)?(([^\\s\\/#]+\\.)+[^\\s\\/#]+)(:[0-9]+)?(\\/|(\\/|\\#)([\\w#!:.?+=&%@!\\-\\/]+))?$|^(\\/|(\\/|\\#)([\\w#!:.?+=&%@!\\-\\/]+))$',
+          flags: null
+        },
+        message: 'The external link must be a URL like \'https://www.watermark.org/\', a mailto url like \'mailto:info@watermark.org\', or a relative URL like \'#location-on-page\''
+      }],
+    disabled: false,
+    omitted: false
+  })
+
+  redirect.createField('pageLink', {
+    name: 'Page Link',
+    type: 'Link',
+    localized: false,
+    required: false,
+    validations: [{ linkContentType: ['page'] }],
+    disabled: false,
+    omitted: false,
+    linkType: 'Entry'
+  })
+
+  redirect.createField('sectionLink', {
+    name: 'Section Link',
+    type: 'Link',
+    localized: false,
+    required: false,
+    validations: [],
+    disabled: false,
+    omitted: false,
+    linkType: 'Entry'
+  })
+
+  redirect.changeEditorInterface('slug', 'slugEditor')
+
+  redirect.changeEditorInterface('externalLink', 'urlEditor', { helpText: 'An external URL to send people to, that is not a page on this site.  Use this OR Page Link, you can\'t use both.' })
+
+  redirect.changeEditorInterface('pageLink', 'entryCardEditor', { helpText: 'A page on this site to send people to.  Use this OR External Link, you can\'t use both.' })
+
+  redirect.changeEditorInterface('sectionLink', 'entryLinkEditor', { helpText: '(Optional) If provided, this will link the user to the specific section on a page.  If you use this, you must also use Page Link.' })
+
 }
