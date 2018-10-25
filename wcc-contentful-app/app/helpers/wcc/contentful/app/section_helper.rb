@@ -3,6 +3,8 @@
 require 'redcarpet'
 
 module WCC::Contentful::App::SectionHelper
+  extend self
+
   def section_template_name(section)
     section.class.name.demodulize.underscore.sub('section_', '')
   end

@@ -13,8 +13,22 @@ RSpec.describe WCC::Contentful::App::PagesController, type: :controller do
     expect(assigns(:page)).to eq(page)
   end
 
+  it 'uses redirect when given' do
+    expect(WCC::Contentful::Model::Page).to receive(:find_by)
+      .and_return(nil)
+    redirect = contentful_stub('redirect',
+      slug: '/test',
+      external_link: 'https://www.google.com')
+
+    get :show, params: { slug: 'test' }
+
+    expect(response).to redirect_to(redirect.external_link)
+  end
+
   it 'raises exception when page not found' do
     expect(WCC::Contentful::Model::Page).to receive(:find_by)
+      .and_return(nil)
+    expect(WCC::Contentful::Model::Redirect).to receive(:find_by)
       .and_return(nil)
 
     expect {
