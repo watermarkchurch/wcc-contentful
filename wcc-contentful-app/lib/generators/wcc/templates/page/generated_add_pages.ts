@@ -1,4 +1,4 @@
-import Migration from 'contentful-migration-cli'
+import Migration from '@watermarkchurch/contentful-migration'
 
 export = function (migration: Migration) {
   const page = migration.createContentType('page')
