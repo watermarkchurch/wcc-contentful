@@ -74,7 +74,7 @@ namespace :app do
     const = WCC::Contentful::Helpers.constant_from_content_type(model)
 
     # Write a model for the content type
-    File.write("lib/generators/wcc/templates/#{singular}/models/#{singular}.rb", <<~HEREDOC)
+    File.write("lib/generators/wcc/templates/#{singular}/models/#{singular.tr('-', '_')}.rb", <<~HEREDOC)
       # frozen_string_literal: true
        # This model represents the '#{model}' content type in Contentful.  Any linked
       # entries of the '#{model}' content type will be resolved as instances of this class.
