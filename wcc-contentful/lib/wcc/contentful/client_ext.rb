@@ -20,6 +20,7 @@ class Contentful::Client
   end
 
   REWRITE_REGEXP = /^(https?\:\/\/(?:\w+)\.contentful\.com\/spaces\/[^\/]+\/)(?!environments)(.+)$/
+    .freeze
   def self.rewrite_to_environment(url, environment)
     return url unless m = REWRITE_REGEXP.match(url)
 
