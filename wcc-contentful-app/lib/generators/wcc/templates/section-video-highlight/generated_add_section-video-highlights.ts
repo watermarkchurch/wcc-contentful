@@ -30,7 +30,7 @@ export = function(migration : Migration, { makeRequest, spaceId, accessToken }) 
     required: false,
     validations:
       [{
-        size: { max: 75 },
+        size: { min: 0, max: 75 },
         message: 'Tag must be short!'
       }],
     disabled: false,
@@ -52,7 +52,7 @@ export = function(migration : Migration, { makeRequest, spaceId, accessToken }) 
     type: 'Text',
     localized: true,
     required: false,
-    validations: [{ size: { max: 500 } }],
+    validations: [{ size: { min: 0, max: 500 } }],
     disabled: false,
     omitted: false
   })

@@ -80,7 +80,7 @@ export = function(migration : Migration, { makeRequest, spaceId, accessToken }) 
     type: 'Integer',
     localized: false,
     required: false,
-    validations: [{ range: { min: 1 } }],
+    validations: [{ range: { min: 1, max: Infinity } }],
     disabled: false,
     omitted: false
   })

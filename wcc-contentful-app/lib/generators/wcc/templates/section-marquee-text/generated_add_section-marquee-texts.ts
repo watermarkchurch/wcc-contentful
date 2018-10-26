@@ -28,7 +28,7 @@ export = function(migration : Migration, { makeRequest, spaceId, accessToken }) 
     type: 'Symbol',
     localized: true,
     required: false,
-    validations: [{ size: { max: 50 } }],
+    validations: [{ size: { min: 0, max: 50 } }],
     disabled: false,
     omitted: false
   })
@@ -38,7 +38,7 @@ export = function(migration : Migration, { makeRequest, spaceId, accessToken }) 
     type: 'Symbol',
     localized: true,
     required: true,
-    validations: [{ size: { max: 150 } }],
+    validations: [{ size: { min: 0, max: 150 } }],
     disabled: false,
     omitted: false
   })
