@@ -1,5 +1,6 @@
 # frozen_string_literal: true
- # This model represents the 'section-marquee-text' content type in Contentful.  Any linked
+
+# This model represents the 'section-marquee-text' content type in Contentful.  Any linked
 # entries of the 'section-marquee-text' content type will be resolved as instances of this class.
 # It exposes .find, .find_by, and .find_all methods to query Contentful.
 class SectionMarqueeText < WCC::Contentful::Model::SectionMarqueeText
