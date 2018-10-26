@@ -1,4 +1,4 @@
-import Migration from 'contentful-migration';
+import Migration from '@watermarkchurch/contentful-migration';
 
 export = function(migration: Migration, { makeRequest, spaceId, accessToken }) {
   var menu = migration.createContentType('menu', {
