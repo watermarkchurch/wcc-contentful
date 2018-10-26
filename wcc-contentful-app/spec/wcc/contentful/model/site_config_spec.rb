@@ -21,15 +21,5 @@ RSpec.describe WCC::Contentful::Model::SiteConfig do
       expect(subject_h['sys']).to eq(stubbed_h['sys'])
       expect(subject_h['fields']).to eq(stubbed_h['fields'])
     end
-
-    it 'memoizes the instance' do
-      stubbed = contentful_create('site-config', foreign_key: 'default')
-      expect(WCC::Contentful::Model::SiteConfig).to receive(:find_by)
-        .once
-        .and_return(stubbed)
-
-      described_class.instance
-      described_class.instance
-    end
   end
 end
