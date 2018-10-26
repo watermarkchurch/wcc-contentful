@@ -18,11 +18,7 @@
               data: { toggle: 'collapse', target: '#navbar' }) %>
       <% end %>
     </div>
-  <% elsif item.respond_to?(:href) %>
-    <%= render_button(item, class: 'nav-link', data: { toggle: 'collapse', target: '#navbar' }) %>
   <% else %>
-    <%# divider %>
-    <span class="divider <%= item.style %>">
-    </span>
+    <%= render_button(item, class: 'nav-link', data: { toggle: 'collapse', target: '#navbar' }) %>
   <% end %>
 <% end %>
