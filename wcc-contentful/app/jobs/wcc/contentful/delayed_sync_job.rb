@@ -48,7 +48,9 @@ module WCC::Contentful
         store.set('sync:token', token: sync_resp.next_sync_token)
 
         logger.info "Synced #{count} entries.  Next sync token:\n  #{sync_resp.next_sync_token}"
-        sync_later!(up_to_id: up_to_id) unless id_found
+        logger.info "Should enqueue again? [#{!id_found}]"
+        # Passing nil to only enqueue the job 1 more time
+        sync_later!(up_to_id: nil) unless id_found
         sync_resp.next_sync_token
       end
     end

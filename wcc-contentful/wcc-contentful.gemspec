@@ -24,6 +24,7 @@ Gem::Specification.new do |spec|
 
   spec.require_paths = ['lib']
 
+  spec.add_development_dependency 'byebug'
   spec.add_development_dependency 'coveralls'
   spec.add_development_dependency 'dotenv', '~> 2.2'
   spec.add_development_dependency 'erb_lint', '~> 0.0.26'

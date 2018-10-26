@@ -80,7 +80,7 @@ RSpec.describe WCC::Contentful::DelayedSyncJob, type: :job do
       end
     end
 
-    it 'Drops the job again if the ID still does not come back' do
+    it 'Drops the job again if the ID still does not come back and told to go again' do
       allow(client).to receive(:sync)
         .and_return(double(
                       items: next_sync['items'],
@@ -89,10 +89,24 @@ RSpec.describe WCC::Contentful::DelayedSyncJob, type: :job do
 
       # expect
       expect(job).to receive(:sync_later!)
-        .with(up_to_id: 'foobar')
+        .with(up_to_id: nil)
 
       # act
       job.sync!(up_to_id: 'foobar')
+    end
+
+    it 'does not drop a job if the ID is nil' do
+      allow(client).to receive(:sync)
+        .and_return(double(
+                      items: next_sync['items'],
+                      next_sync_token: 'test2'
+                    ))
+
+      expect(ActiveJob::Base.queue_adapter).to_not receive(:enqueue)
+      expect(ActiveJob::Base.queue_adapter).to_not receive(:enqueue_at)
+
+      # act
+      job.sync!(up_to_id: nil)
     end
   end
 
