@@ -7,7 +7,7 @@
 
       <div class="contact-panel__content">
         <!-- TODO: use route helper without needing to call directly on wcc_contentful_app -->
-        <%= form_tag wcc_contentful_app.contact_form_path, remote: true, data: { contact_us: 'yaddiyaddi' }, method: 'post' do %>
+        <%= form_tag wcc_contentful_app.contact_form_path, remote: true, data: { contact_form: 'yaddiyaddi' }, method: 'post' do %>
           <input type="hidden" name="id" value="<%= section.id %>" />
           <% section.fields&.each do |field| %>
             <div class="field">
