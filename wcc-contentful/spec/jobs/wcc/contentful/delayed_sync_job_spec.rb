@@ -134,6 +134,26 @@ RSpec.describe WCC::Contentful::DelayedSyncJob, type: :job do
       expect(synced).to eq('test')
       expect(synced2).to eq('test2')
     end
+
+    it 'ignores a poison sync token in the store' do
+      allow(WCC::Contentful::Services.instance).to receive(:store)
+        .and_return(WCC::Contentful::Store::LazyCacheStore.new(client))
+
+      store.set('sync:token', poison: 'poison')
+
+      expect(client).to receive(:sync)
+        .with({ sync_token: nil })
+        .and_return(double(
+                      items: [],
+                      next_sync_token: 'test'
+                    ))
+
+      # act
+      synced = job.sync!
+
+      # assert
+      expect(synced).to eq('test')
+    end
   end
 
   describe 'Perform' do

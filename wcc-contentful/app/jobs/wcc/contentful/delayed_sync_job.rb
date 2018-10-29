@@ -33,7 +33,7 @@ module WCC::Contentful
       return unless store.respond_to?(:index)
 
       self.class.mutex.synchronize do
-        next_sync_token = store.find('sync:token')&.fetch('token')
+        next_sync_token = store.find('sync:token')&.fetch('token', nil)
         sync_resp = client.sync(sync_token: next_sync_token)
 
         id_found = up_to_id.nil?
