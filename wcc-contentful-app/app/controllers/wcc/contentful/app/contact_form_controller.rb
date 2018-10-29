@@ -12,7 +12,7 @@ class WCC::Contentful::App::ContactFormController < ApplicationController
       data[item.title] = params[item.title]
     end
 
-    UserMailer.contact_us_email(to_email, data).deliver_later
+    UserMailer.contact_form_email(to_email, data).deliver_later
 
     render json: { type: 'success', message: "Thanks for reaching out. We'll be in touch soon!" }
   end
