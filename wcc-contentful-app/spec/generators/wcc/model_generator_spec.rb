@@ -52,7 +52,7 @@ RSpec.describe Wcc::ModelGenerator, type: :generator do
     it 'should ensure migration-cli is installed' do
       expect(destination_root).to have_structure {
         file 'package.json' do
-          contains '"contentful-migration": "github:watermarkchurch/migration-cli"'
+          contains '"@watermarkchurch/contentful-migration": "^'
         end
       }
     end
