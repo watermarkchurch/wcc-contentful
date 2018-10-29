@@ -45,7 +45,7 @@ module WCC::Contentful
           store.index(item)
           count += 1
         end
-        store.set('sync:token', token: sync_resp.next_sync_token)
+        store.set('sync:token', 'token' => sync_resp.next_sync_token)
 
         logger.info "Synced #{count} entries.  Next sync token:\n  #{sync_resp.next_sync_token}"
         logger.info "Should enqueue again? [#{!id_found}]"

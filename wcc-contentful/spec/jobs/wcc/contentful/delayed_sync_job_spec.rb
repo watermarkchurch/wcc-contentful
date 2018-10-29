@@ -31,7 +31,7 @@ RSpec.describe WCC::Contentful::DelayedSyncJob, type: :job do
                       ))
 
         expect(WCC::Contentful::Services.instance.store).to receive(:set)
-          .with('sync:token', { token: 'test' })
+          .with('sync:token', { 'token' => 'test' })
         expect(WCC::Contentful::Services.instance.store).to_not receive(:index)
 
         # act
@@ -55,7 +55,7 @@ RSpec.describe WCC::Contentful::DelayedSyncJob, type: :job do
 
         items = next_sync['items']
         expect(WCC::Contentful::Services.instance.store).to receive(:set)
-          .with('sync:token', { token: 'test2' })
+          .with('sync:token', { 'token' => 'test2' })
         expect(WCC::Contentful::Services.instance.store).to receive(:index)
           .exactly(items.count).times
 
@@ -107,6 +107,32 @@ RSpec.describe WCC::Contentful::DelayedSyncJob, type: :job do
 
       # act
       job.sync!(up_to_id: nil)
+    end
+
+    it 'continues from prior sync token with LazyCacheStore' do
+      allow(WCC::Contentful::Services.instance).to receive(:store)
+        .and_return(WCC::Contentful::Store::LazyCacheStore.new(client))
+
+      allow(client).to receive(:sync)
+        .with({ sync_token: nil })
+        .and_return(double(
+                      items: [],
+                      next_sync_token: 'test'
+                    ))
+      expect(client).to receive(:sync)
+        .with({ sync_token: 'test' })
+        .and_return(double(
+                      items: [],
+                      next_sync_token: 'test2'
+                    ))
+
+      # act
+      synced = job.sync!
+      synced2 = job.sync!
+
+      # assert
+      expect(synced).to eq('test')
+      expect(synced2).to eq('test2')
     end
   end
 
