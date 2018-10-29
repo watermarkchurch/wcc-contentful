@@ -8,6 +8,7 @@ require 'wcc/contentful'
 require 'webmock/rspec'
 require 'vcr'
 require 'httplog'
+require 'byebug'
 
 require 'bench_helper'
 
