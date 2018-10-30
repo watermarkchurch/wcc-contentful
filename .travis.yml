@@ -1,5 +1,6 @@
 sudo: false
 language: ruby
+cache: bundler
 rvm:
   - 2.3.8
   - 2.4.5
@@ -16,8 +17,6 @@ env:
 before_install: gem install bundler -v 1.16.1
 install:
   - bin/bundle install --path /tmp/vendor/bundle
-before_script:
-  - bundle exec danger
 script:
   - export COVERALLS_PARALLEL=true
   - bin/rspec --format documentation --order rand
@@ -25,6 +24,7 @@ jobs:
   include:
     - stage: lint
       script:
+        - bundle exec danger
         - bundle exec rubocop
         - bundle exec erblint '*/app/views/**/*.erb'
       # Keep in mind to overwrite these here
