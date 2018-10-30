@@ -14,6 +14,8 @@ env:
 before_install: gem install bundler -v 1.16.1
 install:
   - bin/bundle install --path /tmp/vendor/bundle
+before_script:
+  - bundle exec danger
 script:
   - export COVERALLS_PARALLEL=true
   - bin/rspec --format documentation --order rand
