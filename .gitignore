@@ -11,7 +11,8 @@
 # rspec failure tracking
 .rspec_status
 
-Gemfile.lock
+*gemfile.lock
+.bundle
 
 # exports and error logs from contentful
 contentful-export*

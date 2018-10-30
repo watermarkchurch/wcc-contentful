@@ -24,6 +24,7 @@ Gem::Specification.new do |spec|
 
   spec.require_paths = ['lib']
 
+  spec.add_development_dependency 'appraisal'
   spec.add_development_dependency 'byebug'
   spec.add_development_dependency 'coveralls'
   spec.add_development_dependency 'dotenv', '~> 2.2'
@@ -45,7 +46,7 @@ Gem::Specification.new do |spec|
 
   # for generators
   spec.add_development_dependency 'generator_spec', '~> 0.9.4'
-  spec.add_development_dependency 'rails', '~> 5.1'
+  spec.add_development_dependency 'rails', '~> 5.0'
   spec.add_development_dependency 'rspec-rails', '~> 3.7'
   spec.add_development_dependency 'sqlite3'
   spec.add_development_dependency 'timecop', '~> 0.9.1'
