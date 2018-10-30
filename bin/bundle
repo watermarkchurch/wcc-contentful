@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -e
+
+bundle "$@"
+pushd wcc-contentful
+bundle "$@"
+popd
+pushd wcc-contentful-app
+bundle "$@"
+popd
