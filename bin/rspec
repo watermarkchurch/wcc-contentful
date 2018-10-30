@@ -3,9 +3,7 @@
 set -e
 
 cd wcc-contentful
-echo `pwd`
 bundle exec rspec "$@"
 cd ../wcc-contentful-app
-echo `pwd`
 bundle exec rspec "$@"
 cd ..

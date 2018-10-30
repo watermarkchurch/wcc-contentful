@@ -2,9 +2,12 @@
 
 set -e
 
+export BUNDLE_GEMFILE=`pwd`/Gemfile
 bundle "$@"
 cd wcc-contentful
+export BUNDLE_GEMFILE=`pwd`/Gemfile
 bundle "$@"
 cd ../wcc-contentful-app
+export BUNDLE_GEMFILE=`pwd`/Gemfile
 bundle "$@"
 cd ..
