@@ -3,7 +3,9 @@
 set -e
 
 cd wcc-contentful
+export BUNDLE_GEMFILE=`pwd`/Gemfile
 bundle exec rspec "$@"
 cd ../wcc-contentful-app
+export BUNDLE_GEMFILE=`pwd`/Gemfile
 bundle exec rspec "$@"
 cd ..
