@@ -16,7 +16,7 @@ install:
   - bin/bundle install --path /tmp/vendor/bundle
 script:
   - export COVERALLS_PARALLEL=true
-  - bin/rspec --format documentation
+  - bin/rspec --format documentation --order rand
   - bundle exec rubocop
   - bundle exec erblint '*/app/views/**/*.erb'
 notifications:
