@@ -21,7 +21,13 @@ before_script:
 script:
   - export COVERALLS_PARALLEL=true
   - bin/rspec --format documentation --order rand
-  - bundle exec rubocop
-  - bundle exec erblint '*/app/views/**/*.erb'
+jobs:
+  include:
+    - stage: lint
+      script:
+        - bundle exec rubocop
+        - bundle exec erblint '*/app/views/**/*.erb'
+      # Keep in mind to overwrite these here
+      rvm: 2.3
 notifications:
   webhooks: https://coveralls.io/webhook
