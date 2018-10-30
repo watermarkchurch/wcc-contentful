@@ -3,7 +3,6 @@ language: ruby
 cache: bundler
 rvm:
   - 2.3.8
-  - 2.4.5
   - 2.5.3
 addons:
   postgresql: "10"
@@ -28,6 +27,6 @@ jobs:
         - bundle exec rubocop
         - bundle exec erblint '*/app/views/**/*.erb'
       # Keep in mind to overwrite these here
-      rvm: 2.3
+      rvm: 2.5
 notifications:
   webhooks: https://coveralls.io/webhook
