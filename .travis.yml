@@ -17,5 +17,7 @@ install:
 script:
   - export COVERALLS_PARALLEL=true
   - bin/rspec --format documentation
+  - bundle exec rubocop
+  - bundle exec erblint '*/app/views/**/*.erb'
 notifications:
   webhooks: https://coveralls.io/webhook
