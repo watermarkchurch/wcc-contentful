@@ -3,9 +3,8 @@
 set -e
 
 bundle "$@"
-pushd wcc-contentful
+cd wcc-contentful
 bundle "$@"
-popd
-pushd wcc-contentful-app
+cd ../wcc-contentful-app
 bundle "$@"
-popd
+cd ..
