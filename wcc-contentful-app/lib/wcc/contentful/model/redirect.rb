@@ -1,19 +1,29 @@
 # frozen_string_literal: true
 
 class WCC::Contentful::Model::Redirect < WCC::Contentful::Model
-  def href
-    if !url.nil?
-      url
-    elsif valid_page_reference?(pageReference)
-      "/#{pageReference.url}"
-    end
+  def external_uri
+    @external_uri ||= URI(external_link) if external_link.present?
   end
 
-  def valid_page_reference?(page_ref)
-    if !page_ref.nil? && !defined?(page_ref.url).nil?
-      true
-    else
-      false
-    end
+  # A menu link is external if `external_link` is present and not relative.
+  def external?
+    external_uri&.scheme.present?
+  end
+
+  # Gets either the external link or the slug from the referenced page.
+  # Example usage: `redirect_to redirect.href`
+  def href
+    return external_link if external_link
+
+    url = (link&.try(:slug) || link&.try(:url))
+    return url unless fragment.present?
+
+    url = URI(url || '')
+    url.fragment = fragment
+    url.to_s
+  end
+
+  def fragment
+    WCC::Contentful::App::SectionHelper.section_id(section_link) if section_link
   end
 end

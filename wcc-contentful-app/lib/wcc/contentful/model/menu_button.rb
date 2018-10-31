@@ -32,8 +32,6 @@ class WCC::Contentful::Model::MenuButton < WCC::Contentful::Model
   end
 
   def fragment
-    return unless (section = section_link&.try(:bookmark_title) || section_link&.try(:title)).present?
-
-    CGI.escape(section.gsub(/\W+/, '-'))
+    WCC::Contentful::App::SectionHelper.section_id(section_link) if section_link
   end
 end

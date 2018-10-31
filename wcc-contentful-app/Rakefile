@@ -30,6 +30,7 @@ namespace :app do
 
     client = WCC::Contentful::SimpleClient::Management.new(
       space: space.split('/').first,
+      environment: space.split('/')[1],
       management_token: mgmt_token
     )
 
@@ -73,9 +74,10 @@ namespace :app do
     const = WCC::Contentful::Helpers.constant_from_content_type(model)
 
     # Write a model for the content type
-    File.write("lib/generators/wcc/templates/#{singular}/models/#{singular}.rb", <<~HEREDOC)
+    File.write("lib/generators/wcc/templates/#{singular}/models/#{singular.tr('-', '_')}.rb", <<~HEREDOC)
       # frozen_string_literal: true
-       # This model represents the '#{model}' content type in Contentful.  Any linked
+
+      # This model represents the '#{model}' content type in Contentful.  Any linked
       # entries of the '#{model}' content type will be resolved as instances of this class.
       # It exposes .find, .find_by, and .find_all methods to query Contentful.
       class #{const} < WCC::Contentful::Model::#{const}
