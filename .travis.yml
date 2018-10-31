@@ -4,6 +4,9 @@ cache: bundler
 rvm:
   - 2.3.8
   - 2.5.3
+gemfile:
+  - gemfiles/rails_5.2.gemfile
+  - gemfiles/rails_5.0.gemfile
 addons:
   postgresql: "10"
   apt:
@@ -15,10 +18,10 @@ env:
   - PGPORT=5433
 before_install: gem install bundler -v 1.16.1
 install:
-  - bin/bundle install --path /tmp/vendor/bundle
+  - bundle install --path /tmp/vendor/bundle
 script:
   - export COVERALLS_PARALLEL=true
-  - bin/rspec --format documentation --order rand
+  - bin/bundle exec rspec --format documentation --order rand
 jobs:
   include:
     - stage: lint
@@ -28,5 +31,6 @@ jobs:
         - bundle exec erblint '*/app/views/**/*.erb'
       # Keep in mind to overwrite these here
       rvm: 2.5
+      gemfile: gemfiles/rails_5.2.gemfile
 notifications:
   webhooks: https://coveralls.io/webhook
