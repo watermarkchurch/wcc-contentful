@@ -1,0 +1,15 @@
+.section-faq {
+  &__show-more-button {
+    &[aria-expanded="false"] {
+      .section-faq__show-more-button__expanded {
+        display: none;
+      }
+    }
+
+    &[aria-expanded="true"] {
+      .section-faq__show-more-button__collapsed {
+        display: none;
+      }
+    }
+  }
+}
