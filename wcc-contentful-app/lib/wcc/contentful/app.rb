@@ -26,6 +26,6 @@ module WCC::Contentful::App
   end
 
   def self.db_connected?
-    !!@db_connected
+    @db_connected
   end
 end
