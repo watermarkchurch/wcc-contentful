@@ -6,8 +6,7 @@
       </div><!--faq-panel__header-->
 
       <div class="contact-panel__content">
-        <!-- TODO: use route helper without needing to call directly on wcc_contentful_app -->
-        <%= form_tag contact_form_path, remote: true, data: { contact_form: 'yaddiyaddi' }, method: 'post' do %>
+        <%= form_tag contact_form_path, remote: true, data: { contact_form: '' }, method: 'post' do %>
           <input type="hidden" name="id" value="<%= section.id %>" />
           <% section.fields&.each do |field| %>
             <div class="field">
@@ -16,7 +15,8 @@
                   when 'email'
                     content_tag(:input, nil, type: 'email', name: field.title, required: true)
                   when 'textarea'
-                    content_tag(:textarea, nil, rows: 8, columnns: 80, name: field.title, minlength: 5, required: true)
+                    content_tag(:textarea, nil,
+                      rows: 8, columnns: 80, name: field.title, minlength: 5, required: true)
                   else
                     content_tag(:input, nil, type: 'text', name: field.title)
                   end %>
