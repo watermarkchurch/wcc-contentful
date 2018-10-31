@@ -3,5 +3,5 @@
 WCC::Contentful::App::Engine.routes.draw do
   get '/*slug', to: 'pages#show'
   root 'pages#index'
-  post '/contact_form', to: 'contact_form#create'
+  post '/contact_form', to: 'contact_form#create', as: :contact_form
 end
