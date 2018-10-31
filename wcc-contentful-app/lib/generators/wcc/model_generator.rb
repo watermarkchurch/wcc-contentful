@@ -70,8 +70,8 @@ module Wcc
       copy_file 'wcc_contentful.rb', 'config/initializers/wcc_contentful.rb'
     end
 
-    def create_model_migration
-      copy_file "#{singular}/generated_add_#{plural}.ts",
+    def create_model_migrations
+      copy_file "#{singular}/migrations/generated_add_#{plural}.ts",
         "db/migrate/#{timestamp}01_generated_add_#{plural}.ts"
     end
 
