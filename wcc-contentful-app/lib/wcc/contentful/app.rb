@@ -16,5 +16,23 @@ module WCC::Contentful::App
       file = File.dirname(__FILE__) + "/model/#{t.name.underscore}.rb"
       require file if File.exist?(file)
     end
+
+    @db_connected =
+      begin
+        ::ActiveRecord::Base.connection_pool.with_connection(&:active?)
+      rescue StandardError
+        false
+      end
+  end
+
+  def self.db_connected?
+    puts "WE ARE CHECKING THIS"
+    puts "WE ARE CHECKING THIS"
+    puts "WE ARE CHECKING THIS"
+    puts @db_connected
+    puts "WE ARE CHECKING THISZZ"
+    puts "WE ARE CHECKING THISZZ"
+    puts "WE ARE CHECKING THISZZ"
+    !!@db_connected
   end
 end

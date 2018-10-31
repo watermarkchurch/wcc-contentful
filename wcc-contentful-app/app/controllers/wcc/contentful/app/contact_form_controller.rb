@@ -15,13 +15,7 @@ class WCC::Contentful::App::ContactFormController < ApplicationController
 
     UserMailer.contact_form_email(to_email, data).deliver_later
 
-    connected =
-      begin
-        ::ActiveRecord::Base.connection_pool.with_connection(&:active?)
-      rescue StandardError
-        false
-      end
-    if connected
+    if WCC::Contentful::App.db_connected?
       if ActiveRecord::Base.connection.table_exists? 'wcc_contentful_app_contact_form_submissions'
         WCC::Contentful::App::ContactFormSubmission.create!(
           full_name: data['First and Last Name'],
