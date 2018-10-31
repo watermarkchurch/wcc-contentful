@@ -73,6 +73,10 @@ module Wcc
     def create_model_migrations
       copy_file "#{singular}/migrations/generated_add_#{plural}.ts",
         "db/migrate/#{timestamp}01_generated_add_#{plural}.ts"
+
+      Dir.glob("#{singular}/migrations/*.rb").each do |f|
+        copy_file f, "db/migrate/#{timestamp}_#{f}"
+      end
     end
 
     def drop_model_overrides_in_app_models
