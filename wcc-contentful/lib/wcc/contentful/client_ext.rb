@@ -19,10 +19,9 @@ class Contentful::Client
     adapter.call(url, query, headers, proxy)
   end
 
-  REWRITE_REGEXP = /^(https?\:\/\/(?:\w+)\.contentful\.com\/spaces\/[^\/]+\/)(?!environments)(.+)$/
-    .freeze
+  REWRITE_REGX = /^(https?\:\/\/(?:\w+)\.contentful\.com\/spaces\/[^\/]+\/)(?!environments)(.+)$/.freeze
   def self.rewrite_to_environment(url, environment)
-    return url unless m = REWRITE_REGEXP.match(url)
+    return url unless m = REWRITE_REGX.match(url)
 
     File.join(m[1], 'environments', environment, m[2])
   end

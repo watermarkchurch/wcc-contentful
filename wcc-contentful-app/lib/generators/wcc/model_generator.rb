@@ -26,7 +26,7 @@ module Wcc
         package = JSON.parse(File.read('package.json'))
         deps = package['dependencies']
 
-        unless deps.try(:[], 'contentful-migration').present?
+        unless deps.try(:[], '@watermarkchurch/contentful-migration').present?
           run 'npm install --save @watermarkchurch/contentful-migration ts-node ' \
             'typescript contentful-export'
         end

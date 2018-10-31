@@ -8,6 +8,7 @@ require 'wcc/contentful'
 require 'webmock/rspec'
 require 'vcr'
 require 'httplog'
+require 'byebug'
 
 require 'bench_helper'
 
@@ -70,5 +71,4 @@ end
 
 HttpLog.configure do |config|
   config.compact_log = true
-  config.color = true
 end
