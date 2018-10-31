@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -e
+
+if [[ -z "$BUNDLE_GEMFILE" ]]; then
+  export BUNDLE_GEMFILE=`pwd`/Gemfile
+fi
+
+cd wcc-contentful
+echo "$(basename `pwd`) $ bundle $*"
+bundle "$@"
+cd ../wcc-contentful-app
+echo "$(basename `pwd`) $ bundle $*"
+bundle "$@"
+cd ..

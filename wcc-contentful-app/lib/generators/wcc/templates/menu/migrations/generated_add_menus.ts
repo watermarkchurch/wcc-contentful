@@ -1,4 +1,4 @@
-import Migration from 'contentful-migration';
+import Migration from '@watermarkchurch/contentful-migration';
 
 export = function(migration: Migration, { makeRequest, spaceId, accessToken }) {
   var menu = migration.createContentType('menu', {
@@ -282,28 +282,4 @@ export = function(migration: Migration, { makeRequest, spaceId, accessToken }) {
   dropdownmenu.changeEditorInterface('label', 'entryLinkEditor');
   dropdownmenu.changeEditorInterface('items', 'entryLinksEditor');
   dropdownmenu.changeEditorInterface('internalTitle', 'singleLine');
-
-  var divider = migration.createContentType('divider', {
-    displayField: 'style',
-    name: 'Divider',
-    description:
-      'A Divider just puts a separator between elements.  This can be a `<hr />` HTML element, or sometimes a Pipe character `|` depending on the context.'
-  });
-
-  divider.createField('style', {
-    name: 'Style',
-    type: 'Symbol',
-    localized: false,
-    required: true,
-    validations: [
-      { unique: true },
-      {
-        in: ['divider', 'thick divider']
-      }
-    ],
-    disabled: false,
-    omitted: false
-  });
-
-  divider.changeEditorInterface('style', 'radio');
 };

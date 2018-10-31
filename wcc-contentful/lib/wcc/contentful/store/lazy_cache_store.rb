@@ -36,19 +36,16 @@ module WCC::Contentful::Store
         end
       end
 
-      q = find_all(content_type: content_type, options: { limit: 1 }.merge!(options || {}))
+      q = build_query(
+        content_type: content_type,
+        options: { limit: 1 }.merge!(options || {})
+      )
       q = q.apply(filter) if filter
       q.first
     end
 
     def find_all(content_type:, options: nil)
-      Query.new(
-        store: self,
-        client: @client,
-        relation: { content_type: content_type },
-        cache: @cache,
-        options: options
-      )
+      build_query(content_type: content_type, options: options.dup)
     end
 
     # #index is called whenever the sync API comes back with more data.
@@ -84,6 +81,27 @@ module WCC::Contentful::Store
       old = @cache.read(key)
       @cache.delete(key)
       old
+    end
+
+    private
+
+    def build_query(content_type:, options: nil)
+      if options.delete(:cache_response)
+        Query.new(
+          store: self,
+          client: @client,
+          relation: { content_type: content_type },
+          cache: @cache,
+          options: options
+        )
+      else
+        CDNAdapter::Query.new(
+          store: self,
+          client: @client,
+          relation: { content_type: content_type },
+          options: options
+        )
+      end
     end
 
     def nil_obj(id)
