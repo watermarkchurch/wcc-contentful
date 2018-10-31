@@ -16,5 +16,5 @@ group :development, :test do
   gem 'rubocop', require: false
 end
 
-gemspec :path => "./wcc-contentful"
-gemspec :path => "./wcc-contentful-app"
+gemspec path: './wcc-contentful'
+gemspec path: './wcc-contentful-app'
