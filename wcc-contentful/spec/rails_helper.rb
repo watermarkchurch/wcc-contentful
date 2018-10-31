@@ -4,6 +4,11 @@ require 'spec_helper'
 
 ENV['RAILS_ENV'] ||= 'test'
 
+# require dummy rails app for engine related specs
+VCR.use_cassette('models/wcc_contentful/content_types/init_mgmt_api', record: :none) do
+  require File.expand_path('dummy/config/environment.rb', __dir__)
+end
+
 # require rails libraries:
 #   railtie includes rails + framework middleware
 #   active_job for any job specs
@@ -15,11 +20,6 @@ require 'wcc/contentful/rails'
 
 # require rspec-rails to simulate framework behavior in specs
 require 'rspec/rails'
-
-# require dummy rails app for engine related specs
-VCR.use_cassette('models/wcc_contentful/content_types/init_mgmt_api', record: :none) do
-  require File.expand_path('dummy/config/environment.rb', __dir__)
-end
 
 ENGINE_RAILS_ROOT = File.join(File.dirname(__FILE__), '../')
 
