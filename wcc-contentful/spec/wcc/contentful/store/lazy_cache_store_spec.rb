@@ -146,57 +146,60 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
       expect(main_menu2).to eq(main_menu)
     end
 
-    it 'caches all response items' do
-      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
-        .with(query: hash_including({
-          locale: '*',
-          content_type: 'menu',
-          'fields.name.en-US' => 'Main Menu'
-        }))
-        .to_return(body: load_fixture('contentful/lazy_cache_store/query_main_menu.json'))
+    context 'cache_response: true' do
+      it 'caches all response items' do
+        stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
+          .with(query: hash_including({
+            locale: '*',
+            content_type: 'menu',
+            'fields.name.en-US' => 'Main Menu'
+          }))
+          .to_return(body: load_fixture('contentful/lazy_cache_store/query_main_menu.json'))
 
-      # act
-      main_menu = store.find_all(content_type: 'menu')
-        .apply(name: 'Main Menu')
-        .first
+        # act
+        main_menu = store.find_all(content_type: 'menu', options: { cache_response: true })
+          .apply(name: 'Main Menu')
+          .first
 
-      # assert
-      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
-          '/entries/FNlqULSV0sOy4IoGmyWOW')
-        .with(query: hash_including({
-          locale: '*'
-        }))
-        .to_raise('Should not hit the API a second time!')
-      main_menu2 = store.find('FNlqULSV0sOy4IoGmyWOW')
-      expect(main_menu2).to eq(main_menu)
-    end
+        # assert
+        stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
+            '/entries/FNlqULSV0sOy4IoGmyWOW')
+          .with(query: hash_including({
+            locale: '*'
+          }))
+          .to_raise('Should not hit the API a second time!')
+        main_menu2 = store.find('FNlqULSV0sOy4IoGmyWOW')
+        expect(main_menu2).to eq(main_menu)
+      end
 
-    it 'caches all response includes' do
-      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
-        .with(query: hash_including({
-          locale: '*',
-          content_type: 'page'
-        }))
-        .to_return(body: load_fixture('contentful/lazy_cache_store/pages_include_2.json'))
+      it 'caches all response includes' do
+        stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
+          .with(query: hash_including({
+            locale: '*',
+            content_type: 'page'
+          }))
+          .to_return(body: load_fixture('contentful/lazy_cache_store/pages_include_2.json'))
 
-      # act
-      found = store.find_all(content_type: 'page', options: {
-        limit: 5,
-        include: 2
-      })
-      _pages = found.result.take(5).force
+        # act
+        found = store.find_all(content_type: 'page', options: {
+          limit: 5,
+          include: 2,
+          cache_response: true
+        })
+        _pages = found.result.take(5).force
 
-      # assert
-      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
-          '/entries/38ijVyGafC6ESQyk6uy2kw')
-        .with(query: hash_including({
-          locale: '*'
-        }))
-        .to_raise('Should not hit the API a second time!')
-      cached_product_list = store.find('38ijVyGafC6ESQyk6uy2kw')
-      expect(cached_product_list.dig('sys', 'id')).to eq('38ijVyGafC6ESQyk6uy2kw')
-      expect(cached_product_list.dig('sys', 'type')).to eq('Entry')
-      expect(cached_product_list.dig('fields', 'collectionId', 'en-US')).to eq('Z2lk...')
+        # assert
+        stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
+            '/entries/38ijVyGafC6ESQyk6uy2kw')
+          .with(query: hash_including({
+            locale: '*'
+          }))
+          .to_raise('Should not hit the API a second time!')
+        cached_product_list = store.find('38ijVyGafC6ESQyk6uy2kw')
+        expect(cached_product_list.dig('sys', 'id')).to eq('38ijVyGafC6ESQyk6uy2kw')
+        expect(cached_product_list.dig('sys', 'type')).to eq('Entry')
+        expect(cached_product_list.dig('fields', 'collectionId', 'en-US')).to eq('Z2lk...')
+      end
     end
   end
 
@@ -232,20 +235,23 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
     end
 
     it 'stores returned object in cache' do
+      id = page.dig('sys', 'id')
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries/#{id}")
+        .with(query: hash_including({
+          locale: '*'
+        }))
+        .to_return(body: page.to_json)
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
         .with(query: hash_including({
           locale: '*',
           content_type: 'page',
-          'sys.id' => page.dig('sys', 'id')
-        }))
-        .to_return(body: body)
-        .times(1)
-        .then.to_raise('Should not hit the API a second time!')
+          'sys.id' => id
+        })).to_raise('Should not hit the API a second time!')
 
       # act
       # store it in the cache and then query again
-      store.find_by(content_type: 'page', filter: { 'sys.id' => page.dig('sys', 'id') })
-      cached_page = store.find_by(content_type: 'page', filter: { 'sys.id' => page.dig('sys', 'id') })
+      store.find(id)
+      cached_page = store.find_by(content_type: 'page', filter: { 'sys.id' => id })
 
       # assert
       expect(cached_page).to eq(page)
@@ -317,70 +323,72 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
       expect(section1.dig('sys', 'type')).to eq('Entry')
     end
 
-    it 'overwrites included item in the cache' do
-      section0_id = page.dig('fields', 'sections', 'en-US', 0, 'sys', 'id')
-      includes_arr = body_hash.dig('includes', 'Entry')
-      includes_arr.delete_at(includes_arr.find_index { |e| e.dig('sys', 'id') == section0_id })
+    context 'cache_response: true' do
+      it 'overwrites included item in the cache' do
+        section0_id = page.dig('fields', 'sections', 'en-US', 0, 'sys', 'id')
+        includes_arr = body_hash.dig('includes', 'Entry')
+        includes_arr.delete_at(includes_arr.find_index { |e| e.dig('sys', 'id') == section0_id })
 
-      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
-        .with(query: hash_including({
-          locale: '*',
-          content_type: 'page',
-          'fields.slug.en-US' => '/'
-        }))
-        .to_return(body: body_hash.to_json)
+        stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
+          .with(query: hash_including({
+            locale: '*',
+            content_type: 'page',
+            'fields.slug.en-US' => '/'
+          }))
+          .to_return(body: body_hash.to_json)
 
-      store.set(section0_id, {
-        'sys' => {
-          'id' => section0_id,
-          'revision' => 1
-        }
-      })
+        store.set(section0_id, {
+          'sys' => {
+            'id' => section0_id,
+            'revision' => 1
+          }
+        })
 
-      # act
-      _queried_page = store.find_by(content_type: 'page',
-                                    filter: { 'fields.slug' => '/' },
-                                    options: { include: 2 })
+        # act
+        _queried_page = store.find_by(content_type: 'page',
+                                      filter: { 'fields.slug' => '/' },
+                                      options: { include: 2, cache_response: true })
 
-      # assert
-      cached_section0 = store.find(section0_id)
-      expect(cached_section0).to eq({
-        'sys' => {
-          'id' => section0_id,
-          'revision' => 1
-        }
-      })
-    end
+        # assert
+        cached_section0 = store.find(section0_id)
+        expect(cached_section0).to eq({
+          'sys' => {
+            'id' => section0_id,
+            'revision' => 1
+          }
+        })
+      end
 
-    it 'does not overwrite included item if it is missing' do
-      # Delete the section from the includes array - simulates it being unpublished
-      section0_id = page.dig('fields', 'sections', 'en-US', 0, 'sys', 'id')
-      includes_arr = body_hash.dig('includes', 'Entry')
-      section0 = includes_arr.find { |e| e.dig('sys', 'id') == section0_id }
+      it 'does not overwrite included item if it is missing' do
+        # Delete the section from the includes array - simulates it being unpublished
+        section0_id = page.dig('fields', 'sections', 'en-US', 0, 'sys', 'id')
+        includes_arr = body_hash.dig('includes', 'Entry')
+        section0 = includes_arr.find { |e| e.dig('sys', 'id') == section0_id }
 
-      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
-        .with(query: hash_including({
-          locale: '*',
-          content_type: 'page',
-          'fields.slug.en-US' => '/'
-        }))
-        .to_return(body: body_hash.to_json)
+        stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
+          .with(query: hash_including({
+            locale: '*',
+            content_type: 'page',
+            'fields.slug.en-US' => '/'
+          }))
+          .to_return(body: body_hash.to_json)
 
-      store.set(section0_id, {
-        'sys' => {
-          'id' => section0_id,
-          'revision' => 1
-        }
-      })
+        store.set(section0_id, {
+          'sys' => {
+            'id' => section0_id,
+            'revision' => 1
+          }
+        })
 
-      # act
-      _queried_page = store.find_by(content_type: 'page',
-                                    filter: { 'fields.slug' => '/' },
-                                    options: { include: 2 })
+        # act
+        _queried_page = store.find_by(content_type: 'page',
+                                      filter: { 'fields.slug' => '/' },
+                                      options: { include: 2, cache_response: true })
 
-      # assert
-      cached_section0 = store.find(section0_id)
-      expect(cached_section0).to eq(section0)
+        # assert
+        cached_section0 = store.find(section0_id)
+        expect(cached_section0).to eq(section0)
+      end
     end
   end
 
