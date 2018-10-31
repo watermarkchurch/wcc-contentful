@@ -26,13 +26,6 @@ module WCC::Contentful::App
   end
 
   def self.db_connected?
-    puts "WE ARE CHECKING THIS"
-    puts "WE ARE CHECKING THIS"
-    puts "WE ARE CHECKING THIS"
-    puts @db_connected
-    puts "WE ARE CHECKING THISZZ"
-    puts "WE ARE CHECKING THISZZ"
-    puts "WE ARE CHECKING THISZZ"
     !!@db_connected
   end
 end
