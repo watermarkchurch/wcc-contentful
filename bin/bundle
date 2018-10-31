@@ -2,12 +2,14 @@
 
 set -e
 
-export BUNDLE_GEMFILE=`pwd`/Gemfile
-bundle "$@"
+if [[ -z "$BUNDLE_GEMFILE" ]]; then
+  export BUNDLE_GEMFILE=`pwd`/Gemfile
+fi
+
 cd wcc-contentful
-export BUNDLE_GEMFILE=`pwd`/Gemfile
+echo "$(basename `pwd`) $ bundle $*"
 bundle "$@"
 cd ../wcc-contentful-app
-export BUNDLE_GEMFILE=`pwd`/Gemfile
+echo "$(basename `pwd`) $ bundle $*"
 bundle "$@"
 cd ..
