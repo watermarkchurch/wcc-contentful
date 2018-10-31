@@ -6,23 +6,24 @@
 <%= content_tag(:li, class: classes) do %>
   <% if dropdown?(item) %>
     <% if item.label %>
-      <%= render_button(item.label, class: 'nav-link dropdown-toggle') %>
+      <%= render_button(item.label,
+            class: 'nav-link dropdown-toggle',
+            data: { toggle: 'dropdown' },
+            role: 'button') %>
     <% else %>
-      <%= content_tag(:a, item.name, class: 'nav-link dropdown-toggle') %>
+      <%= content_tag(:a, item.name,
+            class: 'nav-link dropdown-toggle',
+            data: { toggle: 'dropdown' },
+            role: 'button') %>
     <% end %>
 
     <div class='dropdown-menu'>
       <% item.items.each do |dropdown_item| %>
         <%= render_button(dropdown_item,
-              class: 'dropdown-item',
-              data: { toggle: 'collapse', target: '#navbar' }) %>
+              class: 'dropdown-item') %>
       <% end %>
     </div>
-  <% elsif item.respond_to?(:href) %>
-    <%= render_button(item, class: 'nav-link', data: { toggle: 'collapse', target: '#navbar' }) %>
   <% else %>
-    <%# divider %>
-    <span class="divider <%= item.style %>">
-    </span>
+    <%= render_button(item, class: 'nav-link', data: { toggle: 'collapse', target: '#navbar' }) %>
   <% end %>
 <% end %>

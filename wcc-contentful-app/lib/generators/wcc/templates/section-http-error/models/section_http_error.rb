@@ -1,8 +1,9 @@
 # frozen_string_literal: true
- # This model represents the 'section-video' content type in Contentful.  Any linked
-# entries of the 'section-video' content type will be resolved as instances of this class.
+
+# This model represents the 'section-http-error' content type in Contentful.  Any linked
+# entries of the 'section-http-error' content type will be resolved as instances of this class.
 # It exposes .find, .find_by, and .find_all methods to query Contentful.
-class SectionVideo < WCC::Contentful::Model::SectionVideo
+class SectionHttpError < WCC::Contentful::Model::SectionHttpError
   # Add custom validations to ensure that app-specific properties exist:
   # validate_field :foo, :String, :required
   # validate_field :bar_links, :Array, link_to: %w[bar baz]
