@@ -5,7 +5,7 @@ class WCC::Contentful::App::ContactFormController < ApplicationController
     id = params['id']
     raise ArgumentError, 'missing form ID' unless id
 
-    form_model = WCC::Contentful::Model.find(id)
+    form_model = WCC::Contentful::Model::SectionContactForm.find(id)
     to_email = form_model.notificationEmail
     data = {}
 
