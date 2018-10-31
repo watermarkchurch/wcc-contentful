@@ -7,11 +7,7 @@ class WCC::Contentful::App::ContactFormController < ApplicationController
 
     form_model = WCC::Contentful::Model::SectionContactForm.find(id)
     to_email = form_model.notificationEmail
-    data = {}
-
-    form_model.fields.each do |item|
-      data[item.title] = params[item.title]
-    end
+    data = params.slice(*form_model.fields.map(&:title))
 
     UserMailer.contact_form_email(to_email, data).deliver_later
 
