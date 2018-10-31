@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'rails_helper'
+
 RSpec.describe(WCC::Contentful::App::ModelValidators) do
   let(:content_types) {
     JSON.parse(load_fixture('contentful/content_types_mgmt_api.json'))
