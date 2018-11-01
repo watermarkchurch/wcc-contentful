@@ -8,8 +8,11 @@
   },
   "scripts": {
     "fix-css": "stylelint */app/**/*.scss --syntax scss --fix",
+    "fix-js": "eslint */app/**/*.js --fix",
+    "fix": "npm run fix-css && npm run fix-js",
     "lint-css": "stylelint */app/**/*.scss --syntax scss",
-    "lint": "npm run lint-css"
+    "lint-js": "eslint */app/**/*.js",
+    "lint": "npm run lint-css && npm run lint-js"
   },
   "repository": {
     "type": "git",
@@ -24,6 +27,10 @@
   "dependencies": {
     "stylelint": "^9.7.1",
     "stylelint-config-sass-guidelines": "^5.2.0",
-    "stylelint-scss": "^3.3.2"
+    "stylelint-scss": "^3.3.2",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^8.0.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint": "^5.8.0"
   }
 }
