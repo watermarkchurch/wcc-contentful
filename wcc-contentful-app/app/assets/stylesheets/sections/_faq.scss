@@ -1,0 +1,39 @@
+.section-faq {
+  &__show-more-button {
+    text-decoration: none;
+
+    &[aria-expanded='false'] {
+      .section-faq__show-more-button__expanded {
+        display: none;
+      }
+    }
+
+    &[aria-expanded='true'] {
+      .section-faq__show-more-button__collapsed {
+        display: none;
+      }
+    }
+  }
+
+  &__faq-question {
+    cursor: pointer;
+  }
+
+  &__expander {
+    display: flex;
+    text-align: right;
+
+    a {
+      text-decoration: none;
+      width: 100%;
+
+      &[aria-expanded='false']::before {
+        content: '+';
+      }
+
+      &[aria-expanded='true']::before {
+        content: '-';
+      }
+    }
+  }
+}
