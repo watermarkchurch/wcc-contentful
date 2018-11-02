@@ -74,8 +74,8 @@ module Wcc
       copy_file "#{singular}/migrations/generated_add_#{plural}.ts",
         "db/migrate/#{timestamp}01_generated_add_#{plural}.ts"
 
-      Dir.glob("#{singular}/migrations/*.rb").each do |f|
-        copy_file f, "db/migrate/#{timestamp}_#{f}"
+      Dir.glob("#{__dir__}/templates/#{singular}/migrations/*.rb").each do |f|
+        copy_file f, "db/migrate/#{timestamp}_#{File.basename(f)}"
       end
     end
 
