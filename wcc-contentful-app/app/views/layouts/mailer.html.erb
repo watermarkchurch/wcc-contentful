@@ -2,72 +2,8 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <style>
-      /* Email styles need to be inline */
-      html {
-        background-color: #fff;
-        font-family: Arial, sans-serif;
-      }
-      body {
-        background-color: #fff;
-        margin: 0;
-        min-width: 320px;
-      }
-
-      @media screen and (min-width:480px) {
-        html {
-        }
-
-        body {
-          background-color: #fafafa;
-          border: 1px solid #e5e5e5;
-          margin: .75em auto;
-          max-width: 700px;
-          width: 90%;
-        }
-      }
-
-      .topbar__title__logo {
-        align-items: center;
-        display: flex;
-      }
-
-      .topbar__title__text {
-        font-size: 0.8rem;
-        font-weight: 600;
-        padding: 0 0.5rem;
-      }
-
-      .visually-hidden {
-        clip: rect(1px, 1px, 1px, 1px);
-        height: 1px;
-        overflow: hidden;
-        position: absolute !important;
-        width: 1px;
-      }
-
-      #svg--wm--resources {
-        display: none;
-      }
-
-      #svg--watermark--icon {
-        margin-right: 0.5rem;
-        padding: 0.1rem;
-      }
-
-      #svg--divider {
-        margin-right: 0.5rem;
-      }
-
-      #content {
-        padding: 2em 1em;
-      }
-    </style>
   </head>
-
   <body>
-    <div id="content">
-      <%= content_for?(:content) ? yield(:content) : yield %>
-    </div>
+    <%= yield %>
   </body>
 </html>
