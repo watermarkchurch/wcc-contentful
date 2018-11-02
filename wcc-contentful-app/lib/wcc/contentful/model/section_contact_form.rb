@@ -2,7 +2,7 @@
 
 class WCC::Contentful::Model::SectionContactForm < WCC::Contentful::Model
   def send_email(data)
-    ::WCC::Contentful::App::UserMailer.contact_form_email(notificationEmail, data).deliver
+    ::WCC::Contentful::App::ContactMailer.contact_form_email(notificationEmail, data).deliver
 
     save_contact_form(data)
   end
