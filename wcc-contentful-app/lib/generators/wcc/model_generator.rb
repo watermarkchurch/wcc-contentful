@@ -70,9 +70,13 @@ module Wcc
       copy_file 'wcc_contentful.rb', 'config/initializers/wcc_contentful.rb'
     end
 
-    def create_model_migration
-      copy_file "#{singular}/generated_add_#{plural}.ts",
+    def create_model_migrations
+      copy_file "#{singular}/migrations/generated_add_#{plural}.ts",
         "db/migrate/#{timestamp}01_generated_add_#{plural}.ts"
+
+      Dir.glob("#{__dir__}/templates/#{singular}/migrations/*.rb").each do |f|
+        copy_file f, "db/migrate/#{timestamp}_#{File.basename(f)}"
+      end
     end
 
     def drop_model_overrides_in_app_models
