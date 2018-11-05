@@ -4,7 +4,7 @@
       <% if section.title.present? %>
         <h2 class="section-video-content__title"><%= section.title %></h2>
       <% end %>
-      <div class="section-video-content__video video-responsive">
+      <div class="section-video-content__video embed-responsive embed-responsive-16by9">
         <%= raw section.embed_code %>
       </div>
     </div>
