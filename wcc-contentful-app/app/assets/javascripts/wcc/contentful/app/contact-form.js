@@ -1,3 +1,7 @@
+if (typeof window.$ == 'undefined' ) {
+  var $ = window.jQuery
+}
+
 $(function() {
   $('[data-contact-form]').each(function(_, input) {
     var $form = $(input)
