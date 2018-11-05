@@ -17,7 +17,7 @@ $(function() {
       }
 
       if (status == 'OK') {
-        $form.append($('span').text(json.message).delay(5).remove())
+        $form.append($('span').text(json.message))
         $('input:visible, textarea', $form).val('')
       } else {
         alert('Sorry, something went wrong.')
