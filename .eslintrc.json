@@ -4,5 +4,9 @@
     "semi": ["error", "never"],
     "quotes": ["error", "single"],
     "no-console": 2
+  },
+  "env": {
+    "browser": true,
+    "node": true
   }
 }

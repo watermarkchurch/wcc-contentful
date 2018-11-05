@@ -1,6 +1,6 @@
 <div class="section-error-page" style="background-image: url(<%= section.background_image&.file&.url %>);">
   <div class="row">
-    <div class="column">
+    <div class="col">
       <div class="error-page__content">
         <h2 class="error-page__content__title"><%= section.errorCode %></h2>
         <p class="error-page__content__text"><%= markdown(section.text) if section.text.present? %></p>

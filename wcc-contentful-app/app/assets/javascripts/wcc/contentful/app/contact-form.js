@@ -1,22 +1,37 @@
-$(window).load(function() {
-  $('[data-contact-form]').each((_, input) => {
-    const $form = $(input);
+if (typeof window.$ == 'undefined' ) {
+  var $ = window.jQuery
+}
 
-    function handleResponse(status, responseJSON) {
-      if (responseJSON) {
-        alert(responseJSON.message);
-      } else {
-        alert('Sorry, something went wrong.');
-      }
-      $('input:visible, textarea', $form).val('');
+$(function() {
+  function handleResponse($form, event, status, xhr) {
+    // Handle backwards compat for [rails/jquery]-ujs ajax callbacks
+    var json
+    if (event.detail) {
+      json = JSON.parse(event.detail[2].response)
+      status = event.detail[1]
+    } else {
+      json = xhr.responseJSON
     }
 
-    $form.on('ajax:success', (event, data, status, xhr) => {
-      handleResponse(status, xhr.responseJSON);
-    });
+    if (status == 'OK') {
+      $form.append(
+        $('<span>').text(json.message).delay(2000).fadeOut(2000, function() { $(this).remove() })
+      )
+      $('input:visible, textarea', $form).val('')
+    } else {
+      alert('Sorry, something went wrong.')
+    }
+  }
 
-    $form.on('ajax:error', (event, xhr, status) => {
-      handleResponse(status, xhr.responseJSON);
-    });
-  });
+  $('[data-contact-form]').each(function(_, input) {
+    var $form = $(input)
+
+    $form.on('ajax:success', function(event, data, status, xhr) {
+      handleResponse($form, event, status, xhr)
+    })
+
+    $form.on('ajax:error', function(event, xhr, status) {
+      handleResponse($form, event, status, xhr)
+    })
+  })
 })
