@@ -6,21 +6,30 @@ $(function() {
   $('[data-contact-form]').each(function(_, input) {
     var $form = $(input)
 
-    function handleResponse(status, responseJSON) {
-      if (responseJSON) {
-        alert(responseJSON.message)
+    function handleResponse(event, status, xhr) {
+      // Handle backwards compat for [rails/jquery]-ujs ajax callbacks
+      var json
+      if (event.detail) {
+        json = JSON.parse(event.detail[2].response)
+        status = event.detail[1]
+      } else {
+        json = xhr.responseJSON
+      }
+
+      if (status == 'OK') {
+        $form.append($('span').text(json.message).delay(5).remove())
+        $('input:visible, textarea', $form).val('')
       } else {
         alert('Sorry, something went wrong.')
       }
-      $('input:visible, textarea', $form).val('')
     }
 
     $form.on('ajax:success', function(event, data, status, xhr) {
-      handleResponse(status, xhr.responseJSON)
+      handleResponse(event, status, xhr)
     })
 
     $form.on('ajax:error', function(event, xhr, status) {
-      handleResponse(status, xhr.responseJSON)
+      handleResponse(event, status, xhr)
     })
   })
 })
