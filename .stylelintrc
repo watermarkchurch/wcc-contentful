@@ -1,0 +1,22 @@
+{
+  "extends": "stylelint-config-sass-guidelines",
+  "plugins": [
+    "stylelint-scss"
+  ],
+  "ignoreFiles": [
+    "**/vendor/**/*.scss"
+  ],
+  "rules": {
+    "max-nesting-depth": null,
+    "selector-max-compound-selectors": null,
+    "selector-class-pattern": null,
+    "selector-no-qualifying-type": null,
+    "selector-no-vendor-prefix": null,
+    "property-no-vendor-prefix": null,
+    "selector-max-id": 1,
+    "scss/dollar-variable-colon-space-after": "at-least-one-space",
+    "scss/at-mixin-pattern": null,
+    "number-leading-zero": null,
+    "scss/at-extend-no-missing-placeholder": null
+  }
+}

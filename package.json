@@ -1,0 +1,36 @@
+{
+  "name": "wcc-contentful",
+  "version": "1.0.0",
+  "description": "The home of multiple gems that Watermark Community Church uses to integrate with Contentful.",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "fix-css": "stylelint */app/**/*.scss --syntax scss --fix",
+    "fix-js": "eslint */app/**/*.js --fix",
+    "fix": "npm run fix-css && npm run fix-js",
+    "lint-css": "stylelint */app/**/*.scss --syntax scss",
+    "lint-js": "eslint */app/**/*.js",
+    "lint": "npm run lint-css && npm run lint-js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/watermarkchurch/wcc-contentful.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/watermarkchurch/wcc-contentful/issues"
+  },
+  "homepage": "https://github.com/watermarkchurch/wcc-contentful#readme",
+  "dependencies": {
+    "stylelint": "^9.7.1",
+    "stylelint-config-sass-guidelines": "^5.2.0",
+    "stylelint-scss": "^3.3.2",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^8.0.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint": "^5.8.0"
+  }
+}
