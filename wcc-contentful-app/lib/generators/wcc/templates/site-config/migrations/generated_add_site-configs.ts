@@ -8,19 +8,19 @@ export = function(migration : Migration, { makeRequest, spaceId, accessToken }) 
   /************  site-config  ******************/
 
   var siteConfig = migration.createContentType('site-config', {
-    displayField: 'title',
+    displayField: 'internalTitle',
     name: 'Site Config',
     description: 'This is the top level object for the configuration of your site.'
   })
 
-  siteConfig.createField('title', {
-    name: 'Title',
+  siteConfig.createField('internalTitle', {
+    name: 'Internal Title (Contentful Only)',
     type: 'Symbol',
     localized: false,
     required: true,
-    validations: [{ unique: true }],
+    validations: [],
     disabled: false,
-    omitted: false
+    omitted: true
   })
 
   siteConfig.createField('foreignKey', {
