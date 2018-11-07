@@ -32,6 +32,7 @@ module WCC::Contentful
   # Configures the WCC::Contentful gem to talk to a Contentful space.
   # This must be called first in your initializer, before #init! or accessing the
   # client.
+  # See WCC::Contentful::Configuration for all configuration options.
   def self.configure
     @configuration ||= Configuration.new
     yield(configuration)
