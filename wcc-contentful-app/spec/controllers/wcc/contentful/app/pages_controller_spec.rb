@@ -13,7 +13,7 @@ RSpec.describe WCC::Contentful::App::PagesController, type: :controller do
 
     get :index
 
-    expect(response).to render_template('wcc/contentful/app/pages/show')
+    expect(response).to render_template('pages/show')
     expect(assigns(:page)).to eq(page)
   end
 
@@ -24,7 +24,7 @@ RSpec.describe WCC::Contentful::App::PagesController, type: :controller do
 
     get :index
 
-    expect(response).to render_template('wcc/contentful/app/pages/show')
+    expect(response).to render_template('pages/show')
     expect(assigns(:page)).to eq(page)
   end
 

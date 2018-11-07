@@ -6,13 +6,14 @@ class WCC::Contentful::App::PagesController < ApplicationController
   def index
     @page = global_site_config&.homepage ||
       WCC::Contentful::Model::Page.find_by(slug: '/', options: { include: 3 })
-    render 'wcc/contentful/app/pages/show'
+    render 'pages/show'
   end
 
   def show
     slug = '/' + params[:slug]
     @page = WCC::Contentful::Model::Page.find_by(slug: slug, options: { include: 3 })
-    return if @page
+
+    return render 'pages/show' if @page
 
     redirect = WCC::Contentful::Model::Redirect.find_by(slug: slug, options: { include: 0 })
     raise WCC::Contentful::App::PageNotFoundError, slug unless redirect
