@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class WCC::Contentful::App::PagesController < ApplicationController
-  helper SectionHelper
+  helper ::WCC::Contentful::App::SectionHelper
 
   def index
     @page = global_site_config&.homepage ||
