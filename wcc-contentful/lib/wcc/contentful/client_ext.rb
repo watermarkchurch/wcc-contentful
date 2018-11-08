@@ -2,7 +2,7 @@
 
 class Contentful::Client
   class << self
-    alias_method :old_get_http, :get_http
+    alias_method :old_get_http, :get_http if respond_to?(:get_http)
   end
 
   def self.adapter
