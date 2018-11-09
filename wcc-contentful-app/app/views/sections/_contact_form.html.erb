@@ -13,10 +13,21 @@
             <label for="" class="contact-panel__form-field-label"><%= field.title %></label>
             <%= case field.input_type
                 when 'email'
-                  content_tag(:input, nil, type: 'email', name: field.title, class: 'form-control', required: true)
+                  content_tag(:input,
+                    nil,
+                    type: 'email',
+                    name: field.title,
+                    class: 'form-control',
+                    required: true)
                 when 'textarea'
-                  content_tag(:textarea, nil,
-                    rows: 8, columnns: 80, name: field.title, class: 'form-control', minlength: 5, required: true)
+                  content_tag(:textarea,
+                    nil,
+                    rows: 8,
+                    columnns: 80,
+                    name: field.title,
+                    class: 'form-control',
+                    minlength: 5,
+                    required: true)
                 else
                   content_tag(:input, nil, type: 'text', name: field.title, class: 'form-control')
                 end %>
