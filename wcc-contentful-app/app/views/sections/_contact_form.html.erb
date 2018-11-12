@@ -1,35 +1,42 @@
-<div class="row">
-  <div class="col">
-    <div class="contact-panel -mt5">
-      <div class="contact-panel__header">
-        <%= markdown(section.text) %>
-      </div><!--faq-panel__header-->
+<div class="row justify-content-center">
+  <div class="col-xs-12 col-md-10">
+    <div class="contact-panel__header">
+      <%= markdown(section.text) %>
+    </div><!--contact-panel__header-->
 
-      <div class="contact-panel__content">
-        <%= form_tag contact_form_path, remote: true, data: { contact_form: true }, method: 'post' do %>
-          <input type="hidden" name="id" value="<%= section.id %>" />
-          <% section.fields&.each do |field| %>
-            <div class="field">
-              <label for="" class="contact-panel__label"><%= field.title %></label>
-              <%= case field.input_type
-                  when 'email'
-                    content_tag(:input, nil, type: 'email', name: field.title, required: true)
-                  when 'textarea'
-                    content_tag(:textarea, nil,
-                      rows: 8, columnns: 80, name: field.title, minlength: 5, required: true)
-                  else
-                    content_tag(:input, nil, type: 'text', name: field.title)
-                  end %>
+    <div class="contact-panel__form">
+      <%= form_tag contact_form_path, remote: true, data: { contact_form: true }, method: 'post' do %>
+        <input type="hidden" name="id" value="<%= section.id %>" />
 
-            </div>
-          <% end %>
-          <%= submit_tag section.submit_button_text || 'Submit',
-                class: 'button white', data: { disable_with: 'Submitting...' } %>
+        <% section.fields&.each do |field| %>
+          <div class="form-group contact-panel__form-field">
+            <label for="" class="contact-panel__form-field-label"><%= field.title %></label>
+            <%= case field.input_type
+                when 'email'
+                  content_tag(:input,
+                    nil,
+                    type: 'email',
+                    name: field.title,
+                    class: 'form-control',
+                    required: true)
+                when 'textarea'
+                  content_tag(:textarea,
+                    nil,
+                    rows: 8,
+                    columnns: 80,
+                    name: field.title,
+                    class: 'form-control',
+                    minlength: 5,
+                    required: true)
+                else
+                  content_tag(:input, nil, type: 'text', name: field.title, class: 'form-control')
+                end %>
+          </div>
         <% end %>
+        <%= submit_tag section.submit_button_text || 'Submit',
+              class: 'btn btn-primary', data: { disable_with: 'Submitting...' } %>
+      <% end %>
 
-      </div><!--faq-panel__content-->
-
-    </div><!--faq-panel-->
-
+    </div><!--contact-panel__content-->
   </div><!--column-->
 </div><!--row-->
