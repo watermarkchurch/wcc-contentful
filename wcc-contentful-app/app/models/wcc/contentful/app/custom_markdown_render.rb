@@ -15,15 +15,15 @@ module WCC::Contentful::App
               link_with_class[2] == CGI.unescape_html(content)
           end
         link_class = link_with_class[3]
-        "<a href=\"#{link}\" title=\"#{title}\" class=\"#{link_class}\" target=\"#{target}\">#{content}</a>"
+        "<a href=\"#{link}\" title=\"#{title}\" class=\"#{link_class}\" #{target}>#{content}</a>"
       else
-        "<a href=\"#{link}\" title=\"#{title}\" target=\"#{target}\">#{content}</a>"
+        "<a href=\"#{link}\" title=\"#{title}\" #{target}>#{content}</a>"
       end
     end
 
     def url_target(url)
       if url.scan(/(\s|^)(https?:\/\/\S*)/).present?
-        'blank'
+        "target='_blank'"
       else
         nil
       end
