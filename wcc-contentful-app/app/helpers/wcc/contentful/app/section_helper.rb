@@ -62,7 +62,7 @@ module WCC::Contentful::App::SectionHelper
     markdown.render(text).html_safe
   end
 
-  def links_within_markdown(text)  
+  def links_within_markdown(text)
     # Captures all of the links in the markdown text provided
     # with each matching link being returned as an array like the following:
     # [
@@ -85,17 +85,18 @@ module WCC::Contentful::App::SectionHelper
     links_with_classes_arr = []
     raw_classes_arr = []
     return [links_with_classes_arr, raw_classes_arr] unless markdown_links.present?
-    markdown_links.each do |markdown_link_arr|
-      if markdown_link_arr.last.present?
-        raw_class = markdown_link_arr[3]
-        url, title = url_and_title(markdown_link_arr[2])
-        content = markdown_link_arr[1]
-        classes = capture_individual_classes(raw_class)
-        link_class = combine_individual_classes_to_one_string(classes)
 
-        raw_classes_arr << raw_class
-        links_with_classes_arr << [url, title, content, link_class]
-      end
+    markdown_links.each do |markdown_link_arr|
+      next unless markdown_link_arr.last.present?
+
+      raw_class = markdown_link_arr[3]
+      url, title = url_and_title(markdown_link_arr[2])
+      content = markdown_link_arr[1]
+      classes = capture_individual_classes(raw_class)
+      link_class = combine_individual_classes_to_one_string(classes)
+
+      raw_classes_arr << raw_class
+      links_with_classes_arr << [url, title, content, link_class]
     end
 
     [links_with_classes_arr, raw_classes_arr]
@@ -127,7 +128,7 @@ module WCC::Contentful::App::SectionHelper
     # ['.button', '.white']
     # into one string to be used as the class for a url tag
     # 'button white'
-    class_string = ""    
+    class_string = ''
     classes.each do |klass|
       class_string += klass.tr('.', '') + ' '
     end
