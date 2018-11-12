@@ -109,7 +109,7 @@ module WCC::Contentful::App::SectionHelper
 
   def url_and_title(markdown_link_and_title)
     # match markdown styled absolute or relative url and title if provided
-    match = markdown_link_and_title.scan(/(\s|^)(https?:\/\/.*?|^\/\S*\/*\S*)(?=\s|$)|(\".*?\")/)
+    match = markdown_link_and_title.scan(/(\s|^)(https?:\/\/\S*|^\/\S*\/*\S*)(?=\s|$)|(\".*?\")/)
     url = match[0][1]
     title = match[1] ? match[1][2] : nil
     [url, title]
