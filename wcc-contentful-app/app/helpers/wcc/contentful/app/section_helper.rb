@@ -37,7 +37,7 @@ module WCC::Contentful::App::SectionHelper
     options = {
       filter_html: true,
       hard_wrap: true,
-      link_attributes: { rel: 'nofollow', target: '_blank' },
+      link_attributes: { target: '_blank' },
       space_after_headers: true,
       fenced_code_blocks: true,
       links_with_classes: links_with_classes
