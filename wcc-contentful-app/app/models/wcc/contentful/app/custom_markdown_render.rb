@@ -8,15 +8,24 @@ module WCC::Contentful::App
     end
   
     def link(link, title, content)
+      target = url_target(link)
       if link_with_class =
           @links_with_classes.detect do |link_with_class|
-            (link_with_class[0] == link || link_with_class[1] == link) &&
-              link_with_class[3] == CGI.unescape_html(content)
+            link_with_class[0] == link &&
+              link_with_class[2] == CGI.unescape_html(content)
           end
-        link_class = link_with_class[4]
-        "<a href=\"#{link}\" title=\"#{title}\" class=\"#{link_class}\" target=\"_blank\" rel=\"nofollow\">#{content}</a>"
+        link_class = link_with_class[3]
+        "<a href=\"#{link}\" title=\"#{title}\" class=\"#{link_class}\" target=\"#{target}\" rel=\"nofollow\">#{content}</a>"
       else
-        "<a href=\"#{link}\" title=\"#{title}\" target=\"_blank\" rel=\"nofollow\">#{content}</a>"
+        "<a href=\"#{link}\" title=\"#{title}\" target=\"#{target}\" rel=\"nofollow\">#{content}</a>"
+      end
+    end
+
+    def url_target(url)
+      if url.scan(/(\s|^)(https?:\/\/\S*)/).present?
+        'blank'
+      else
+        nil
       end
     end
   end
