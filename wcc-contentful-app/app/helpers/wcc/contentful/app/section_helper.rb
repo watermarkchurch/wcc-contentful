@@ -88,13 +88,13 @@ module WCC::Contentful::App::SectionHelper
     markdown_links.each do |markdown_link_arr|
       if markdown_link_arr.last.present?
         raw_class = markdown_link_arr[3]
-        url, title = url_and_title(markdown_link_arr[2])
+        absolute_url, relative_url, title = url_and_title(markdown_link_arr[2])
         content = markdown_link_arr[1]
         classes = capture_individual_classes(raw_class)
         link_class = combine_individual_classes_to_one_string(classes)
 
         raw_classes_arr << raw_class
-        links_with_classes_arr << [url, title, content, link_class]
+        links_with_classes_arr << [absolute_url, relative_url, title, content, link_class]
       end
     end
 
@@ -109,10 +109,11 @@ module WCC::Contentful::App::SectionHelper
 
   def url_and_title(markdown_link_and_title)
     # match markdown styled absolute or relative url and title if provided
-    match = markdown_link_and_title.scan(/(\s|^)(https?:\/\/\S*|^\/\S*\/*\S*)(?=\s|$)|(\".*?\")/)
-    url = match[0][1]
+    match = markdown_link_and_title.scan(/(\s|^)(https?:\/\/\S*)|(^\/\S*\/*\S*)(?=\s|$)|(\".*?\")/)
+    absolute_url = match[0][1] ? match[0][1] : nil
+    relative_url = match[0][2] ? match[0][2] : nil
     title = match[1] ? match[1][2] : nil
-    [url, title]
+    [absolute_url, relative_url, title]
   end
 
   def capture_individual_classes(classes)
