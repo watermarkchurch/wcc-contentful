@@ -228,7 +228,7 @@ RSpec.describe WCC::Contentful::DownloadsSchema do
       allow(client).to receive(:editor_interface) do |content_type_id, _query = {}|
         i = editor_interface.deep_dup
         i['sys']['contentType']['sys']['id'] = content_type_id
-        double(body: i)
+        double(raw: i)
       end
       client
     }

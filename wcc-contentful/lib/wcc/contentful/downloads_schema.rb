@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'wcc/contentful'
+
 class WCC::Contentful::DownloadsSchema
   def self.call(file = nil, management_client: nil)
     new(file, management_client).call
@@ -30,7 +32,7 @@ class WCC::Contentful::DownloadsSchema
   def editor_interfaces
     @editor_interfaces ||=
       content_types
-        .map { |ct| @client.editor_interface(ct.dig('sys', 'id')).body }
+        .map { |ct| @client.editor_interface(ct.dig('sys', 'id')).raw }
         .map { |i| strip_sys(i) }
         .sort_by { |i| i.dig('sys', 'contentType', 'sys', 'id') }
   end
@@ -38,6 +40,7 @@ class WCC::Contentful::DownloadsSchema
   private
 
   def strip_sys(obj)
+    puts "sys: #{obj}" unless obj['sys'].is_a? Hash
     obj.merge!({
       'sys' => obj['sys'].slice('id', 'type', 'contentType')
     })
