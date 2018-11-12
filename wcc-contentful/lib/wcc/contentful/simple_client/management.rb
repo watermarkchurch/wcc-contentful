@@ -28,6 +28,11 @@ class WCC::Contentful::SimpleClient::Management < WCC::Contentful::SimpleClient
     resp.assert_ok!
   end
 
+  def editor_interface(content_type_id, query = {})
+    resp = get("content_types/#{content_type_id}/editor_interface", query)
+    resp.assert_ok!
+  end
+
   def webhook_definitions(**query)
     resp = get("/spaces/#{space}/webhook_definitions", query)
     resp.assert_ok!
