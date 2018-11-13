@@ -140,6 +140,7 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
           ]
         
         links_with_classes, raw_classes = helper.gather_links_with_classes_data(links_with_classes_arr)
+
         expect(raw_classes).to match_array(expected_raw_classes)
       end
     end
@@ -161,6 +162,26 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
         expect(returned_value[0]).to be_empty
         expect(returned_value[1]).to be_empty
       end
+    end
+  end
+
+  describe '#remove_markdown_href_class_syntax' do
+    it "removes all of the '{: .button}' syntax from markdown text" do
+      raw_classes =
+        [
+          '{: .button .white}',
+          '{: .button-medium .green}'
+        ]
+      text =
+        +"Ministry developed by [Awaken](/awaken \"Awaken's Homepage\"){: .button .white} in Dallas, Texas."\
+        " Just relax. [Watermark Community Church](http://www.watermark.org){: .button-medium .green} ok."\
+        " Last line goes here [Test](https://test.com)."
+      
+      expect(text.include? '{: .button .white}').to be true
+
+      helper.remove_markdown_href_class_syntax(raw_classes, text)
+
+      expect(text.include? '{: .button .white}').to be false
     end
   end
 end
