@@ -58,7 +58,7 @@ module WCC::Contentful::App::SectionHelper
     text = CGI.escapeHTML(text)
     text = text.gsub(/\&amp;(nbsp|vert|\#\d+);/, '&\1;')
       .gsub(/\&lt;br\/?\&gt;/, '<br/>')
-    text.html_safe
+    content_tag(:span, text.html_safe, class: 'safe-line-break')
   end
 
   def split_content_for_mobile_view(visible_count, speakers)
