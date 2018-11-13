@@ -8,9 +8,19 @@ export = function(migration : Migration, { makeRequest, spaceId, accessToken }) 
   /************  faq  ******************/
 
   var faq = migration.createContentType('faq', {
-    displayField: 'questions',
+    displayField: 'internalTitle',
     name: 'FAQ',
     description: ''
+  })
+
+  faq.createField('internalTitle', {
+    name: 'Internal Title (Contentful Only)',
+    type: 'Symbol',
+    localized: false,
+    required: true,
+    validations: [],
+    disabled: false,
+    omitted: true,
   })
 
   faq.createField('questions', {
