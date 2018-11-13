@@ -240,4 +240,13 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
       expect(classes).to match_array(expected_array_of_classes)
     end
   end
+
+  describe '#combine_individual_classes_to_one_string' do
+    it 'receives an array of classes and returns those classes as a string' do
+      array_of_classes = ['.button', '.white']
+      class_string = helper.combine_individual_classes_to_one_string(array_of_classes)
+
+      expect(class_string).to eq('button white ')
+    end
+  end
 end
