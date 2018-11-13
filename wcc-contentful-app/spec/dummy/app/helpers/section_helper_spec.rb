@@ -222,4 +222,22 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
       end
     end
   end
+
+  describe '#capture_individual_classes' do
+    it 'receives a string and returns an array' do
+      raw_class = '{: .button .white}'
+      classes = helper.capture_individual_classes(raw_class)
+
+      expect(classes).not_to be_empty
+    end
+
+    it 'takes classes from a specific string syntax and pushes them into an array' do
+      raw_class = '{: .button .white}'
+      expected_array_of_classes =
+        ['.button', '.white']
+      classes = helper.capture_individual_classes(raw_class)
+
+      expect(classes).to match_array(expected_array_of_classes)
+    end
+  end
 end
