@@ -9,12 +9,12 @@ module WCC::Contentful::App
 
     def link(link, title, content)
       target = url_target(link)
-      if link_with_class =
+      if link_with_class_data =
            @links_with_classes.find do |link_with_class|
              link_with_class[0] == link &&
                  link_with_class[2] == CGI.unescape_html(content)
            end
-        link_class = link_with_class[3]
+        link_class = link_with_class_data[3]
         "<a href=\"#{link}\" title=\"#{title}\" class=\"#{link_class}\" #{target}>#{content}</a>"
       else
         "<a href=\"#{link}\" title=\"#{title}\" #{target}>#{content}</a>"
