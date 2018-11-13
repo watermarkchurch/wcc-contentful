@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
   let(:markdown_string_with_links_that_have_classes) {
-    "Ministry developed by [Awaken](/awaken \"Awaken's Homepage\"){: .button .white} in Dallas, Texas."\
+    +"Ministry developed by [Awaken](/awaken \"Awaken's Homepage\"){: .button .white} in Dallas, Texas."\
     " Just relax. [Watermark Community Church](http://www.watermark.org){: .button-medium .green} ok."\
     " Last line goes here [Test](https://test.com)."
   }
@@ -16,6 +16,31 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
   let(:markdown_string_without_links) {
     "nothin to see here"
   }
+
+  describe '#markdown' do
+    context 'when markdown includes links with classes' do
+      it 'uses those classes in the hyperlinks within the html to be rendered' do
+        html_to_render =
+          helper.markdown(markdown_string_with_links_that_have_classes)
+
+        expect(html_to_render).to include("class=\"button white \"")
+        expect(html_to_render).to include("class=\"button-medium green \"")
+        expect(html_to_render).to include(
+          "<a href=\"/awaken\" title=\"Awaken's Homepage\" class=\"button white \" >Awaken</a>"
+        )
+      end
+    end
+
+    context 'when markdown does NOT include links with classes' do
+      it 'returns html with hyperlinks that do not have class attributes' do
+        html_to_render =
+          helper.markdown(markdown_string_with_classless_link)
+
+        expect(html_to_render).to_not include("class=")
+        expect(html_to_render).to include("<a href=\"https://test.com\" target=\"_blank\">Test</a>")
+      end
+    end
+  end
 
   describe '#links_within_markdown' do
     context 'when given markdown that includes links' do
