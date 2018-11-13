@@ -2,16 +2,14 @@
 
 require 'rails_helper'
 
-RSpec.describe WCC::Contentful::App::PagesController, type: :controller do
-  routes { WCC::Contentful::App::Engine.routes }
-
+RSpec.describe WCC::Contentful::App::PagesController, type: :request do
   it 'loads homepage off of site config' do
     page = contentful_create('page', slug: '/')
     _config = contentful_stub('siteConfig',
       foreign_key: 'default',
       homepage: page)
 
-    get :index
+    get '/'
 
     expect(response).to render_template('pages/show')
     expect(assigns(:page)).to eq(page)
@@ -22,7 +20,7 @@ RSpec.describe WCC::Contentful::App::PagesController, type: :controller do
     expect(WCC::Contentful::Model::SiteConfig).to receive(:find_by)
       .and_return(nil)
 
-    get :index
+    get '/'
 
     expect(response).to render_template('pages/show')
     expect(assigns(:page)).to eq(page)
@@ -31,7 +29,7 @@ RSpec.describe WCC::Contentful::App::PagesController, type: :controller do
   it 'loads page by slug' do
     page = contentful_stub('page', slug: '/test')
 
-    get :show, params: { slug: 'test' }
+    get '/test'
 
     expect(assigns(:page)).to eq(page)
   end
@@ -43,7 +41,7 @@ RSpec.describe WCC::Contentful::App::PagesController, type: :controller do
       slug: '/test',
       external_link: 'https://www.google.com')
 
-    get :show, params: { slug: 'test' }
+    get '/test'
 
     expect(response).to redirect_to(redirect.external_link)
   end
@@ -55,7 +53,7 @@ RSpec.describe WCC::Contentful::App::PagesController, type: :controller do
       .and_return(nil)
 
     expect {
-      get :show, params: { slug: 'not-found' }
+      get '/not-found'
     }.to raise_error(WCC::Contentful::App::PageNotFoundError)
   end
 end
