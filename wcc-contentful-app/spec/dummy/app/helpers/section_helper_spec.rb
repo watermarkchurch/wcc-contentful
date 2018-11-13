@@ -184,4 +184,42 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
       expect(text.include? '{: .button .white}').to be false
     end
   end
+
+  describe '#url_and_title' do
+    context 'when markdown link has an absolute url' do
+      it 'returns the absolute url' do
+        markdown_link = 'http://www.watermark.org "Watermark Community Church"'
+        url, title = helper.url_and_title(markdown_link)
+
+        expect(url).to eq('http://www.watermark.org')
+      end
+    end
+
+    context 'when markdown link has a relative url' do
+      it 'returns the relative url' do
+        markdown_link = '/awaken "Awaken\'s Homepage"'
+        url, title = helper.url_and_title(markdown_link)
+
+        expect(url).to eq('/awaken')
+      end
+    end
+
+    context 'when markdown link includes a title' do
+      it 'returns the title' do
+        markdown_link = 'http://www.watermark.org "Watermark Community Church"'
+        url, title = helper.url_and_title(markdown_link)
+
+        expect(title).to eq('"Watermark Community Church"')
+      end
+    end
+
+    context 'when markdown link does not include a title' do
+      it 'returns nil in the title slot' do
+        markdown_link = 'http://www.watermark.org'
+        url, title = helper.url_and_title(markdown_link)
+
+        expect(title).to be_nil
+      end
+    end
+  end
 end
