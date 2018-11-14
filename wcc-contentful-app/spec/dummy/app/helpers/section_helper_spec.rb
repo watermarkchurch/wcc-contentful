@@ -93,6 +93,28 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
         expect(html_to_render).to include("<a href=\"http://www.google.com\" target=\"_blank\">newline after the parens</a>\\n{: .test }")
       end
     end
+
+    context 'When class doesn\'t begin with a space: [forget spaces](http://www.google.com){:.test}' do
+      it 'should still apply the classes to the hyperlink' do
+        markdown_string =
+          +'some before text [forget spaces](http://www.google.com){:.test} and some after text'
+        html_to_render =
+          helper.markdown(markdown_string)
+        
+        expect(html_to_render).to include("class=\"test \"")
+      end
+    end
+
+    context 'When classes have no spaces in between: [no space](http://www.google.com){: .btn.btn-primary }' do
+      it 'should still apply the classes to the hyperlink' do
+        markdown_string =
+          +'some before text [no space](http://www.google.com){: .btn.btn-primary } and some after text'
+        html_to_render =
+          helper.markdown(markdown_string)
+        
+        expect(html_to_render).to include("class=\"btn btn-primary \"")
+      end
+    end
   end
 
   describe '#links_within_markdown' do
