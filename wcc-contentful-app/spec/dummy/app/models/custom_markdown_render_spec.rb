@@ -76,6 +76,23 @@ RSpec.describe WCC::Contentful::App::CustomMarkdownRender, :type => :model do
       end
     end
 
+    context 'when given a hash location as url' do
+      it 'returns nil' do
+        url = '#awaken'
+        options = {
+          filter_html: true,
+          hard_wrap: true,
+          link_attributes: { target: '_blank' },
+          space_after_headers: true,
+          fenced_code_blocks: true,
+          links_with_classes: []
+        }
+
+        renderer = WCC::Contentful::App::CustomMarkdownRender.new(options)
+        expect(renderer.url_target(url)).to be_nil
+      end
+    end
+
     context 'when given an absolute url' do
       it 'returns target=_blank' do
         url = "https://www.watermarkresources.com"

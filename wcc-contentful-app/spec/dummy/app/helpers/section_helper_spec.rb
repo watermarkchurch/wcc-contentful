@@ -239,6 +239,15 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
       end
     end
 
+    context 'when markdown link has a hash location' do
+      it 'returns the hash location' do
+        markdown_link = '#awaken "Awaken\'s Homepage"'
+        url, title = helper.url_and_title(markdown_link)
+
+        expect(url).to eq('#awaken')
+      end
+    end
+
     context 'when markdown link includes a title' do
       it 'returns the title' do
         markdown_link = 'http://www.watermark.org "Watermark Community Church"'
