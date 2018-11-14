@@ -40,6 +40,16 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
         expect(html_to_render).to include("<a href=\"https://test.com\" target=\"_blank\">Test</a>")
       end
     end
+
+    context 'when only class syntax is passed {: .this } without link' do
+      it 'returns the {: .this } within the html to be rendered' do
+        markdown_string = "Just some content {: .this }"
+        html_to_render =
+          helper.markdown(markdown_string)
+
+        expect(html_to_render).to include("{: .this }")
+      end
+    end
   end
 
   describe '#links_within_markdown' do
