@@ -115,6 +115,17 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
         expect(html_to_render).to include("class=\"btn btn-primary \"")
       end
     end
+
+    context 'when content of link matches the class name given' do
+      it 'should apply the the class to the hyperlink with no conflict' do
+        markdown_string =
+          +'some before text [text or .text that matches a class](/home "text or .text"){: .text } and some after text'
+        html_to_render =
+          helper.markdown(markdown_string)
+        
+        expect(html_to_render).to include("class=\"text \"")
+      end
+    end
   end
 
   describe '#links_within_markdown' do
