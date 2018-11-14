@@ -99,7 +99,7 @@ module WCC::Contentful::App::SectionHelper
   end
 
   def capture_individual_classes(classes)
-    classes.scan(/[.][\S]*[^\}\s]/)
+    classes.scan(/\.[^\.\}\s]*/)
   end
 
   def combine_individual_classes_to_one_string(classes)
