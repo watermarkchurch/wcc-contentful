@@ -2,11 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe WCC::Contentful::WebhookController, type: :controller do
-  routes { WCC::Contentful::Engine.routes }
-
-  render_views
-
+RSpec.describe WCC::Contentful::WebhookController, type: :request do
   describe 'receive' do
     let!(:good_headers) {
       {
@@ -20,6 +16,8 @@ RSpec.describe WCC::Contentful::WebhookController, type: :controller do
       load_fixture('contentful/contentful_published_blog.json')
     }
 
+    let(:request_headers) { { 'CONTENT_TYPE' => 'application/json' } }
+
     before do
       WCC::Contentful.configure do |config|
         config.webhook_username = 'tester1'
@@ -31,9 +29,8 @@ RSpec.describe WCC::Contentful::WebhookController, type: :controller do
 
     it 'denies requests without HTTP BASIC auth' do
       request.headers['Content-Type'] = 'application/vnd.contentful.management.v1+json'
-      post :receive,
-        body: body,
-        format: :json
+
+      post '/wcc/contentful/webhook/receive', body, request_headers
 
       # assert
       expect(response).to have_http_status(:unauthorized)
@@ -44,7 +41,7 @@ RSpec.describe WCC::Contentful::WebhookController, type: :controller do
         'Authorization': basic_auth('tester1', 'badpasswd'),
         'Content-Type': 'application/vnd.contentful.management.v1+json'
       )
-      post :receive, body: body
+      post '/wcc/contentful/webhook/receive', body
 
       # assert
       expect(response).to have_http_status(:unauthorized)
@@ -52,7 +49,7 @@ RSpec.describe WCC::Contentful::WebhookController, type: :controller do
 
     it 'denies requests with bad content type' do
       request.headers[:Authorization] = basic_auth('tester1', 'password1')
-      post :receive, body: body
+      post '/wcc/contentful/webhook/receive', body
 
       # assert
       expect(response).to have_http_status(:not_acceptable)
@@ -65,7 +62,7 @@ RSpec.describe WCC::Contentful::WebhookController, type: :controller do
         'Content-Type': 'application/vnd.contentful.management.v1+json'
       )
 
-      post :receive, body: '{}'
+      post '/wcc/contentful/webhook/receive', '{}'
 
       # assert
       expect(response).to have_http_status(:bad_request)
@@ -77,8 +74,7 @@ RSpec.describe WCC::Contentful::WebhookController, type: :controller do
         'Content-Type': 'application/vnd.contentful.management.v1+json'
       )
 
-      post :receive,
-        body: body
+      post '/wcc/contentful/webhook/receive', body
 
       # assert
       expect(response).to have_http_status(:no_content)
@@ -99,8 +95,7 @@ RSpec.describe WCC::Contentful::WebhookController, type: :controller do
         .and_return(store)
 
       # act
-      post :receive,
-        body: body
+      post '/wcc/contentful/webhook/receive', body
     end
 
     it 'runs a sync on success' do
@@ -114,8 +109,7 @@ RSpec.describe WCC::Contentful::WebhookController, type: :controller do
         .with(hash_including(JSON.parse(body)))
 
       # act
-      post :receive,
-        body: body
+      post '/wcc/contentful/webhook/receive', body
 
       # assert
       expect(response).to have_http_status(:no_content)
@@ -135,8 +129,7 @@ RSpec.describe WCC::Contentful::WebhookController, type: :controller do
       expect(WCC::Contentful::DelayedSyncJob).to receive(:perform_later)
 
       # act
-      post :receive,
-        body: body
+      post '/wcc/contentful/webhook/receive', body
 
       # assert
       expect(response).to have_http_status(:no_content)
@@ -164,8 +157,7 @@ RSpec.describe WCC::Contentful::WebhookController, type: :controller do
       )
 
       # act
-      post :receive,
-        body: body
+      post '/wcc/contentful/webhook/receive', body
 
       # assert
       expect(events.length).to eq(2)
@@ -189,8 +181,7 @@ RSpec.describe WCC::Contentful::WebhookController, type: :controller do
       )
 
       # act
-      post :receive,
-        body: body
+      post '/wcc/contentful/webhook/receive', body
 
       # assert
       expect(events.length).to eq(1)
