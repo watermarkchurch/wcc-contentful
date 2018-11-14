@@ -70,6 +70,29 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
         expect(html_to_render).to include("{: .this }")
       end
     end
+
+    context 'When given: [links with a newline]\n(https://www.test.com){: .newline }' do
+      it 'will render the string as a mashed up mess because of the \n' do
+        markdown_string =
+          'some before text [links with a newline]\n(https://www.test.com){: .newline } and some after text'
+        html_to_render =
+          helper.markdown(markdown_string)
+
+        expect(html_to_render).to include(
+          "[links with a newline]\\n(<a href=\"https://www.test.com)%7B:\" target=\"_blank\">https://www.test.com){:</a> .newline }"
+        )
+      end
+    end
+    context 'When given: [newline after the parens](http://www.google.com)\n{: .test }' do
+      it 'will render the \n{: .test } after the converted hyperlink' do
+        markdown_string =
+          'some before text [newline after the parens](http://www.google.com)\n{: .test } and some after text'
+        html_to_render =
+          helper.markdown(markdown_string)
+
+        expect(html_to_render).to include("<a href=\"http://www.google.com\" target=\"_blank\">newline after the parens</a>\\n{: .test }")
+      end
+    end
   end
 
   describe '#links_within_markdown' do
