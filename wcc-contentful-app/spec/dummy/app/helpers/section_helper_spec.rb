@@ -37,7 +37,7 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
           helper.markdown(markdown_string_with_classless_link)
 
         expect(html_to_render).to_not include("class=")
-        expect(html_to_render).to include("<a href=\"https://test.com\" target=\"_blank\">Test</a>")
+        expect(html_to_render).to include("<a target=\"_blank\" href=\"https://test.com\">Test</a>")
       end
     end
 
@@ -78,7 +78,7 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
         html_to_render =
           helper.markdown(markdown_string)
 
-        expect(html_to_render).to include("<a href=\"https://www.test.com\" target=\"_blank\">links with a newline</a>")
+        expect(html_to_render).to include("<a target=\"_blank\" href=\"https://www.test.com\">links with a newline</a>")
         expect(html_to_render).to_not include("class")
       end
 
@@ -88,7 +88,7 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
         html_to_render =
           helper.markdown(markdown_string)
           expect(html_to_render).to include(
-            "<a href=\"https://www.test.com\" target=\"_blank\">links with a newline</a>{: .newline }"
+            "<a target=\"_blank\" href=\"https://www.test.com\">links with a newline</a>{: .newline }"
           )
       end
     end
@@ -100,7 +100,7 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
           helper.markdown(markdown_string)
 
         expect(html_to_render).to include(
-          "<a href=\"http://www.google.com\" target=\"_blank\">newline after the parens</a>"
+          "<a target=\"_blank\" href=\"http://www.google.com\">newline after the parens</a>"
         )
       end
       it 'will render <br>\n{: .test } after the converted hyperlink' do
@@ -110,7 +110,7 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
           helper.markdown(markdown_string)
 
         expect(html_to_render).to include(
-          "<a href=\"http://www.google.com\" target=\"_blank\">newline after the parens</a><br>\n{: .test }"
+          "<a target=\"_blank\" href=\"http://www.google.com\">newline after the parens</a><br>\n{: .test }"
         )
       end
     end
