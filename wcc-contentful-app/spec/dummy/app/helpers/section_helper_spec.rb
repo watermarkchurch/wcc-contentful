@@ -25,8 +25,8 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
 
         expect(html_to_render).to include("class=\"button white \"")
         expect(html_to_render).to include("class=\"button-medium green \"")
-        expect(CGI.unescape_html(html_to_render)).to include(
-          "<a title=\"Awaken's Homepage\" class=\"button white \" href=\"/awaken\">Awaken</a>"
+        expect(html_to_render).to include(
+          "<a class=\"button-medium green \" target=\"_blank\" href=\"http://www.watermark.org\">Watermark Community Church</a>"
         )
       end
     end
