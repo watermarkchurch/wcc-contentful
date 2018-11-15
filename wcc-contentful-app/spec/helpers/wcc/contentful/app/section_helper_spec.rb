@@ -5,16 +5,16 @@ require 'rails_helper'
 RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
   let(:markdown_string_with_links_that_have_classes) {
     +"Ministry developed by [Awaken](/awaken \"Awaken's Homepage\"){: .button .white} in Dallas, Texas."\
-    " Just relax. [Watermark Community Church](http://www.watermark.org){: .button-medium .green} ok."\
-    " Last line goes here [Test](https://test.com)."
+    ' Just relax. [Watermark Community Church](http://www.watermark.org){: .button-medium .green} ok.'\
+    ' Last line goes here [Test](https://test.com).'
   }
 
   let(:markdown_string_with_classless_link) {
-    "Test line goes here [Test](https://test.com)."
+    'Test line goes here [Test](https://test.com).'
   }
 
   let(:markdown_string_without_links) {
-    "nothin to see here"
+    'nothin to see here'
   }
 
   describe '#markdown' do
@@ -23,10 +23,10 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
         html_to_render =
           helper.markdown(markdown_string_with_links_that_have_classes)
 
-        expect(html_to_render).to include("class=\"button white \"")
-        expect(html_to_render).to include("class=\"button-medium green \"")
+        expect(html_to_render).to include('class="button white "')
+        expect(html_to_render).to include('class="button-medium green "')
         expect(html_to_render).to include(
-          "<a class=\"button-medium green \" target=\"_blank\" href=\"http://www.watermark.org\">Watermark Community Church</a>"
+          '<a class="button-medium green " target="_blank" href="http://www.watermark.org">Watermark Community Church</a>'
         )
       end
     end
@@ -36,38 +36,38 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
         html_to_render =
           helper.markdown(markdown_string_with_classless_link)
 
-        expect(html_to_render).to_not include("class=")
-        expect(html_to_render).to include("<a target=\"_blank\" href=\"https://test.com\">Test</a>")
+        expect(html_to_render).to_not include('class=')
+        expect(html_to_render).to include('<a target="_blank" href="https://test.com">Test</a>')
       end
     end
 
     context 'when only class syntax is passed {: .this } without link' do
       it 'returns the {: .this } within the html to be rendered' do
-        markdown_string = "Just some content {: .this }"
+        markdown_string = 'Just some content {: .this }'
         html_to_render =
           helper.markdown(markdown_string)
 
-        expect(html_to_render).to include("{: .this }")
+        expect(html_to_render).to include('{: .this }')
       end
     end
 
     context 'when class syntax is used but without a dot on the class {: this }' do
       it 'returns the {: this } within the html to be rendered' do
-        markdown_string = "Just some content {: this }"
+        markdown_string = 'Just some content {: this }'
         html_to_render =
           helper.markdown(markdown_string)
 
-        expect(html_to_render).to include("{: this }")
+        expect(html_to_render).to include('{: this }')
       end
     end
 
     context 'when only class syntax is passed {: .this } without link' do
       it 'returns the {: .this } within the html to be rendered' do
-        markdown_string = "Just some content {: .this }"
+        markdown_string = 'Just some content {: .this }'
         html_to_render =
           helper.markdown(markdown_string)
 
-        expect(html_to_render).to include("{: .this }")
+        expect(html_to_render).to include('{: .this }')
       end
     end
 
@@ -78,8 +78,8 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
         html_to_render =
           helper.markdown(markdown_string)
 
-        expect(html_to_render).to include("<a target=\"_blank\" href=\"https://www.test.com\">links with a newline</a>")
-        expect(html_to_render).to_not include("class")
+        expect(html_to_render).to include('<a target="_blank" href="https://www.test.com">links with a newline</a>')
+        expect(html_to_render).to_not include('class')
       end
 
       it 'will render the class as plain text next to the hyperlink' do
@@ -87,9 +87,9 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
           "some before text [links with a newline]\n(https://www.test.com){: .newline } and some after text"
         html_to_render =
           helper.markdown(markdown_string)
-          expect(html_to_render).to include(
-            "<a target=\"_blank\" href=\"https://www.test.com\">links with a newline</a>{: .newline }"
-          )
+        expect(html_to_render).to include(
+          '<a target="_blank" href="https://www.test.com">links with a newline</a>{: .newline }'
+        )
       end
     end
     context 'When given: [newline after the parens](http://www.google.com)\n{: .test }' do
@@ -100,7 +100,7 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
           helper.markdown(markdown_string)
 
         expect(html_to_render).to include(
-          "<a target=\"_blank\" href=\"http://www.google.com\">newline after the parens</a>"
+          '<a target="_blank" href="http://www.google.com">newline after the parens</a>'
         )
       end
       it 'will render <br>\n{: .test } after the converted hyperlink' do
@@ -121,8 +121,8 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
           +'some before text [forget spaces](http://www.google.com){:.test} and some after text'
         html_to_render =
           helper.markdown(markdown_string)
-        
-        expect(html_to_render).to include("class=\"test \"")
+
+        expect(html_to_render).to include('class="test "')
       end
     end
 
@@ -132,8 +132,8 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
           +'some before text [no space](http://www.google.com){: .btn.btn-primary } and some after text'
         html_to_render =
           helper.markdown(markdown_string)
-        
-        expect(html_to_render).to include("class=\"btn btn-primary \"")
+
+        expect(html_to_render).to include('class="btn btn-primary "')
       end
     end
 
@@ -143,8 +143,8 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
           +'some before text [text or .text that matches a class](/home "text or .text"){: .text } and some after text'
         html_to_render =
           helper.markdown(markdown_string)
-        
-        expect(html_to_render).to include("class=\"text \"")
+
+        expect(html_to_render).to include('class="text "')
       end
     end
   end
@@ -264,13 +264,13 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
               '{: .button-medium .green}'
             ]
           ]
-        
+
         expected_raw_classes =
           [
             '{: .button .white}',
             '{: .button-medium .green}'
           ]
-        
+
         links_with_classes, raw_classes = helper.gather_links_with_classes_data(links_with_classes_arr)
 
         expect(raw_classes).to match_array(expected_raw_classes)
@@ -306,14 +306,14 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
         ]
       text =
         +"Ministry developed by [Awaken](/awaken \"Awaken's Homepage\"){: .button .white} in Dallas, Texas."\
-        " Just relax. [Watermark Community Church](http://www.watermark.org){: .button-medium .green} ok."\
-        " Last line goes here [Test](https://test.com)."
-      
-      expect(text.include? '{: .button .white}').to be true
+        ' Just relax. [Watermark Community Church](http://www.watermark.org){: .button-medium .green} ok.'\
+        ' Last line goes here [Test](https://test.com).'
+
+      expect(text.include?('{: .button .white}')).to be true
 
       helper.remove_markdown_href_class_syntax(raw_classes, text)
 
-      expect(text.include? '{: .button .white}').to be false
+      expect(text.include?('{: .button .white}')).to be false
     end
   end
 

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require "rails_helper"
+require 'rails_helper'
 require 'redcarpet'
 
-RSpec.describe WCC::Contentful::App::CustomMarkdownRender, :type => :model do
+RSpec.describe WCC::Contentful::App::CustomMarkdownRender, type: :model do
   describe '#link' do
     let(:link) {
       'https://www.watermarkresources.com'
@@ -95,7 +95,7 @@ RSpec.describe WCC::Contentful::App::CustomMarkdownRender, :type => :model do
 
     context 'when given an absolute url' do
       it 'returns target=_blank' do
-        url = "https://www.watermarkresources.com"
+        url = 'https://www.watermarkresources.com'
         options = {
           filter_html: true,
           hard_wrap: true,
