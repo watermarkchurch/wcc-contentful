@@ -38,7 +38,10 @@ RSpec.describe WCC::Contentful::App::CustomMarkdownRender, type: :model do
         }
 
         renderer = WCC::Contentful::App::CustomMarkdownRender.new(options)
-        expect(renderer.link(link, title, content)).to eq("<a title=\"#{title}\" class=\"#{link_class}\" target=\"_blank\" href=\"#{link}\">#{content}</a>")
+        expect(renderer.link(link, title, content)).to eq(
+          "<a title=\"#{title}\" class=\"#{link_class}\" target=\"_blank\" href=\"#{link}\">"\
+          "#{content}</a>"
+        )
       end
     end
 
@@ -54,7 +57,9 @@ RSpec.describe WCC::Contentful::App::CustomMarkdownRender, type: :model do
         }
 
         renderer = WCC::Contentful::App::CustomMarkdownRender.new(options)
-        expect(renderer.link(link, title, content)).to eq("<a title=\"#{title}\" target=\"_blank\" href=\"#{link}\">#{content}</a>")
+        expect(renderer.link(link, title, content)).to eq(
+          "<a title=\"#{title}\" target=\"_blank\" href=\"#{link}\">#{content}</a>"
+        )
       end
     end
   end
