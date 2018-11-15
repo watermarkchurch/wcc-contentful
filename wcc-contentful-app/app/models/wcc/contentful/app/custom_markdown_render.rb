@@ -4,25 +4,28 @@ module WCC::Contentful::App
   class CustomMarkdownRender < Redcarpet::Render::HTML
     def initialize(options)
       super
-      @links_with_classes = options[:links_with_classes]
+      @options = options
     end
 
     def link(link, title, content)
-      target = url_target(link)
-      if link_with_class_data =
-           @links_with_classes.find do |link_with_class|
-             link_with_class[0] == link &&
-                 link_with_class[2] == CGI.unescape_html(content)
-           end
-        link_class = link_with_class_data[3]
-        "<a href=\"#{link}\" title=\"#{title}\" class=\"#{link_class}\" #{target}>#{content}</a>"
-      else
-        "<a href=\"#{link}\" title=\"#{title}\" #{target}>#{content}</a>"
-      end
+      link_with_class_data =
+        @options[:links_with_classes].find do |link_with_class|
+          link_with_class[0] == link &&
+              link_with_class[2] == CGI.unescape_html(content)
+        end
+      
+      link_class = link_with_class_data ? link_with_class_data[3] : nil
+      ActionController::Base.helpers.link_to(content, link, hyperlink_attributes(title, link_class, link))
     end
 
-    def url_target(url)
-      "target='_blank'" if url.scan(/(\s|^)(https?:\/\/\S*)/).present?
+    def hyperlink_attributes(title, link_class = nil, url)
+      default_link_attrs =
+        use_target_blank?(url) ? @options[:link_attributes] : @options[:link_attributes].except(:target)
+      { title: title, class: link_class }.merge(default_link_attrs)
+    end
+
+    def use_target_blank?(url)
+      url.scan(/(\s|^)(https?:\/\/\S*)/).present?
     end
   end
 end

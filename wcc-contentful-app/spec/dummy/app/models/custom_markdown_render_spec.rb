@@ -38,7 +38,7 @@ RSpec.describe WCC::Contentful::App::CustomMarkdownRender, :type => :model do
         }
 
         renderer = WCC::Contentful::App::CustomMarkdownRender.new(options)
-        expect(renderer.link(link, title, content)).to eq("<a href=\"#{link}\" title=\"#{title}\" class=\"#{link_class}\" target='_blank'>#{content}</a>")
+        expect(renderer.link(link, title, content)).to eq("<a title=\"#{title}\" class=\"#{link_class}\" target=\"_blank\" href=\"#{link}\">#{content}</a>")
       end
     end
 
@@ -54,11 +54,11 @@ RSpec.describe WCC::Contentful::App::CustomMarkdownRender, :type => :model do
         }
 
         renderer = WCC::Contentful::App::CustomMarkdownRender.new(options)
-        expect(renderer.link(link, title, content)).to eq("<a href=\"#{link}\" title=\"#{title}\" target='_blank'>#{content}</a>")
+        expect(renderer.link(link, title, content)).to eq("<a title=\"#{title}\" target=\"_blank\" href=\"#{link}\">#{content}</a>")
       end
     end
   end
-  describe '#url_target' do
+  describe '#use_target_blank?' do
     context 'when given a relative url' do
       it 'returns nil' do
         url = '/awaken'
@@ -72,7 +72,7 @@ RSpec.describe WCC::Contentful::App::CustomMarkdownRender, :type => :model do
         }
 
         renderer = WCC::Contentful::App::CustomMarkdownRender.new(options)
-        expect(renderer.url_target(url)).to be_nil
+        expect(renderer.use_target_blank?(url)).to be false
       end
     end
 
@@ -89,7 +89,7 @@ RSpec.describe WCC::Contentful::App::CustomMarkdownRender, :type => :model do
         }
 
         renderer = WCC::Contentful::App::CustomMarkdownRender.new(options)
-        expect(renderer.url_target(url)).to be_nil
+        expect(renderer.use_target_blank?(url)).to be false
       end
     end
 
@@ -106,7 +106,7 @@ RSpec.describe WCC::Contentful::App::CustomMarkdownRender, :type => :model do
         }
 
         renderer = WCC::Contentful::App::CustomMarkdownRender.new(options)
-        expect(renderer.url_target(url)).to eq("target='_blank'")
+        expect(renderer.use_target_blank?(url)).to be true
       end
     end
   end
