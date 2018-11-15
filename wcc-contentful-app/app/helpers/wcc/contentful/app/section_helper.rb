@@ -50,13 +50,8 @@ module WCC::Contentful::App::SectionHelper
       tables: true
     }
 
-    if links_with_classes.present?
-      renderer = ::WCC::Contentful::App::CustomMarkdownRender.new(options)
-      remove_markdown_href_class_syntax(raw_classes, text)
-    else
-      renderer = ::Redcarpet::Render::HTML.new(options)
-    end
-
+    renderer = ::WCC::Contentful::App::CustomMarkdownRender.new(options)
+    remove_markdown_href_class_syntax(raw_classes, text)
     markdown = ::Redcarpet::Markdown.new(renderer, extensions)
 
     markdown.render(text).html_safe
