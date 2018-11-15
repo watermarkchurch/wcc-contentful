@@ -64,8 +64,6 @@ module WCC::Contentful::App::SectionHelper
   def gather_links_with_classes_data(markdown_links)
     links_with_classes_arr = []
     raw_classes_arr = []
-    return [links_with_classes_arr, raw_classes_arr] unless markdown_links.present?
-
     markdown_links.each do |markdown_link_arr|
       next unless markdown_link_arr.last.present?
 
