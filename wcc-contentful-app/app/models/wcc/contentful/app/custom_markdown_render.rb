@@ -9,7 +9,7 @@ module WCC::Contentful::App
 
     def link(link, title, content)
       link_with_class_data =
-        @options[:links_with_classes].find do |link_with_class|
+        @options[:links_with_classes]&.find do |link_with_class|
           link_with_class[0] == link &&
             link_with_class[2] == CGI.unescape_html(content)
         end
@@ -23,9 +23,13 @@ module WCC::Contentful::App
     end
 
     def hyperlink_attributes(title, url, link_class = nil)
-      default_link_attrs =
-        use_target_blank?(url) ? @options[:link_attributes] : @options[:link_attributes].except(:target)
-      { title: title, class: link_class }.merge(default_link_attrs)
+      link_attrs = { title: title, class: link_class }
+
+      link_attrs[:target] = '_blank' if use_target_blank?(url)
+
+      return link_attrs unless @options[:link_attributes]
+
+      @options[:link_attributes].merge(link_attrs)
     end
 
     def use_target_blank?(url)
