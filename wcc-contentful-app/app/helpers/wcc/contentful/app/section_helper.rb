@@ -54,7 +54,9 @@ module WCC::Contentful::App::SectionHelper
     remove_markdown_href_class_syntax(raw_classes, text)
     markdown = ::Redcarpet::Markdown.new(renderer, extensions)
 
-    markdown.render(text).html_safe
+    content_tag(:div,
+      markdown.render(text).html_safe,
+      class: 'formatted-content')
   end
 
   def links_within_markdown(text)

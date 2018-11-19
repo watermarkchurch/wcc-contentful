@@ -18,13 +18,19 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
   }
 
   describe '#markdown' do
+    it 'returns string wrapped in div' do
+      rendered_html = helper.markdown(markdown_string_without_links)
+
+      expect(rendered_html).to have_selector('div.formatted-content')
+    end
+
     context 'when markdown includes links with classes' do
       it 'uses those classes in the hyperlinks within the html to be rendered' do
         html_to_render =
           helper.markdown(markdown_string_with_links_that_have_classes)
 
-        expect(html_to_render).to include('class="button white "')
-        expect(html_to_render).to include('class="button-medium green "')
+        expect(html_to_render).to have_selector('.button.white')
+        expect(html_to_render).to have_selector('.button-medium.green')
       end
     end
 
@@ -33,7 +39,6 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
         html_to_render =
           helper.markdown(markdown_string_with_classless_link)
 
-        expect(html_to_render).to_not include('class=')
         expect(html_to_render).to include('<a target="_blank" href="https://test.com">Test</a>')
       end
     end
@@ -76,10 +81,8 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
         html_to_render =
           helper.markdown(markdown_string)
 
-        expect(html_to_render).to include(
-          '<a target="_blank" href="https://www.test.com">links with a newline</a>'
-        )
-        expect(html_to_render).to_not include('class')
+        expect(html_to_render).to have_link(href: 'https://www.test.com')
+        expect(html_to_render).to_not have_selector('.newline')
       end
 
       it 'will render the class as plain text next to the hyperlink' do
