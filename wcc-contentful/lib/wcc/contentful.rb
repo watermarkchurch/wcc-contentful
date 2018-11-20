@@ -5,6 +5,7 @@ require 'wcc/contentful/version'
 require 'active_support'
 require 'active_support/core_ext/object'
 
+require 'wcc/contentful/active_record_shim'
 require 'wcc/contentful/configuration'
 require 'wcc/contentful/exceptions'
 require 'wcc/contentful/helpers'
