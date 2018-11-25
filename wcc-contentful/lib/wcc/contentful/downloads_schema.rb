@@ -13,12 +13,38 @@ class WCC::Contentful::DownloadsSchema
   end
 
   def call
+    return unless needs_update?
+
+    update!
+  end
+
+  def update!
     FileUtils.mkdir_p(File.dirname(@file))
 
     File.write(@file, JSON.pretty_generate({
       'contentTypes' => content_types,
       'editorInterfaces' => editor_interfaces
     }))
+  end
+
+  def needs_update?
+    return true unless File.exist?(@file)
+
+    contents =
+      begin
+        JSON.parse(File.read(@file))
+      rescue JSON::ParserError
+        return true
+      end
+
+    existing_cts = contents['contentTypes'].sort_by { |ct| ct.dig('sys', 'id') }
+    return true unless content_types.count == existing_cts.count
+    return true unless deep_contains_all(content_types, existing_cts)
+
+    existing_eis = contents['editorInterfaces'].sort_by { |i| i.dig('sys', 'contentType', 'sys', 'id') }
+    return true unless editor_interfaces.count == existing_eis.count
+
+    !deep_contains_all(editor_interfaces, existing_eis)
   end
 
   def content_types
@@ -40,9 +66,25 @@ class WCC::Contentful::DownloadsSchema
   private
 
   def strip_sys(obj)
-    puts "sys: #{obj}" unless obj['sys'].is_a? Hash
     obj.merge!({
       'sys' => obj['sys'].slice('id', 'type', 'contentType')
     })
+  end
+
+  def deep_contains_all(expected, actual)
+    if expected.is_a? Array
+      expected.each_with_index do |val, i|
+        return false unless deep_contains_all(val, actual[i])
+      end
+      true
+    elsif expected.is_a? Hash
+      expected.each do |(key, val)|
+        return false unless actual.key?(key)
+        return false unless deep_contains_all(val, actual[key])
+      end
+      true
+    else
+      expected == actual
+    end
   end
 end

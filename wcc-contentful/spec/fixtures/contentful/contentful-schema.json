@@ -104,12 +104,12 @@
       },
       "controls": [
         {
-          "fieldId": "title",
+          "fieldId": "name",
           "widgetId": "singleLine"
         },
         {
-          "fieldId": "slug",
-          "widgetId": "singleLine"
+          "fieldId": "items",
+          "widgetId": "entryLinksEditor"
         }
       ]
     },
@@ -127,12 +127,12 @@
       },
       "controls": [
         {
-          "fieldId": "title",
+          "fieldId": "name",
           "widgetId": "singleLine"
         },
         {
-          "fieldId": "slug",
-          "widgetId": "singleLine"
+          "fieldId": "photo",
+          "widgetId": "assetLinkEditor"
         }
       ]
     }
