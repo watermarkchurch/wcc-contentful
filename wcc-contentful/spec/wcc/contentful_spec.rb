@@ -19,6 +19,7 @@ RSpec.describe WCC::Contentful, :vcr do
       config.space = valid_contentful_space_id
       config.content_delivery = :eager_sync
       config.environment = nil
+      config.update_schema_file = :never
     end
   end
 
@@ -212,6 +213,35 @@ RSpec.describe WCC::Contentful, :vcr do
         content_type = WCC::Contentful::Model::MenuButton.content_type
         expect(content_type).to eq('menuButton')
       end
+
+      it 'should error if schema file not present and API keys incorrect (404)' do
+        stub_request(:get,
+          "https://cdn.contentful.com/spaces/#{contentful_space_id}/content_types?limit=1000")
+          .to_return(status: 404, body: '{}')
+
+        WCC::Contentful.configure do |config|
+          config.update_schema_file = :if_possible
+          config.schema_file = 'not-present.json'
+        end
+
+        expect {
+          WCC::Contentful.init!
+        }.to raise_error(WCC::Contentful::InitializationError)
+      end
+
+      it 'should not error if schema file present' do
+        stub_request(:get,
+          "https://cdn.contentful.com/spaces/#{contentful_space_id}/content_types?limit=1000")
+          .to_return(status: 404, body: '{}')
+
+        WCC::Contentful.configure do |config|
+          config.update_schema_file = :if_possible
+          # file located inside spec/dummy/
+          config.schema_file = 'db/contentful-schema.json'
+        end
+
+        WCC::Contentful.init!
+      end
     end
 
     context 'with management token' do
@@ -395,7 +425,9 @@ RSpec.describe WCC::Contentful, :vcr do
         # assert
         expect(menu.name).to eq('Side Menu')
         expect(button.text).to eq('About')
-        button2 = WCC::Contentful::Model::Menu.find('6y9DftpiYoA4YiKg2CgoUU').items.first
+        menu2 = WCC::Contentful::Model::Menu.find('6y9DftpiYoA4YiKg2CgoUU')
+        puts menu2.raw
+        button2 = menu2.items.first
         expect(button2.text).to eq('About')
       end
     end

@@ -32,7 +32,7 @@ RSpec.describe WCC::Contentful::DownloadsSchema do
     }
 
     let(:subject) {
-      described_class.new(nil, management_client)
+      described_class.new('db/contentful-schema.json', management_client: management_client)
     }
 
     it 'creates directory' do

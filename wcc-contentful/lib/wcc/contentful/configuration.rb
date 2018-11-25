@@ -85,6 +85,41 @@ class WCC::Contentful::Configuration
   #  ->(url, query, headers = {}, proxy = {}) { ... }
   attr_writer :http_adapter
 
+  # Indicates whether to update the contentful-schema.json file for building models.
+  # The schema can also be updated with `rake wcc_contentful:download_schema`
+  # Valid values are:
+  #
+  # never:: wcc-contentful not update the schema even if a management token is available.
+  #         If your schema file is out of date this could cause null-reference errors or
+  #         not found errors at runtime.  If your schema file does not exist or is invalid,
+  #         WCC::Contentful.init! will raise a WCC::Contentful::InitializitionError
+  #
+  # if_possible:: wcc-contentful will attempt to reach out to the management API for
+  #               content types, and will fall back to the schema file if the API
+  #               cannot be reached.  This is the default.
+  #
+  # always:: wcc-contentful will check either the management API or the CDN for the
+  #          most up-to-date content types and will raise a WCC::Contentful::InitializationError
+  #          if the API cannot be reached.
+  def update_schema_file=(sym)
+    valid_syms = %i[never if_possible always]
+    unless valid_syms.include?(sym)
+      raise ArgumentError, "update_schema_file must be one of #{valid_syms}"
+    end
+
+    @update_schema_file = sym
+  end
+  attr_reader :update_schema_file
+
+  # The file to store the Contentful schema in.  You should check this into source
+  # control, similar to `db/schema.rb`.  This filename is relative to the rails root.
+  # Defaults to 'db/contentful-schema.json
+  attr_writer :schema_file
+
+  def schema_file
+    Rails.root.join(@schema_file)
+  end
+
   def initialize
     @access_token = ''
     @app_url = ENV['APP_URL']
@@ -93,6 +128,8 @@ class WCC::Contentful::Configuration
     @space = ''
     @default_locale = nil
     @content_delivery = :direct
+    @update_schema_file = :if_possible
+    @schema_file = 'db/contentful-schema.json'
     @webhook_jobs = []
   end
 

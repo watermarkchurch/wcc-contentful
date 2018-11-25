@@ -4,12 +4,13 @@ require 'wcc/contentful'
 
 class WCC::Contentful::DownloadsSchema
   def self.call(file = nil, management_client: nil)
-    new(file, management_client).call
+    new(file, management_client: management_client).call
   end
 
-  def initialize(file = nil, management_client = nil)
+  def initialize(file = nil, management_client: nil)
     @client = management_client || WCC::Contentful::Services.instance.management_client
-    @file = file || './db/contentful-schema.json'
+    @file = file || WCC::Contentful.configuration&.schema_file
+    raise ArgumentError, 'Please pass filename or call WCC::Contentful.configure' unless @file
   end
 
   def call

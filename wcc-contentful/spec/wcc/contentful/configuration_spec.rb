@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'rails_helper'
+
 RSpec.describe WCC::Contentful::Configuration do
   subject(:config) { WCC::Contentful::Configuration.new }
 

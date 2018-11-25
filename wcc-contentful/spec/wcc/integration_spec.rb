@@ -12,6 +12,7 @@ RSpec.describe 'Full Stack Integration', :vcr do
         config.preview_token = contentful_preview_token
         config.content_delivery = :lazy_sync
         config.environment = nil
+        config.update_schema_file = :never
       end
     end
 
