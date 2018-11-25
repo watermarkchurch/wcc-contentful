@@ -113,18 +113,18 @@ class WCC::Contentful::Configuration
   # The schema can also be updated with `rake wcc_contentful:download_schema`
   # Valid values are:
   #
-  # never:: wcc-contentful not update the schema even if a management token is available.
-  #         If your schema file is out of date this could cause null-reference errors or
-  #         not found errors at runtime.  If your schema file does not exist or is invalid,
-  #         WCC::Contentful.init! will raise a WCC::Contentful::InitializitionError
+  # [:never] wcc-contentful will not update the schema even if a management token is available.
+  #          If your schema file is out of date this could cause null-reference errors or
+  #          not found errors at runtime.  If your schema file does not exist or is invalid,
+  #          WCC::Contentful.init! will raise a WCC::Contentful::InitializitionError
   #
-  # if_possible:: wcc-contentful will attempt to reach out to the management API for
-  #               content types, and will fall back to the schema file if the API
-  #               cannot be reached.  This is the default.
+  # [:if_possible] wcc-contentful will attempt to reach out to the management API for
+  #                content types, and will fall back to the schema file if the API
+  #                cannot be reached.  This is the default.
   #
-  # always:: wcc-contentful will check either the management API or the CDN for the
-  #          most up-to-date content types and will raise a WCC::Contentful::InitializationError
-  #          if the API cannot be reached.
+  # [:always] wcc-contentful will check either the management API or the CDN for the
+  #           most up-to-date content types and will raise a
+  #           WCC::Contentful::InitializationError if the API cannot be reached.
   def update_schema_file=(sym)
     valid_syms = %i[never if_possible always]
     unless valid_syms.include?(sym)
