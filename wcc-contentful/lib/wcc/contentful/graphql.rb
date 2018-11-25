@@ -6,7 +6,7 @@ require 'graphql'
 module WCC::Contentful
   # This module builds a GraphQL schema out of our IndexedRepresentation.
   # It is currently unused and not hooked up in the WCC::Contentful.init! method.
-  # TODO: https://zube.io/watermarkchurch/development/c/2234 hook it up
+  # TODO: https://github.com/watermarkchurch/wcc-contentful/issues/14 hook it up
   module Graphql
   end
 end

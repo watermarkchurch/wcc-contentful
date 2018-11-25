@@ -1,22 +1,42 @@
 # frozen_string_literal: true
 
+# This object contains all the configuration options for the `wcc-contentful` gem.
 class WCC::Contentful::Configuration
-  ATTRIBUTES = %i[
-    access_token
-    app_url
-    management_token
-    space
-    environment
-    default_locale
-    content_delivery
-    preview_token
-    http_adapter
-    sync_cache_store
-    webhook_username
-    webhook_password
-    webhook_jobs
-  ].freeze
-  attr_accessor(*ATTRIBUTES)
+  # (required) Sets the Contentful Space ID.
+  attr_accessor :space
+  # (required) Sets the Content Delivery API access token.
+  attr_accessor :access_token
+
+  # Sets the app's root URL for a Rails app.  Used by the WCC::Contentful::Engine
+  # to automatically set up webhooks to point at the WCC::Contentful::WebhookController
+  attr_accessor :app_url
+  # Sets the Content Management Token used to communicate with the Management API.
+  # This is required for automatically setting up webhooks, and to create the
+  # WCC::Contentful::Services#management_client.
+  attr_accessor :management_token
+  # Sets the Environment ID.  Leave blank to use master.
+  attr_accessor :environment
+  # Sets the default locale.  Defaults to 'en-US'.
+  attr_accessor :default_locale
+  # Sets the Content Preview API access token.  Only required if you use the
+  # preview flag.
+  attr_accessor :preview_token
+  # Sets an optional basic auth username that will be validated by the webhook controller.
+  # You must ensure the configured webhook sets the "HTTP Basic Auth username"
+  attr_accessor :webhook_username
+  # Sets an optional basic auth password that will be validated by the webhook controller.
+  # You must ensure the configured webhook sets the "HTTP Basic Auth password"
+  attr_accessor :webhook_password
+  # An array of jobs that are run whenever a webhook is received by the webhook controller.
+  # The job can be an ActiveJob class which responds to `:perform_later`, or a lambda or
+  # other object that responds to `:call`.
+  # Example:
+  #  config.webhook_jobs << MyJobClass
+  #  config.webhook_jobs << ->(event) { ... }
+  #
+  # See the source code for WCC::Contentful::DelayedSyncJob for an example of how
+  # to implement a webhook job.
+  attr_accessor :webhook_jobs
 
   # Returns true if the currently configured environment is pointing at `master`.
   def master?
@@ -34,11 +54,11 @@ class WCC::Contentful::Configuration
   #               with the `:eager_sync` method, the entire content of the Contentful
   #               space is downloaded locally and stored in the
   #               {WCC::Contentful::Services#store configured store}.  The application is
-  #               responsible to periodically call `WCC::Contentful.sync!` to keep the store
-  #               updated. Alternatively, the provided {WCC::Contentful::Engine Engine}
+  #               responsible to periodically call the WCC::Contentful::DelayedSyncJob to
+  #               keep the store updated. Alternatively, the provided {WCC::Contentful::Engine Engine}
   #               can be mounted to receive a webhook from the Contentful space
   #               on publish events:
-  #                 mount WCC::Contentful::Engine, at: '/wcc/contentful'
+  #                 mount WCC::Contentful::Engine, at: '/'
   #
   # [:lazy_sync] `config.content_delivery = :lazy_sync, [cache]`
   #              The `:lazy_sync` method is a hybrid between the other two methods.
@@ -66,9 +86,13 @@ class WCC::Contentful::Configuration
     @content_delivery_params = cd_params
   end
 
+  # Gets the configured content_delivery symbol
+  attr_reader :content_delivery
+  # Gets the parameters passed in the content_delivery configuration
   attr_reader :content_delivery_params
 
-  # Directly sets the adapter layer for communicating with Contentful
+  # Directly sets the adapter layer for communicating with Contentful.
+  # This overrides the content_delivery setting to `:custom`.
   def store=(value)
     @content_delivery = :custom
     store, *cd_params = value
@@ -83,7 +107,7 @@ class WCC::Contentful::Configuration
   # You can pass your own adapter which responds to 'call', or even a lambda
   # that accepts the following parameters:
   #  ->(url, query, headers = {}, proxy = {}) { ... }
-  attr_writer :http_adapter
+  attr_accessor :http_adapter
 
   # Indicates whether to update the contentful-schema.json file for building models.
   # The schema can also be updated with `rake wcc_contentful:download_schema`
@@ -133,6 +157,8 @@ class WCC::Contentful::Configuration
     @webhook_jobs = []
   end
 
+  # Validates the configuration, raising ArgumentError if anything is wrong.  This
+  # is called by WCC::Contentful.init!
   def validate!
     raise ArgumentError, 'Please provide "space"' unless space.present?
     raise ArgumentError, 'Please provide "access_token"' unless access_token.present?

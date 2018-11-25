@@ -5,6 +5,7 @@ require 'wcc/contentful/version'
 require 'active_support'
 require 'active_support/core_ext/object'
 
+require 'wcc/contentful/active_record_shim'
 require 'wcc/contentful/configuration'
 require 'wcc/contentful/downloads_schema'
 require 'wcc/contentful/exceptions'
@@ -33,6 +34,7 @@ module WCC::Contentful
   # Configures the WCC::Contentful gem to talk to a Contentful space.
   # This must be called first in your initializer, before #init! or accessing the
   # client.
+  # See WCC::Contentful::Configuration for all configuration options.
   def self.configure
     @configuration ||= Configuration.new
     yield(configuration)
