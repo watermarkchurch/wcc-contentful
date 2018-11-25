@@ -426,7 +426,6 @@ RSpec.describe WCC::Contentful, :vcr do
         expect(menu.name).to eq('Side Menu')
         expect(button.text).to eq('About')
         menu2 = WCC::Contentful::Model::Menu.find('6y9DftpiYoA4YiKg2CgoUU')
-        puts menu2.raw
         button2 = menu2.items.first
         expect(button2.text).to eq('About')
       end
