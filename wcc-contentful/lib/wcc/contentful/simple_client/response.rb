@@ -174,6 +174,8 @@ class WCC::Contentful::SimpleClient
       case code
       when 404
         NotFoundError
+      when 401
+        UnauthorizedError
       else
         ApiError
       end
@@ -186,5 +188,8 @@ class WCC::Contentful::SimpleClient
   end
 
   class NotFoundError < ApiError
+  end
+
+  class UnauthorizedError < ApiError
   end
 end

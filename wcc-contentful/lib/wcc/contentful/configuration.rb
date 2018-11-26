@@ -163,6 +163,10 @@ class WCC::Contentful::Configuration
     raise ArgumentError, 'Please provide "space"' unless space.present?
     raise ArgumentError, 'Please provide "access_token"' unless access_token.present?
 
+    if update_schema_file == :always && management_token.blank?
+      raise ArgumentError, 'A management_token is required in order to update the schema file.'
+    end
+
     webhook_jobs&.each do |job|
       next if job.respond_to?(:call) || job.respond_to?(:perform_later)
 

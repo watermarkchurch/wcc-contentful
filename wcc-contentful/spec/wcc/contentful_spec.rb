@@ -214,10 +214,25 @@ RSpec.describe WCC::Contentful, :vcr do
         expect(content_type).to eq('menuButton')
       end
 
-      it 'should error if schema file not present and API keys incorrect (404)' do
+      it 'should error if schema file not present and wrong space ID given (404)' do
         stub_request(:get,
           "https://cdn.contentful.com/spaces/#{contentful_space_id}/content_types?limit=1000")
           .to_return(status: 404, body: '{}')
+
+        WCC::Contentful.configure do |config|
+          config.update_schema_file = :if_possible
+          config.schema_file = 'not-present.json'
+        end
+
+        expect {
+          WCC::Contentful.init!
+        }.to raise_error(WCC::Contentful::InitializationError)
+      end
+
+      it 'should error if schema file not present and API keys incorrect (401)' do
+        stub_request(:get,
+          "https://cdn.contentful.com/spaces/#{contentful_space_id}/content_types?limit=1000")
+          .to_return(status: 401, body: '{}')
 
         WCC::Contentful.configure do |config|
           config.update_schema_file = :if_possible
@@ -236,6 +251,41 @@ RSpec.describe WCC::Contentful, :vcr do
 
         WCC::Contentful.configure do |config|
           config.update_schema_file = :if_possible
+          # file located inside spec/dummy/
+          config.schema_file = 'db/contentful-schema.json'
+        end
+
+        WCC::Contentful.init!
+      end
+
+      it 'should error if management keys incorrect and update_schema_file = :always' do
+        stub_request(:get,
+          "https://api.contentful.com/spaces/#{contentful_space_id}/content_types?limit=1000")
+          .to_return(status: 401, body: '{}')
+
+        WCC::Contentful.configure do |config|
+          config.update_schema_file = :always
+          config.management_token = 'bad token'
+          # file located inside spec/dummy/
+          config.schema_file = 'db/contentful-schema.json'
+        end
+
+        expect {
+          WCC::Contentful.init!
+        }.to raise_error(WCC::Contentful::InitializationError)
+      end
+
+      it 'should not error if management keys incorrect and update_schema_file = :if_possible' do
+        stub_request(:get,
+          "https://api.contentful.com/spaces/#{contentful_space_id}/content_types?limit=1000")
+          .to_return(status: 401, body: '{}')
+        stub_request(:get,
+          "https://cdn.contentful.com/spaces/#{contentful_space_id}/content_types?limit=1000")
+          .to_raise('No need to call CDN')
+
+        WCC::Contentful.configure do |config|
+          config.update_schema_file = :if_possible
+          config.management_token = 'bad token'
           # file located inside spec/dummy/
           config.schema_file = 'db/contentful-schema.json'
         end

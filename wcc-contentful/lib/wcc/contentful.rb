@@ -59,8 +59,14 @@ module WCC::Contentful
     if configuration.update_schema_file == :always ||
         (configuration.update_schema_file == :if_possible && Services.instance.management_client)
 
-      downloader = WCC::Contentful::DownloadsSchema.new
-      downloader.update! if configuration.update_schema_file == :always || downloader.needs_update?
+      begin
+        downloader = WCC::Contentful::DownloadsSchema.new
+        downloader.update! if configuration.update_schema_file == :always || downloader.needs_update?
+      rescue WCC::Contentful::SimpleClient::ApiError => e
+        raise InitializationError, e if configuration.update_schema_file == :always
+
+        Rails.logger.warn("Unable to download schema from management API - #{e.message}")
+      end
     end
 
     @content_types =
@@ -81,7 +87,7 @@ module WCC::Contentful
         Services.instance.client
       begin
         @content_types = client.content_types(limit: 1000).items if client
-      rescue WCC::Contentful::SimpleClient::NotFoundError => e
+      rescue WCC::Contentful::SimpleClient::ApiError => e
         # indicates bad credentials
         Rails.logger.warn("Unable to load content types from API - #{e.message}")
       end
