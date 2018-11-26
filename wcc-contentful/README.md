@@ -286,6 +286,72 @@ MyContentType.find_by(my_field: 'test') == stubbed
 # => true
 ```
 
+## Advanced Configuration Example
+
+Here's an example containing all the configuration options, and a sample setup for
+automatic deployment to Heroku.  This is intended to make you aware of what is possible,
+and not as a general recommendation of what your setup should look like.
+
+```ruby
+# config/initializers/wcc_contentful.rb
+WCC::Contentful.configure do |config|
+  config.access_token = ENV['CONTENTFUL_ACCESS_TOKEN']
+  config.space = ENV['CONTENTFUL_SPACE_ID']
+  config.environment = ENV['CONTENTFUL_ENVIRONMENT']
+  config.preview_token = ENV['CONTENTFUL_PREVIEW_ACCESS_TOKEN']
+
+  # You may or may not want to provide this to your production server...
+  config.management_token = ENV['CONTENTFUL_MANAGEMENT_TOKEN'] unless Rails.env.production?
+
+  config.app_url = "https://#{ENV['HOSTNAME']}"
+  config.webhook_username = 'my-app-webhook'
+  config.webhook_password = Rails.application.secrets.webhook_password
+  config.webhook_jobs << MyOnWebhookJob
+
+  config.content_delivery = :lazy_sync, Rails.cache if Rails.env.production?
+  # incompatible with config.content_delivery
+  # config.store = MyCustomStore.new
+
+  # Implement some adapter like this to use another HTTP client
+  config.http_adapter = MyFaradayAdapter.new
+
+  config.update_schema_file = :never
+end
+
+WCC::Contentful.init!
+```
+
+For Heroku:
+
+```yaml
+# Procfile
+web: bundle exec rails s
+worker: bundle exec sidekiq
+release: bin/release
+```
+
+```sh
+# bin/release
+#!/bin/sh
+
+set -e
+
+echo "Migrating database..."
+bin/rake db:migrate
+
+echo "Migrating contentful..."
+migrations_to_be_run=$( ... ) # somehow figure this out
+node_modules/.bin/contentful-migration \
+    -s $CONTENTFUL_SPACE_ID -a $CONTENTFUL_MANAGEMENT_TOKEN \
+    -y -p "$migrations_to_be_run"
+
+echo "Updating schema file..."
+rake wcc_contentful:download_schema
+```
+
+All configuration options can be found [in the rubydoc](https://www.rubydoc.info/gems/wcc-contentful/WCC/Contentful/Configuration) under
+{WCC::Contentful::Configuration}
+
 
 ## Development
 

@@ -7,6 +7,7 @@ require 'active_support/core_ext/object'
 
 require 'wcc/contentful/active_record_shim'
 require 'wcc/contentful/configuration'
+require 'wcc/contentful/downloads_schema'
 require 'wcc/contentful/exceptions'
 require 'wcc/contentful/helpers'
 require 'wcc/contentful/services'
@@ -55,12 +56,47 @@ module WCC::Contentful
   def self.init!
     raise ArgumentError, 'Please first call WCC:Contentful.configure' if configuration.nil?
 
-    # we want as much as possible the raw JSON from the API so use the management
-    # client if possible
-    client = Services.instance.management_client ||
-      Services.instance.client
+    if configuration.update_schema_file == :always ||
+        (configuration.update_schema_file == :if_possible && Services.instance.management_client)
 
-    @content_types = client.content_types(limit: 1000).items
+      begin
+        downloader = WCC::Contentful::DownloadsSchema.new
+        downloader.update! if configuration.update_schema_file == :always || downloader.needs_update?
+      rescue WCC::Contentful::SimpleClient::ApiError => e
+        raise InitializationError, e if configuration.update_schema_file == :always
+
+        Rails.logger.warn("Unable to download schema from management API - #{e.message}")
+      end
+    end
+
+    @content_types =
+      begin
+        if File.exist?(configuration.schema_file)
+          JSON.parse(File.read(configuration.schema_file))['contentTypes']
+        end
+      rescue JSON::ParserError
+        Rails.logger.warn("Schema file invalid, ignoring it: #{configuration.schema_file}")
+        nil
+      end
+
+    if !@content_types && %i[if_possible never].include?(configuration.update_schema_file)
+      # Final fallback - try to grab content types from CDN.  We can't update the file
+      # because the CDN doesn't have all the field validation info, but we can at least
+      # build the WCC::Contentful::Model instances.
+      client = Services.instance.management_client ||
+        Services.instance.client
+      begin
+        @content_types = client.content_types(limit: 1000).items if client
+      rescue WCC::Contentful::SimpleClient::ApiError => e
+        # indicates bad credentials
+        Rails.logger.warn("Unable to load content types from API - #{e.message}")
+      end
+    end
+
+    unless @content_types
+      raise InitializationError, 'Unable to load content types from schema file or API!' \
+        ' Check your access token and space ID.'
+    end
 
     indexer =
       ContentTypeIndexer.new.tap do |ixr|

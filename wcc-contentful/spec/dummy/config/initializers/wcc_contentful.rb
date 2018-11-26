@@ -15,6 +15,8 @@ WCC::Contentful.configure do |config|
   # config.management_token = # Contentful API management token
   # config.content_delivery = # :direct, :eager_sync, or :lazy_sync
   # config.sync_store = # :memory, :postgres, or a custom implementation
+
+  config.update_schema_file = :never
 end
 
 # Download content types, build models, and sync content
