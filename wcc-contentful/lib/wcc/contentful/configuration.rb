@@ -2,6 +2,25 @@
 
 # This object contains all the configuration options for the `wcc-contentful` gem.
 class WCC::Contentful::Configuration
+  ATTRIBUTES = %i[
+    space
+    access_token
+    app_url
+    management_token
+    environment
+    default_locale
+    preview_token
+    webhook_username
+    webhook_password
+    webhook_jobs
+    content_delivery
+    content_delivery_params
+    store
+    http_adapter
+    update_schema_file
+    schema_file
+  ].freeze
+
   # (required) Sets the Contentful Space ID.
   attr_accessor :space
   # (required) Sets the Content Delivery API access token.
@@ -171,6 +190,27 @@ class WCC::Contentful::Configuration
       next if job.respond_to?(:call) || job.respond_to?(:perform_later)
 
       raise ArgumentError, "The job '#{job}' must be an instance of ActiveJob::Base or respond to :call"
+    end
+  end
+
+  def freeze
+    FrozenConfiguration.new(self)
+  end
+
+  class FrozenConfiguration
+    attr_reader(*ATTRIBUTES)
+
+    def initialize(configuration)
+      ATTRIBUTES.each do |att|
+        val = configuration.public_send(att)
+        val.freeze if val.respond_to?(:freeze)
+        instance_variable_set("@#{att}", val)
+      end
+    end
+
+    # Returns true if the currently configured environment is pointing at `master`.
+    def master?
+      !environment.present?
     end
   end
 end

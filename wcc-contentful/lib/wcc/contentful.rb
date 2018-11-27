@@ -36,6 +36,8 @@ module WCC::Contentful
   # client.
   # See WCC::Contentful::Configuration for all configuration options.
   def self.configure
+    raise InitializationError, 'Cannot configure after initialization' if @initialized
+
     @configuration ||= Configuration.new
     yield(configuration)
 
@@ -54,7 +56,8 @@ module WCC::Contentful
   #   class Page < WCC::Contentful::Model::Page; end
   #   Page.find_by(slug: 'about-us')
   def self.init!
-    raise ArgumentError, 'Please first call WCC:Contentful.configure' if configuration.nil?
+    raise InitializationError, 'Please first call WCC:Contentful.configure' if configuration.nil?
+    raise InitializationError, 'Already Initialized' if @initialized
 
     if configuration.update_schema_file == :always ||
         (configuration.update_schema_file == :if_possible && Services.instance.management_client)
@@ -113,5 +116,7 @@ module WCC::Contentful
     WCC::Contentful::ModelBuilder.new(@types).build_models
 
     require_relative 'contentful/client_ext' if defined?(::Contentful)
+    @configuration = @configuration.freeze
+    @initialized = true
   end
 end
