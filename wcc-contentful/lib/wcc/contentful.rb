@@ -18,6 +18,7 @@ require 'wcc/contentful/model'
 require 'wcc/contentful/model_methods'
 require 'wcc/contentful/model_singleton_methods'
 require 'wcc/contentful/model_builder'
+require 'wcc/contentful/sync_engine'
 
 # The root namespace of the wcc-contentful gem
 #
