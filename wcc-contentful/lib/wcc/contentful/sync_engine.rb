@@ -50,7 +50,7 @@ module WCC::Contentful
     # If the configured store responds to `:index`, that will be called with each
     # item in the Sync response to update the store.
     # If a block is passed, that block will be evaluated with each item in the
-    # response *INSTEAD OF* updating the store.
+    # response.
     # @param [String] up_to_id An ID to look for in the response.  The method returns
     #   true if the ID was found or no up_to_id was given, false if the ID did not come back.
     # @return [Array] A `[Boolean, Integer]` tuple where the first value is whether the ID was found,
@@ -68,11 +68,8 @@ module WCC::Contentful
           id = item.dig('sys', 'id')
           id_found ||= id == up_to_id
 
-          if block_given?
-            yield(item)
-          elsif store.respond_to?(:index)
-            store.index(item)
-          end
+          yield(item) if block_given?
+          store.index(item) if store.respond_to?(:index)
           emit_item(item)
 
           count += 1
