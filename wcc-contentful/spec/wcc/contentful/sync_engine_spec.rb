@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe WCC::Contentful::DelayedSyncJob, type: :job do
+RSpec.describe WCC::Contentful::SyncEngine::Job, type: :job do
   ActiveJob::Base.queue_adapter = :test
   described_class.queue_adapter = :test
 

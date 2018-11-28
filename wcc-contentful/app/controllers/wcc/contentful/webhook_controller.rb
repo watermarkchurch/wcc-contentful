@@ -21,7 +21,7 @@ module WCC::Contentful
       event.require('sys').require(%w[id type])
       event = event.to_h
 
-      # Immediately update the store, we may update again later using DelayedSyncJob.
+      # Immediately update the store, we may update again later using SyncEngine::Job.
       store.index(event) if store.respond_to?(:index)
 
       jobs.each do |job|
@@ -63,7 +63,7 @@ module WCC::Contentful
     end
 
     def jobs
-      jobs = [WCC::Contentful::DelayedSyncJob]
+      jobs = [WCC::Contentful::SyncEngine::Job]
       jobs.push(*WCC::Contentful.configuration.webhook_jobs)
     end
   end

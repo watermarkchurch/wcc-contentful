@@ -68,65 +68,69 @@ module WCC::Contentful
     def write
       store&.public_send(@write_method, @state_key, @state)
     end
-  end
-  # This job uses the Contentful Sync API to update the configured store with
-  # the latest data from Contentful.
-  class DelayedSyncJob < ActiveJob::Base
-    include WCC::Contentful::ServiceAccessors
 
-    self.queue_adapter = :async
-    queue_as :default
+    # Define the job only if rails is loaded
+    if defined?(ActiveJob::Base)
+      # This job uses the Contentful Sync API to update the configured store with
+      # the latest data from Contentful.
+      class Job < ActiveJob::Base
+        include WCC::Contentful::ServiceAccessors
 
-    def self.mutex
-      @mutex ||= Mutex.new
-    end
+        self.queue_adapter = :async
+        queue_as :default
 
-    def self.engine
-      @engine ||= SyncEngine.new(
-        store: WCC::Contentful::Services.instance.store,
-        client: WCC::Contentful::Services.instance.client,
-        key: 'sync:token'
-      )
-    end
+        def self.mutex
+          @mutex ||= Mutex.new
+        end
 
-    def perform(event = nil)
-      up_to_id = nil
-      up_to_id = event[:up_to_id] || event.dig('sys', 'id') if event
-      sync!(up_to_id: up_to_id)
-    end
+        def self.engine
+          @engine ||= SyncEngine.new(
+            store: WCC::Contentful::Services.instance.store,
+            client: WCC::Contentful::Services.instance.client,
+            key: 'sync:token'
+          )
+        end
 
-    # Calls the Contentful Sync API and updates the configured store with the returned
-    # data.
-    #
-    # @param [String] up_to_id
-    #  An ID that we know has changed and should come back from the sync.
-    #  If we don't find this ID in the sync data, then drop a job to try
-    #  the sync again after a few minutes.
-    #
-    def sync!(up_to_id: nil)
-      return unless store.respond_to?(:index)
+        def perform(event = nil)
+          up_to_id = nil
+          up_to_id = event[:up_to_id] || event.dig('sys', 'id') if event
+          sync!(up_to_id: up_to_id)
+        end
 
-      self.class.mutex.synchronize do
-        id_found, count =
-          self.class.engine.next(up_to_id: up_to_id) do |item|
-            store.index(item)
+        # Calls the Contentful Sync API and updates the configured store with the returned
+        # data.
+        #
+        # @param [String] up_to_id
+        #  An ID that we know has changed and should come back from the sync.
+        #  If we don't find this ID in the sync data, then drop a job to try
+        #  the sync again after a few minutes.
+        #
+        def sync!(up_to_id: nil)
+          return unless store.respond_to?(:index)
+
+          self.class.mutex.synchronize do
+            id_found, count =
+              self.class.engine.next(up_to_id: up_to_id) do |item|
+                store.index(item)
+              end
+
+            next_sync_token = self.class.engine.state['token']
+
+            logger.info "Synced #{count} entries.  Next sync token:\n  #{next_sync_token}"
+            logger.info "Should enqueue again? [#{!id_found}]"
+            # Passing nil to only enqueue the job 1 more time
+            sync_later!(up_to_id: nil) unless id_found
+            next_sync_token
           end
+        end
 
-        next_sync_token = self.class.engine.state['token']
-
-        logger.info "Synced #{count} entries.  Next sync token:\n  #{next_sync_token}"
-        logger.info "Should enqueue again? [#{!id_found}]"
-        # Passing nil to only enqueue the job 1 more time
-        sync_later!(up_to_id: nil) unless id_found
-        next_sync_token
+        # Drops an ActiveJob job to invoke WCC::Contentful.sync! after a given amount
+        # of time.
+        def sync_later!(up_to_id: nil, wait: 10.minutes)
+          self.class.set(wait: wait)
+            .perform_later(up_to_id: up_to_id)
+        end
       end
-    end
-
-    # Drops an ActiveJob job to invoke WCC::Contentful.sync! after a given amount
-    # of time.
-    def sync_later!(up_to_id: nil, wait: 10.minutes)
-      WCC::Contentful::DelayedSyncJob.set(wait: wait)
-        .perform_later(up_to_id: up_to_id)
     end
   end
 end

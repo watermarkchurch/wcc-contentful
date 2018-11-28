@@ -111,7 +111,7 @@ module WCC::Contentful
     store = Services.instance.store
     if store.respond_to?(:index)
       # Drop an initial sync
-      WCC::Contentful::DelayedSyncJob.perform_later
+      WCC::Contentful::SyncEngine::Job.perform_later if defined?(WCC::Contentful::SyncEngine::Job)
     end
 
     WCC::Contentful::ModelBuilder.new(@types).build_models

@@ -53,7 +53,7 @@ class WCC::Contentful::Configuration
   #  config.webhook_jobs << MyJobClass
   #  config.webhook_jobs << ->(event) { ... }
   #
-  # See the source code for WCC::Contentful::DelayedSyncJob for an example of how
+  # See the source code for WCC::Contentful::SyncEngine::Job for an example of how
   # to implement a webhook job.
   attr_accessor :webhook_jobs
 
@@ -73,9 +73,10 @@ class WCC::Contentful::Configuration
   #               with the `:eager_sync` method, the entire content of the Contentful
   #               space is downloaded locally and stored in the
   #               {WCC::Contentful::Services#store configured store}.  The application is
-  #               responsible to periodically call the WCC::Contentful::DelayedSyncJob to
+  #               responsible to periodically call the WCC::Contentful::SyncEngine#next to
   #               keep the store updated. Alternatively, the provided {WCC::Contentful::Engine Engine}
-  #               can be mounted to receive a webhook from the Contentful space
+  #               can be mounted to automatically call WCC::Contentful::SyncEngine#next on
+  #               webhook events.
   #               on publish events:
   #                 mount WCC::Contentful::Engine, at: '/'
   #

@@ -87,7 +87,7 @@ RSpec.describe WCC::Contentful::WebhookController, type: :request do
     end
 
     it 'runs a sync on success' do
-      expect(WCC::Contentful::DelayedSyncJob).to receive(:perform_later)
+      expect(WCC::Contentful::SyncEngine::Job).to receive(:perform_later)
         .with(hash_including(JSON.parse(body)))
 
       # act
@@ -105,7 +105,7 @@ RSpec.describe WCC::Contentful::WebhookController, type: :request do
       end
 
       # expect
-      expect(WCC::Contentful::DelayedSyncJob).to receive(:perform_later)
+      expect(WCC::Contentful::SyncEngine::Job).to receive(:perform_later)
 
       # act
       post '/wcc/contentful/webhook/receive',

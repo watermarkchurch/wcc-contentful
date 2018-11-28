@@ -210,7 +210,7 @@ RSpec.describe WCC::Contentful::Configuration do
       config.preview_token = 'test-pt'
       config.webhook_username = 'test-wh'
       config.webhook_password = 'test-wh-pword'
-      config.webhook_jobs = [-> { 'one' }, WCC::Contentful::DelayedSyncJob]
+      config.webhook_jobs = [-> { 'one' }, WCC::Contentful::SyncEngine::Job]
       config.content_delivery = :lazy_sync, ActiveSupport::Cache::MemoryStore.new
       config.http_adapter = -> { 'test' }
       config
