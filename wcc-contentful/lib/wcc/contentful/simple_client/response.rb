@@ -28,10 +28,18 @@ class WCC::Contentful::SimpleClient
       parsed_message || "#{code}: #{raw_response.body}"
     end
 
+    def skip
+      raw['skip']
+    end
+
+    def total
+      raw['total']
+    end
+
     def next_page?
       return unless raw.key? 'items'
 
-      raw['items'].length + raw['skip'] < raw['total']
+      page_items.length + skip < total
     end
 
     def next_page
@@ -40,7 +48,7 @@ class WCC::Contentful::SimpleClient
       @next_page ||= @client.get(
         @request[:url],
         (@request[:query] || {}).merge({
-          skip: raw['items'].length + raw['skip']
+          skip: page_items.length + skip
         })
       )
       @next_page.assert_ok!
@@ -60,7 +68,7 @@ class WCC::Contentful::SimpleClient
     end
 
     def each_page(&block)
-      raise ArgumentError, 'Not a collection response' unless raw['items']
+      raise ArgumentError, 'Not a collection response' unless page_items
 
       ret =
         Enumerator.new do |y|
@@ -81,19 +89,21 @@ class WCC::Contentful::SimpleClient
     end
 
     def items
-      each_page.flat_map do |page|
-        page.raw['items']
-      end
+      each_page.flat_map(&:page_items)
+    end
+
+    def page_items
+      raw['items']
     end
 
     def count
-      raw['total']
+      total
     end
 
     def first
-      raise ArgumentError, 'Not a collection response' unless raw['items']
+      raise ArgumentError, 'Not a collection response' unless page_items
 
-      raw['items'].first
+      page_items.first
     end
 
     def includes
@@ -135,7 +145,7 @@ class WCC::Contentful::SimpleClient
     end
 
     def each_page
-      raise ArgumentError, 'Not a collection response' unless raw['items']
+      raise ArgumentError, 'Not a collection response' unless page_items
 
       ret =
         Enumerator.new do |y|

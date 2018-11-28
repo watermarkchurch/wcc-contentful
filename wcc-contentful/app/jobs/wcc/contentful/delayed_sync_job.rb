@@ -3,6 +3,72 @@
 require 'active_job'
 
 module WCC::Contentful
+  class SyncEngine
+    def state
+      (@state&.dup || {}).freeze
+    end
+
+    attr_reader :store
+    attr_reader :client
+
+    def initialize(state: nil, store: nil, client: nil, key: nil)
+      @state_key = key || "sync:#{object_id}"
+      @client = client || WCC::Contentful::Services.instance.client
+
+      if store
+        @fetch_method = FETCH_METHODS.find { |m| store.respond_to?(m) }
+        @write_method = WRITE_METHODS.find { |m| store.respond_to?(m) }
+        unless @fetch_method && @write_method
+          raise ArgumentError, ":store param must implement one of #{FETCH_METHODS}" \
+            " AND one of #{WRITE_METHODS}"
+        end
+
+        @store = store
+        @state = fetch
+      end
+      if state
+        @state = { 'token' => state } if state.is_a? String
+        @state = state if state.is_a? Hash
+        raise ArgumentError, ':state param must be a String or Hash' unless @state
+      end
+      raise ArgumentError, 'either :state or :store must be provided' unless @state || @store
+    end
+
+    def next(up_to_id: nil)
+      @state ||= fetch || {}
+      next_sync_token = @state['token']
+      sync_resp = client.sync(sync_token: next_sync_token)
+
+      id_found = up_to_id.nil?
+
+      count = 0
+      sync_resp.items.each do |item|
+        id = item.dig('sys', 'id')
+        id_found ||= id == up_to_id
+
+        yield(item) if block_given?
+
+        count += 1
+      end
+      @state['token'] = sync_resp.next_sync_token
+      write
+
+      [id_found, count]
+    end
+
+    FETCH_METHODS = %i[fetch find].freeze
+    WRITE_METHODS = %i[write set].freeze
+
+    private
+
+    def fetch
+      store&.public_send(@fetch_method, @state_key)
+    end
+
+    def write
+      store&.public_send(@write_method, @state_key, @state)
+    end
+  end
   # This job uses the Contentful Sync API to update the configured store with
   # the latest data from Contentful.
   class DelayedSyncJob < ActiveJob::Base
@@ -13,6 +79,14 @@ module WCC::Contentful
 
     def self.mutex
       @mutex ||= Mutex.new
+    end
+
+    def self.engine
+      @engine ||= SyncEngine.new(
+        store: WCC::Contentful::Services.instance.store,
+        client: WCC::Contentful::Services.instance.client,
+        key: 'sync:token'
+      )
     end
 
     def perform(event = nil)
@@ -33,25 +107,18 @@ module WCC::Contentful
       return unless store.respond_to?(:index)
 
       self.class.mutex.synchronize do
-        next_sync_token = store.find('sync:token')&.fetch('token', nil)
-        sync_resp = client.sync(sync_token: next_sync_token)
+        id_found, count =
+          self.class.engine.next(up_to_id: up_to_id) do |item|
+            store.index(item)
+          end
 
-        id_found = up_to_id.nil?
+        next_sync_token = self.class.engine.state['token']
 
-        count = 0
-        sync_resp.items.each do |item|
-          id = item.dig('sys', 'id')
-          id_found ||= id == up_to_id
-          store.index(item)
-          count += 1
-        end
-        store.set('sync:token', 'token' => sync_resp.next_sync_token)
-
-        logger.info "Synced #{count} entries.  Next sync token:\n  #{sync_resp.next_sync_token}"
+        logger.info "Synced #{count} entries.  Next sync token:\n  #{next_sync_token}"
         logger.info "Should enqueue again? [#{!id_found}]"
         # Passing nil to only enqueue the job 1 more time
         sync_later!(up_to_id: nil) unless id_found
-        sync_resp.next_sync_token
+        next_sync_token
       end
     end
 

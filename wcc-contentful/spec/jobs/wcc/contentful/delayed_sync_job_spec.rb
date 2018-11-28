@@ -19,6 +19,8 @@ RSpec.describe WCC::Contentful::DelayedSyncJob, type: :job do
 
     allow(WCC::Contentful::Services.instance).to receive(:client)
       .and_return(client)
+
+    described_class.instance_variable_set('@engine', nil)
   end
 
   describe '.sync!' do
