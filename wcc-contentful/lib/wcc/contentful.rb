@@ -108,8 +108,7 @@ module WCC::Contentful
       end
     @types = indexer.types
 
-    store = Services.instance.store
-    if store.respond_to?(:index)
+    if Services.instance.sync_engine&.should_sync?
       # Drop an initial sync
       WCC::Contentful::SyncEngine::Job.perform_later if defined?(WCC::Contentful::SyncEngine::Job)
     end

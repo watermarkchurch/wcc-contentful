@@ -22,6 +22,10 @@ module WCC::Contentful
     attr_reader :store
     attr_reader :client
 
+    def should_sync?
+      store&.respond_to?(:index) || has_listeners?
+    end
+
     def initialize(state: nil, store: nil, client: nil, key: nil)
       @state_key = key || "sync:#{object_id}"
       @client = client || WCC::Contentful::Services.instance.client
@@ -69,7 +73,7 @@ module WCC::Contentful
           id_found ||= id == up_to_id
 
           yield(item) if block_given?
-          store.index(item) if store.respond_to?(:index)
+          store.index(item) if store&.respond_to?(:index)
           emit_item(item)
 
           count += 1
@@ -125,8 +129,6 @@ module WCC::Contentful
         #  the sync again after a few minutes.
         #
         def sync!(up_to_id: nil)
-          return unless store.respond_to?(:index)
-
           id_found, count = sync_engine.next(up_to_id: up_to_id)
 
           next_sync_token = sync_engine.state['token']

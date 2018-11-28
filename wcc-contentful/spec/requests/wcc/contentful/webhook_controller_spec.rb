@@ -22,6 +22,9 @@ RSpec.describe WCC::Contentful::WebhookController, type: :request do
         config.webhook_password = 'password1'
         config.space = contentful_space_id
         config.access_token = contentful_access_token
+
+        # required in order to trigger SyncEngine::Job
+        config.content_delivery = :eager_sync, :memory
       end
     end
 
@@ -73,7 +76,7 @@ RSpec.describe WCC::Contentful::WebhookController, type: :request do
 
     it 'immediately updates the store on success' do
       # expect
-      store = double
+      store = double(fetch: nil, write: nil)
       expect(store).to receive(:index)
         .with(hash_including(JSON.parse(body)))
       allow(WCC::Contentful::Services.instance)

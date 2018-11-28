@@ -111,11 +111,19 @@ module WCC::Contentful
     # WCC::Contentful::Engine, which will call #next anytime a webhook is received.
     def sync_engine
       @sync_engine ||=
-        ensure_configured do |_config|
+        if SyncEngine::WRITE_METHODS.find { |m| store.respond_to?(m) }
           SyncEngine.new(
             store: store,
             client: client,
             key: 'sync:token'
+          )
+        else
+          # it makes no sense to lookup the sync token from the store if we can't
+          # go back and set it after we advance. (I'm looking at you CDNAdapter)
+
+          SyncEngine.new(
+            state: { 'token' => nil },
+            client: client
           )
         end
     end

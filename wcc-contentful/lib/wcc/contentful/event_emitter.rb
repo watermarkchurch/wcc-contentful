@@ -50,6 +50,12 @@ module WCC::Contentful::EventEmitter
       listeners.delete(listener)
     end
 
+    def has_listeners?(event = nil) # rubocop:disable Naming/PredicateName preference in this instance
+      return __listeners[event].present? if event
+
+      __listeners.values.any? { |arr| !arr.empty? }
+    end
+
     def emit(event, *args)
       raise ArgumentError, 'event must be specified' unless event
 

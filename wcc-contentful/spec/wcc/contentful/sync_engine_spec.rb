@@ -30,7 +30,7 @@ RSpec.describe WCC::Contentful::SyncEngine::Job, type: :job do
     allow(WCC::Contentful::Services.instance).to receive(:sync_engine)
       .and_return(sync_engine)
 
-    described_class.instance_variable_set('@engine', nil)
+    described_class.instance_variable_set('@sync_engine', nil)
   end
 
   describe '.sync!' do

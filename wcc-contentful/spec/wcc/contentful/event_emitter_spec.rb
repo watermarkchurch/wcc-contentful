@@ -16,6 +16,7 @@ RSpec.describe WCC::Contentful::EventEmitter do
       subject.emit('test')
 
       expect(id).to be_present
+      expect(subject.has_listeners?).to be true
       expect(count).to eq(1)
     end
   end
@@ -29,6 +30,7 @@ RSpec.describe WCC::Contentful::EventEmitter do
 
       subject.emit('test')
       expect(count).to eq(0)
+      expect(subject.has_listeners?).to be false
     end
   end
 
@@ -94,10 +96,12 @@ RSpec.describe WCC::Contentful::EventEmitter do
       count = 0
       id = subject.once('test') { count += 1 }
 
-      subject.emit('test')
-      subject.emit('test')
-
       expect(id).to be_present
+      expect(subject.has_listeners?).to be true
+
+      subject.emit('test')
+      expect(subject.has_listeners?).to be false
+      subject.emit('test')
       expect(count).to eq(1)
     end
 

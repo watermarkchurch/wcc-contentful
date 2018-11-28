@@ -63,7 +63,8 @@ module WCC::Contentful
     end
 
     def jobs
-      jobs = [WCC::Contentful::SyncEngine::Job]
+      jobs = []
+      jobs << WCC::Contentful::SyncEngine::Job if sync_engine&.should_sync?
       jobs.push(*WCC::Contentful.configuration.webhook_jobs)
     end
   end
