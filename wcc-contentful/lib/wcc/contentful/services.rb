@@ -105,6 +105,10 @@ module WCC::Contentful
         end
     end
 
+    # Gets the configured WCC::Contentful::SyncEngine which is responsible for
+    # updating the currently configured store.  The application must periodically
+    # call #next on this instance.  Alternately, the application can mount the
+    # WCC::Contentful::Engine, which will call #next anytime a webhook is received.
     def sync_engine
       @sync_engine ||=
         ensure_configured do |_config|
@@ -140,6 +144,8 @@ module WCC::Contentful
   #       store.find(...)
   #
   #       client.entries(...)
+  #
+  #       sync_engine.next
   #     end
   #   end
   # @see Services

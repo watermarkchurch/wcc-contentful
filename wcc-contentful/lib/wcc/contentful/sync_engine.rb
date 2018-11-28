@@ -3,6 +3,14 @@
 require 'active_job'
 
 module WCC::Contentful
+  # The SyncEngine is used to keep the currently configured store up to date
+  # using the Sync API.  It is available on the WCC::Contentful::Services instance,
+  # and the application is responsible to periodically call #next in order to hit
+  # the sync API and update the store.
+  #
+  # If you have mounted the WCC::Contentful::Engine, then
+  # the WCC::Contentful::WebhookController will call #next automatically anytime
+  # a webhook is received.
   class SyncEngine
     def state
       (@state&.dup || {}).freeze
@@ -34,6 +42,15 @@ module WCC::Contentful
       raise ArgumentError, 'either :state or :store must be provided' unless @state || @store
     end
 
+    # Gets the next increment of data from the Sync API.
+    # If the configured store responds to `:index`, that will be called with each
+    # item in the Sync response to update the store.
+    # If a block is passed, that block will be evaluated with each item in the
+    # response *INSTEAD OF* updating the store.
+    # @param [String] up_to_id An ID to look for in the response.  The method returns
+    #   true if the ID was found or no up_to_id was given, false if the ID did not come back.
+    # @return [Array] A `[Boolean, Integer]` tuple where the first value is whether the ID was found,
+    #   and the second value is the number of items returned.
     def next(up_to_id: nil)
       @state ||= fetch || {}
       next_sync_token = @state['token']
