@@ -5,6 +5,9 @@ module WCC::Contentful::EventEmitter
 
   included do
     def add_listener(event, listener)
+      raise ArgumentError, 'event must be specified' unless event
+      raise ArgumentError, 'listener must be provided' unless listener
+
       listener_id = [event, listener.object_id].join(':')
       listeners = __listeners.compute_if_absent(event) { Concurrent::Array.new }
       listeners << {
@@ -13,6 +16,28 @@ module WCC::Contentful::EventEmitter
         listener: listener
       }
       listener_id
+    end
+
+    def on(event, listener = nil, &block)
+      raise ArgumentError, 'listener block must be given' unless listener || block_given?
+
+      add_listener(event, listener || Proc.new(&block))
+    end
+
+    def once(event, listener = nil, &block)
+      raise ArgumentError, 'listener block must be given' unless listener || block_given?
+
+      id = ''
+      emitter = self
+      listener ||= Proc.new(&block)
+      id = add_listener(event,
+        proc { |*args|
+          begin
+            listener.call(*args)
+          ensure
+            emitter.remove_listener(id)
+          end
+        })
     end
 
     def remove_listener(id)
@@ -41,6 +66,9 @@ module WCC::Contentful::EventEmitter
 
     def __listeners
       @__listeners ||= Concurrent::Map.new
+    end
+
+    def ensure_removed(listener_id)
     end
   end
 end

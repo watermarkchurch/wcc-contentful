@@ -68,4 +68,82 @@ RSpec.describe WCC::Contentful::EventEmitter do
       expect(calls[0]).to eq([1, 2])
     end
   end
+
+  describe '#on' do
+    it 'adds a block' do
+      count = 0
+      id = subject.on('test') { count += 1 }
+      subject.emit('test')
+
+      expect(id).to be_present
+      expect(count).to eq(1)
+    end
+
+    it 'adds a proc' do
+      count = 0
+      id = subject.on('test', proc { count += 1 })
+      subject.emit('test')
+
+      expect(id).to be_present
+      expect(count).to eq(1)
+    end
+  end
+
+  describe '#once' do
+    it 'removes the listener after receiving the first message' do
+      count = 0
+      id = subject.once('test') { count += 1 }
+
+      subject.emit('test')
+      subject.emit('test')
+
+      expect(id).to be_present
+      expect(count).to eq(1)
+    end
+
+    it 'passes arguments to the block' do
+      emitted = []
+      subject.once('test') { |arg| emitted << arg }
+
+      subject.emit('test', 1)
+      subject.emit('test', 2)
+
+      expect(emitted).to eq([1])
+    end
+
+    it 'passes arguments to the proc' do
+      emitted = []
+      subject.once('test', ->(arg) { emitted << arg })
+
+      subject.emit('test', 1)
+      subject.emit('test', 2)
+
+      expect(emitted).to eq([1])
+    end
+
+    it 'removes listener even if error thrown' do
+      count = 0
+      subject.once('test') {
+        count += 1
+        raise StandardError, 'Test Error'
+      }
+
+      subject.emit('test')
+      subject.emit('test')
+
+      expect(count).to eq(1)
+    end
+
+    it 'does not prevent other listeners from getting the message' do
+      count = 0
+      subject.on('test') { count += 1 }
+      subject.once('test') { count += 1 }
+      subject.on('test') { count += 1 }
+
+      subject.emit('test')
+      subject.emit('test')
+
+      expect(count).to eq(5)
+    end
+  end
 end
