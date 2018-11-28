@@ -74,6 +74,11 @@ Metrics/ClassLength:
 Metrics/ModuleLength:
   Enabled: false
 
+Naming/MemoizedInstanceVariableName:
+  Exclude:
+    # There's a bug in this cop triggered by this file
+    - '*/lib/wcc/contentful/event_emitter.rb'
+
 Performance/UnfreezeString:
   Exclude:
     - '*/spec/**/*.rb'

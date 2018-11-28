@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'active_job'
+require 'wcc/contentful/event_emitter'
 
 module WCC::Contentful
   # The SyncEngine is used to keep the currently configured store up to date
@@ -12,6 +13,8 @@ module WCC::Contentful
   # the WCC::Contentful::WebhookController will call #next automatically anytime
   # a webhook is received.
   class SyncEngine
+    include WCC::Contentful::EventEmitter
+
     def state
       (@state&.dup || {}).freeze
     end
@@ -68,6 +71,7 @@ module WCC::Contentful
         elsif store.respond_to?(:index)
           store.index(item)
         end
+        emit_item(item)
 
         count += 1
       end
@@ -81,6 +85,11 @@ module WCC::Contentful
     WRITE_METHODS = %i[write set].freeze
 
     private
+
+    def emit_item(item)
+      event = item.dig('sys', 'type')
+      emit(event, item)
+    end
 
     def fetch
       store&.public_send(@fetch_method, @state_key)
