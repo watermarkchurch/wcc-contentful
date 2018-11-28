@@ -12,6 +12,13 @@ RSpec.describe WCC::Contentful::SyncEngine::Job, type: :job do
 
   let(:client) { double }
   let(:store) { double(find: nil, index: nil, set: nil) }
+  let(:sync_engine) {
+    WCC::Contentful::SyncEngine.new(
+      store: store,
+      client: client,
+      key: 'sync:token'
+    )
+  }
 
   before do
     allow(WCC::Contentful::Services.instance).to receive(:store)
@@ -19,6 +26,9 @@ RSpec.describe WCC::Contentful::SyncEngine::Job, type: :job do
 
     allow(WCC::Contentful::Services.instance).to receive(:client)
       .and_return(client)
+
+    allow(WCC::Contentful::Services.instance).to receive(:sync_engine)
+      .and_return(sync_engine)
 
     described_class.instance_variable_set('@engine', nil)
   end
@@ -32,9 +42,9 @@ RSpec.describe WCC::Contentful::SyncEngine::Job, type: :job do
                         next_sync_token: 'test'
                       ))
 
-        expect(WCC::Contentful::Services.instance.store).to receive(:set)
+        expect(store).to receive(:set)
           .with('sync:token', { 'token' => 'test' })
-        expect(WCC::Contentful::Services.instance.store).to_not receive(:index)
+        expect(store).to_not receive(:index)
 
         # act
         synced = job.sync!
@@ -56,9 +66,9 @@ RSpec.describe WCC::Contentful::SyncEngine::Job, type: :job do
                       ))
 
         items = next_sync['items']
-        expect(WCC::Contentful::Services.instance.store).to receive(:set)
+        expect(store).to receive(:set)
           .with('sync:token', { 'token' => 'test2' })
-        expect(WCC::Contentful::Services.instance.store).to receive(:index)
+        expect(store).to receive(:index)
           .exactly(items.count).times
 
         # act
@@ -111,50 +121,48 @@ RSpec.describe WCC::Contentful::SyncEngine::Job, type: :job do
       job.sync!(up_to_id: nil)
     end
 
-    it 'continues from prior sync token with LazyCacheStore' do
-      allow(WCC::Contentful::Services.instance).to receive(:store)
-        .and_return(WCC::Contentful::Store::LazyCacheStore.new(client))
+    context 'with LazyCacheStore' do
+      let(:store) { WCC::Contentful::Store::LazyCacheStore.new(client) }
 
-      allow(client).to receive(:sync)
-        .with({ sync_token: nil })
-        .and_return(double(
-                      items: [],
-                      next_sync_token: 'test'
-                    ))
-      expect(client).to receive(:sync)
-        .with({ sync_token: 'test' })
-        .and_return(double(
-                      items: [],
-                      next_sync_token: 'test2'
-                    ))
+      it 'continues from prior sync token with LazyCacheStore' do
+        allow(client).to receive(:sync)
+          .with({ sync_token: nil })
+          .and_return(double(
+                        items: [],
+                        next_sync_token: 'test'
+                      ))
+        expect(client).to receive(:sync)
+          .with({ sync_token: 'test' })
+          .and_return(double(
+                        items: [],
+                        next_sync_token: 'test2'
+                      ))
 
-      # act
-      synced = job.sync!
-      synced2 = job.sync!
+        # act
+        synced = job.sync!
+        synced2 = job.sync!
 
-      # assert
-      expect(synced).to eq('test')
-      expect(synced2).to eq('test2')
-    end
+        # assert
+        expect(synced).to eq('test')
+        expect(synced2).to eq('test2')
+      end
 
-    it 'ignores a poison sync token in the store' do
-      allow(WCC::Contentful::Services.instance).to receive(:store)
-        .and_return(WCC::Contentful::Store::LazyCacheStore.new(client))
+      it 'ignores a poison sync token in the store' do
+        store.set('sync:token', poison: 'poison')
 
-      store.set('sync:token', poison: 'poison')
+        expect(client).to receive(:sync)
+          .with({ sync_token: nil })
+          .and_return(double(
+                        items: [],
+                        next_sync_token: 'test'
+                      ))
 
-      expect(client).to receive(:sync)
-        .with({ sync_token: nil })
-        .and_return(double(
-                      items: [],
-                      next_sync_token: 'test'
-                    ))
+        # act
+        synced = job.sync!
 
-      # act
-      synced = job.sync!
-
-      # assert
-      expect(synced).to eq('test')
+        # assert
+        expect(synced).to eq('test')
+      end
     end
   end
 

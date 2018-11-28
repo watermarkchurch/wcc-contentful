@@ -105,6 +105,17 @@ module WCC::Contentful
         end
     end
 
+    def sync_engine
+      @sync_engine ||=
+        ensure_configured do |_config|
+          SyncEngine.new(
+            store: store,
+            client: client,
+            key: 'sync:token'
+          )
+        end
+    end
+
     private
 
     def ensure_configured

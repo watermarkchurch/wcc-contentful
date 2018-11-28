@@ -46,7 +46,11 @@ module WCC::Contentful
         id = item.dig('sys', 'id')
         id_found ||= id == up_to_id
 
-        yield(item) if block_given?
+        if block_given?
+          yield(item)
+        elsif store.respond_to?(:index)
+          store.index(item)
+        end
 
         count += 1
       end
@@ -83,14 +87,6 @@ module WCC::Contentful
           @mutex ||= Mutex.new
         end
 
-        def self.engine
-          @engine ||= SyncEngine.new(
-            store: WCC::Contentful::Services.instance.store,
-            client: WCC::Contentful::Services.instance.client,
-            key: 'sync:token'
-          )
-        end
-
         def perform(event = nil)
           up_to_id = nil
           up_to_id = event[:up_to_id] || event.dig('sys', 'id') if event
@@ -109,12 +105,9 @@ module WCC::Contentful
           return unless store.respond_to?(:index)
 
           self.class.mutex.synchronize do
-            id_found, count =
-              self.class.engine.next(up_to_id: up_to_id) do |item|
-                store.index(item)
-              end
+            id_found, count = sync_engine.next(up_to_id: up_to_id)
 
-            next_sync_token = self.class.engine.state['token']
+            next_sync_token = sync_engine.state['token']
 
             logger.info "Synced #{count} entries.  Next sync token:\n  #{next_sync_token}"
             logger.info "Should enqueue again? [#{!id_found}]"
