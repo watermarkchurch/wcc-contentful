@@ -8,6 +8,8 @@ module WCC::Contentful::EventEmitter
       raise ArgumentError, 'event must be specified' unless event
       raise ArgumentError, 'listener must be provided' unless listener
 
+      event = event.to_s
+
       listener_id = [event, listener.object_id].join(':')
       listeners = __listeners.compute_if_absent(event) { Concurrent::Array.new }
       listeners << {
@@ -49,6 +51,9 @@ module WCC::Contentful::EventEmitter
     end
 
     def emit(event, *args)
+      raise ArgumentError, 'event must be specified' unless event
+
+      event = event.to_s
       return unless listeners = __listeners[event]
 
       # emit over a snapshot of the listeners
