@@ -25,6 +25,7 @@ module WCC::Contentful
     def initialize(state: nil, store: nil, client: nil, key: nil)
       @state_key = key || "sync:#{object_id}"
       @client = client || WCC::Contentful::Services.instance.client
+      @mutex = Mutex.new
 
       if store
         @fetch_method = FETCH_METHODS.find { |m| store.respond_to?(m) }
@@ -55,28 +56,31 @@ module WCC::Contentful
     # @return [Array] A `[Boolean, Integer]` tuple where the first value is whether the ID was found,
     #   and the second value is the number of items returned.
     def next(up_to_id: nil)
-      @state ||= fetch || {}
-      next_sync_token = @state['token']
-      sync_resp = client.sync(sync_token: next_sync_token)
-
       id_found = up_to_id.nil?
-
       count = 0
-      sync_resp.items.each do |item|
-        id = item.dig('sys', 'id')
-        id_found ||= id == up_to_id
 
-        if block_given?
-          yield(item)
-        elsif store.respond_to?(:index)
-          store.index(item)
+      @mutex.synchronize do
+        @state ||= fetch || {}
+        next_sync_token = @state['token']
+
+        sync_resp = client.sync(sync_token: next_sync_token)
+        sync_resp.items.each do |item|
+          id = item.dig('sys', 'id')
+          id_found ||= id == up_to_id
+
+          if block_given?
+            yield(item)
+          elsif store.respond_to?(:index)
+            store.index(item)
+          end
+          emit_item(item)
+
+          count += 1
         end
-        emit_item(item)
 
-        count += 1
+        @state['token'] = sync_resp.next_sync_token
+        write
       end
-      @state['token'] = sync_resp.next_sync_token
-      write
 
       [id_found, count]
     end
@@ -109,10 +113,6 @@ module WCC::Contentful
         self.queue_adapter = :async
         queue_as :default
 
-        def self.mutex
-          @mutex ||= Mutex.new
-        end
-
         def perform(event = nil)
           up_to_id = nil
           up_to_id = event[:up_to_id] || event.dig('sys', 'id') if event
@@ -130,17 +130,15 @@ module WCC::Contentful
         def sync!(up_to_id: nil)
           return unless store.respond_to?(:index)
 
-          self.class.mutex.synchronize do
-            id_found, count = sync_engine.next(up_to_id: up_to_id)
+          id_found, count = sync_engine.next(up_to_id: up_to_id)
 
-            next_sync_token = sync_engine.state['token']
+          next_sync_token = sync_engine.state['token']
 
-            logger.info "Synced #{count} entries.  Next sync token:\n  #{next_sync_token}"
-            logger.info "Should enqueue again? [#{!id_found}]"
-            # Passing nil to only enqueue the job 1 more time
-            sync_later!(up_to_id: nil) unless id_found
-            next_sync_token
-          end
+          logger.info "Synced #{count} entries.  Next sync token:\n  #{next_sync_token}"
+          logger.info "Should enqueue again? [#{!id_found}]"
+          # Passing nil to only enqueue the job 1 more time
+          sync_later!(up_to_id: nil) unless id_found
+          next_sync_token
         end
 
         # Drops an ActiveJob job to invoke WCC::Contentful.sync! after a given amount
