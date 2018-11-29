@@ -9,11 +9,20 @@ module WCC::Contentful::ActiveRecordShim
 
   class_methods do
     def model_name
-      name
+      WCC::Contentful::Helpers.constant_from_content_type(content_type)
+    end
+
+    def const_get(name)
+      # Because our pattern is `class MyModel < WCC::Contentful::Model::MyModel`
+      # if you do MyModel.const_get('MyModel') Algolia expects you to return
+      # ::MyModel not WCC::Contentful::Model::MyModel
+      return self if name == model_name
+
+      super
     end
 
     def table_name
-      name.tableize
+      model_name.tableize
     end
 
     def unscoped
@@ -32,6 +41,12 @@ module WCC::Contentful::ActiveRecordShim
       }
 
       find_all(filter).each_slice(batch_size, &block)
+    end
+
+    def where(**conditions)
+      # TODO: return a Query object that implements more of the ActiveRecord query interface
+      # https://guides.rubyonrails.org/active_record_querying.html#conditions
+      find_all(conditions)
     end
   end
 end
