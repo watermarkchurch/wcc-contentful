@@ -18,6 +18,7 @@ require 'wcc/contentful/model'
 require 'wcc/contentful/model_methods'
 require 'wcc/contentful/model_singleton_methods'
 require 'wcc/contentful/model_builder'
+require 'wcc/contentful/sync_engine'
 
 # The root namespace of the wcc-contentful gem
 #
@@ -36,6 +37,8 @@ module WCC::Contentful
   # client.
   # See WCC::Contentful::Configuration for all configuration options.
   def self.configure
+    raise InitializationError, 'Cannot configure after initialization' if @initialized
+
     @configuration ||= Configuration.new
     yield(configuration)
 
@@ -54,7 +57,8 @@ module WCC::Contentful
   #   class Page < WCC::Contentful::Model::Page; end
   #   Page.find_by(slug: 'about-us')
   def self.init!
-    raise ArgumentError, 'Please first call WCC:Contentful.configure' if configuration.nil?
+    raise InitializationError, 'Please first call WCC:Contentful.configure' if configuration.nil?
+    raise InitializationError, 'Already Initialized' if @initialized
 
     if configuration.update_schema_file == :always ||
         (configuration.update_schema_file == :if_possible && Services.instance.management_client)
@@ -104,14 +108,15 @@ module WCC::Contentful
       end
     @types = indexer.types
 
-    store = Services.instance.store
-    if store.respond_to?(:index)
+    if Services.instance.sync_engine&.should_sync?
       # Drop an initial sync
-      WCC::Contentful::DelayedSyncJob.perform_later
+      WCC::Contentful::SyncEngine::Job.perform_later if defined?(WCC::Contentful::SyncEngine::Job)
     end
 
     WCC::Contentful::ModelBuilder.new(@types).build_models
 
     require_relative 'contentful/client_ext' if defined?(::Contentful)
+    @configuration = @configuration.freeze
+    @initialized = true
   end
 end

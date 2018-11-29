@@ -156,7 +156,7 @@ RSpec.describe WCC::Contentful, :vcr do
             config.content_delivery = :eager_sync
             config.environment = 'specs'
           end
-        }.to_not raise_error(ArgumentError)
+        }.to_not raise_error
       end
     end
 
@@ -188,7 +188,31 @@ RSpec.describe WCC::Contentful, :vcr do
       # act
       expect {
         WCC::Contentful.init!
-      }.to raise_error(ArgumentError)
+      }.to raise_error(WCC::Contentful::InitializationError)
+    end
+
+    it 'raises error if attempting to initialize twice' do
+      WCC::Contentful.init!
+
+      expect {
+        WCC::Contentful.init!
+      }.to raise_error(WCC::Contentful::InitializationError)
+    end
+
+    it 'freezes the configuration' do
+      WCC::Contentful.init!
+
+      expect(WCC::Contentful.configuration)
+        .to be_a(WCC::Contentful::Configuration::FrozenConfiguration)
+    end
+
+    it 'errors when attempting to configure after initialize' do
+      WCC::Contentful.init!
+
+      expect {
+        WCC::Contentful.configure do |config|
+        end
+      }.to raise_error(WCC::Contentful::InitializationError)
     end
 
     context 'without management token' do

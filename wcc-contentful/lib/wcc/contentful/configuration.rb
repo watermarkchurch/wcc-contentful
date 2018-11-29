@@ -2,6 +2,25 @@
 
 # This object contains all the configuration options for the `wcc-contentful` gem.
 class WCC::Contentful::Configuration
+  ATTRIBUTES = %i[
+    space
+    access_token
+    app_url
+    management_token
+    environment
+    default_locale
+    preview_token
+    webhook_username
+    webhook_password
+    webhook_jobs
+    content_delivery
+    content_delivery_params
+    store
+    http_adapter
+    update_schema_file
+    schema_file
+  ].freeze
+
   # (required) Sets the Contentful Space ID.
   attr_accessor :space
   # (required) Sets the Content Delivery API access token.
@@ -34,7 +53,7 @@ class WCC::Contentful::Configuration
   #  config.webhook_jobs << MyJobClass
   #  config.webhook_jobs << ->(event) { ... }
   #
-  # See the source code for WCC::Contentful::DelayedSyncJob for an example of how
+  # See the source code for WCC::Contentful::SyncEngine::Job for an example of how
   # to implement a webhook job.
   attr_accessor :webhook_jobs
 
@@ -54,9 +73,10 @@ class WCC::Contentful::Configuration
   #               with the `:eager_sync` method, the entire content of the Contentful
   #               space is downloaded locally and stored in the
   #               {WCC::Contentful::Services#store configured store}.  The application is
-  #               responsible to periodically call the WCC::Contentful::DelayedSyncJob to
+  #               responsible to periodically call the WCC::Contentful::SyncEngine#next to
   #               keep the store updated. Alternatively, the provided {WCC::Contentful::Engine Engine}
-  #               can be mounted to receive a webhook from the Contentful space
+  #               can be mounted to automatically call WCC::Contentful::SyncEngine#next on
+  #               webhook events.
   #               on publish events:
   #                 mount WCC::Contentful::Engine, at: '/'
   #
@@ -171,6 +191,27 @@ class WCC::Contentful::Configuration
       next if job.respond_to?(:call) || job.respond_to?(:perform_later)
 
       raise ArgumentError, "The job '#{job}' must be an instance of ActiveJob::Base or respond to :call"
+    end
+  end
+
+  def freeze
+    FrozenConfiguration.new(self)
+  end
+
+  class FrozenConfiguration
+    attr_reader(*ATTRIBUTES)
+
+    def initialize(configuration)
+      ATTRIBUTES.each do |att|
+        val = configuration.public_send(att)
+        val.freeze if val.respond_to?(:freeze)
+        instance_variable_set("@#{att}", val)
+      end
+    end
+
+    # Returns true if the currently configured environment is pointing at `master`.
+    def master?
+      !environment.present?
     end
   end
 end

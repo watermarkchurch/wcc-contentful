@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe WCC::Contentful::DelayedSyncJob, type: :job do
+RSpec.describe WCC::Contentful::SyncEngine::Job, type: :job do
   ActiveJob::Base.queue_adapter = :test
   described_class.queue_adapter = :test
 
@@ -12,6 +12,13 @@ RSpec.describe WCC::Contentful::DelayedSyncJob, type: :job do
 
   let(:client) { double }
   let(:store) { double(find: nil, index: nil, set: nil) }
+  let(:sync_engine) {
+    WCC::Contentful::SyncEngine.new(
+      store: store,
+      client: client,
+      key: 'sync:token'
+    )
+  }
 
   before do
     allow(WCC::Contentful::Services.instance).to receive(:store)
@@ -19,6 +26,11 @@ RSpec.describe WCC::Contentful::DelayedSyncJob, type: :job do
 
     allow(WCC::Contentful::Services.instance).to receive(:client)
       .and_return(client)
+
+    allow(WCC::Contentful::Services.instance).to receive(:sync_engine)
+      .and_return(sync_engine)
+
+    described_class.instance_variable_set('@sync_engine', nil)
   end
 
   describe '.sync!' do
@@ -30,9 +42,9 @@ RSpec.describe WCC::Contentful::DelayedSyncJob, type: :job do
                         next_sync_token: 'test'
                       ))
 
-        expect(WCC::Contentful::Services.instance.store).to receive(:set)
+        expect(store).to receive(:set)
           .with('sync:token', { 'token' => 'test' })
-        expect(WCC::Contentful::Services.instance.store).to_not receive(:index)
+        expect(store).to_not receive(:index)
 
         # act
         synced = job.sync!
@@ -54,13 +66,39 @@ RSpec.describe WCC::Contentful::DelayedSyncJob, type: :job do
                       ))
 
         items = next_sync['items']
-        expect(WCC::Contentful::Services.instance.store).to receive(:set)
+        expect(store).to receive(:set)
           .with('sync:token', { 'token' => 'test2' })
-        expect(WCC::Contentful::Services.instance.store).to receive(:index)
+        expect(store).to receive(:index)
           .exactly(items.count).times
 
         # act
         job.sync!
+      end
+
+      it 'emits each item returned by the sync' do
+        allow(client).to receive(:sync)
+          .and_return(double(
+                        items: next_sync['items'],
+                        next_sync_token: 'test2'
+                      ))
+
+        emitted_entries = []
+        sync_engine.add_listener('Entry', ->(item) { emitted_entries << item })
+        emitted_assets = []
+        sync_engine.add_listener('Asset', ->(item) { emitted_assets << item })
+        emitted_deletions = []
+        sync_engine.add_listener('DeletedEntry', ->(item) { emitted_deletions << item })
+        emitted_deletions = []
+        sync_engine.add_listener('DeletedAsset', ->(item) { emitted_deletions << item })
+
+        # act
+        job.sync!
+
+        expect(emitted_entries.count).to eq(2)
+        expect(emitted_assets.count).to eq(0)
+        expect(emitted_deletions.count).to eq(12)
+        expect(emitted_entries.dig(0, 'sys', 'id')).to eq('47PsST8EicKgWIWwK2AsW6')
+        expect(emitted_entries.dig(1, 'sys', 'id')).to eq('1qLdW7i7g4Ycq6i4Cckg44')
       end
     end
 
@@ -109,50 +147,48 @@ RSpec.describe WCC::Contentful::DelayedSyncJob, type: :job do
       job.sync!(up_to_id: nil)
     end
 
-    it 'continues from prior sync token with LazyCacheStore' do
-      allow(WCC::Contentful::Services.instance).to receive(:store)
-        .and_return(WCC::Contentful::Store::LazyCacheStore.new(client))
+    context 'with LazyCacheStore' do
+      let(:store) { WCC::Contentful::Store::LazyCacheStore.new(client) }
 
-      allow(client).to receive(:sync)
-        .with({ sync_token: nil })
-        .and_return(double(
-                      items: [],
-                      next_sync_token: 'test'
-                    ))
-      expect(client).to receive(:sync)
-        .with({ sync_token: 'test' })
-        .and_return(double(
-                      items: [],
-                      next_sync_token: 'test2'
-                    ))
+      it 'continues from prior sync token with LazyCacheStore' do
+        allow(client).to receive(:sync)
+          .with({ sync_token: nil })
+          .and_return(double(
+                        items: [],
+                        next_sync_token: 'test'
+                      ))
+        expect(client).to receive(:sync)
+          .with({ sync_token: 'test' })
+          .and_return(double(
+                        items: [],
+                        next_sync_token: 'test2'
+                      ))
 
-      # act
-      synced = job.sync!
-      synced2 = job.sync!
+        # act
+        synced = job.sync!
+        synced2 = job.sync!
 
-      # assert
-      expect(synced).to eq('test')
-      expect(synced2).to eq('test2')
-    end
+        # assert
+        expect(synced).to eq('test')
+        expect(synced2).to eq('test2')
+      end
 
-    it 'ignores a poison sync token in the store' do
-      allow(WCC::Contentful::Services.instance).to receive(:store)
-        .and_return(WCC::Contentful::Store::LazyCacheStore.new(client))
+      it 'ignores a poison sync token in the store' do
+        store.set('sync:token', poison: 'poison')
 
-      store.set('sync:token', poison: 'poison')
+        expect(client).to receive(:sync)
+          .with({ sync_token: nil })
+          .and_return(double(
+                        items: [],
+                        next_sync_token: 'test'
+                      ))
 
-      expect(client).to receive(:sync)
-        .with({ sync_token: nil })
-        .and_return(double(
-                      items: [],
-                      next_sync_token: 'test'
-                    ))
+        # act
+        synced = job.sync!
 
-      # act
-      synced = job.sync!
-
-      # assert
-      expect(synced).to eq('test')
+        # assert
+        expect(synced).to eq('test')
+      end
     end
   end
 

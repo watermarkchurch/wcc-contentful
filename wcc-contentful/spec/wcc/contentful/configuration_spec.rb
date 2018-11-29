@@ -197,4 +197,55 @@ RSpec.describe WCC::Contentful::Configuration do
       }.to raise_error(ArgumentError)
     end
   end
+
+  describe '#freeze' do
+    subject(:config) {
+      config = WCC::Contentful::Configuration.new
+      config.space = 'test-space'
+      config.access_token = 'test-at'
+      config.app_url = 'test-app-url'
+      config.management_token = 'test-mt'
+      config.environment = 'test'
+      config.default_locale = 'asdf'
+      config.preview_token = 'test-pt'
+      config.webhook_username = 'test-wh'
+      config.webhook_password = 'test-wh-pword'
+      config.webhook_jobs = [-> { 'one' }, WCC::Contentful::SyncEngine::Job]
+      config.content_delivery = :lazy_sync, ActiveSupport::Cache::MemoryStore.new
+      config.http_adapter = -> { 'test' }
+      config
+    }
+
+    it 'returns an instance that has all the same readable attributes' do
+      frozen = config.freeze
+
+      WCC::Contentful::Configuration::ATTRIBUTES.each do |att|
+        expect(frozen.send(att)).to eq(config.send(att))
+      end
+    end
+
+    it 'does not allow setting any of the attributes' do
+      frozen = config.freeze
+
+      WCC::Contentful::Configuration::ATTRIBUTES.each do |att|
+        expect {
+          frozen.send("#{att}=", 'test')
+        }.to raise_error(NoMethodError)
+      end
+    end
+
+    it 'does not allow modifying hashes or arrays' do
+      frozen = config.freeze
+
+      %i[webhook_jobs content_delivery_params].each do |att|
+        expect {
+          frozen.send(att) << 'test'
+        }.to(
+          raise_error(RuntimeError) do |e|
+            expect(e.message).to eq("can't modify frozen Array")
+          end
+        )
+      end
+    end
+  end
 end

@@ -105,6 +105,29 @@ module WCC::Contentful
         end
     end
 
+    # Gets the configured WCC::Contentful::SyncEngine which is responsible for
+    # updating the currently configured store.  The application must periodically
+    # call #next on this instance.  Alternately, the application can mount the
+    # WCC::Contentful::Engine, which will call #next anytime a webhook is received.
+    def sync_engine
+      @sync_engine ||=
+        if SyncEngine::WRITE_METHODS.find { |m| store.respond_to?(m) }
+          SyncEngine.new(
+            store: store,
+            client: client,
+            key: 'sync:token'
+          )
+        else
+          # it makes no sense to lookup the sync token from the store if we can't
+          # go back and set it after we advance. (I'm looking at you CDNAdapter)
+
+          SyncEngine.new(
+            state: { 'token' => nil },
+            client: client
+          )
+        end
+    end
+
     private
 
     def ensure_configured
@@ -129,6 +152,8 @@ module WCC::Contentful
   #       store.find(...)
   #
   #       client.entries(...)
+  #
+  #       sync_engine.next
   #     end
   #   end
   # @see Services
