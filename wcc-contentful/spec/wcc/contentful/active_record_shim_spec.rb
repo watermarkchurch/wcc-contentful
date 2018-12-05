@@ -4,6 +4,10 @@ require 'spec_helper'
 
 class ShimTest
   include WCC::Contentful::ActiveRecordShim
+
+  def self.content_type
+    'shim-test'
+  end
 end
 
 RSpec.describe WCC::Contentful::ActiveRecordShim do
@@ -45,6 +49,37 @@ RSpec.describe WCC::Contentful::ActiveRecordShim do
       ShimTest.find_in_batches({ batch_size: 50 }, &block)
 
       expect(find_all).to have_received(:each_slice).with(50, &block)
+    end
+  end
+
+  describe '.where' do
+    it 'calls `find_all` with filters' do
+      find_all = spy
+      expect(ShimTest).to receive(:find_all)
+        .with(id: %w[1 2 3])
+        .and_return(find_all)
+
+      result = ShimTest.where(id: %w[1 2 3])
+
+      expect(result).to eq(find_all)
+    end
+  end
+
+  describe '.const_get' do
+    class ShimTest::ConstGetTest
+      def self.content_type
+        'const-get-test'
+      end
+    end
+
+    class ConstGetTest < ShimTest::ConstGetTest
+      include WCC::Contentful::ActiveRecordShim
+    end
+
+    it 'loads the top-level constant instead of the superclass' do
+      got = ConstGetTest.const_get('ConstGetTest')
+
+      expect(got).to eq(ConstGetTest)
     end
   end
 end

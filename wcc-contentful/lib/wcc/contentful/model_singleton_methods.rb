@@ -40,11 +40,7 @@ module WCC::Contentful::ModelSingletonMethods
     filter = filter&.dup
     options = filter&.delete(:options) || {}
 
-    if filter.present?
-      filter.transform_keys! { |k| k.to_s.camelize(:lower) }
-      bad_fields = filter.keys.reject { |k| self::FIELDS.include?(k) }
-      raise ArgumentError, "These fields do not exist: #{bad_fields}" unless bad_fields.empty?
-    end
+    filter.transform_keys! { |k| k.to_s.camelize(:lower) } if filter.present?
 
     query = store(options[:preview])
       .find_all(content_type: content_type, options: options.except(:preview))
@@ -62,11 +58,7 @@ module WCC::Contentful::ModelSingletonMethods
     filter = filter&.dup
     options = filter&.delete(:options) || {}
 
-    if filter.present?
-      filter.transform_keys! { |k| k.to_s.camelize(:lower) }
-      bad_fields = filter.keys.reject { |k| self::FIELDS.include?(k) }
-      raise ArgumentError, "These fields do not exist: #{bad_fields}" unless bad_fields.empty?
-    end
+    filter.transform_keys! { |k| k.to_s.camelize(:lower) } if filter.present?
 
     result = store(options[:preview])
       .find_by(content_type: content_type, filter: filter, options: options.except(:preview))
