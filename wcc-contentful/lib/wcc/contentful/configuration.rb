@@ -194,6 +194,10 @@ class WCC::Contentful::Configuration
     end
   end
 
+  def frozen?
+    false
+  end
+
   def freeze
     FrozenConfiguration.new(self)
   end
@@ -212,6 +216,10 @@ class WCC::Contentful::Configuration
     # Returns true if the currently configured environment is pointing at `master`.
     def master?
       !environment.present?
+    end
+
+    def frozen?
+      true
     end
   end
 end
