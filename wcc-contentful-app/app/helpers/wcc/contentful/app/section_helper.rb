@@ -31,6 +31,8 @@ module WCC::Contentful::App::SectionHelper
   end
 
   def markdown(text)
+    return unless text
+    
     markdown_links = links_within_markdown(text)
     links_with_classes, raw_classes = gather_links_with_classes_data(markdown_links)
 
