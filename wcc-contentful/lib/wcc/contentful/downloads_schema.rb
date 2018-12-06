@@ -10,6 +10,7 @@ class WCC::Contentful::DownloadsSchema
   def initialize(file = nil, management_client: nil)
     @client = management_client || WCC::Contentful::Services.instance.management_client
     @file = file || WCC::Contentful.configuration&.schema_file
+    raise ArgumentError, 'Please configure your management token' unless @client
     raise ArgumentError, 'Please pass filename or call WCC::Contentful.configure' unless @file
   end
 
