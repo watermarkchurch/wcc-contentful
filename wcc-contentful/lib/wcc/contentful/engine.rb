@@ -2,8 +2,6 @@
 
 module WCC::Contentful
   class Engine < ::Rails::Engine
-    isolate_namespace WCC::Contentful
-
     initializer 'enable webhook' do
       config = WCC::Contentful.configuration
       next unless config&.management_token.present?

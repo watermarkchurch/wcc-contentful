@@ -1,3 +1,7 @@
 @import './components/menu-item';
 
 @import './sections/faq';
+
+.safe-line-break {
+  white-space: pre-line;
+}

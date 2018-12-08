@@ -1,9 +1,11 @@
 The home of multiple gems that Watermark Community Church uses to integrate with
 Contentful.
 
+[![Build Status](https://travis-ci.org/watermarkchurch/wcc-contentful.svg?branch=master)](https://travis-ci.org/watermarkchurch/wcc-contentful)
 [![Coverage Status](https://coveralls.io/repos/github/watermarkchurch/wcc-contentful/badge.svg?branch=master)](https://coveralls.io/github/watermarkchurch/wcc-contentful?branch=master)
 
-* [wcc-contentful](./wcc-contentful)
+* [wcc-contentful](./wcc-contentful) [![Gem Version](https://badge.fury.io/rb/wcc-contentful.svg)](https://rubygems.org/gems/wcc-contentful)
+* [wcc-contentful-app](./wcc-contentful-app) [![Gem Version](https://badge.fury.io/rb/wcc-contentful-app.svg)](https://rubygems.org/gems/wcc-contentful-app)
 
 ## Supported Rails versions
 
@@ -39,7 +41,6 @@ $ bundle exec appraisal install
 $ BUNDLE_GEMFILE=`pwd`/gemfiles/rails_4.2.gemfile bin/bundle exec rspec
 ```
 
-
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/watermarkchurch/wcc-contentful. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
@@ -63,16 +64,8 @@ rake bump:minor
 rake bump:pre
 ```
 
-Note: ensure that the versions of both gems are synchronized!  CI will run
-`rake check` and will fail if this is not the case.  The bump tasks handle this
-automatically.
+Note: ensure that the versions of both gems are synchronized!  The release command
+will run `rake check` and will fail if this is not the case.  The bump tasks should
+synchronize automatically.
 
-2) Commit and tag the release:
-
-```
-git commit -m "Release vX.X.X
-git tag -s vX.X.X
-git push --follow-tags
-```
-
-3) Have a beer!  [CircleCI will handle the rest.](https://circleci.com/gh/watermarkchurch/workflows/wcc-contentful)
+2) Run `rake release` to commit, tag, and upload the gems.

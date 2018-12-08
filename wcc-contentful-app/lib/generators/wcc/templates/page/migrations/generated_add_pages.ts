@@ -5,7 +5,17 @@ export = function (migration: Migration) {
     .name('Page')
     .description('A page describes a collection of sections that correspond' +
      'to a URL slug')
-    .displayField('title')
+    .displayField('internalTitle')
+
+  page.createField('internalTitle', {
+    name: 'Internal Title (Contentful Only)',
+    type: 'Symbol',
+    localized: false,
+    required: true,
+    validations: [],
+    disabled: false,
+    omitted: true,
+  })
 
   page.createField('title')
     .name('Title')
@@ -50,9 +60,19 @@ export = function (migration: Migration) {
   /************  redirect  ******************/
 
   var redirect = migration.createContentType('redirect', {
-    displayField: 'slug',
+    displayField: 'internalTitle',
     name: 'Redirect',
     description: ''
+  })
+
+  redirect.createField('internalTitle', {
+    name: 'Internal Title (Contentful Only)',
+    type: 'Symbol',
+    localized: false,
+    required: true,
+    validations: [],
+    disabled: false,
+    omitted: true,
   })
 
   redirect.createField('slug', {
@@ -113,6 +133,8 @@ export = function (migration: Migration) {
     omitted: false,
     linkType: 'Entry'
   })
+
+  redirect.changeEditorInterface('internalTitle', 'singleLine')
 
   redirect.changeEditorInterface('slug', 'slugEditor')
 

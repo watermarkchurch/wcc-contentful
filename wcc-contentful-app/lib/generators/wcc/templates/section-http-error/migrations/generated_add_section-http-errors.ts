@@ -14,13 +14,13 @@ export = function(migration : Migration, { makeRequest, spaceId, accessToken }) 
   })
 
   sectionHttpError.createField('internalTitle', {
-    name: 'Internal Title',
+    name: 'Internal Title (Contentful Only)',
     type: 'Symbol',
     localized: false,
     required: true,
     validations: [],
     disabled: false,
-    omitted: false
+    omitted: true
   })
 
   sectionHttpError.createField('errorCode', {

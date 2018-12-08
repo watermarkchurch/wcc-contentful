@@ -34,4 +34,7 @@ module WCC::Contentful
   # to resolve an entry's links and that entry cannot be found in the space.
   class ResolveError < StandardError
   end
+
+  class InitializationError < StandardError
+  end
 end

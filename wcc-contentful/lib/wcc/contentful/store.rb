@@ -18,13 +18,13 @@ require_relative 'store/lazy_cache_store'
 #
 # lazy_sync:: Uses the Contentful CDN in combination with an ActiveSupport::Cache
 #             implementation in order to respond with the cached data where possible,
-#             saving your CDN quota.  The cache is kept up-to-date via the Sync API
-#             and the WCC::Contentful::DelayedSyncJob.  It is correct, but not complete.
+#             saving your CDN quota.  The cache is kept up-to-date via the Sync Engine
+#             and the WCC::Contentful::SyncEngine::Job.  It is correct, but not complete.
 #
 # eager_sync:: Uses one of the full store implementations to store the entirety
 #              of the Contentful space locally.  All queries are run against this
-#              local copy, which is kept up to date via the Sync API and the
-#              WCC::Contentful::DelayedSyncJob.  The local store is correct and complete.
+#              local copy, which is kept up to date via the Sync Engine and the
+#              WCC::Contentful::SyncEngine::Job.  The local store is correct and complete.
 #
 # The currently configured store is available on WCC::Contentful::Services.instance.store
 module WCC::Contentful::Store

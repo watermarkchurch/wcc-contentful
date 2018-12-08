@@ -2,17 +2,13 @@
 
 require 'rails_helper'
 
-RSpec.describe WCC::Contentful::WebhookController, type: :controller do
-  routes { WCC::Contentful::Engine.routes }
-
-  render_views
-
+RSpec.describe WCC::Contentful::WebhookController, type: :request do
   describe 'receive' do
     let!(:good_headers) {
       {
-        'Authorization': basic_auth('tester1', 'password1'),
-        'Content-Type': 'application/vnd.contentful.management.v1+json',
-        'x-contentful-topic': 'ContentManagement.Entry.publish'
+        'Authorization' => basic_auth('tester1', 'password1'),
+        'Content-Type' => 'application/vnd.contentful.management.v1+json',
+        'x-contentful-topic' => 'ContentManagement.Entry.publish'
       }
     }
 
@@ -26,33 +22,34 @@ RSpec.describe WCC::Contentful::WebhookController, type: :controller do
         config.webhook_password = 'password1'
         config.space = contentful_space_id
         config.access_token = contentful_access_token
+
+        # required in order to trigger SyncEngine::Job
+        config.content_delivery = :eager_sync, :memory
       end
     end
 
     it 'denies requests without HTTP BASIC auth' do
-      request.headers['Content-Type'] = 'application/vnd.contentful.management.v1+json'
-      post :receive,
-        body: body,
-        format: :json
+      post '/wcc/contentful/webhook/receive',
+        params: body,
+        headers: good_headers.slice('Content-Type')
 
       # assert
       expect(response).to have_http_status(:unauthorized)
     end
 
     it 'denies requests with bad HTTP BASIC auth' do
-      request.headers.merge!(
-        'Authorization': basic_auth('tester1', 'badpasswd'),
-        'Content-Type': 'application/vnd.contentful.management.v1+json'
-      )
-      post :receive, body: body
+      post '/wcc/contentful/webhook/receive',
+        params: body,
+        headers: good_headers.merge('Authorization' => basic_auth('tester1', 'badpasswd'))
 
       # assert
       expect(response).to have_http_status(:unauthorized)
     end
 
     it 'denies requests with bad content type' do
-      request.headers[:Authorization] = basic_auth('tester1', 'password1')
-      post :receive, body: body
+      post '/wcc/contentful/webhook/receive',
+        params: body,
+        headers: good_headers.slice('Authorization')
 
       # assert
       expect(response).to have_http_status(:not_acceptable)
@@ -60,38 +57,26 @@ RSpec.describe WCC::Contentful::WebhookController, type: :controller do
     end
 
     it 'denies requests not conforming to contentful object structure' do
-      request.headers.merge!(
-        'Authorization': basic_auth('tester1', 'password1'),
-        'Content-Type': 'application/vnd.contentful.management.v1+json'
-      )
-
-      post :receive, body: '{}'
+      post '/wcc/contentful/webhook/receive',
+        params: '{}',
+        headers: good_headers
 
       # assert
       expect(response).to have_http_status(:bad_request)
     end
 
     it 'returns 204 no content on success' do
-      request.headers.merge!(
-        'Authorization': basic_auth('tester1', 'password1'),
-        'Content-Type': 'application/vnd.contentful.management.v1+json'
-      )
-
-      post :receive,
-        body: body
+      post '/wcc/contentful/webhook/receive',
+        params: body,
+        headers: good_headers
 
       # assert
       expect(response).to have_http_status(:no_content)
     end
 
     it 'immediately updates the store on success' do
-      request.headers.merge!(
-        'Authorization': basic_auth('tester1', 'password1'),
-        'Content-Type': 'application/vnd.contentful.management.v1+json'
-      )
-
       # expect
-      store = double
+      store = double(fetch: nil, write: nil)
       expect(store).to receive(:index)
         .with(hash_including(JSON.parse(body)))
       allow(WCC::Contentful::Services.instance)
@@ -99,44 +84,36 @@ RSpec.describe WCC::Contentful::WebhookController, type: :controller do
         .and_return(store)
 
       # act
-      post :receive,
-        body: body
+      post '/wcc/contentful/webhook/receive',
+        params: body,
+        headers: good_headers
     end
 
     it 'runs a sync on success' do
-      request.headers.merge!(
-        'Authorization': basic_auth('tester1', 'password1'),
-        'Content-Type': 'application/vnd.contentful.management.v1+json',
-        'x-contentful-topic': 'ContentManagement.Entry.unpublish'
-      )
-
-      expect(WCC::Contentful::DelayedSyncJob).to receive(:perform_later)
+      expect(WCC::Contentful::SyncEngine::Job).to receive(:perform_later)
         .with(hash_including(JSON.parse(body)))
 
       # act
-      post :receive,
-        body: body
+      post '/wcc/contentful/webhook/receive',
+        params: body,
+        headers: good_headers
 
       # assert
       expect(response).to have_http_status(:no_content)
     end
 
     it 'runs a sync even in master environment' do
-      request.headers.merge!(
-        'Authorization': basic_auth('tester1', 'password1'),
-        'Content-Type': 'application/vnd.contentful.management.v1+json'
-      )
-
       WCC::Contentful.configure do |config|
         config.environment = 'staging'
       end
 
       # expect
-      expect(WCC::Contentful::DelayedSyncJob).to receive(:perform_later)
+      expect(WCC::Contentful::SyncEngine::Job).to receive(:perform_later)
 
       # act
-      post :receive,
-        body: body
+      post '/wcc/contentful/webhook/receive',
+        params: body,
+        headers: good_headers
 
       # assert
       expect(response).to have_http_status(:no_content)
@@ -157,15 +134,10 @@ RSpec.describe WCC::Contentful::WebhookController, type: :controller do
       expect(my_job).to receive(:perform_later)
         .with(hash_including(parsed_body))
 
-      request.headers.merge!(
-        'Authorization': basic_auth('tester1', 'password1'),
-        'Content-Type': 'application/vnd.contentful.management.v1+json',
-        'x-contentful-topic': 'ContentManagement.Entry.unpublish'
-      )
-
       # act
-      post :receive,
-        body: body
+      post '/wcc/contentful/webhook/receive',
+        params: body,
+        headers: good_headers
 
       # assert
       expect(events.length).to eq(2)
@@ -182,15 +154,10 @@ RSpec.describe WCC::Contentful::WebhookController, type: :controller do
       expect(WCC::Contentful.configuration).to receive(:webhook_jobs)
         .and_return(jobs)
 
-      request.headers.merge!(
-        'Authorization': basic_auth('tester1', 'password1'),
-        'Content-Type': 'application/vnd.contentful.management.v1+json',
-        'x-contentful-topic': 'ContentManagement.Entry.unpublish'
-      )
-
       # act
-      post :receive,
-        body: body
+      post '/wcc/contentful/webhook/receive',
+        params: body,
+        headers: good_headers
 
       # assert
       expect(events.length).to eq(1)
