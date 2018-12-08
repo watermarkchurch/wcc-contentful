@@ -114,8 +114,6 @@ module WCC::Contentful
     end
 
     WCC::Contentful::ModelBuilder.new(@types).build_models
-
-    require_relative 'contentful/client_ext' if defined?(::Contentful)
     @configuration = @configuration.freeze
     @initialized = true
   end
