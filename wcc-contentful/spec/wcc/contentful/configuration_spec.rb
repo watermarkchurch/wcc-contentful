@@ -216,6 +216,9 @@ RSpec.describe WCC::Contentful::Configuration do
       config
     }
 
+    it { expect(config.frozen?).to be false }
+    it { expect(config.freeze.frozen?).to be true }
+
     it 'returns an instance that has all the same readable attributes' do
       frozen = config.freeze
 
