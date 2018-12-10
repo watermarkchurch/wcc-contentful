@@ -5,12 +5,12 @@ require 'rails_helper'
 RSpec.describe 'sections/contact_form' do
   helper WCC::Contentful::App::SectionHelper
 
-  it 'renders the given section with empty styles' do
+  it 'raises action view template error if text is nil' do
     section = contentful_create('section-contact-form')
 
-    render partial: 'components/section', locals: { section: section }
-
-    expect(rendered).to have_css('section.section-contact-form.default')
+    expect {
+      render partial: 'components/section', locals: { section: section }
+    }.to raise_error(ActionView::Template::Error)
   end
 
   it 'processes the markdown in the section' do
