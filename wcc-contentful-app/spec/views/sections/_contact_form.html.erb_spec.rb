@@ -6,7 +6,8 @@ RSpec.describe 'sections/contact_form' do
   helper WCC::Contentful::App::SectionHelper
 
   it 'raises action view template error if text is nil' do
-    section = contentful_create('section-contact-form')
+    section = contentful_create('section-contact-form',
+      text: nil)
 
     expect {
       render partial: 'components/section', locals: { section: section }
