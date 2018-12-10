@@ -63,9 +63,7 @@
           "type": "Symbol",
           "localized": false,
           "required": true,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": true
         },
@@ -75,9 +73,7 @@
           "type": "Symbol",
           "localized": false,
           "required": true,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -87,9 +83,7 @@
           "type": "Text",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -133,9 +127,7 @@
           "type": "Text",
           "localized": false,
           "required": true,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -162,9 +154,7 @@
           "type": "Symbol",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         }
@@ -220,9 +210,7 @@
           "type": "Symbol",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -232,9 +220,7 @@
           "type": "Array",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false,
           "items": {
@@ -310,9 +296,7 @@
           "type": "Symbol",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -339,9 +323,7 @@
           "type": "Array",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false,
           "items": {
@@ -408,9 +390,7 @@
           "type": "Text",
           "localized": false,
           "required": true,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -420,9 +400,7 @@
           "type": "Array",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false,
           "items": {
@@ -443,9 +421,7 @@
           "type": "Symbol",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -535,9 +511,7 @@
           "type": "Symbol",
           "localized": false,
           "required": true,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -547,9 +521,7 @@
           "type": "Text",
           "localized": false,
           "required": true,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -559,9 +531,7 @@
           "type": "Integer",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -571,9 +541,7 @@
           "type": "Number",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -583,9 +551,7 @@
           "type": "Date",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -595,9 +561,7 @@
           "type": "Boolean",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -607,9 +571,7 @@
           "type": "Location",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         }
@@ -672,9 +634,7 @@
           "type": "Text",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -684,9 +644,7 @@
           "type": "Text",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         }
@@ -742,9 +700,7 @@
           "type": "Symbol",
           "localized": false,
           "required": true,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -754,9 +710,7 @@
           "type": "Date",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -766,9 +720,7 @@
           "type": "Date",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -778,9 +730,7 @@
           "type": "Object",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         }
@@ -836,9 +786,7 @@
           "type": "Symbol",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -848,9 +796,7 @@
           "type": "Array",
           "localized": false,
           "required": true,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false,
           "items": {
@@ -911,9 +857,7 @@
           "type": "Text",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -923,9 +867,7 @@
           "type": "Array",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false,
           "items": {
@@ -946,9 +888,7 @@
           "type": "Link",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false,
           "linkType": "Entry"
@@ -959,9 +899,7 @@
           "type": "Array",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false,
           "items": {
@@ -985,9 +923,7 @@
           "type": "Link",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false,
           "linkType": "Entry"
@@ -1044,9 +980,7 @@
           "type": "Symbol",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -1174,9 +1108,7 @@
           "type": "Symbol",
           "localized": false,
           "required": true,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -1186,16 +1118,12 @@
           "type": "Array",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false,
           "items": {
             "type": "Link",
-            "validations": [
-
-            ],
+            "validations": [],
             "linkType": "Entry"
           }
         },
@@ -1205,9 +1133,7 @@
           "type": "Link",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false,
           "linkType": "Entry"
@@ -1295,16 +1221,12 @@
           "type": "Array",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false,
           "items": {
             "type": "Symbol",
-            "validations": [
-
-            ]
+            "validations": []
           }
         },
         {
@@ -1313,16 +1235,12 @@
           "type": "Array",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false,
           "items": {
             "type": "Symbol",
-            "validations": [
-
-            ]
+            "validations": []
           }
         }
       ]
@@ -1377,9 +1295,7 @@
           "type": "Symbol",
           "localized": false,
           "required": true,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -1409,9 +1325,7 @@
           "type": "Array",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false,
           "items": {
@@ -1435,9 +1349,7 @@
           "type": "Array",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false,
           "items": {
@@ -1535,12 +1447,132 @@
           "type": "Link",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false,
           "linkType": "Entry"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "hw5pse7y1ojx"
+          }
+        },
+        "id": "section-contact-form",
+        "type": "ContentType",
+        "createdAt": "2018-11-05T22:16:04.824Z",
+        "updatedAt": "2018-11-05T22:16:05.218Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2SGEbzNLW9vNhYefhYrx1w"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2SGEbzNLW9vNhYefhYrx1w"
+          }
+        },
+        "publishedCounter": 1,
+        "version": 2,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2SGEbzNLW9vNhYefhYrx1w"
+          }
+        },
+        "publishedVersion": 1,
+        "firstPublishedAt": "2018-11-05T22:16:05.218Z",
+        "publishedAt": "2018-11-05T22:16:05.218Z"
+      },
+      "name": "Section: Contact Form",
+      "description": "A Contact Form section contains a Form with several Form Fields.  The responses to the form will be collected and provided to the appropriate administrator.",
+      "displayField": "internalTitle",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title (Contentful Only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": true
+        },
+        {
+          "id": "text",
+          "name": "Text",
+          "type": "Text",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "fields",
+          "name": "Fields",
+          "type": "Array",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Link",
+            "validations": [
+              {
+                "linkContentType": [
+                  "formField"
+                ]
+              }
+            ],
+            "linkType": "Entry"
+          }
+        },
+        {
+          "id": "submitButtonText",
+          "name": "Submit Button Text",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "notificationEmail",
+          "name": "NotificationEmail",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [
+            {
+              "regexp": {
+                "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$",
+                "flags": null
+              },
+              "message": "Must be a valid email address."
+            }
+          ],
+          "disabled": false,
+          "omitted": false
         }
       ]
     },
@@ -1601,9 +1633,7 @@
           "type": "Symbol",
           "localized": false,
           "required": true,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": true
         },
@@ -1613,9 +1643,7 @@
           "type": "Symbol",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -1643,9 +1671,7 @@
           "type": "Symbol",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -1671,9 +1697,7 @@
           "type": "Array",
           "localized": false,
           "required": true,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false,
           "items": {
@@ -1694,9 +1718,7 @@
           "type": "Symbol",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -1706,9 +1728,7 @@
           "type": "Symbol",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         }
@@ -1771,9 +1791,7 @@
           "type": "Symbol",
           "localized": false,
           "required": true,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": true
         },
@@ -1783,9 +1801,7 @@
           "type": "Symbol",
           "localized": false,
           "required": true,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -1795,9 +1811,7 @@
           "type": "Array",
           "localized": false,
           "required": true,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false,
           "items": {
@@ -1842,9 +1856,7 @@
           "type": "Symbol",
           "localized": false,
           "required": true,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": true
         },
@@ -2174,9 +2186,7 @@
           "type": "Symbol",
           "localized": false,
           "required": true,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         }
@@ -2239,9 +2249,7 @@
           "type": "Symbol",
           "localized": false,
           "required": true,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -2251,9 +2259,7 @@
           "type": "Text",
           "localized": false,
           "required": true,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         }
@@ -2316,9 +2322,7 @@
           "type": "Symbol",
           "localized": false,
           "required": true,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -2328,9 +2332,7 @@
           "type": "Integer",
           "localized": false,
           "required": true,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -2340,9 +2342,7 @@
           "type": "Text",
           "localized": false,
           "required": true,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -2352,9 +2352,7 @@
           "type": "Array",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false,
           "items": {
@@ -2446,9 +2444,7 @@
           "type": "Symbol",
           "localized": false,
           "required": true,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": true
         },
@@ -2490,9 +2486,7 @@
           "type": "Text",
           "localized": true,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         }
@@ -2555,9 +2549,7 @@
           "type": "Symbol",
           "localized": false,
           "required": true,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": true
         },
@@ -2584,9 +2576,7 @@
           "type": "Text",
           "localized": false,
           "required": true,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -2667,9 +2657,7 @@
           "type": "Symbol",
           "localized": false,
           "required": true,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": true
         },
@@ -2696,9 +2684,7 @@
           "type": "Symbol",
           "localized": false,
           "required": true,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -2724,9 +2710,7 @@
           "type": "Text",
           "localized": false,
           "required": true,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         }
@@ -3051,9 +3035,7 @@
           "type": "Link",
           "localized": false,
           "required": false,
-          "validations": [
-
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false,
           "linkType": "Entry"

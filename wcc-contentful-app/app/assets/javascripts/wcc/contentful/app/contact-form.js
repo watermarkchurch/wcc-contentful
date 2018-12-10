@@ -13,7 +13,7 @@ $(function() {
       json = xhr.responseJSON
     }
 
-    if (status == 'OK') {
+    if (status == 'OK' || status == 'success') {
       $form.append(
         $('<span>').text(json.message).delay(2000).fadeOut(2000, function() { $(this).remove() })
       )
