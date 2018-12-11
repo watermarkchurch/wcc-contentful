@@ -18,12 +18,19 @@
     <% end %>
 
     <div class='dropdown-menu'>
-      <% item.items.each do |dropdown_item| %>
-        <%= render_button(dropdown_item,
-              class: 'dropdown-item') %>
+      <% item.items.each do |dropdown_item|
+        next unless dropdown_item %>
+        <% if menu_button?(item) %>
+          <%= render_button(dropdown_item,
+                class: 'dropdown-item') %>
+        <% else %>
+          <%= render 'components/other-menu-item', item: item %>
+        <% end %>
       <% end %>
     </div>
-  <% else %>
+  <% elsif menu_button?(item) %>
     <%= render_button(item, class: 'nav-link') %>
+  <% else %>
+    <%= render 'components/other-menu-item', item: item %>
   <% end %>
 <% end %>

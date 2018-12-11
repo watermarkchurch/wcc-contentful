@@ -5,6 +5,10 @@ module WCC::Contentful::App::MenuHelper
     item.respond_to?(:items)
   end
 
+  def menu_button?(item)
+    item.is_a? WCC::Contentful::Model::MenuButton
+  end
+
   def item_active?(item)
     return true if item.try(:label) && item_active?(item.label)
     return item.items.any? { |i| item_active?(i) } if item.respond_to?(:items)
