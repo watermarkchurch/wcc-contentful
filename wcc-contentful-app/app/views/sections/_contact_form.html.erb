@@ -10,6 +10,9 @@
             data: { contact_form: true },
             method: 'post' do %>
         <input type="hidden" name="id" value="<%= section.id %>" />
+        <% if section&.person_email %>
+          <input type="hidden" name="person_email" value="<%= section.person_email %>" />
+        <% end %>
 
         <% section.fields&.each do |field| %>
           <div class="form-group contact-panel__form-field">
