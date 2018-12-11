@@ -24,7 +24,11 @@ module WCC::Contentful::App::MenuHelper
       push_class('external', options)
       options[:target] = :_blank
     end
-    push_class('icon-only', options) unless button.text.present?
+    if button.icon.present? || button.material_icon.present? || options.dig(:icon, :fallback)
+      push_class('icon-only', options) unless button.text.present?
+    elsif button.text.present?
+      push_class('text-only', options)
+    end
 
     push_class(button.style, options) if button.style
 
@@ -60,7 +64,7 @@ module WCC::Contentful::App::MenuHelper
   end
 
   def push_class(classes, options)
-    options[:class] = [*classes].push(*options[:class])
+    options[:class] = [*classes, *options[:class]]
   end
 
   def hash_only(href)
