@@ -20,7 +20,7 @@ module WCC::Contentful::App::MenuHelper
   def render_button(button, options = {}, &block)
     html = render_button_inner_html(button, options, &block)
 
-    if button.external?
+    if button.try(:external?)
       push_class('external', options)
       options[:target] = :_blank
     end
