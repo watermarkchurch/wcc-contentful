@@ -1,12 +1,12 @@
 <% styles ||= []
    styles.push(*section_styles(section))
    section_prefixes ||= nil
-   section_name = section_template_name(section) %>
+   section_name = section_template_name(section)
+   person_email ||= nil %>
 <%= content_tag(:section, class: styles, id: section_id(section)) do %>
   <% if section_prefixes && lookup_context.exists?(section_name, [*section_prefixes], true) %>
     <%= render([*section_prefixes, section_name].join('/'), section: section) %>
   <% else %>
-    <%= render("sections/#{section_name}", section: section) %>
+    <%= render("sections/#{section_name}", section: section, person_email: person_email) %>
   <% end %>
-
 <% end %>

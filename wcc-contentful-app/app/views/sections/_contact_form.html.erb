@@ -11,7 +11,7 @@
             method: 'post' do %>
         <input type="hidden" name="id" value="<%= section.id %>" />
         <% if person_email %>
-          <input type="hidden" name="person_email" value="<%= person_email %>" />
+          <input id="person-email" type="hidden" name="person-email" value="<%= person_email %>" />
         <% end %>
 
         <% section.fields&.each do |field| %>

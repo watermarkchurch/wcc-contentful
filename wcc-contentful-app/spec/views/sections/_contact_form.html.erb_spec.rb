@@ -10,7 +10,7 @@ RSpec.describe 'sections/contact_form' do
       text: nil)
 
     expect {
-      render partial: 'components/section', locals: { section: section }
+      render 'components/section', section: section
     }.to raise_error(ActionView::Template::Error)
   end
 
@@ -18,8 +18,20 @@ RSpec.describe 'sections/contact_form' do
     section = contentful_create('section-contact-form',
       text: '## This should be an H2')
 
-    render partial: 'components/section', locals: { section: section }
+    render 'components/section', section: section
 
     expect(rendered).to match(/<h2>This should be an H2<\/h2>/)
+  end
+
+  it 'handles person_email' do
+    email = 'ez.net'
+    not_the_email = 'ez.bucketz'
+    section = contentful_create('section-contact-form',
+      text: '## This should be an H2')
+
+    render 'components/section', section: section, person_email: email
+
+    expect(rendered).to have_selector("input#person-email[value='#{email}']", visible: false)
+    expect(rendered).to_not have_selector("input#person-email[value='#{not_the_email}']", visible: false)
   end
 end
