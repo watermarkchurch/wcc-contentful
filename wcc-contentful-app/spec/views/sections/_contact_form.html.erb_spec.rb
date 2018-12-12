@@ -32,6 +32,9 @@ RSpec.describe 'sections/contact_form' do
     render 'components/section', section: section, person_email: email
 
     expect(rendered).to have_selector("input#person-email[value='#{email}']", visible: false)
-    expect(rendered).to_not have_selector("input#person-email[value='#{not_the_email}']", visible: false)
+    expect(rendered).to_not have_selector(
+      "input#person-email[value='#{not_the_email}']",
+      visible: false
+    )
   end
 end
