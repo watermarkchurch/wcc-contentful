@@ -16,6 +16,6 @@ class WCC::Contentful::App::ContactFormController < ApplicationController
   end
 
   def form_params
-    params.slice(*form_model.fields.map(&:title), :person_email)
+    params.slice(*form_model.fields.map(&:title), :recipient_email)
   end
 end

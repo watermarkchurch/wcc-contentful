@@ -2,7 +2,7 @@
 
 class WCC::Contentful::Model::SectionContactForm < WCC::Contentful::Model
   def send_email(data)
-    ::WCC::Contentful::App::ContactMailer.contact_form_email(to_email(data), data).deliver
+    ::WCC::Contentful::App::ContactMailer.contact_form_email(data[:recipient_email], data).deliver
 
     save_contact_form(data)
   end
@@ -12,14 +12,6 @@ class WCC::Contentful::Model::SectionContactForm < WCC::Contentful::Model
   end
 
   private
-
-  def to_email(data)
-    if email = data[:person_email]
-      email
-    else
-      notificationEmail
-    end
-  end
 
   def save_contact_form(data)
     return unless ::WCC::Contentful::App.db_connected?
