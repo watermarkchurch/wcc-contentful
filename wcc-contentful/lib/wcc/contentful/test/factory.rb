@@ -15,27 +15,30 @@ module WCC::Contentful::Test::Factory
     bad_attrs = attrs.reject { |a| const.content_type_definition.fields.key?(a) }
     raise ArgumentError, "Attribute(s) do not exist on #{const}: #{bad_attrs.keys}" if bad_attrs.any?
 
-    default_instance(const, id).tap do |instance|
+    instance = const.new(default_raw(const, id).tap do |raw|
       attrs.each do |k, v|
         field = const.content_type_definition.fields[k]
 
-        raw = v
-        if %i[Asset Link].include?(field.type)
-          raw = to_raw(v, field.type)
-
-          unless field.array ? v.any? { |i| i.is_a?(String) } : v.is_a?(String)
-            instance.instance_variable_set("@#{field.name}_resolved", v)
-          end
-        end
-
-        instance.raw['fields'][field.name][instance.sys.locale] = raw
-        instance.instance_variable_set("@#{field.name}", raw)
+        raw_value = v
+        raw_value = to_raw(v, field.type) if %i[Asset Link].include?(field.type)
+        raw['fields'][field.name][raw.dig('sys', 'locale')] = raw_value
       end
+    end)
 
-      def instance.to_s
-        "#<#{self.class.name} id=\"#{id}\">"
+    attrs.each do |k, v|
+      field = const.content_type_definition.fields[k]
+      next unless %i[Asset Link].include?(field.type)
+
+      unless field.array ? v.any? { |i| i.is_a?(String) } : v.is_a?(String)
+        instance.instance_variable_set("@#{field.name}_resolved", v)
       end
     end
+
+    def instance.to_s
+      "#<#{self.class.name} id=\"#{id}\">"
+    end
+
+    instance
   end
 
   class Link

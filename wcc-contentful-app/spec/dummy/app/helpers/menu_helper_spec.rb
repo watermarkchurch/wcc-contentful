@@ -35,7 +35,7 @@ RSpec.describe WCC::Contentful::App::MenuHelper, type: :helper do
 
     context 'external link' do
       subject(:button) {
-        contentful_stub('menuButton', externalLink: 'https://other-site.com/awaken')
+        contentful_create('menuButton', externalLink: 'https://other-site.com/awaken')
       }
       before do
         allow(button).to receive(:material_icon).and_return(nil)
@@ -51,16 +51,11 @@ RSpec.describe WCC::Contentful::App::MenuHelper, type: :helper do
 
     context 'page link' do
       subject(:button) {
-        contentful_stub('menuButton',
-          link: contentful_stub('page', slug: '/awaken')
+        contentful_create('menuButton',
+          link: contentful_create('page',
+            slug: '/awaken')
         )
       }
-      before do
-        allow(button).to receive(:material_icon).and_return(nil)
-        allow(button).to receive(:external?).and_return(false)
-        allow(button).to receive(:style).and_return("white-border")
-        allow(button).to receive(:href).and_return('/awaken')
-      end
 
       it { expect(result).to include 'href="/awaken"' }
       it { expect(result).to_not include 'target="_blank"' }
@@ -69,53 +64,71 @@ RSpec.describe WCC::Contentful::App::MenuHelper, type: :helper do
 
     context 'local link to other page' do
       subject(:button) {
-        contentful_stub('menuButton',
-          link: contentful_stub('page', slug: '/other-page'),
-          sectionLink: contentful_stub('section-Faq', bookmarkTitle: 'faqs')
+        contentful_create('menuButton',
+          link: contentful_create('page', slug: '/other-page'),
+          sectionLink: contentful_create('section-Faq', bookmarkTitle: 'faqs')
         )
       }
-      before do
-        allow(button).to receive(:material_icon).and_return(nil)
-        allow(button).to receive(:external?).and_return(false)
-        allow(button).to receive(:style).and_return("white-border")
-        allow(button).to receive(:href).and_return('/other-page#faqs')
-      end
 
       it { expect(result).to include 'href="/other-page#faqs"' }
     end
 
     context 'local link to this page' do
       subject(:button) {
-        contentful_stub('menuButton',
-          link: contentful_stub('page', slug: '/awaken'),
-          sectionLink: contentful_stub('section-faq', bookmarkTitle: 'faqs')
+        contentful_create('menuButton',
+          link: contentful_create('page', slug: '/awaken'),
+          sectionLink: contentful_create('section-faq', bookmarkTitle: 'faqs')
         )
       }
-      before do
-        allow(button).to receive(:material_icon).and_return(nil)
-        allow(button).to receive(:external?).and_return(false)
-        allow(button).to receive(:style).and_return("white-border")
-        allow(button).to receive(:href).and_return('#faqs')
-      end
 
       it { expect(result).to include 'href="#faqs"' }
     end
 
     context 'local link without page' do
       subject(:button) {
-        contentful_stub('menuButton',
+        contentful_create('menuButton',
           link: nil,
-          sectionLink: contentful_stub('section-faq', bookmarkTitle: 'faqs')
+          sectionLink: contentful_create('section-faq', bookmarkTitle: 'faqs')
         )
       }
-      before do
-        allow(button).to receive(:material_icon).and_return(nil)
-        allow(button).to receive(:external?).and_return(false)
-        allow(button).to receive(:style).and_return("white-border")
-        allow(button).to receive(:href).and_return('#faqs')
-      end
 
       it { expect(result).to include 'href="#faqs"' }
+    end
+
+    context 'button with icon' do
+      subject(:button) { contentful_create('menuButton', icon: contentful_image_double )}
+
+      it { expect(result).to include 'icon-only' }
+      it { expect(result).to_not include('text-only') }
+    end
+
+    context 'button with material icon' do
+      subject(:button) { contentful_create('menuButton', material_icon: 'test' )}
+
+      it { expect(result).to include 'icon-only' }
+      it { expect(result).to_not include('text-only') }
+    end
+
+    context 'button with text and icon' do
+      subject(:button) { contentful_create('menuButton', icon: contentful_image_double, text: 'test' ) }
+
+      it { expect(result).to_not include('icon-only') }
+      it { expect(result).to_not include('text-only') }
+    end
+
+    context 'button with text only' do
+      subject(:button) { contentful_create('menuButton', text: 'test')}
+
+      it { expect(result).to_not include('icon-only') }
+      it { expect(result).to include('text-only') }
+
+    end
+
+    context 'empty button' do
+      subject(:button) { contentful_create('menuButton')}
+      
+      it { expect(result).to_not include('icon-only') }
+      it { expect(result).to_not include('text-only') }
     end
   end
 end

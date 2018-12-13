@@ -5,6 +5,10 @@ module WCC::Contentful::App::MenuHelper
     item.respond_to?(:items)
   end
 
+  def menu_button?(item)
+    item.is_a? WCC::Contentful::Model::MenuButton
+  end
+
   def item_active?(item)
     return true if item.try(:label) && item_active?(item.label)
     return item.items.any? { |i| item_active?(i) } if item.respond_to?(:items)
@@ -16,11 +20,15 @@ module WCC::Contentful::App::MenuHelper
   def render_button(button, options = {}, &block)
     html = render_button_inner_html(button, options, &block)
 
-    if button.external?
+    if button.try(:external?)
       push_class('external', options)
       options[:target] = :_blank
     end
-    push_class('icon-only', options) unless button.text.present?
+    if button.icon.present? || button.material_icon.present? || options.dig(:icon, :fallback)
+      push_class('icon-only', options) unless button.text.present?
+    elsif button.text.present?
+      push_class('text-only', options)
+    end
 
     push_class(button.style, options) if button.style
 
@@ -56,7 +64,7 @@ module WCC::Contentful::App::MenuHelper
   end
 
   def push_class(classes, options)
-    options[:class] = [*classes].push(*options[:class])
+    options[:class] = [*classes, *options[:class]]
   end
 
   def hash_only(href)
