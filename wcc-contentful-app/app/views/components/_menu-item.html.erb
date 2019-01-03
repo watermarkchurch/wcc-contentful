@@ -2,19 +2,23 @@
 
    classes ||= ['nav-item']
    classes.push('active') if item_active?(item)
-   classes.push('dropdown') if dropdown?(item) %>
+   classes.push('dropdown') if dropdown?(item)
+   
+   tabindex ||= 0 %>
 <%= content_tag(:li, class: classes) do %>
   <% if dropdown?(item) %>
     <% if item.label %>
       <%= render_button(item.label,
             class: 'nav-link dropdown-toggle',
             data: { toggle: 'dropdown' },
-            role: 'button') %>
+            role: 'button',
+            tabindex: tabindex) %>
     <% else %>
       <%= content_tag(:a, item.name,
             class: 'nav-link dropdown-toggle',
             data: { toggle: 'dropdown' },
-            role: 'button') %>
+            role: 'button',
+            tabindex: tabindex) %>
     <% end %>
 
     <div class='dropdown-menu'>
@@ -22,14 +26,15 @@
         next unless dropdown_item %>
         <% if menu_button?(dropdown_item) %>
           <%= render_button(dropdown_item,
-                class: 'dropdown-item') %>
+                class: 'dropdown-item',
+                tabindex: tabindex) %>
         <% else %>
           <%= render 'components/other-menu-item', item: dropdown_item %>
         <% end %>
       <% end %>
     </div>
   <% elsif menu_button?(item) %>
-    <%= render_button(item, class: 'nav-link') %>
+    <%= render_button(item, class: 'nav-link', tabindex: tabindex) %>
   <% else %>
     <%= render 'components/other-menu-item', item: item %>
   <% end %>
