@@ -5,10 +5,22 @@ module WCC::Contentful::Test::Attributes
     String: 'test',
     Int: 0,
     Float: 0.0,
-    DateTime: Time.at(0),
+    DateTime: Time.at(0).to_s,
     Boolean: false,
-    Json: -> { OpenStruct.new },
-    Coordinates: -> { OpenStruct.new }
+    Json: ->(_f) { {} },
+    Coordinates: ->(_f) { {} },
+    Asset: ->(f) {
+             WCC::Contentful::Link.new(
+               "fake-#{f.name}-#{SecureRandom.urlsafe_base64[1..6]}",
+               :Asset
+             ).raw
+           },
+    Link: ->(f) {
+            WCC::Contentful::Link.new(
+              "fake-#{f.name}-#{SecureRandom.urlsafe_base64[1..6]}",
+              :Link
+            ).raw
+          }
   }.freeze
 
   class << self
@@ -35,8 +47,8 @@ module WCC::Contentful::Test::Attributes
       return [] if field.array
       return unless field.required
 
-      val = DEFAULTS[field]
-      return val.call if val.respond_to?(:call)
+      val = DEFAULTS[field.type]
+      return val.call(field) if val.respond_to?(:call)
 
       val
     end

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative './link'
 require_relative './sys'
 
 module WCC::Contentful
