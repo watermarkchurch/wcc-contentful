@@ -29,13 +29,13 @@
                 class: 'dropdown-item',
                 tabindex: tabindex) %>
         <% else %>
-          <%= render 'components/other-menu-item', item: dropdown_item %>
+          <%= render 'components/other-menu-item', item: dropdown_item, tabindex: tabindex %>
         <% end %>
       <% end %>
     </div>
   <% elsif menu_button?(item) %>
     <%= render_button(item, class: 'nav-link', tabindex: tabindex) %>
   <% else %>
-    <%= render 'components/other-menu-item', item: item %>
+    <%= render 'components/other-menu-item', item: item, tabindex: tabindex %>
   <% end %>
 <% end %>
