@@ -77,5 +77,39 @@ RSpec.describe WCC::Contentful::DownloadsSchema do
         end
       end
     end
+
+    it 'writes properly when new field added' do
+      Dir.mktmpdir do |dir|
+        Dir.chdir(dir) do
+          FileUtils.mkdir_p('db')
+          FileUtils.cp(
+            File.join(fixture_root, 'contentful/contentful-schema-from-export.json'),
+            'db/contentful-schema.json'
+          )
+          brand = {
+            'id' => 'brand',
+            'name' => 'Brand',
+            'type' => 'Link',
+            'localized' => false,
+            'required' => true,
+            'validations' => [],
+            'disabled' => false,
+            'omitted' => false,
+            'linkType' => 'Asset'
+          }
+
+          # testimonial section
+          content_types.dig(0, 'fields') << brand
+
+          subject.call
+
+          expected = JSON.parse(load_fixture('contentful/contentful-schema.json'))
+          # testimonial section
+          expected.dig('contentTypes', 1, 'fields') << brand
+          expect(File.read('db/contentful-schema.json'))
+            .to eq(JSON.pretty_generate(expected))
+        end
+      end
+    end
   end
 end

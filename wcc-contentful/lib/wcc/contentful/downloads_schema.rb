@@ -76,6 +76,7 @@ class WCC::Contentful::DownloadsSchema
   def deep_contains_all(expected, actual)
     if expected.is_a? Array
       expected.each_with_index do |val, i|
+        return false unless actual[i]
         return false unless deep_contains_all(val, actual[i])
       end
       true
