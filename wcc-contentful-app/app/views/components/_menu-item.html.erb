@@ -3,7 +3,7 @@
    classes ||= ['nav-item']
    classes.push('active') if item_active?(item)
    classes.push('dropdown') if dropdown?(item)
-   
+
    tabindex ||= 0 %>
 <%= content_tag(:li, class: classes) do %>
   <% if dropdown?(item) %>
