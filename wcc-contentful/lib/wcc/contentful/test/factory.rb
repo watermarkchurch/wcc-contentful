@@ -41,33 +41,6 @@ module WCC::Contentful::Test::Factory
     instance
   end
 
-  class Link
-    attr_reader :id
-    attr_reader :link_type
-    attr_reader :raw
-
-    LINK_TYPES = {
-      Asset: 'Asset',
-      Link: 'Entry'
-    }.freeze
-
-    def initialize(model, link_type = nil)
-      @id = model.try(:id) || model
-      @link_type = link_type
-      @link_type ||= model.is_a?(WCC::Contentful::Model::Asset) ? :Asset : :Link
-      @raw =
-        {
-          'sys' => {
-            'type' => 'Link',
-            'linkType' => LINK_TYPES[@link_type],
-            'id' => @id
-          }
-        }
-    end
-
-    alias_method :to_h, :raw
-  end
-
   private
 
   def default_instance(model, id = nil)
@@ -120,7 +93,7 @@ module WCC::Contentful::Test::Factory
     if val.is_a? Array
       val.map { |i| to_raw(i, field_type) }
     elsif val.is_a? String
-      Link.new(val, field_type).raw
+      WCC::Contentful::Link.new(val, field_type).raw
     elsif val
       val.raw
     end

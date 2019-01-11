@@ -7,7 +7,8 @@ RSpec.describe 'sections/http_error' do
   helper WCC::Contentful::App::MenuHelper
 
   it 'renders successfully' do
-    section = contentful_create('section-http-error')
+    section = contentful_create('section-http-error',
+      background_image: contentful_image_double)
 
     render partial: 'components/section', locals: { section: section }
 
@@ -17,6 +18,7 @@ RSpec.describe 'sections/http_error' do
 
   it 'renders buttons' do
     section = contentful_create('section-http-error',
+      background_image: contentful_image_double,
       action_button: [
         contentful_create('menuButton'),
         nil,
