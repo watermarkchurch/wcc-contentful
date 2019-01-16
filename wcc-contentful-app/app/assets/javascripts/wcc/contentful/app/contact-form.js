@@ -3,6 +3,15 @@ if (typeof window.$ == 'undefined' ) {
 }
 
 $(function() {
+  function warningAlert(message) {
+    return '<div class="alert alert-warning alert-dismissible fade show">' +
+      message +
+      '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+        '<span aria-hidden="true">&times;</span>' +
+      '</button>' +
+    '</div>'
+  }
+
   function handleResponse($form, event, status, xhr) {
     // Handle backwards compat for [rails/jquery]-ujs ajax callbacks
     var json
@@ -18,6 +27,8 @@ $(function() {
         $('<span>').text(json.message).delay(2000).fadeOut(2000, function() { $(this).remove() })
       )
       $('input:visible, textarea', $form).val('')
+    } else if (json.message) {
+      $form.append(warningAlert(json.message))
     } else {
       alert('Sorry, something went wrong.')
     }
