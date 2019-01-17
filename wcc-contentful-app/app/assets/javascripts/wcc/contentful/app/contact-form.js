@@ -30,6 +30,10 @@ $(function() {
         $('<span>').text(json.message).delay(2000).fadeOut(2000, function() { $(this).remove() })
       )
       $('input:visible, textarea', $form).val('')
+      $('.alert', $form).remove()
+      if (typeof window.grecaptcha != 'undefined') {
+        window.grecaptcha.reset()
+      }
     } else if (json.message) {
       $form.append(warningAlert(json.message))
     } else {
