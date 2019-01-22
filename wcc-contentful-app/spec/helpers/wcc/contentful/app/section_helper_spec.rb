@@ -9,6 +9,12 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
     ' Last line goes here [Test](https://test.com).'
   }
 
+  let(:markdown_string_with_links_that_have_classes2) {
+    +"Ministry by [Awaken](/awaken \"Awaken's Homepage\"){: .button .white} in Dallas, Texas."\
+    " Ministry by [Awaken](/awaken \"Awaken's Homepage\"){: .button .white} in Dallas, Texas."\
+    " Ministry by [Awaken](/awaken \"Awaken's Homepage\"){: .button .white} in Dallas, Texas."
+  }
+
   let(:markdown_string_with_classless_link) {
     'Test line goes here [Test](https://test.com).'
   }
@@ -31,6 +37,30 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
 
         expect(html_to_render).to have_selector('.button.white')
         expect(html_to_render).to have_selector('.button-medium.green')
+      end
+    end
+
+    context 'when markdown includes the same link with classes multiple times' do
+      it 'builds the hyperlink with classes each time it appears in the markdown' do
+        html_to_render =
+          helper.markdown(markdown_string_with_links_that_have_classes2)
+
+        # The {: .button .white} is in the markdown_string_with_links_that_have_classes2
+        # 3 times, so 3 hyperlinks with those classes should be returned in the html_to_render
+        expect(html_to_render).to have_selector('.button.white', count: 3)
+      end
+    end
+
+    context 'when markdown receives the same text twice' do
+      it 'applies the classes to the hyperlinks both times' do
+        html_to_render =
+          helper.markdown(markdown_string_with_links_that_have_classes)
+
+        html_to_render2 =
+          helper.markdown(markdown_string_with_links_that_have_classes)
+
+        expect(html_to_render).to have_selector('.button.white', count: 1)
+        expect(html_to_render2).to have_selector('.button.white', count: 1)
       end
     end
 
@@ -306,7 +336,7 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
   end
 
   describe '#remove_markdown_href_class_syntax' do
-    it "removes all of the '{: .button}' syntax from markdown text" do
+    it "returns the markdown text without all of the '{: .button}' syntax" do
       raw_classes =
         [
           '{: .button .white}',
@@ -317,11 +347,17 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
         ' [Watermark Community Church](http://www.watermark.org){: .button-medium .green}'\
         ' [Test](https://test.com).'
 
+      text_without_class_syntax =
+        +"Ministry developed by [Awaken](/awaken \"Awaken's Homepage\")"\
+        ' [Watermark Community Church](http://www.watermark.org)'\
+        ' [Test](https://test.com).'
+
       expect(text.include?('{: .button .white}')).to be true
 
-      helper.remove_markdown_href_class_syntax(raw_classes, text)
+      transformed_text = helper.remove_markdown_href_class_syntax(raw_classes, text)
 
-      expect(text.include?('{: .button .white}')).to be false
+      expect(transformed_text.include?('{: .button .white}')).to be false
+      expect(transformed_text).to eq(text_without_class_syntax)
     end
   end
 
