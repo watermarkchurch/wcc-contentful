@@ -23,11 +23,23 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
     'nothin to see here'
   }
 
+  let(:markdown_link_with_quote) {
+    "[Children's](https://watermark.formstack.com/forms/childrensvolunteer)"
+  }
+
   describe '#markdown' do
     it 'returns string wrapped in div' do
       rendered_html = helper.markdown(markdown_string_without_links)
 
       expect(rendered_html).to have_selector('div.formatted-content')
+    end
+
+    context 'when markdown link text has a single quote in it' do
+      it 'renders the quote as a part of the link text' do
+        html_to_render = helper.markdown(markdown_link_with_quote)
+
+        expect(html_to_render).to have_content("Children's")
+      end
     end
 
     context 'when markdown includes links with classes' do

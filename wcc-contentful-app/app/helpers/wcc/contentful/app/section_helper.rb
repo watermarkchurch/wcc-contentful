@@ -56,9 +56,9 @@ module WCC::Contentful::App::SectionHelper
     markdown = ::Redcarpet::Markdown.new(renderer, extensions)
 
     content_tag(:div,
-      markdown.render(
-        remove_markdown_href_class_syntax(raw_classes, text)
-      ).html_safe,
+      CGI.unescapeHTML(markdown.render(
+                         remove_markdown_href_class_syntax(raw_classes, text)
+                       )).html_safe,
       class: 'formatted-content')
   end
 
