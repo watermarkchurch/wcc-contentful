@@ -171,7 +171,7 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
     context 'When class doesn\'t begin with a space: [forget spaces](http://www.google.com){:.test}' do
       it 'should still apply the classes to the hyperlink' do
         markdown_string =
-          +'some before text [forget spaces](http://www.google.com){:.test} and some after text'
+          'some before text [forget spaces](http://www.google.com){:.test} and some after text'
         html_to_render =
           helper.markdown(markdown_string)
 
@@ -182,7 +182,7 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
     context 'When classes have no space: [no space](http://www.google.com){: .btn.btn-primary }' do
       it 'should still apply the classes to the hyperlink' do
         markdown_string =
-          +'some before text [no space](http://www.google.com){: .btn.btn-primary } and some after text'
+          'some before text [no space](http://www.google.com){: .btn.btn-primary } and some after text'
         html_to_render =
           helper.markdown(markdown_string)
 
@@ -193,8 +193,11 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
     context 'when content of link matches the class name given' do
       it 'should apply the the class to the hyperlink with no conflict' do
         markdown_string =
-          +'some before text [text or .text that matches a class]'\
-          '(/home "text or .text"){: .text } and some after text'
+          <<-STRING
+            some before text 
+            [text or .text that matches a class](/home "text or .text"){: .text } 
+            and some after text
+          STRING
         html_to_render =
           helper.markdown(markdown_string)
 
@@ -359,14 +362,18 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
           '{: .button-medium .green}'
         ]
       text =
-        +"Ministry developed by [Awaken](/awaken \"Awaken's Homepage\"){: .button .white}"\
-        ' [Watermark Community Church](http://www.watermark.org){: .button-medium .green}'\
-        ' [Test](https://test.com).'
+        <<-STRING
+          Ministry developed by [Awaken](/awaken \"Awaken's Homepage\"){: .button .white}
+           [Watermark Community Church](http://www.watermark.org){: .button-medium .green}
+           [Test](https://test.com).
+        STRING
 
       text_without_class_syntax =
-        +"Ministry developed by [Awaken](/awaken \"Awaken's Homepage\")"\
-        ' [Watermark Community Church](http://www.watermark.org)'\
-        ' [Test](https://test.com).'
+        <<-STRING
+          Ministry developed by [Awaken](/awaken \"Awaken's Homepage\")
+           [Watermark Community Church](http://www.watermark.org)
+           [Test](https://test.com).
+        STRING
 
       expect(text.include?('{: .button .white}')).to be true
 
