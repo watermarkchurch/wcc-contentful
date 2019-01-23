@@ -194,8 +194,8 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
       it 'should apply the the class to the hyperlink with no conflict' do
         markdown_string =
           <<-STRING
-            some before text 
-            [text or .text that matches a class](/home "text or .text"){: .text } 
+            some before text
+            [text or .text that matches a class](/home "text or .text"){: .text }
             and some after text
           STRING
         html_to_render =
