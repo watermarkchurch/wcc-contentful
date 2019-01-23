@@ -375,11 +375,11 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
            [Test](https://test.com).
         STRING
 
-      expect(text.include?('{: .button .white}')).to be true
+      expect(text).to include('{: .button .white}')
 
       transformed_text = helper.remove_markdown_href_class_syntax(raw_classes, text)
 
-      expect(transformed_text.include?('{: .button .white}')).to be false
+      expect(transformed_text).to_not include('{: .button .white}')
       expect(transformed_text).to eq(text_without_class_syntax)
     end
   end
