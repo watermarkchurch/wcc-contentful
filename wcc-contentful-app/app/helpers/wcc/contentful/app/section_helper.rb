@@ -53,11 +53,12 @@ module WCC::Contentful::App::SectionHelper
     }
 
     renderer = ::WCC::Contentful::App::CustomMarkdownRender.new(options)
-    remove_markdown_href_class_syntax(raw_classes, text)
     markdown = ::Redcarpet::Markdown.new(renderer, extensions)
 
     content_tag(:div,
-      markdown.render(text).html_safe,
+      CGI.unescapeHTML(markdown.render(
+                         remove_markdown_href_class_syntax(raw_classes, text)
+                       )).html_safe,
       class: 'formatted-content')
   end
 
@@ -85,7 +86,9 @@ module WCC::Contentful::App::SectionHelper
   end
 
   def remove_markdown_href_class_syntax(raw_classes, text)
-    raw_classes.each { |klass| text.slice!(klass) }
+    text_without_markdown_class_syntax = text.dup
+    raw_classes.each { |klass| text_without_markdown_class_syntax.slice!(klass) }
+    text_without_markdown_class_syntax
   end
 
   def url_and_title(markdown_link_and_title)

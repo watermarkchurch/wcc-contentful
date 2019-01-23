@@ -4,9 +4,19 @@ require 'rails_helper'
 
 RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
   let(:markdown_string_with_links_that_have_classes) {
-    +"Ministry by [Awaken](/awaken \"Awaken's Homepage\"){: .button .white} in Dallas, Texas."\
-    ' Just relax. [Watermark Community Church](http://www.watermark.org){: .button-medium .green} ok.'\
-    ' Last line goes here [Test](https://test.com).'
+    <<-STRING
+      Ministry by [Awaken](/awaken \"Awaken's Homepage\"){: .button .white} in Dallas, Texas.
+      Just relax. [Watermark Community Church](http://www.watermark.org){: .button-medium .green} ok.
+      Last line goes here [Test](https://test.com).
+    STRING
+  }
+
+  let(:markdown_string_with_links_that_have_classes2) {
+    <<-STRING
+      Ministry by [Awaken](/awaken \"Awaken's Homepage\"){: .button .white} in Dallas, Texas.
+      Ministry by [Awaken](/awaken \"Awaken's Homepage\"){: .button .white} in Dallas, Texas.
+      Ministry by [Awaken](/awaken \"Awaken's Homepage\"){: .button .white} in Dallas, Texas.
+    STRING
   }
 
   let(:markdown_string_with_classless_link) {
@@ -17,11 +27,23 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
     'nothin to see here'
   }
 
+  let(:markdown_link_with_quote) {
+    "[Children's](https://watermark.formstack.com/forms/childrensvolunteer)"
+  }
+
   describe '#markdown' do
     it 'returns string wrapped in div' do
       rendered_html = helper.markdown(markdown_string_without_links)
 
       expect(rendered_html).to have_selector('div.formatted-content')
+    end
+
+    context 'when markdown link text has a single quote in it' do
+      it 'renders the quote as a part of the link text' do
+        html_to_render = helper.markdown(markdown_link_with_quote)
+
+        expect(html_to_render).to have_content("Children's")
+      end
     end
 
     context 'when markdown includes links with classes' do
@@ -31,6 +53,30 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
 
         expect(html_to_render).to have_selector('.button.white')
         expect(html_to_render).to have_selector('.button-medium.green')
+      end
+    end
+
+    context 'when markdown includes the same link with classes multiple times' do
+      it 'builds the hyperlink with classes each time it appears in the markdown' do
+        html_to_render =
+          helper.markdown(markdown_string_with_links_that_have_classes2)
+
+        # The {: .button .white} is in the markdown_string_with_links_that_have_classes2
+        # 3 times, so 3 hyperlinks with those classes should be returned in the html_to_render
+        expect(html_to_render).to have_selector('.button.white', count: 3)
+      end
+    end
+
+    context 'when markdown receives the same text twice' do
+      it 'applies the classes to the hyperlinks both times' do
+        html_to_render =
+          helper.markdown(markdown_string_with_links_that_have_classes)
+
+        html_to_render2 =
+          helper.markdown(markdown_string_with_links_that_have_classes)
+
+        expect(html_to_render).to have_selector('.button.white', count: 1)
+        expect(html_to_render2).to have_selector('.button.white', count: 1)
       end
     end
 
@@ -125,7 +171,7 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
     context 'When class doesn\'t begin with a space: [forget spaces](http://www.google.com){:.test}' do
       it 'should still apply the classes to the hyperlink' do
         markdown_string =
-          +'some before text [forget spaces](http://www.google.com){:.test} and some after text'
+          'some before text [forget spaces](http://www.google.com){:.test} and some after text'
         html_to_render =
           helper.markdown(markdown_string)
 
@@ -136,7 +182,7 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
     context 'When classes have no space: [no space](http://www.google.com){: .btn.btn-primary }' do
       it 'should still apply the classes to the hyperlink' do
         markdown_string =
-          +'some before text [no space](http://www.google.com){: .btn.btn-primary } and some after text'
+          'some before text [no space](http://www.google.com){: .btn.btn-primary } and some after text'
         html_to_render =
           helper.markdown(markdown_string)
 
@@ -147,8 +193,11 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
     context 'when content of link matches the class name given' do
       it 'should apply the the class to the hyperlink with no conflict' do
         markdown_string =
-          +'some before text [text or .text that matches a class]'\
-          '(/home "text or .text"){: .text } and some after text'
+          <<-STRING
+            some before text
+            [text or .text that matches a class](/home "text or .text"){: .text }
+            and some after text
+          STRING
         html_to_render =
           helper.markdown(markdown_string)
 
@@ -306,22 +355,32 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
   end
 
   describe '#remove_markdown_href_class_syntax' do
-    it "removes all of the '{: .button}' syntax from markdown text" do
+    it "returns the markdown text without all of the '{: .button}' syntax" do
       raw_classes =
         [
           '{: .button .white}',
           '{: .button-medium .green}'
         ]
       text =
-        +"Ministry developed by [Awaken](/awaken \"Awaken's Homepage\"){: .button .white}"\
-        ' [Watermark Community Church](http://www.watermark.org){: .button-medium .green}'\
-        ' [Test](https://test.com).'
+        <<-STRING
+          Ministry developed by [Awaken](/awaken \"Awaken's Homepage\"){: .button .white}
+           [Watermark Community Church](http://www.watermark.org){: .button-medium .green}
+           [Test](https://test.com).
+        STRING
 
-      expect(text.include?('{: .button .white}')).to be true
+      text_without_class_syntax =
+        <<-STRING
+          Ministry developed by [Awaken](/awaken \"Awaken's Homepage\")
+           [Watermark Community Church](http://www.watermark.org)
+           [Test](https://test.com).
+        STRING
 
-      helper.remove_markdown_href_class_syntax(raw_classes, text)
+      expect(text).to include('{: .button .white}')
 
-      expect(text.include?('{: .button .white}')).to be false
+      transformed_text = helper.remove_markdown_href_class_syntax(raw_classes, text)
+
+      expect(transformed_text).to_not include('{: .button .white}')
+      expect(transformed_text).to eq(text_without_class_syntax)
     end
   end
 
