@@ -4,15 +4,19 @@ require 'rails_helper'
 
 RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
   let(:markdown_string_with_links_that_have_classes) {
-    +"Ministry by [Awaken](/awaken \"Awaken's Homepage\"){: .button .white} in Dallas, Texas."\
-    ' Just relax. [Watermark Community Church](http://www.watermark.org){: .button-medium .green} ok.'\
-    ' Last line goes here [Test](https://test.com).'
+    <<-STRING
+      Ministry by [Awaken](/awaken \"Awaken's Homepage\"){: .button .white} in Dallas, Texas.
+      Just relax. [Watermark Community Church](http://www.watermark.org){: .button-medium .green} ok.
+      Last line goes here [Test](https://test.com).
+    STRING
   }
 
   let(:markdown_string_with_links_that_have_classes2) {
-    +"Ministry by [Awaken](/awaken \"Awaken's Homepage\"){: .button .white} in Dallas, Texas."\
-    " Ministry by [Awaken](/awaken \"Awaken's Homepage\"){: .button .white} in Dallas, Texas."\
-    " Ministry by [Awaken](/awaken \"Awaken's Homepage\"){: .button .white} in Dallas, Texas."
+    <<-STRING
+      Ministry by [Awaken](/awaken \"Awaken's Homepage\"){: .button .white} in Dallas, Texas.
+      Ministry by [Awaken](/awaken \"Awaken's Homepage\"){: .button .white} in Dallas, Texas.
+      Ministry by [Awaken](/awaken \"Awaken's Homepage\"){: .button .white} in Dallas, Texas.
+    STRING
   }
 
   let(:markdown_string_with_classless_link) {
