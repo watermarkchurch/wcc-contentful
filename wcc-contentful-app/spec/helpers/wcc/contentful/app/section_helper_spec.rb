@@ -27,10 +27,6 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
     'nothin to see here'
   }
 
-  let(:markdown_link_with_quote) {
-    "[Children's](https://watermark.formstack.com/forms/childrensvolunteer)"
-  }
-
   describe '#markdown' do
     it 'returns string wrapped in div' do
       rendered_html = helper.markdown(markdown_string_without_links)
@@ -40,9 +36,56 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
 
     context 'when markdown link text has a single quote in it' do
       it 'renders the quote as a part of the link text' do
-        html_to_render = helper.markdown(markdown_link_with_quote)
+        html_to_render =
+          helper.markdown(
+            "[Children's](https://watermark.formstack.com/forms/childrensvolunteer)"
+          )
 
-        expect(html_to_render).to have_content("Children's")
+        expect(html_to_render).to have_link("Children's", href: 'https://watermark.formstack.com/forms/childrensvolunteer')
+      end
+    end
+
+    context 'when markdown link text has a single quote and class' do
+      it 'renders the quote as a part of the link text' do
+        html_to_render =
+          helper.markdown(
+            "[Children's](https://watermark.formstack.com/forms){: .btn .btn-primary}"
+          )
+
+        expect(html_to_render).to have_link(
+          "Children's",
+          href: 'https://watermark.formstack.com/forms',
+          class: 'btn btn-primary'
+        )
+      end
+    end
+
+    context 'when markdown link is a mailto link' do
+      it 'renders the mailto link' do
+        html_to_render =
+          helper.markdown(
+            '[request application](mailto:students@watermark.org)'
+          )
+
+        expect(html_to_render).to have_link(
+          'request application',
+          href: 'mailto:students@watermark.org'
+        )
+      end
+    end
+
+    context 'when markdown link is a mailto link and has a class' do
+      it 'renders the mailto link' do
+        html_to_render =
+          helper.markdown(
+            '[request application](mailto:students@watermark.org){: .btn .btn-primary}'
+          )
+
+        expect(html_to_render).to have_link(
+          'request application',
+          href: 'mailto:students@watermark.org',
+          class: 'btn btn-primary'
+        )
       end
     end
 
@@ -51,8 +94,12 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
         html_to_render =
           helper.markdown(markdown_string_with_links_that_have_classes)
 
-        expect(html_to_render).to have_selector('.button.white')
-        expect(html_to_render).to have_selector('.button-medium.green')
+        expect(html_to_render).to have_link('Awaken', href: '/awaken', class: 'button white')
+        expect(html_to_render).to have_link(
+          'Watermark Community Church',
+          href: 'http://www.watermark.org',
+          class: 'button-medium green'
+        )
       end
     end
 
@@ -61,9 +108,7 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
         html_to_render =
           helper.markdown(markdown_string_with_links_that_have_classes2)
 
-        # The {: .button .white} is in the markdown_string_with_links_that_have_classes2
-        # 3 times, so 3 hyperlinks with those classes should be returned in the html_to_render
-        expect(html_to_render).to have_selector('.button.white', count: 3)
+        expect(html_to_render).to have_link('Awaken', href: '/awaken', class: 'button white', count: 3)
       end
     end
 
@@ -75,8 +120,8 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
         html_to_render2 =
           helper.markdown(markdown_string_with_links_that_have_classes)
 
-        expect(html_to_render).to have_selector('.button.white', count: 1)
-        expect(html_to_render2).to have_selector('.button.white', count: 1)
+        expect(html_to_render).to have_link('Awaken', href: '/awaken', class: 'button white', count: 1)
+        expect(html_to_render2).to have_link('Awaken', href: '/awaken', class: 'button white', count: 1)
       end
     end
 
