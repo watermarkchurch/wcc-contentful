@@ -54,11 +54,14 @@ module WCC::Contentful::App::SectionHelper
 
     renderer = ::WCC::Contentful::App::CustomMarkdownRender.new(options)
     markdown = ::Redcarpet::Markdown.new(renderer, extensions)
+    html_to_render = markdown.render(remove_markdown_href_class_syntax(raw_classes, text))
+
+    if match = hyperlink_match(html_to_render)
+      html_to_render = remove_target_blank(html_to_render) unless use_target_blank?(match[1])
+    end
 
     content_tag(:div,
-      CGI.unescapeHTML(markdown.render(
-                         remove_markdown_href_class_syntax(raw_classes, text)
-                       )).html_safe,
+      CGI.unescapeHTML(html_to_render).html_safe,
       class: 'formatted-content')
   end
 
@@ -111,6 +114,22 @@ module WCC::Contentful::App::SectionHelper
       class_string += klass.tr('.', '') + ' '
     end
     class_string
+  end
+
+  def hyperlink_match(string)
+    # return MatchData hash if string includes a hyperlink
+    /href\s*=\s*"([^"]*)"/.match(string)
+  end
+
+  def use_target_blank?(url)
+    return false unless scheme = URI.parse(url).scheme
+    return false unless scheme != 'mailto'
+
+    true
+  end
+
+  def remove_target_blank(string)
+    string.gsub('target="_blank"', '')
   end
 
   def safe_line_break(text)

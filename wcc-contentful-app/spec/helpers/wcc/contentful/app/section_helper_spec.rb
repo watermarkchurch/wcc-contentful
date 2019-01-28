@@ -34,6 +34,102 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
       expect(rendered_html).to have_selector('div.formatted-content')
     end
 
+    context 'when markdown link has an absolute url' do
+      it "returns the absolute url with target='_blank'" do
+        html_to_render =
+          helper.markdown(
+            '[Watermark Community Church](http://www.watermark.org)'
+          )
+
+        expect(html_to_render).to have_link(
+          'Watermark Community Church',
+          href: 'http://www.watermark.org'
+        )
+        expect(html_to_render).to have_selector(
+          :css,
+          'a[href="http://www.watermark.org"][target="_blank"]'
+        )
+      end
+    end
+
+    context 'when markdown link has an absolute url with a class' do
+      it "returns the absolute url with target='_blank' and class" do
+        html_to_render =
+          helper.markdown(
+            '[Watermark Community Church](http://www.watermark.org){: .btn .btn-primary}'
+          )
+
+        expect(html_to_render).to have_link(
+          'Watermark Community Church',
+          href: 'http://www.watermark.org',
+          class: 'btn btn-primary'
+        )
+        expect(html_to_render).to have_selector(
+          :css,
+          'a[href="http://www.watermark.org"][target="_blank"]'
+        )
+      end
+    end
+
+    context 'when markdown link has a relative url' do
+      it "returns the relative url without target='_blank'" do
+        html_to_render =
+          helper.markdown(
+            "[Awaken's Homepage](/awaken)"
+          )
+
+        expect(html_to_render).to have_link("Awaken's Homepage", href: '/awaken')
+        expect(html_to_render).to_not have_selector(:css, 'a[href="/awaken"][target="_blank"]')
+      end
+    end
+
+    context 'when markdown link has a relative url with a class' do
+      it "returns the relative url without target='_blank' but with the class" do
+        html_to_render =
+          helper.markdown(
+            "[Awaken's Homepage](/awaken){: .btn .btn-primary}"
+          )
+
+        expect(html_to_render).to have_link(
+          "Awaken's Homepage",
+          href: '/awaken',
+          class: 'btn btn-primary'
+        )
+        expect(html_to_render).to_not have_selector(:css, 'a[href="/awaken"][target="_blank"]')
+      end
+    end
+
+    context 'when markdown link has a hash location' do
+      it "returns the hash location without target='_blank'" do
+        html_to_render =
+          helper.markdown(
+            "[Awaken's Homepage](#awaken)"
+          )
+
+        expect(html_to_render).to have_link("Awaken's Homepage", href: '#awaken')
+        expect(html_to_render).to_not have_selector(
+          :css,
+          'a[href="#awaken"][target="_blank"]'
+        )
+      end
+    end
+
+    context 'when markdown link has a hash location with a class' do
+      it "returns the hash location without target='_blank' but with the class" do
+        html_to_render =
+          helper.markdown(
+            "[Awaken's Homepage](#awaken){: .btn .btn-primary}"
+          )
+
+        expect(html_to_render).to have_link(
+          "Awaken's Homepage",
+          href: '#awaken',
+          class: 'btn btn-primary'
+        )
+        expect(html_to_render).to_not have_selector(:css, 'a[href="#awaken"][target="_blank"]')
+      end
+    end
+
     context 'when markdown link text has a single quote in it' do
       it 'renders the quote as a part of the link text' do
         html_to_render =
@@ -70,6 +166,18 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
         expect(html_to_render).to have_link(
           'request application',
           href: 'mailto:students@watermark.org'
+        )
+      end
+
+      it "does not include target='_blank'" do
+        html_to_render =
+          helper.markdown(
+            '[request application](mailto:students@watermark.org)'
+          )
+
+        expect(html_to_render).to_not have_selector(
+          :css,
+          'a[href="mailto:students@watermark.org"][target="_blank"]'
         )
       end
     end
@@ -187,6 +295,7 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
         )
       end
     end
+
     context 'When given: [newline after the parens](http://www.google.com)\n{: .test }' do
       it 'will render the html hyperlink without using the class' do
         markdown_string =
