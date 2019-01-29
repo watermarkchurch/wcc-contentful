@@ -1,4 +1,4 @@
 <% @page.sections&.each_with_index do |section, index|
   next if section.nil? %>
-  <%= render('components/section', section: section, index: index) %>
+  <%= render_section(section, index) %>
 <% end %>
