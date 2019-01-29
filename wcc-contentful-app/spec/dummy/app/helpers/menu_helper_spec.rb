@@ -110,10 +110,33 @@ RSpec.describe WCC::Contentful::App::MenuHelper, type: :helper do
     end
 
     context 'button with text and icon' do
-      subject(:button) { contentful_create('menuButton', icon: contentful_image_double, text: 'test' ) }
+      subject(:button) { contentful_create('menuButton',
+        icon: contentful_image_double, text: 'test' ) }
 
       it { expect(result).to_not include('icon-only') }
       it { expect(result).to_not include('text-only') }
+
+      it 'renders both icon and text' do
+        expect(result).to include("src=\"#{button.icon.file.url}\"")
+        expect(result).to include("<span>test</span>")
+      end
+    end
+
+    context 'button with text, icon, and material icon' do
+      subject(:button) { contentful_create('menuButton',
+        icon: contentful_image_double,
+        material_icon: 'search',
+        text: 'test' ) }
+
+      it { expect(result).to_not include('icon-only') }
+      it { expect(result).to_not include('text-only') }
+
+      it 'renders both icon and text' do
+        expect(result).to include("src=\"#{button.icon.file.url}\"")
+        expect(result).to include("<span>test</span>")
+        expect(result).to include('<i class="material-icons">search</i>')
+      end
+      
     end
 
     context 'button with text only' do
