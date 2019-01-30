@@ -40,8 +40,8 @@ module WCC::Contentful::App::MenuHelper
   end
 
   def render_button_inner_html(button, options = {}, &block)
-    html = render_button_icon(button.icon, options.delete(:icon)) ||
-      render_button_material_icon(button.material_icon) + content_tag(:span, button.text)
+    html = render_button_icon(button.icon, options.delete(:icon)) || ''.html_safe
+    html += render_button_material_icon(button.material_icon) + content_tag(:span, button.text)
 
     html += capture(&block) if block_given?
     html
