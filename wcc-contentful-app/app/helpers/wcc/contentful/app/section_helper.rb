@@ -5,6 +5,10 @@ require 'redcarpet'
 module WCC::Contentful::App::SectionHelper
   extend self
 
+  def render_section(section, index)
+    render('components/section', section: section, index: index)
+  end
+
   def section_template_name(section)
     section.class.name.demodulize.underscore.sub('section_', '')
   end
