@@ -2,13 +2,6 @@
 
 class WCC::Contentful::Model::SectionContactForm < WCC::Contentful::Model
   def send_email(data)
-    puts "WHAT DOES THE DATA LOOK LIKE??"
-    puts "WHAT DOES THE DATA LOOK LIKE??"
-    puts "WHAT DOES THE DATA LOOK LIKE??"
-    puts data.inspect
-    puts "WHAT DOES THE DATA LOOK LIKE??!!!!"
-    puts "WHAT DOES THE DATA LOOK LIKE??!!!!"
-    puts "WHAT DOES THE DATA LOOK LIKE??!!!!"
     ::WCC::Contentful::App::ContactMailer.contact_form_email(data[:notification_email], data).deliver
 
     save_contact_form(data)
