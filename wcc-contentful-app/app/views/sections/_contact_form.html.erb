@@ -10,6 +10,7 @@
             data: { contact_form: true },
             method: 'post' do %>
         <input type="hidden" name="id" value="<%= section.id %>" />
+        <input type="hidden" name="internal_title" value="<%= section.internal_title %>" />
         <% if defined?(email_object_id) %>
           <input
             id="email-object-id"
