@@ -46,6 +46,6 @@ class WCC::Contentful::App::PagesController < ApplicationController
     # They may have not installed `site-config` in the project
     return unless defined?(WCC::Contentful::Model::SiteConfig)
 
-    @global_site_config ||= WCC::Contentful::Model::SiteConfig.instance
+    @global_site_config ||= WCC::Contentful::Model::SiteConfig.instance(preview?)
   end
 end
