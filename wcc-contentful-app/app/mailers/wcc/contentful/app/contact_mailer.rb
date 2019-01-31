@@ -5,7 +5,7 @@ module WCC::Contentful::App
     def contact_form_email(to_email, data)
       @form_data = data
 
-      mail(to: to_email, subject: "#{@form_data[:internal_title]} Submission")
+      mail(from: @form_data[:Email] , to: to_email, subject: "#{@form_data[:internal_title]} Submission")
     end
   end
 end
