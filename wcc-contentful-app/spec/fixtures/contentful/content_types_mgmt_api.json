@@ -1513,7 +1513,7 @@
           "required": true,
           "validations": [],
           "disabled": false,
-          "omitted": true
+          "omitted": false
         },
         {
           "id": "text",

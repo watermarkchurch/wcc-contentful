@@ -21,7 +21,7 @@ export = function (migration: Migration, { makeRequest, spaceId, accessToken }) 
     required: true,
     validations: [],
     disabled: false,
-    omitted: true
+    omitted: false
   })
 
   sectionContactForm.createField('text', {
