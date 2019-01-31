@@ -3,7 +3,14 @@
 class WCC::Contentful::App::ContactFormController < ApplicationController
   def create
     address = params[:email_object_id] ? email_address(email_model) : form_model.notification_email
-    form_model.send_email(form_params.merge!({ notification_email: address }))
+    form_model.send_email(
+      form_params.merge!(
+        {
+          notification_email: address,
+          internal_title: params[:internal_title]
+        }
+      )
+    )
 
     render json: { type: 'success', message: "Thanks for reaching out. We'll be in touch soon!" }
   end
