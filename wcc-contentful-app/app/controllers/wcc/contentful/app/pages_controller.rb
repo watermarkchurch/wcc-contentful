@@ -5,23 +5,34 @@ class WCC::Contentful::App::PagesController < ApplicationController
 
   def index
     @page = global_site_config&.homepage ||
-      page_model.find_by(slug: '/', options: { include: 3 })
+      page_model.find_by(slug: '/', options: { include: 3, preview: preview? })
     render 'pages/show'
   end
 
   def show
     slug = '/' + params[:slug]
-    @page = page_model.find_by(slug: slug, options: { include: 3 })
+    @page = page_model.find_by(slug: slug, options: { include: 3, preview: preview? })
 
     return render 'pages/show' if @page
 
-    redirect = redirect_model.find_by(slug: slug, options: { include: 0 })
+    redirect = redirect_model.find_by(slug: slug, options: { include: 0, preview: preview? })
     raise WCC::Contentful::App::PageNotFoundError, slug unless redirect
 
     redirect_to redirect.href
   end
 
   private
+
+  def preview?
+    return super if defined?(super)
+
+    @preview ||=
+      if ENV['CONTENTFUL_PREVIEW_PASSWORD'].present?
+        params[:preview]&.chomp == ENV['CONTENTFUL_PREVIEW_PASSWORD']&.chomp
+      else
+        false
+      end
+  end
 
   def page_model
     WCC::Contentful::Model.resolve_constant('page')
