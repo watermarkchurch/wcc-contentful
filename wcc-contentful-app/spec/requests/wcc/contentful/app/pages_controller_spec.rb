@@ -72,4 +72,96 @@ RSpec.describe WCC::Contentful::App::PagesController, type: :request do
       get '/not-found'
     }.to raise_error(WCC::Contentful::App::PageNotFoundError)
   end
+
+  it 'uses preview if preview param set' do
+    page = contentful_create('page', slug: '/test')
+
+    expect(MyPage).to receive(:find_by)
+      .with(slug: '/test', options: { include: 3, preview: true })
+      .and_return(page)
+    expect(WCC::Contentful::Model::Redirect).to_not receive(:find_by)
+
+    # act
+    with_preview_password do |pw|
+      get '/test', params: { preview: pw }
+    end
+
+    expect(assigns(:page)).to eq(page)
+  end
+
+  it 'uses preview in redirect as well' do
+    redirect = contentful_create('redirect',
+      slug: '/test',
+      external_link: 'https://www.google.com')
+
+    expect(MyPage).to receive(:find_by)
+      .with(slug: '/test', options: { include: 3, preview: true })
+    expect(WCC::Contentful::Model::Redirect).to receive(:find_by)
+      .with(slug: '/test', options: { include: 0, preview: true })
+      .and_return(redirect)
+
+    # act
+    with_preview_password do |pw|
+      get '/test', params: { preview: pw }
+    end
+
+    expect(response).to redirect_to(redirect.external_link)
+  end
+
+  it 'does not use preview when password doesnt match' do
+    expect(MyPage).to receive(:find_by)
+      .with(slug: '/test', options: { include: 3, preview: false })
+    expect(WCC::Contentful::Model::Redirect).to receive(:find_by)
+      .with(slug: '/test', options: { include: 0, preview: false })
+
+    # act
+    expect {
+      with_preview_password do |_pw|
+        get '/test', params: { preview: 'some other password' }
+      end
+    }.to raise_error(WCC::Contentful::App::PageNotFoundError)
+  end
+
+  it 'uses application controller defined preview? function' do
+    allow_any_instance_of(ApplicationController)
+      .to receive(:preview?)
+      .and_return(true)
+
+    page = contentful_create('page', slug: '/test')
+    expect(MyPage).to receive(:find_by)
+      .with(slug: '/test', options: { include: 3, preview: true })
+      .and_return(page)
+
+    # act
+    get '/test'
+
+    expect(assigns(:page)).to eq(page)
+  end
+
+  it 'respects application controller defined preview? function even if preview param set' do
+    allow_any_instance_of(ApplicationController)
+      .to receive(:preview?)
+      .and_return(false)
+
+    expect(MyPage).to receive(:find_by)
+      .with(slug: '/test', options: { include: 3, preview: false })
+    expect(WCC::Contentful::Model::Redirect).to receive(:find_by)
+      .with(slug: '/test', options: { include: 0, preview: false })
+
+    # act
+    expect {
+      with_preview_password do |_pw|
+        get '/test', params: { preview: 'some other password' }
+      end
+    }.to raise_error(WCC::Contentful::App::PageNotFoundError)
+  end
+
+  def with_preview_password
+    previous = ENV['CONTENTFUL_PREVIEW_PASSWORD']
+    ENV['CONTENTFUL_PREVIEW_PASSWORD'] = 'topsecret'
+
+    yield 'topsecret'
+  ensure
+    ENV['CONTENTFUL_PREVIEW_PASSWORD'] = previous
+  end
 end
