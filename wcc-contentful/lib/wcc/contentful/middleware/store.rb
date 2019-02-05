@@ -9,7 +9,7 @@ module WCC::Contentful::Middleware::Store
 
   def find(id)
     found = store.find(id)
-    return found if select(found)
+    return transform(found) if select(found)
   end
 
   def find_by(options: nil, **args)
