@@ -18,7 +18,7 @@ class WCC::Contentful::Link
       {
         'sys' => {
           'type' => 'Link',
-          'linkType' => LINK_TYPES[@link_type],
+          'linkType' => LINK_TYPES[@link_type] || link_type,
           'id' => @id
         }
       }
