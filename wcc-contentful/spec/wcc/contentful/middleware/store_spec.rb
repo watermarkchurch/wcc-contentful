@@ -10,7 +10,9 @@ RSpec.describe WCC::Contentful::Middleware::Store do
     end
   }
 
-  subject(:instance) { implementation.new(next_store) }
+  subject(:instance) {
+    implementation.new.tap { |i| i.store = next_store }
+  }
 
   %i[
     index

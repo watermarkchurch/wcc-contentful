@@ -3,13 +3,9 @@
 module WCC::Contentful::Middleware::Store
   extend ActiveSupport::Concern
 
-  attr_reader :store
+  attr_accessor :store
 
   delegate :index, :set, :delete, to: :store
-
-  def initialize(store)
-    @store = store
-  end
 
   def find(id)
     found = store.find(id)
