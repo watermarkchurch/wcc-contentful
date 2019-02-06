@@ -30,7 +30,7 @@ module WCC::Contentful::App
     # Inject additional configuration into WCC::Contentful
     WCC::Contentful.configure do |config|
       unless config.middleware.any? { |x| x.is_a? WCC::Contentful::App::Middleware::PublishAt }
-        config.middleware << WCC::Contentful::App::Middleware::PublishAt.new
+        config.middleware << WCC::Contentful::App::Middleware::PublishAt
       end
     end
 

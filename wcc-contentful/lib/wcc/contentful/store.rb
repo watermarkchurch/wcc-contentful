@@ -51,10 +51,10 @@ module WCC::Contentful::Store
         end
 
         built = public_send("build_#{cdn_method}", config, *content_delivery_params)
-        config.middleware.select { |m| m.respond_to?(:store=) }
+        config.middleware
           .reduce(built) do |memo, middleware|
-            middleware.store = memo
-            middleware
+            middleware = middleware.call(memo, content_delivery_params, config)
+            middleware || memo
           end
       end
 

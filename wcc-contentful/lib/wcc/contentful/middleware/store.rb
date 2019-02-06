@@ -20,6 +20,12 @@ module WCC::Contentful::Middleware::Store
 
   delegate :index, :index?, :set, :delete, to: :store
 
+  def self.call(store, content_delivery_params, config)
+    instance = new
+    instance.store = store
+    instance
+  end
+
   def find(id)
     found = store.find(id)
     return transform(found) if found && select(found)
