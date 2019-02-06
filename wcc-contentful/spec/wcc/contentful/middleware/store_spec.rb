@@ -14,6 +14,17 @@ RSpec.describe WCC::Contentful::Middleware::Store do
     implementation.new.tap { |i| i.store = next_store }
   }
 
+  before do
+    allow(WCC::Contentful).to receive(:types)
+      .and_return({
+        'test1' => double(fields: {
+          'exclude' => double(name: 'name', type: :Boolean, array: false),
+          'link' => double(name: 'link', type: :Link, array: false),
+          'links' => double(name: 'links', type: :Link, array: true)
+        })
+      })
+  end
+
   %i[
     index
     set
@@ -40,6 +51,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
     describe '#find' do
       it 'returns entry that matches select' do
         entry = {
+          'sys' => sys,
           'fields' => {
             'exclude' => nil
           }
@@ -56,6 +68,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
 
       it 'returns nil for entry that doesnt match select' do
         entry = {
+          'sys' => sys,
           'fields' => {
             'exclude' => { 'en-US' => true }
           }
@@ -74,6 +87,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
     describe '#find_by' do
       it 'returns entry that matches select' do
         entry = {
+          'sys' => sys,
           'fields' => {
             'exclude' => nil
           }
@@ -106,12 +120,14 @@ RSpec.describe WCC::Contentful::Middleware::Store do
 
       it 'resolves as broken link for linked entry that doesnt match select' do
         entry = {
+          'sys' => sys,
           'fields' => {
             'link' => {
               'en-US' => {
                 'sys' => {
                   'id' => '5678',
-                  'type' => 'Entry'
+                  'type' => 'Entry',
+                  'contentType' => content_type
                 },
                 'fields' => {
                   'exclude' => { 'en-US' => true }
@@ -130,6 +146,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
                                  options: { include: 1 })
 
         expect(found).to eq({
+          'sys' => entry['sys'],
           'fields' => {
             'link' => {
               'en-US' => {
@@ -149,14 +166,17 @@ RSpec.describe WCC::Contentful::Middleware::Store do
       it 'returns only entries that matches select' do
         entries = [
           {
+            'sys' => sys,
             'fields' => {
               'exclude' => nil
             }
           }, {
+            'sys' => sys,
             'fields' => {
               'exclude' => { 'en-US' => true }
             }
           }, {
+            'sys' => sys,
             'fields' => {
               'exclude' => { 'en-US' => false }
             }
@@ -177,12 +197,14 @@ RSpec.describe WCC::Contentful::Middleware::Store do
 
       it 'resolves as broken link for linked entry that doesnt match select' do
         entries = [{
+          'sys' => sys,
           'fields' => {
             'link' => {
               'en-US' => {
                 'sys' => {
                   'id' => '5678',
-                  'type' => 'Entry'
+                  'type' => 'Entry',
+                  'contentType' => content_type
                 },
                 'fields' => {
                   'exclude' => { 'en-US' => true }
@@ -201,6 +223,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
                                   options: { include: 1 })
 
         expect(found).to eq([{
+          'sys' => entries.dig(0, 'sys'),
           'fields' => {
             'link' => {
               'en-US' => {
@@ -232,6 +255,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
     describe '#find' do
       it 'transforms the entry' do
         entry = {
+          'sys' => sys,
           'fields' => {
             'exclude' => nil
           }
@@ -243,13 +267,14 @@ RSpec.describe WCC::Contentful::Middleware::Store do
         # act
         found = instance.find('1234')
 
-        expect(found.dig('fields', 'excluded', 'en-US')).to be 'no'
+        expect(found.dig('fields', 'excluded', 'en-US')).to eq 'no'
       end
     end
 
     describe '#find_by' do
       it 'transforms the entry' do
         entry = {
+          'sys' => sys,
           'fields' => {
             'exclude' => nil
           }
@@ -261,17 +286,19 @@ RSpec.describe WCC::Contentful::Middleware::Store do
         # act
         found = instance.find_by(content_type: 'test', filter: { 'sys.id' => '1234' })
 
-        expect(found.dig('fields', 'excluded', 'en-US')).to be 'no'
+        expect(found.dig('fields', 'excluded', 'en-US')).to eq 'no'
       end
 
       it 'transforms the entry even in a resolved include' do
         entry = {
+          'sys' => sys,
           'fields' => {
             'link' => {
               'en-US' => {
                 'sys' => {
                   'id' => '5678',
-                  'type' => 'Entry'
+                  'type' => 'Entry',
+                  'contentType' => content_type
                 },
                 'fields' => {
                   'exclude' => { 'en-US' => true }
@@ -290,7 +317,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
                                  options: { include: 1 })
 
         expect(found.dig('fields', 'link', 'en-US', 'fields', 'excluded', 'en-US'))
-          .to be 'no'
+          .to eq 'no'
       end
     end
 
@@ -298,14 +325,17 @@ RSpec.describe WCC::Contentful::Middleware::Store do
       it 'transforms all entries' do
         entries = [
           {
+            'sys' => sys,
             'fields' => {
               'exclude' => nil
             }
           }, {
+            'sys' => sys,
             'fields' => {
               'exclude' => { 'en-US' => true }
             }
           }, {
+            'sys' => sys,
             'fields' => {
               'exclude' => { 'en-US' => false }
             }
@@ -319,18 +349,20 @@ RSpec.describe WCC::Contentful::Middleware::Store do
         found = instance.find_all(content_type: 'test', filter: { 'test' => 'ok' })
 
         found.each do |entry|
-          expect(entry.dig('fields', 'excluded', 'en-US')).to be 'no'
+          expect(entry.dig('fields', 'excluded', 'en-US')).to eq 'no'
         end
       end
 
       it 'transforms resolved entries too' do
         entries = [{
+          'sys' => sys,
           'fields' => {
             'link' => {
               'en-US' => {
                 'sys' => {
                   'id' => '5678',
-                  'type' => 'Entry'
+                  'type' => 'Entry',
+                  'contentType' => content_type
                 },
                 'fields' => {
                   'exclude' => { 'en-US' => true }
@@ -349,8 +381,26 @@ RSpec.describe WCC::Contentful::Middleware::Store do
                                   options: { include: 1 })
 
         expect(found[0].dig('fields', 'link', 'en-US', 'fields', 'excluded', 'en-US'))
-          .to be 'no'
+          .to eq 'no'
       end
     end
+  end
+
+  def sys
+    {
+      'id' => SecureRandom.urlsafe_base64,
+      'type' => 'Entry',
+      'contentType' => content_type
+    }
+  end
+
+  def content_type
+    {
+      'sys' => {
+        'linkType' => 'ContentType',
+        'type' => 'Link',
+        'id' => 'test1'
+      }
+    }
   end
 end

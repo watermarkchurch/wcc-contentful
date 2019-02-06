@@ -46,33 +46,23 @@ module WCC::Contentful::Middleware::Store
   private
 
   def resolve_includes(entry, depth)
-    return entry unless entry && depth && depth > 0 && fields = entry['fields']
+    return entry unless entry && depth && depth > 0
 
-    fields.each do |(_name, locales)|
-      # TODO: handle non-* locale
-      locales.each do |(locale, val)|
-        locales[locale] =
-          if val.is_a? Array
-            val.map { |e| resolve_link(e, depth) }
-          else
-            resolve_link(val, depth)
-          end
-      end
+    WCC::Contentful::LinkVisitor.new(entry, :Link, :Asset, depth: depth).map do |val|
+      resolve_link(val)
     end
-
-    entry
   end
 
-  def resolve_link(val, depth)
+  def resolve_link(val)
     return val unless val.is_a?(Hash) && val.dig('sys', 'type') == 'Entry'
 
-    unless select(val)
+    if select(val)
+      transform(val)
+    else
       # Pretend it's an unresolved link -
       # matches the behavior of a store when the link cannot be retrieved
-      return WCC::Contentful::Link.new(val.dig('sys', 'id'), val.dig('sys', 'type')).to_h
+      WCC::Contentful::Link.new(val.dig('sys', 'id'), val.dig('sys', 'type')).to_h
     end
-
-    transform(resolve_includes(val, depth - 1))
   end
 
   def select(_entry)
