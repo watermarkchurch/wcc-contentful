@@ -475,14 +475,22 @@ RSpec.shared_examples 'contentful store' do
       shallow =
         1.upto(3).map do |i|
           {
-            'sys' => { 'id' => "shallow#{i}", 'type' => 'Entry', 'contentType' => make_link_to('shallow', 'ContentType') },
+            'sys' => {
+              'id' => "shallow#{i}",
+              'type' => 'Entry',
+              'contentType' => make_link_to('shallow', 'ContentType')
+            },
             'fields' => { 'name' => { 'en-US' => "shallow#{i}" } }
           }
         end
       deep =
         1.upto(2).map do |i|
           {
-            'sys' => { 'id' => "deep#{i}", 'type' => 'Entry', 'contentType' => make_link_to('deep', 'ContentType') },
+            'sys' => {
+              'id' => "deep#{i}",
+              'type' => 'Entry',
+              'contentType' => make_link_to('deep', 'ContentType')
+            },
             'fields' => {
               'name' => { 'en-US' => "deep#{i}" },
               'subLink' => { 'en-US' => make_link_to("shallow#{i}") }
