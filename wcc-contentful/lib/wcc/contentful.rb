@@ -27,6 +27,8 @@ require 'wcc/contentful/middleware'
 # initializer.
 module WCC::Contentful
   class << self
+    attr_reader :initialized
+
     # Gets the current configuration, after calling WCC::Contentful.configure
     attr_reader :configuration
 
