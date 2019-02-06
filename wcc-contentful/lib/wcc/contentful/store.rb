@@ -50,7 +50,12 @@ module WCC::Contentful::Store
           raise ArgumentError, "Don't know how to build content delivery method #{cdn_method}"
         end
 
-        public_send("build_#{cdn_method}", config, *content_delivery_params)
+        built = public_send("build_#{cdn_method}", config, *content_delivery_params)
+        config.middleware.select { |m| m.respond_to?(:store=) }
+          .reduce(built) do |memo, middleware|
+            middleware.store = memo
+            middleware
+          end
       end
 
       def validate!

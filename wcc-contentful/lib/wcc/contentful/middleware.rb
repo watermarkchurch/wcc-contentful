@@ -4,3 +4,4 @@ module WCC::Contentful::Middleware
 end
 
 require_relative './middleware/store'
+# someday: ./middleware/client & ./middleware/model ?

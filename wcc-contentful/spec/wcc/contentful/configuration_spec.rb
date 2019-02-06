@@ -131,6 +131,28 @@ RSpec.describe WCC::Contentful::Configuration do
     end
   end
 
+  describe '#middleware' do
+    it 'applies a middleware to the configured store' do
+      Test_Middleware =
+        Class.new do
+          include WCC::Contentful::Middleware::Store
+        end
+
+      config.middleware << Test_Middleware.new
+
+      # act
+      store = WCC::Contentful::Store::Factory.new(
+        config,
+        double(client: double),
+        :direct,
+        []
+      ).build_sync_store
+
+      expect(store).to be_a Test_Middleware
+      expect(store.store).to be_a WCC::Contentful::Store::CDNAdapter
+    end
+  end
+
   describe '#validate!' do
     it 'permits non-master environment combined with sync delivery strategy' do
       config.space = 'test_space'

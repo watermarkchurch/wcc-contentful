@@ -1,5 +1,18 @@
 # frozen_string_literal: true
 
+# A Store middleware wraps the Store interface to perform any desired transformations
+# on the Contentful entries coming back from the store.  A Store middleware must
+# implement the Store interface as well as a `store=` attribute writer, which is
+# used to inject the next store or middleware in the chain.
+#
+# The Store interface can be seen on the WCC::Contentful::Store::Base class.  It
+# consists of the `#find, #find_by, #find_all, #set, #delete,` and `#index` methods.
+#
+# Including this concern will define those methods to pass through to the next store.
+# Any of those methods can be overridden on the implementing middleware.
+# It will also expose two overridable methods, `#select` and `#transform`.  These
+# methods are applied when reading values out of the store, and can be used to
+# apply a filter or transformation to each entry in the store.
 module WCC::Contentful::Middleware::Store
   extend ActiveSupport::Concern
 
