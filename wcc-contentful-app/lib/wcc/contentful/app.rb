@@ -2,10 +2,12 @@
 
 require 'wcc/contentful/rails'
 
+require_relative './app/configuration'
 require_relative './app/rails'
 require_relative './app/exceptions'
 require_relative './app/model_validators'
 require_relative './ext/model'
+require_relative './app/middleware/publish_at'
 
 module WCC::Contentful::App
   class << self
@@ -16,7 +18,9 @@ module WCC::Contentful::App
   end
 
   def self.configure
-    raise InitializationError, 'Cannot configure after initialization' if initialized || WCC::Contentful.initialized
+    if initialized || WCC::Contentful.initialized
+      raise InitializationError, 'Cannot configure after initialization'
+    end
 
     @configuration ||= Configuration.new
     yield(configuration)
@@ -35,7 +39,7 @@ module WCC::Contentful::App
 
   def self.init!
     raise ArgumentError, 'Please first call WCC::Contentful.init!' unless WCC::Contentful.initialized
-    raise ArgumentError, 'Please first call WCC::Contentful::App.configure' if configuration.nil? 
+    raise ArgumentError, 'Please first call WCC::Contentful::App.configure' if configuration.nil?
 
     # Extend all model types w/ validation & extra fields
     WCC::Contentful.types.each_value do |t|
@@ -49,7 +53,7 @@ module WCC::Contentful::App
       rescue StandardError
         false
       end
-    
+
     @initialized = true
   end
 

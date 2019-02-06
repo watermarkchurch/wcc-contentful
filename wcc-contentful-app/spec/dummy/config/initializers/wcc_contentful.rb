@@ -20,6 +20,9 @@ WCC::Contentful.configure do |config|
   config.update_schema_file = :never
 end
 
+WCC::Contentful::App.configure do |config|
+end
+
 # Download content types, build models, and sync content
 WCC::Contentful.init!
 WCC::Contentful::App.init!
