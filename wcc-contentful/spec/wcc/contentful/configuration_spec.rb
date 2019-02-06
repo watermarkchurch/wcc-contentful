@@ -138,7 +138,7 @@ RSpec.describe WCC::Contentful::Configuration do
           include WCC::Contentful::Middleware::Store
         end
 
-      config.middleware << Test_Middleware.new
+      config.middleware << Test_Middleware
 
       # act
       store = WCC::Contentful::Store::Factory.new(

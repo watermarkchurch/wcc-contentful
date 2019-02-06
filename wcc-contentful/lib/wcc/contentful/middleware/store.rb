@@ -20,10 +20,12 @@ module WCC::Contentful::Middleware::Store
 
   delegate :index, :index?, :set, :delete, to: :store
 
-  def self.call(store, content_delivery_params, config)
-    instance = new
-    instance.store = store
-    instance
+  class_methods do
+    def call(store, _content_delivery_params, _config)
+      instance = new
+      instance.store = store
+      instance
+    end
   end
 
   def find(id)
