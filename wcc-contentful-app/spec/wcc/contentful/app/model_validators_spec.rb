@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require 'spec_helper'
+require 'wcc/contentful/app/model_validators'
+require 'wcc/contentful/ext/model'
 
 RSpec.describe(WCC::Contentful::App::ModelValidators) do
   let(:content_types) {
