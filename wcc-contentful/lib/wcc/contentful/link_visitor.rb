@@ -1,11 +1,22 @@
 # frozen_string_literal: true
 
+# The LinkVisitor is a utility class for walking trees of linked entries.
+# It is used internally by the Store layer to compose the resulting resolved hashes.
+# But you can use it too!
 class WCC::Contentful::LinkVisitor
   attr_reader :entry
   attr_reader :type
   attr_reader :fields
   attr_reader :depth
 
+  # @param [Hash] entry The entry hash (resolved or unresolved) to walk
+  # @param [Array<String, Symbol>] The fields to select from the entry tree.
+  #         Use `:Link` to select only links, or `'slug'` to select all slugs in the tree.
+  # @param [Fixnum] depth (optional) How far to walk down the tree of links.  Be careful of
+  #         recursive trees!
+  # @example
+  #   entry = store.find_by(id: id, include: 3)
+  #   WCC::Contentful::LinkVisitor.new(entry, 'slug', depth: 3).map { |slug| 'https://mirror-site' + slug }
   def initialize(entry, *fields, depth: 0)
     unless entry.is_a?(Hash) && entry.dig('sys', 'id')
       raise ArgumentError, "Please provide an entry as a hash value (got #{entry})"
@@ -22,6 +33,12 @@ class WCC::Contentful::LinkVisitor
     @depth = depth
   end
 
+  # Walks an entry and its resolved links, without transforming the entry.
+  # @yield [value, field, locale]
+  # @yieldparam [Object] value The value of the selected field.
+  # @yieldparam [WCC::Contentful::IndexedRepresentation::Field] field The type of the selected field
+  # @yieldparam [String] locale The locale of the current field value
+  # @returns nil
   def visit(&block)
     type.fields.each_value do |f|
       if f.array
@@ -34,6 +51,13 @@ class WCC::Contentful::LinkVisitor
     nil
   end
 
+  # Walks an entry and its resolved links, transforming the given values.
+  # @yield [value, field, locale]
+  # @yieldparam value The value of the selected field.
+  # @yieldparam [WCC::Contentful::IndexedRepresentation::Field] field The type of the selected field
+  # @yieldparam [String] locale The locale of the current field value
+  # @yieldreturn The new value of the field.
+  # @returns A new entry hash, with selected fields replaced by the results of the block
   def map(&block)
     fields =
       entry['fields'].each_with_object({}) do |(key, value), h|
@@ -112,8 +136,8 @@ class WCC::Contentful::LinkVisitor
 
   def each_locale(field)
     raw_value = entry.dig('fields', field.name)
-    if entry.dig('sys', 'locale')
-      yield(raw_value, entry.dig('sys', 'locale'))
+    if locale = entry.dig('sys', 'locale')
+      yield(raw_value, locale)
     else
       raw_value&.each_with_object({}) do |(locale, val), h|
         h[locale] = yield(val, locale)
