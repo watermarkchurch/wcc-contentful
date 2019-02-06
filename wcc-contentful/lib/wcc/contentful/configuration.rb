@@ -202,10 +202,10 @@ class WCC::Contentful::Configuration
     end
 
     middleware.each do |m|
-      next if m.respond_to?(:store=)
+      next if m.respond_to?(:call)
 
       raise ArgumentError, 'The middleware cannot be applied!  ' \
-        'It must specify a `store=` attribute writer.'
+        'It must respond to :call'
     end
   end
 
