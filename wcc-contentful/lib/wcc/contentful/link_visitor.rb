@@ -16,7 +16,8 @@ class WCC::Contentful::LinkVisitor
   #         recursive trees!
   # @example
   #   entry = store.find_by(id: id, include: 3)
-  #   WCC::Contentful::LinkVisitor.new(entry, 'slug', depth: 3).map { |slug| 'https://mirror-site' + slug }
+  #   WCC::Contentful::LinkVisitor.new(entry, 'slug', depth: 3)
+  #     .map { |slug| 'https://mirror-site' + slug }
   def initialize(entry, *fields, depth: 0)
     unless entry.is_a?(Hash) && entry.dig('sys', 'id')
       raise ArgumentError, "Please provide an entry as a hash value (got #{entry})"
@@ -139,8 +140,8 @@ class WCC::Contentful::LinkVisitor
     if locale = entry.dig('sys', 'locale')
       yield(raw_value, locale)
     else
-      raw_value&.each_with_object({}) do |(locale, val), h|
-        h[locale] = yield(val, locale)
+      raw_value&.each_with_object({}) do |(l, val), h|
+        h[l] = yield(val, l)
       end
     end
   end
