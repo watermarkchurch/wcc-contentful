@@ -18,9 +18,12 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
       expect(indexer.types.keys.sort).to eq(
         %w[
           Asset
+          callToAction
+          conference
           dog
           dropdownMenu
           faq
+          formField
           homepage
           menu
           menuButton
@@ -28,14 +31,27 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
           ministry
           ministryCard
           page
+          partnerChurch
           redirect2
           section-CardSearch
           section-Faq
           section-Testimonials
           section-VideoHighlight
+          section-block-text
+          section-contact-us
+          section-domain-object-header
           section-faq
           section-featured-items
           section-hero
+          section-image-gallery
+          section-intro
+          section-location-map
+          section-ministry-details
+          section-partner-churches
+          section-product-list
+          section-resource-list
+          section-testimonials
+          section-video
           section-video-highlight
           testimonial
           theme

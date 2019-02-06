@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Full Stack Integration', :vcr do
+RSpec.describe 'Full Stack Integration' do
   context 'Sync Strategy: lazy_sync' do
     before do
       WCC::Contentful.configure do |config|
@@ -17,7 +17,6 @@ RSpec.describe 'Full Stack Integration', :vcr do
     end
 
     it 'fetches an entry with broken includes' do
-      stub_content_types('page')
       WCC::Contentful.init!
 
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
@@ -29,20 +28,5 @@ RSpec.describe 'Full Stack Integration', :vcr do
 
       WCC::Contentful::Model::Page.find_by(slug: '/ministries/merge', options: { include: 3 })
     end
-  end
-
-  def stub_content_types(*content_types)
-    resp = {
-      sys: { type: 'Array' },
-      total: content_types.length,
-      skip: 0,
-      limit: 100,
-      items: content_types.map do |fixture|
-        JSON.parse(load_fixture(File.join('contentful', 'content_types', "#{fixture}.json")))
-      end
-    }
-    stub_request(:get, "https://api.contentful.com/spaces/#{contentful_space_id}/content_types")
-      .with(query: hash_including({ 'limit' => '1000' }))
-      .to_return(body: resp.to_json)
   end
 end
