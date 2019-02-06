@@ -104,11 +104,11 @@ module WCC::Contentful::Store
           end
       end
 
-      def resolve_link(val, depth)
+      def resolve_link(val)
         return val unless val.is_a?(Hash) && val.dig('sys', 'type') == 'Link'
         return val unless included = response.includes[val.dig('sys', 'id')]
 
-        resolve_includes(included, depth - 1)
+        included
       end
 
       def parameter(field, operator: nil, context: nil, locale: false)

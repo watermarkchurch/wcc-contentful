@@ -2365,7 +2365,1746 @@
           "omitted": false
         }
       ]
-    }
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "7yx6ovlj39n5"
+          }
+        },
+        "id": "section-domain-object-header",
+        "type": "ContentType",
+        "createdAt": "2018-04-16T18:36:58.834Z",
+        "updatedAt": "2018-06-29T21:20:46.989Z",
+        "environment": {
+          "sys": {
+            "id": "gburgett",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedCounter": 3,
+        "version": 6,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedVersion": 5,
+        "firstPublishedAt": "2018-04-16T18:36:59.220Z",
+        "publishedAt": "2018-06-29T21:20:46.989Z"
+      },
+      "displayField": "internalTitle",
+      "name": "Section: Ministry or Conference Header",
+      "description": "A Ministry or Conference Header section includes the Ministry or Conference's colors and logo, to be displayed at the top of a page related to that Ministry or Conference.",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title (Contentful Only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": true
+        },
+        {
+          "id": "name",
+          "name": "Name",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "domainObject",
+          "name": "Ministry or Conference",
+          "type": "Link",
+          "localized": false,
+          "required": true,
+          "validations": [
+            {
+              "linkContentType": [
+                "conference",
+                "ministry"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        },
+        {
+          "id": "secondaryNav",
+          "name": "Secondary Menu",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "linkContentType": [
+                "menu"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "7yx6ovlj39n5"
+          }
+        },
+        "id": "section-block-text",
+        "type": "ContentType",
+        "createdAt": "2018-04-16T18:36:52.993Z",
+        "updatedAt": "2018-11-14T22:44:05.746Z",
+        "environment": {
+          "sys": {
+            "id": "gburgett",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "publishedCounter": 14,
+        "version": 28,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "publishedVersion": 27,
+        "firstPublishedAt": "2018-04-16T18:36:53.212Z",
+        "publishedAt": "2018-11-14T22:44:05.746Z"
+      },
+      "displayField": "internalTitle",
+      "name": "Section: Block Text",
+      "description": "Markdown free-text block",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "bookmarkTitle",
+          "name": "Bookmark Title",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "body",
+          "name": "Body",
+          "type": "Text",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "7yx6ovlj39n5"
+          }
+        },
+        "id": "section-video",
+        "type": "ContentType",
+        "createdAt": "2018-05-18T19:51:12.942Z",
+        "updatedAt": "2018-10-04T22:03:15.959Z",
+        "environment": {
+          "sys": {
+            "id": "gburgett",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedCounter": 4,
+        "version": 8,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedVersion": 7,
+        "firstPublishedAt": "2018-05-18T19:51:13.083Z",
+        "publishedAt": "2018-10-04T22:03:15.959Z"
+      },
+      "displayField": "internalTitle",
+      "name": "Section: Video",
+      "description": "Full width video with a title",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title (Contentful Only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": true
+        },
+        {
+          "id": "title",
+          "name": "Title",
+          "type": "Symbol",
+          "localized": true,
+          "required": false,
+          "validations": [
+            {
+              "size": {
+                "max": 255,
+                "min": 0
+              }
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "embedCode",
+          "name": "Embed Code",
+          "type": "Text",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "style",
+          "name": "Style",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "in": [
+                "off white",
+                "default",
+                "gray"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "7yx6ovlj39n5"
+          }
+        },
+        "id": "section-intro",
+        "type": "ContentType",
+        "createdAt": "2018-05-24T21:17:14.013Z",
+        "updatedAt": "2018-06-29T21:21:48.323Z",
+        "environment": {
+          "sys": {
+            "id": "gburgett",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedCounter": 3,
+        "version": 6,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedVersion": 5,
+        "firstPublishedAt": "2018-05-24T21:17:14.173Z",
+        "publishedAt": "2018-06-29T21:21:48.323Z"
+      },
+      "displayField": "internalTitle",
+      "name": "Section: Intro",
+      "description": "",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title (Contentful Only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": true
+        },
+        {
+          "id": "intro",
+          "name": "Intro",
+          "type": "Text",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "testimonial",
+          "name": "Testimonial",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "linkContentType": [
+                "testimonial"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        },
+        {
+          "id": "testimonialStyle",
+          "name": "Testimonial Style",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "in": [
+                "default",
+                "dark"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "callToAction",
+          "name": "Call To Action",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "linkContentType": [
+                "callToAction"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "7yx6ovlj39n5"
+          }
+        },
+        "id": "callToAction",
+        "type": "ContentType",
+        "createdAt": "2018-04-16T18:36:31.886Z",
+        "updatedAt": "2018-06-29T21:21:38.151Z",
+        "environment": {
+          "sys": {
+            "id": "gburgett",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedCounter": 4,
+        "version": 8,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedVersion": 7,
+        "firstPublishedAt": "2018-04-16T18:36:32.126Z",
+        "publishedAt": "2018-06-29T21:21:38.151Z"
+      },
+      "displayField": "internalTitle",
+      "name": "Call To Action",
+      "description": "A Call To Action draws the user's attention to a particular button that you want them to click on.",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title (Contentful Only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": true
+        },
+        {
+          "id": "title",
+          "name": "Title",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "text",
+          "name": "Text",
+          "type": "Text",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "style",
+          "name": "Style",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "in": [
+                "default",
+                "notification"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "actionButtons",
+          "name": "Action Buttons",
+          "type": "Array",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Link",
+            "validations": [
+              {
+                "linkContentType": [
+                  "menuButton"
+                ]
+              }
+            ],
+            "linkType": "Entry"
+          }
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "7yx6ovlj39n5"
+          }
+        },
+        "id": "section-ministry-details",
+        "type": "ContentType",
+        "createdAt": "2018-04-16T18:37:43.385Z",
+        "updatedAt": "2018-06-29T21:21:54.234Z",
+        "environment": {
+          "sys": {
+            "id": "gburgett",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedCounter": 13,
+        "version": 26,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedVersion": 25,
+        "firstPublishedAt": "2018-04-16T18:37:43.712Z",
+        "publishedAt": "2018-06-29T21:21:54.234Z"
+      },
+      "displayField": "internalTitle",
+      "name": "Section: Ministry Details",
+      "description": "A Ministry Details section provides additional information about the ministry, in long-form text and tabular format.  Typically this appears directly following the Ministry Or Conference Header.  An optional testimonial callout or call to action can be attached.",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title (Contentful Only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": true
+        },
+        {
+          "id": "detailedDescription",
+          "name": "Detailed Description",
+          "type": "Text",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "sampleMaterialsButton",
+          "name": "Sample Materials Button",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "linkContentType": [
+                "menuButton"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        },
+        {
+          "id": "message",
+          "name": "Message",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "linkContentType": [
+                "callToAction"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        },
+        {
+          "id": "domainObject",
+          "name": "Ministry",
+          "type": "Link",
+          "localized": false,
+          "required": true,
+          "validations": [
+            {
+              "linkContentType": [
+                "ministry"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "7yx6ovlj39n5"
+          }
+        },
+        "id": "section-testimonials",
+        "type": "ContentType",
+        "createdAt": "2018-04-16T18:37:10.413Z",
+        "updatedAt": "2018-06-29T21:20:51.338Z",
+        "environment": {
+          "sys": {
+            "id": "gburgett",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedCounter": 4,
+        "version": 8,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedVersion": 7,
+        "firstPublishedAt": "2018-04-16T18:37:10.680Z",
+        "publishedAt": "2018-06-29T21:20:51.338Z"
+      },
+      "displayField": "internalTitle",
+      "name": "Section: Testimonials",
+      "description": "A Testimonials section can show one or many Testimonials written by leaders, partners, or members who have participated in the Ministry or Conference.",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title (Contentful Only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": true
+        },
+        {
+          "id": "name",
+          "name": "Section Name (contentful only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "testimonials",
+          "name": "Testimonials",
+          "type": "Array",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Link",
+            "validations": [
+              {
+                "linkContentType": [
+                  "testimonial"
+                ]
+              }
+            ],
+            "linkType": "Entry"
+          }
+        },
+        {
+          "id": "style",
+          "name": "Style",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "in": [
+                "default",
+                "jumbo"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "7yx6ovlj39n5"
+          }
+        },
+        "id": "section-partner-churches",
+        "type": "ContentType",
+        "createdAt": "2018-04-16T18:37:07.237Z",
+        "updatedAt": "2018-06-29T21:19:54.179Z",
+        "environment": {
+          "sys": {
+            "id": "gburgett",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedCounter": 3,
+        "version": 6,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedVersion": 5,
+        "firstPublishedAt": "2018-04-16T18:37:07.528Z",
+        "publishedAt": "2018-06-29T21:19:54.179Z"
+      },
+      "displayField": "internalTitle",
+      "name": "Section: Partner Churches",
+      "description": "A Partner Churches section is used to display the logos of the partner churches participating in a particular Watermark ministry.",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title (Contentful Only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": true
+        },
+        {
+          "id": "tag",
+          "name": "Tag",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "text",
+          "name": "Text",
+          "type": "Text",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "featuredChurches",
+          "name": "Featured Partner Churches",
+          "type": "Array",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Link",
+            "validations": [
+              {
+                "linkContentType": [
+                  "partnerChurch"
+                ]
+              }
+            ],
+            "linkType": "Entry"
+          }
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "7yx6ovlj39n5"
+          }
+        },
+        "id": "section-location-map",
+        "type": "ContentType",
+        "createdAt": "2018-06-06T21:00:27.182Z",
+        "updatedAt": "2018-06-06T21:00:27.656Z",
+        "environment": {
+          "sys": {
+            "id": "gburgett",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "publishedCounter": 1,
+        "version": 2,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "publishedVersion": 1,
+        "firstPublishedAt": "2018-06-06T21:00:27.656Z",
+        "publishedAt": "2018-06-06T21:00:27.656Z"
+      },
+      "displayField": "internalTitle",
+      "name": "Section: Location Map",
+      "description": "List ministry locations and plot them on a map",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [
+            {
+              "unique": true
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "domainObject",
+          "name": "Domain Object",
+          "type": "Link",
+          "localized": false,
+          "required": true,
+          "validations": [
+            {
+              "linkContentType": [
+                "ministry"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "7yx6ovlj39n5"
+          }
+        },
+        "id": "section-contact-us",
+        "type": "ContentType",
+        "createdAt": "2018-04-16T18:36:55.867Z",
+        "updatedAt": "2018-09-20T21:44:10.239Z",
+        "environment": {
+          "sys": {
+            "id": "gburgett",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedCounter": 7,
+        "version": 14,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedVersion": 13,
+        "firstPublishedAt": "2018-04-16T18:36:56.095Z",
+        "publishedAt": "2018-09-20T21:44:10.239Z"
+      },
+      "displayField": "internalTitle",
+      "name": "Section: Contact Us",
+      "description": "A Contact Us section contains a Form with several Form Fields.  The responses to the form will be collected and provided to the appropriate administrator.",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title (Contentful Only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": true
+        },
+        {
+          "id": "text",
+          "name": "Text",
+          "type": "Text",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "fields",
+          "name": "Fields",
+          "type": "Array",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Link",
+            "validations": [
+              {
+                "linkContentType": [
+                  "formField"
+                ]
+              }
+            ],
+            "linkType": "Entry"
+          }
+        },
+        {
+          "id": "submitButtonText",
+          "name": "Submit Button Text",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "notificationEmail",
+          "name": "NotificationEmail",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [
+            {
+              "regexp": {
+                "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$",
+                "flags": null
+              },
+              "message": "Must be a valid email address."
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "7yx6ovlj39n5"
+          }
+        },
+        "id": "section-resource-list",
+        "type": "ContentType",
+        "createdAt": "2018-05-18T20:31:46.321Z",
+        "updatedAt": "2018-06-29T21:20:56.249Z",
+        "environment": {
+          "sys": {
+            "id": "gburgett",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedCounter": 3,
+        "version": 6,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedVersion": 5,
+        "firstPublishedAt": "2018-05-18T20:31:46.427Z",
+        "publishedAt": "2018-06-29T21:20:56.249Z"
+      },
+      "displayField": "internalTitle",
+      "name": "Section: Resource List",
+      "description": "",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title (Contentful Only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": true
+        },
+        {
+          "id": "name",
+          "name": "Name (contentful only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "domainObject",
+          "name": "Ministry Or Conference",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "linkContentType": [
+                "conference",
+                "ministry"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "7yx6ovlj39n5"
+          }
+        },
+        "id": "section-product-list",
+        "type": "ContentType",
+        "createdAt": "2018-05-24T19:33:27.211Z",
+        "updatedAt": "2018-06-29T21:21:47.388Z",
+        "environment": {
+          "sys": {
+            "id": "gburgett",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedCounter": 3,
+        "version": 6,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedVersion": 5,
+        "firstPublishedAt": "2018-05-24T19:33:27.427Z",
+        "publishedAt": "2018-06-29T21:21:47.388Z"
+      },
+      "displayField": "internalTitle",
+      "name": "Section: Shopify Product List",
+      "description": "The Shopify Product List displays products that are available for purchase via Shopify.",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title (Contentful Only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": true
+        },
+        {
+          "id": "collectionId",
+          "name": "Shopify Collection ID",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "7yx6ovlj39n5"
+          }
+        },
+        "id": "conference",
+        "type": "ContentType",
+        "createdAt": "2018-04-16T18:36:18.741Z",
+        "updatedAt": "2018-06-29T21:49:32.561Z",
+        "environment": {
+          "sys": {
+            "id": "gburgett",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedCounter": 11,
+        "version": 22,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedVersion": 21,
+        "firstPublishedAt": "2018-04-16T18:36:19.089Z",
+        "publishedAt": "2018-06-29T21:49:32.561Z"
+      },
+      "displayField": "internalTitle",
+      "name": "Conference",
+      "description": null,
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title (Contentful Only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": true
+        },
+        {
+          "id": "title",
+          "name": "Title",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [
+            {
+              "unique": true
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "abstractTitle",
+          "name": "Short Description",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "thumbnail",
+          "name": "Logo Only (Thumbnail)",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "linkMimetypeGroup": [
+                "image"
+              ]
+            },
+            {
+              "assetImageDimensions": {
+                "width": {
+                  "min": 400,
+                  "max": 400
+                },
+                "height": {
+                  "min": 400,
+                  "max": 400
+                }
+              },
+              "message": "The thumbnail image must be exactly 400 by 400 pixels."
+            }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Asset"
+        },
+        {
+          "id": "logo",
+          "name": "Logo with Name",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "linkMimetypeGroup": [
+                "image"
+              ]
+            },
+            {
+              "assetImageDimensions": {
+                "width": {
+                  "min": 400,
+                  "max": 400
+                },
+                "height": {
+                  "min": 400,
+                  "max": 400
+                }
+              },
+              "message": "The logo image must be exactly 400 by 400 pixels."
+            }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Asset"
+        },
+        {
+          "id": "backgroundColor",
+          "name": "Background Color",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [
+            {
+              "regexp": {
+                "pattern": "#([a-f]|[A-F]|[0-9]){3}(([a-f]|[A-F]|[0-9]){3})?\\b"
+              },
+              "message": "Must be a hex value (ex: '#EEE' or '#FFAA55')"
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "foregroundColor",
+          "name": "Foreground Color",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [
+            {
+              "regexp": {
+                "pattern": "#([a-f]|[A-F]|[0-9]){3}(([a-f]|[A-F]|[0-9]){3})?\\b",
+                "flags": ""
+              },
+              "message": "Must be a Hex value (ex: '#EEE' or '#FFAA55')"
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "homepage",
+          "name": "Homepage",
+          "type": "Link",
+          "localized": false,
+          "required": true,
+          "validations": [
+            {
+              "linkContentType": [
+                "page"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        },
+        {
+          "id": "tags",
+          "name": "Tags",
+          "type": "Array",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Symbol",
+            "validations": []
+          }
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "7yx6ovlj39n5"
+          }
+        },
+        "id": "section-image-gallery",
+        "type": "ContentType",
+        "createdAt": "2018-04-16T18:37:02.151Z",
+        "updatedAt": "2018-06-29T21:21:53.328Z",
+        "environment": {
+          "sys": {
+            "id": "gburgett",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedCounter": 5,
+        "version": 10,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedVersion": 9,
+        "firstPublishedAt": "2018-04-16T18:37:02.428Z",
+        "publishedAt": "2018-06-29T21:21:53.328Z"
+      },
+      "displayField": "internalTitle",
+      "name": "Section: Image Gallery",
+      "description": "An Image Gallery Section displays a rotating gallery of severalimages in a horizontal row on the page.",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title (Contentful Only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": true
+        },
+        {
+          "id": "images",
+          "name": "Images",
+          "type": "Array",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Link",
+            "validations": [
+              {
+                "linkMimetypeGroup": [
+                  "image"
+                ]
+              },
+              {
+                "assetImageDimensions": {
+                  "width": {
+                    "min": 1000
+                  },
+                  "height": {}
+                }
+              }
+            ],
+            "linkType": "Asset"
+          }
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "7yx6ovlj39n5"
+          }
+        },
+        "id": "partnerChurch",
+        "type": "ContentType",
+        "createdAt": "2018-04-16T18:36:48.783Z",
+        "updatedAt": "2018-06-29T21:20:36.237Z",
+        "environment": {
+          "sys": {
+            "id": "gburgett",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedCounter": 3,
+        "version": 6,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedVersion": 5,
+        "firstPublishedAt": "2018-04-16T18:36:50.310Z",
+        "publishedAt": "2018-06-29T21:20:36.237Z"
+      },
+      "displayField": "internalTitle",
+      "name": "Partner Church",
+      "description": "A Partner Church represents a church which offers one or more Watermark ministries or classes.",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title (Contentful Only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": true
+        },
+        {
+          "id": "name",
+          "name": "Name",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "logo",
+          "name": "Logo",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "linkMimetypeGroup": [
+                "image"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Asset"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "7yx6ovlj39n5"
+          }
+        },
+        "id": "formField",
+        "type": "ContentType",
+        "createdAt": "2018-04-16T18:36:38.985Z",
+        "updatedAt": "2018-06-29T21:21:26.394Z",
+        "environment": {
+          "sys": {
+            "id": "gburgett",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedCounter": 4,
+        "version": 8,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedVersion": 7,
+        "firstPublishedAt": "2018-04-16T18:36:39.606Z",
+        "publishedAt": "2018-06-29T21:21:26.394Z"
+      },
+      "displayField": "internalTitle",
+      "name": "Form Field",
+      "description": "A Form Field represents a piece of information you want to collect from a user via a Form.",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title (Contentful Only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": true
+        },
+        {
+          "id": "title",
+          "name": "Title",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "inputType",
+          "name": "Input Type",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [
+            {
+              "in": [
+                "text",
+                "email",
+                "textarea"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        }
+      ]
+    }    
     
   ]
 }

@@ -8,7 +8,7 @@ class WCC::Contentful::LinkVisitor
 
   def initialize(entry, *fields, depth: 0)
     unless entry.is_a?(Hash) && entry.dig('sys', 'id')
-      raise ArgumentError, 'Please provide an entry as a hash value'
+      raise ArgumentError, "Please provide an entry as a hash value (got #{entry})"
     end
     unless ct = entry.dig('sys', 'contentType', 'sys', 'id')
       raise ArgumentError, 'Entry has no content type!'

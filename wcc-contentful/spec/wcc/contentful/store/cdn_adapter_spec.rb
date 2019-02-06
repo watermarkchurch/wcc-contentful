@@ -50,6 +50,16 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
     JSON
   }
 
+  before do
+    content_types = JSON.parse(load_fixture('contentful/content_types_mgmt_api.json'))
+    indexer = WCC::Contentful::ContentTypeIndexer.new
+    content_types['items'].each do |raw_content_type|
+      indexer.index(raw_content_type)
+    end
+    allow(WCC::Contentful).to receive(:types)
+      .and_return(indexer.types)
+  end
+
   describe '#find' do
     it 'finds data by ID' do
       # act
@@ -250,34 +260,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
     end
 
     it 'passes query params thru to client' do
-      expect(adapter.client).to receive(:entries)
-        .with({
-          locale: '*',
-          content_type: 'page',
-          'fields.slug.en-US' => '/conferences',
-          limit: 2,
-          skip: 10,
-          include: 5
-        })
-        .and_return(double(items: ['item1'], includes: {}))
-
-      # act
-      found = adapter.find_by(
-        content_type: 'page',
-        filter: { slug: '/conferences' },
-        options: {
-          limit: 2,
-          skip: 10,
-          include: 5
-        }
-      )
-
-      # assert
-      expect(found).to eq('item1')
-    end
-
-    it 'passes query params thru to client' do
-      entry_stub = { 'sys' => { 'type' => 'Entry' } }
+      entry_stub = make_entry('test1', 'page')
       expect(adapter.client).to receive(:entries)
         .with({
           locale: '*',
@@ -301,7 +284,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       )
 
       # assert
-      expect(found).to equal(entry_stub)
+      expect(found).to eq(entry_stub)
     end
   end
 
@@ -360,6 +343,21 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
     end
 
     it 'recursively resolves links if include > 0' do
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
+        '?content_type=page&include=2&limit=5&locale=*')
+        .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_1.json'))
+        .then.to_raise(StandardError)
+
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
+        '?content_type=page&include=2&limit=5&locale=*&skip=5')
+        .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_2.json'))
+        .then.to_raise(StandardError)
+
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
+        '?content_type=page&include=2&limit=5&locale=*&skip=10')
+        .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_3.json'))
+        .then.to_raise(StandardError)
+
       # act
       found = adapter.find_all(content_type: 'page', options: {
         limit: 5,
@@ -372,18 +370,33 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       expect(items.count).to eq(11)
 
       page5 = items[5]
-      expect(page5.dig('sys', 'id')).to eq('3DvAuJkpBCCos2SiGswWW4')
+      expect(page5.dig('sys', 'id')).to eq('MNL6HaLyWAAo4A2S2mkkk')
 
       # depth 1
-      domain_object = page5.dig('fields', 'domainObject', 'en-US')
-      expect(domain_object.dig('sys', 'type')).to eq('Entry')
+      header = page5.dig('fields', 'header', 'en-US')
+      expect(header.dig('sys', 'type')).to eq('Entry')
 
       # depth 2
-      thumbnail = domain_object.dig('fields', 'thumbnail', 'en-US')
-      expect(thumbnail.dig('sys', 'type')).to eq('Asset')
+      domain_object = header.dig('fields', 'domainObject', 'en-US')
+      expect(domain_object.dig('sys', 'type')).to eq('Entry')
     end
 
     it 'stops resolving links at include depth' do
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
+        '?content_type=page&include=2&limit=5&locale=*')
+        .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_1.json'))
+        .then.to_raise(StandardError)
+
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
+        '?content_type=page&include=2&limit=5&locale=*&skip=5')
+        .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_2.json'))
+        .then.to_raise(StandardError)
+
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
+        '?content_type=page&include=2&limit=5&locale=*&skip=10')
+        .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_3.json'))
+        .then.to_raise(StandardError)
+
       # act
       found = adapter.find_all(content_type: 'page', options: {
         limit: 5,
@@ -396,21 +409,17 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       expect(items.count).to eq(11)
 
       page5 = items[5]
-      expect(page5.dig('sys', 'id')).to eq('3DvAuJkpBCCos2SiGswWW4')
+      expect(page5.dig('sys', 'id')).to eq('MNL6HaLyWAAo4A2S2mkkk')
 
       # depth 1
-      sections = page5.dig('fields', 'sections', 'en-US')
-      expect(sections.all? { |s| s.dig('sys', 'type') == 'Entry' }).to be true
+      header = page5.dig('fields', 'header', 'en-US')
 
       # depth 2
-      section1 = sections[1]
-      message = section1.dig('fields', 'message', 'en-US')
-      expect(message.dig('sys', 'type')).to eq('Entry')
+      domain_object = header.dig('fields', 'domainObject', 'en-US')
 
       # depth 3
-      button = message.dig('fields', 'actionButtons', 'en-US', 0)
-      expect(button.dig('sys', 'type')).to eq('Link')
-      expect(button.dig('sys', 'linkType')).to eq('Entry')
+      thumbnail = domain_object.dig('fields', 'thumbnail', 'en-US')
+      expect(thumbnail.dig('sys', 'type')).to eq('Link')
     end
   end
 
@@ -424,5 +433,21 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
 
   it 'CDN Adapter does not implement #index' do
     expect(subject).to_not respond_to(:index)
+  end
+
+  def make_entry(id, content_type)
+    {
+      'sys' => {
+        'id' => id,
+        'contentType' => {
+          'sys' => {
+            'type' => 'Link',
+            'linkType' => 'ContentType',
+            'id' => content_type
+          }
+        }
+      },
+      'fields' => {}
+    }
   end
 end

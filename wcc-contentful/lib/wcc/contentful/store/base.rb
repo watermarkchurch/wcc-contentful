@@ -167,28 +167,18 @@ module WCC::Contentful::Store
       # @abstract Override this to provide a more efficient implementation for
       #   a given store.
       def resolve_includes(entry, depth)
-        return entry unless entry && depth && depth > 0 && fields = entry['fields']
+        return entry unless entry && depth && depth > 0
 
-        fields.each do |(_name, locales)|
-          # TODO: handle non-* locale
-          locales.each do |(locale, val)|
-            locales[locale] =
-              if val.is_a? Array
-                val.map { |e| resolve_link(e, depth) }
-              else
-                resolve_link(val, depth)
-              end
-          end
+        WCC::Contentful::LinkVisitor.new(entry, :Link, depth: depth).map do |val|
+          resolve_link(val)
         end
-
-        entry
       end
 
-      def resolve_link(val, depth)
+      def resolve_link(val)
         return val unless val.is_a?(Hash) && val.dig('sys', 'type') == 'Link'
         return val unless included = @store.find(val.dig('sys', 'id'))
 
-        resolve_includes(included, depth - 1)
+        included
       end
 
       private
