@@ -11,7 +11,7 @@ RSpec.describe WCC::Contentful::SyncEngine::Job, type: :job do
   subject(:job) { described_class.new }
 
   let(:client) { double }
-  let(:store) { double(find: nil, index: nil, set: nil) }
+  let(:store) { double(find: nil, index: nil, index?: true, set: nil) }
   let(:sync_engine) {
     WCC::Contentful::SyncEngine.new(
       store: store,

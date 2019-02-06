@@ -433,6 +433,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
 
   it 'CDN Adapter does not implement #index' do
     expect(subject).to_not respond_to(:index)
+    expect(subject.index?).to be false
   end
 
   def make_entry(id, content_type)

@@ -27,6 +27,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
 
   %i[
     index
+    index?
     set
     delete
   ].each do |method|

@@ -4,6 +4,11 @@ module WCC::Contentful::Store
   class CDNAdapter
     attr_reader :client
 
+    # The CDNAdapter cannot index data coming back from the Sync API.
+    def index?
+      false
+    end
+
     # Intentionally not implementing write methods
 
     def initialize(client)

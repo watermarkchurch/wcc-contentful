@@ -18,7 +18,7 @@ module WCC::Contentful::Middleware::Store
 
   attr_accessor :store
 
-  delegate :index, :set, :delete, to: :store
+  delegate :index, :index?, :set, :delete, to: :store
 
   def find(id)
     found = store.find(id)

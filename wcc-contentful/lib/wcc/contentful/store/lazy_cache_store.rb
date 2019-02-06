@@ -70,6 +70,10 @@ module WCC::Contentful::Store
       end
     end
 
+    def index?
+      true
+    end
+
     def set(key, value)
       ensure_hash value
       old = @cache.read(key)

@@ -76,7 +76,7 @@ RSpec.describe WCC::Contentful::WebhookController, type: :request do
 
     it 'immediately updates the store on success' do
       # expect
-      store = double(fetch: nil, write: nil)
+      store = double(fetch: nil, write: nil, index?: true)
       expect(store).to receive(:index)
         .with(hash_including(JSON.parse(body)))
       allow(WCC::Contentful::Services.instance)

@@ -28,6 +28,11 @@ module WCC::Contentful::Store
       raise NotImplementedError, "#{self.class} does not implement #delete"
     end
 
+    # Returns true if this store can index values coming back from the sync API.
+    def index?
+      true
+    end
+
     # Processes a data point received via the Sync API.  This can be a published
     # entry or asset, or a 'DeletedEntry' or 'DeletedAsset'.  The default
     # implementation calls into #set and #delete to perform the appropriate

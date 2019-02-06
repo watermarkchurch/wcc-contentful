@@ -22,7 +22,7 @@ module WCC::Contentful
       event = event.to_h
 
       # Immediately update the store, we may update again later using SyncEngine::Job.
-      store.index(event) if store.respond_to?(:index)
+      store.index(event) if store.index?
 
       jobs.each do |job|
         begin
