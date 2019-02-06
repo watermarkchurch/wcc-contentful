@@ -22,12 +22,12 @@ module WCC::Contentful::Middleware::Store
 
   def find(id)
     found = store.find(id)
-    return transform(found) if select(found)
+    return transform(found) if found && select(found)
   end
 
   def find_by(options: nil, **args)
     result = store.find_by(**args.merge(options: options))
-    return unless select(result)
+    return unless result && select(result)
 
     result = resolve_includes(result, options[:include]) if options && options[:include]
     transform(result)
