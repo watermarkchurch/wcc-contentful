@@ -25,7 +25,7 @@ module WCC::Contentful::App
     def hyperlink_attributes(title, url, link_class = nil)
       link_attrs = { title: title, class: link_class }
 
-      link_attrs[:target] = '_blank' if use_target_blank?(url)
+      link_attrs[:target] = use_target_blank?(url) ? '_blank' : nil
 
       return link_attrs unless @options[:link_attributes]
 
@@ -33,7 +33,10 @@ module WCC::Contentful::App
     end
 
     def use_target_blank?(url)
-      url.scan(/(\s|^)(https?:\/\/\S*)/).present?
+      return false unless scheme = URI.parse(url).scheme
+      return false if scheme == 'mailto'
+
+      true
     end
   end
 end
