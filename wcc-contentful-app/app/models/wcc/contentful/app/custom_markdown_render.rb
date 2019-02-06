@@ -33,10 +33,7 @@ module WCC::Contentful::App
     end
 
     def use_target_blank?(url)
-      return false unless scheme = URI.parse(url).scheme
-      return false if scheme == 'mailto'
-
-      true
+      url.scan(/(\s|^)(https?:\/\/\S*)/).present?
     end
   end
 end
