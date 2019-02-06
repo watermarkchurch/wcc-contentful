@@ -85,14 +85,14 @@ class WCC::Contentful::LinkVisitor
   def visit_array_field(field, &block)
     each_locale(field) do |val, locale|
       val&.each do |v|
-        visit_field_value(v, field, locale, &block)
+        visit_field_value(v, field, locale, &block) unless v.nil?
       end
     end
   end
 
   def visit_field(field, &block)
     each_locale(field) do |val, locale|
-      visit_field_value(val, field, locale, &block)
+      visit_field_value(val, field, locale, &block) unless val.nil?
     end
   end
 
@@ -109,14 +109,14 @@ class WCC::Contentful::LinkVisitor
   def map_array_field(field, &block)
     each_locale(field) do |val, locale|
       val&.map do |v|
-        map_field_value(v, field, locale, &block)
+        map_field_value(v, field, locale, &block) unless v.nil?
       end
     end
   end
 
   def map_field(field, &block)
     each_locale(field) do |val, locale|
-      map_field_value(val, field, locale, &block)
+      map_field_value(val, field, locale, &block) unless val.nil?
     end
   end
 

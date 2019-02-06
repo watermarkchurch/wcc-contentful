@@ -230,6 +230,23 @@ RSpec.describe WCC::Contentful::LinkVisitor do
           ]
         )
       end
+
+      it 'handles nil entries' do
+        visited = []
+        subject = described_class.new(entry.dup, :Link, :Asset, depth: 2)
+
+        # insert a nil section & broken (nil) link
+        entry.dig('fields', 'sections', 'en-US') << nil
+        entry.dig('fields', 'sections', 'en-US', 2,
+          'fields')['link'] = nil
+
+        subject.visit do |link|
+          visited << link.dig('sys', 'id')
+        end
+
+        # Skip the 2nd section's link plus the two entries it linked to
+        expect(visited.count).to eq(95)
+      end
     end
 
     describe '#map' do
@@ -273,6 +290,27 @@ RSpec.describe WCC::Contentful::LinkVisitor do
           'fields', 'items', 'en-US', 0,
           'fields', 'slug', 'en-US'))
           .to eq('/new-prefix/ministries/reengage')
+      end
+
+      it 'handles nil entries' do
+        subject = described_class.new(entry.dup, :Link, :Asset, depth: 2)
+
+        # insert a nil section & broken (nil) link
+        entry.dig('fields', 'sections', 'en-US') << nil
+        entry.dig('fields', 'sections', 'en-US', 2,
+          'fields')['link'] = nil
+
+        result =
+          subject.map do |link|
+            link.merge({
+              'resolved' => true
+            })
+          end
+
+        # maintain the nulls
+        expect(result.dig('fields', 'sections', 'en-US').last).to eq(nil)
+        expect(result.dig('fields', 'sections', 'en-US', 2,
+          'fields')).to include({ 'link' => nil })
       end
     end
   end
