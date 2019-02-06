@@ -1111,13 +1111,20 @@
           "sys": {
             "type": "Link",
             "linkType": "Space",
-            "id": "343qxys30lid"
+            "id": "7yx6ovlj39n5"
           }
         },
         "id": "page",
         "type": "ContentType",
-        "createdAt": "2018-02-12T17:30:48.707Z",
-        "updatedAt": "2018-03-01T22:08:21.619Z",
+        "createdAt": "2018-04-16T18:36:22.087Z",
+        "updatedAt": "2018-08-03T15:34:19.701Z",
+        "environment": {
+          "sys": {
+            "id": "gburgett",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
         "createdBy": {
           "sys": {
             "type": "Link",
@@ -1129,34 +1136,43 @@
           "sys": {
             "type": "Link",
             "linkType": "User",
-            "id": "0SUbYs2vZlXjVR6bH6o83O"
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
           }
         },
-        "publishedCounter": 4,
-        "version": 8,
+        "publishedCounter": 10,
+        "version": 20,
         "publishedBy": {
           "sys": {
             "type": "Link",
             "linkType": "User",
-            "id": "0SUbYs2vZlXjVR6bH6o83O"
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
           }
         },
-        "publishedVersion": 7,
-        "firstPublishedAt": "2018-02-12T17:30:48.889Z",
-        "publishedAt": "2018-03-01T22:08:21.619Z"
+        "publishedVersion": 19,
+        "firstPublishedAt": "2018-04-16T18:36:22.291Z",
+        "publishedAt": "2018-08-03T15:34:19.701Z"
       },
-      "displayField": "title",
+      "displayField": "internalTitle",
       "name": "Page",
-      "description": "Represents one page on the site.  \n\nThere is a Homepage, a Ministry Gallery, one page per ministry, and a variety of other pages.",
+      "description": "A page describes a collection of sections that correspondto a URL slug",
       "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title (Contentful Only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": true
+        },
         {
           "id": "title",
           "name": "Title",
           "type": "Symbol",
           "localized": false,
           "required": true,
-          "validations": [
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false
         },
@@ -1172,7 +1188,7 @@
             },
             {
               "regexp": {
-                "pattern": "(\\/|\\/([\\w#!:.?+=&%@!\\-\\/]))?$"
+                "pattern": "\\/(?:[\\w#!:.?+=&%@!\\-]\\/?)*$"
               },
               "message": "The slug must look like the path part of a URL and begin with a forward slash, example: '/my-page-slug'"
             }
@@ -1181,27 +1197,35 @@
           "omitted": false
         },
         {
+          "id": "header",
+          "name": "Header",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "linkContentType": [
+                "section-hero",
+                "section-domain-object-header"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        },
+        {
           "id": "sections",
           "name": "Sections",
           "type": "Array",
           "localized": false,
           "required": false,
-          "validations": [
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false,
           "items": {
             "type": "Link",
-            "validations": [
-              {
-                "linkContentType": [
-                  "section-CardSearch",
-                  "section-Faq",
-                  "section-Testimonials",
-                  "section-VideoHighlight"
-                ]
-              }
-            ],
+            "validations": [],
             "linkType": "Entry"
           }
         },
@@ -1211,8 +1235,7 @@
           "type": "Array",
           "localized": false,
           "required": false,
-          "validations": [
-          ],
+          "validations": [],
           "disabled": false,
           "omitted": false,
           "items": {
@@ -1226,6 +1249,45 @@
             ],
             "linkType": "Entry"
           }
+        },
+        {
+          "id": "domainObject",
+          "name": "Associated Ministry or Conference",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "linkContentType": [
+                "ministry",
+                "conference"
+              ],
+              "message": "This can be a Ministry or Conference."
+            }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        },
+        {
+          "id": "minimumSecurityLevel",
+          "name": "Minimum Required Security Level",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "in": [
+                "Anonymous",
+                "Mentor",
+                "Lay Leader",
+                "Church Admin",
+                "WMR Admin"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false
         }
       ]
     },
@@ -1829,6 +1891,481 @@
           "omitted": false
         }
       ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "343qxys30lid"
+          }
+        },
+        "id": "section-hero",
+        "type": "ContentType",
+        "createdAt": "2018-02-12T19:17:55.075Z",
+        "updatedAt": "2018-02-12T19:48:08.620Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "publishedCounter": 6,
+        "version": 12,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "publishedVersion": 11,
+        "firstPublishedAt": "2018-02-12T19:17:55.556Z",
+        "publishedAt": "2018-02-12T19:48:08.620Z"
+      },
+      "displayField": "text",
+      "name": "Section: Hero",
+      "description": "",
+      "fields": [
+        {
+          "id": "backgroundImage",
+          "name": "Background Image",
+          "type": "Link",
+          "linkType": "Asset",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "text",
+          "name": "Text",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "primaryButton",
+          "name": "Primary Button",
+          "type": "Link",
+          "validations": [
+            {
+              "linkContentType": [
+                "menuButton"
+              ]
+            }
+          ],
+          "linkType": "Entry",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "secondaryButton",
+          "name": "Secondary Button",
+          "type": "Link",
+          "validations": [
+            {
+              "linkContentType": [
+                "menuButton"
+              ]
+            }
+          ],
+          "linkType": "Entry",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "style",
+          "name": "Text",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "343qxys30lid"
+          }
+        },
+        "id": "section-video-highlight",
+        "type": "ContentType",
+        "createdAt": "2018-02-12T19:17:55.075Z",
+        "updatedAt": "2018-02-12T19:48:08.620Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "publishedCounter": 6,
+        "version": 12,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "publishedVersion": 11,
+        "firstPublishedAt": "2018-02-12T19:17:55.556Z",
+        "publishedAt": "2018-02-12T19:48:08.620Z"
+      },
+      "displayField": "title",
+      "name": "Section: Video Highlight",
+      "description": "",
+      "fields": [
+        {
+          "id": "backgroundImage",
+          "name": "Background Image",
+          "type": "Link",
+          "linkType": "Asset",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "tag",
+          "name": "Tag",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "title",
+          "name": "Title",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "subtext",
+          "name": "subtext",
+          "type": "Text",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "embedCode",
+          "name": "Embed Code",
+          "type": "Text",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "7yx6ovlj39n5"
+          }
+        },
+        "id": "section-featured-items",
+        "type": "ContentType",
+        "createdAt": "2018-04-16T18:37:19.820Z",
+        "updatedAt": "2018-06-29T21:21:31.969Z",
+        "environment": {
+          "sys": {
+            "id": "gburgett",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedCounter": 7,
+        "version": 14,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedVersion": 13,
+        "firstPublishedAt": "2018-04-16T18:37:20.134Z",
+        "publishedAt": "2018-06-29T21:21:31.969Z"
+      },
+      "displayField": "internalTitle",
+      "name": "Section: Featured Items",
+      "description": "Display a row of cards",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title (Contentful Only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": true
+        },
+        {
+          "id": "title",
+          "name": "Title",
+          "type": "Symbol",
+          "localized": true,
+          "required": true,
+          "validations": [
+            {
+              "size": {
+                "max": 150
+              }
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "link",
+          "name": "Link",
+          "type": "Link",
+          "localized": false,
+          "required": true,
+          "validations": [
+            {
+              "linkContentType": [
+                "menuButton"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        },
+        {
+          "id": "items",
+          "name": "Items",
+          "type": "Array",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "size": {
+                "max": 4
+              },
+              "message": "Exceeded max number of items (4)."
+            }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Link",
+            "validations": [
+              {
+                "linkContentType": [
+                  "page"
+                ]
+              }
+            ],
+            "linkType": "Entry"
+          }
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "7yx6ovlj39n5"
+          }
+        },
+        "id": "section-faq",
+        "type": "ContentType",
+        "createdAt": "2018-04-16T18:36:29.044Z",
+        "updatedAt": "2018-06-29T21:20:38.916Z",
+        "environment": {
+          "sys": {
+            "id": "gburgett",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedCounter": 7,
+        "version": 14,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2Rw3pZANDXJEtKNoPuE40I"
+          }
+        },
+        "publishedVersion": 13,
+        "firstPublishedAt": "2018-04-16T18:36:29.331Z",
+        "publishedAt": "2018-06-29T21:20:38.916Z"
+      },
+      "displayField": "internalTitle",
+      "name": "Section: FAQ",
+      "description": "A FAQ Section contains a number of question and answer pairs (FAQs) curated by the administrator.",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title (Contentful Only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": true
+        },
+        {
+          "id": "name",
+          "name": "Name",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [
+            {
+              "unique": true
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "text",
+          "name": "Text",
+          "type": "Text",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "actionButton",
+          "name": "Action Button",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "linkContentType": [
+                "menuButton"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        },
+        {
+          "id": "faqs",
+          "name": "FAQs",
+          "type": "Array",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Link",
+            "validations": [
+              {
+                "linkContentType": [
+                  "faq"
+                ]
+              }
+            ],
+            "linkType": "Entry"
+          }
+        },
+        {
+          "id": "style",
+          "name": "Style",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "in": [
+                "default",
+                "no-overlap"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        }
+      ]
     }
+    
   ]
 }

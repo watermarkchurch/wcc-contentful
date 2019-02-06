@@ -3,8 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe WCC::Contentful::LinkVisitor do
-  let(:subject) { described_class.new(entry.dup) }
-
   before do
     content_types = JSON.parse(load_fixture('contentful/content_types_mgmt_api.json'))
     indexer = WCC::Contentful::ContentTypeIndexer.new
@@ -26,9 +24,10 @@ RSpec.describe WCC::Contentful::LinkVisitor do
     describe '#visit' do
       it 'visits all links' do
         visited = []
+        subject = described_class.new(entry.dup, :Link)
 
         result =
-          subject.visit(:Link) do |link, field|
+          subject.visit do |link, field|
             expect(field.name).to eq('sections')
             expect(link.dig('sys', 'type')).to eq('Link')
             visited << link.dig('sys', 'id')
@@ -47,8 +46,9 @@ RSpec.describe WCC::Contentful::LinkVisitor do
 
       it 'visits all slugs' do
         visited = []
+        subject = described_class.new(entry.dup, 'slug')
 
-        subject.visit('slug') do |value, field, locale|
+        subject.visit do |value, field, locale|
           expect(field.name).to eq('slug')
           expect(field.type).to eq(:String)
           expect(locale).to eq('en-US')
@@ -60,6 +60,7 @@ RSpec.describe WCC::Contentful::LinkVisitor do
 
       it 'visits all fields' do
         visited = {}
+        subject = described_class.new(entry.dup)
 
         subject.visit do |value, field|
           visited[field.name] ||= []
@@ -81,6 +82,79 @@ RSpec.describe WCC::Contentful::LinkVisitor do
             4brZj69fjW8wC4GwW8qmMQ
           ]
         })
+      end
+    end
+  end
+
+  context 'resolved entry' do
+    let(:entry) {
+      JSON.parse(load_fixture('contentful/resolved_homepage_include_2.json'))
+    }
+
+    describe '#visit' do
+      it 'visits all links recursively' do
+        visited = []
+        subject = described_class.new(entry.dup, :Link, :Asset, depth: 2)
+
+        result =
+          subject.visit do |link, _field|
+            # entry or link
+            expect(%w[Entry Asset Link]).to include(link.dig('sys', 'type'))
+            puts "link: #{link.dig('sys', 'type')} #{link.dig('sys', 'contentType', 'sys', 'id')}"
+            visited << link.dig('sys', 'id')
+          end
+
+        expect(result).to be nil
+        expect(subject.entry).to eq(entry)
+        expect(visited.count).to eq(97)
+        # does not yield the base entry
+        expect(visited).to_not include(entry.dig('sys', 'id'))
+      end
+
+      it 'visits all slugs' do
+        visited = []
+        subject = described_class.new(entry.dup, 'slug', depth: 4)
+
+        subject.visit do |value, field, locale|
+          expect(field.name).to eq('slug')
+          expect(field.type).to eq(:String)
+          expect(locale).to eq('en-US')
+          visited << value
+        end
+
+        expect(visited).to eq([
+                                '/',
+                                '/ministries/reengage',
+                                '/ministries/regen',
+                                '/ministries/merge',
+                                '/ministries/foundation-groups',
+                                '/conferences/mmtc',
+                                '/ctc',
+                                '/conferences/yatc',
+                                '/conferences/regeneration'
+                              ])
+      end
+
+      it 'visits all fields' do
+        visited = {}
+        subject = described_class.new(entry.dup, depth: 2)
+
+        subject.visit do |value, field|
+          visited[field.name] ||= []
+          visited[field.name] << if field.type == :Link
+                                   value.dig('sys', 'id')
+                                 else
+                                   value
+                           end
+        end
+
+        expect(visited.keys).to eq(
+          %w[
+            title slug sections backgroundImage text primaryButton externalLink
+            secondaryButton style tag subtext embedCode link items header subpages
+            domainObject name actionButton faqs question answer
+          ]
+        )
       end
     end
   end
