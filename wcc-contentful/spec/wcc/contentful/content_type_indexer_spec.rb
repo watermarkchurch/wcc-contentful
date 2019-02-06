@@ -33,6 +33,10 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
           section-Faq
           section-Testimonials
           section-VideoHighlight
+          section-faq
+          section-featured-items
+          section-hero
+          section-video-highlight
           testimonial
           theme
         ]
