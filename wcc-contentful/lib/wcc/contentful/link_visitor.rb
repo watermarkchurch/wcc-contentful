@@ -41,8 +41,12 @@ class WCC::Contentful::LinkVisitor
   # @yieldparam [String] locale The locale of the current field value
   # @returns nil
   def visit(&block)
-    type.fields.each_value do |f|
-      visit_field(f, &block)
+    _visit do |val, field, locale, index|
+      yield(val, field, locale, index) if should_yield_field?(field)
+
+      next unless should_walk_link?(field, val)
+
+      self.class.new(val, *fields, depth: depth - 1).visit(&block)
     end
 
     nil
@@ -73,46 +77,38 @@ class WCC::Contentful::LinkVisitor
   end
 
   def map_in_place(&block)
-    temp_depth = @depth
-    begin
-      # we are taking over the recursiveness and doing it within the block
-      @depth = 0
-
-      visit do |val, field, locale, index|
+    _visit do |val, field, locale, index|
+      if should_yield_field?(field)
         val = yield(val, field, locale, index)
         set_field(field, locale, index, val)
-
-        next unless should_walk_link?(field, val, temp_depth)
-
-        self.class.new(val, *fields, depth: temp_depth - 1).map_in_place(&block)
       end
 
-      entry
-    ensure
-      @depth = temp_depth
+      next unless should_walk_link?(field, val)
+
+      self.class.new(val, *fields, depth: depth - 1).map_in_place(&block)
     end
+
+    entry
   end
 
   private
 
-  def visit_field(field, &block)
-    each_locale(field) do |val, locale|
-      if field.array
-        val&.each_with_index do |v, index|
-          visit_field_value(v, field, locale, index, &block) unless v.nil?
-        end
-      else
-        visit_field_value(val, field, locale, &block) unless val.nil?
-      end
+  def _visit(&block)
+    type.fields.each_value do |f|
+      visit_field(f, &block)
     end
   end
 
-  def visit_field_value(val, field, locale, index = nil, &block)
-    yield(val, field, locale, index) if should_yield_field?(field)
-
-    return unless should_walk_link?(field, val)
-
-    self.class.new(val, *fields, depth: depth - 1).visit(&block)
+  def visit_field(field)
+    each_locale(field) do |val, locale|
+      if field.array
+        val&.each_with_index do |v, index|
+          yield(v, field, locale, index) unless v.nil?
+        end
+      else
+        yield(val, field, locale) unless val.nil?
+      end
+    end
   end
 
   def map_field(field, &block)
