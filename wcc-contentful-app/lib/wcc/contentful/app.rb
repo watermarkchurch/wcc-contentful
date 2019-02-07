@@ -54,6 +54,7 @@ module WCC::Contentful::App
         false
       end
 
+    @configuration = @configuration.freeze
     @initialized = true
   end
 
