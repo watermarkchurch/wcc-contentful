@@ -313,5 +313,34 @@ RSpec.describe WCC::Contentful::LinkVisitor do
           'fields')).to include({ 'link' => nil })
       end
     end
+
+    describe '#map_in_place' do
+      it 'writes to the same entry' do
+        subject = described_class.new(entry.deep_dup, :Link, depth: 2)
+
+        result =
+          subject.map_in_place do |link|
+            link.merge({
+              'resolved' => true
+            })
+          end
+
+        expect(subject.entry).to_not eq(entry)
+        expect(result).to eq(subject.entry)
+
+        expect(subject.entry.dig('fields', 'sections', 'en-US', 2, 'resolved')).to eq(true)
+        expect(subject.entry.dig('fields', 'sections', 'en-US', 2,
+          'fields', 'items', 'en-US', 0,
+          'fields', 'header', 'en-US'))
+          .to eq({
+            'sys' => {
+              'type' => 'Link',
+              'linkType' => 'Entry',
+              'id' => '11RNBi9ANwc4QuyKmESGQg'
+            },
+            'resolved' => true
+          })
+      end
+    end
   end
 end

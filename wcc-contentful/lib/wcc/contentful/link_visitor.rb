@@ -80,12 +80,33 @@ class WCC::Contentful::LinkVisitor
     })
   end
 
+  def map_in_place(&block)
+    temp_depth = @depth
+    begin
+      # we are taking over the recursiveness and doing it within the block
+      @depth = 0
+
+      visit do |val, field, locale, index|
+        val = yield(val, field, locale, index)
+        set_field(field, locale, index, val)
+
+        next unless should_walk_link?(field, val, temp_depth)
+
+        self.class.new(val, *fields, depth: temp_depth - 1).map_in_place(&block)
+      end
+
+      entry
+    ensure
+      @depth = temp_depth
+    end
+  end
+
   private
 
   def visit_array_field(field, &block)
     each_locale(field) do |val, locale|
-      val&.each do |v|
-        visit_field_value(v, field, locale, &block) unless v.nil?
+      val&.each_with_index do |v, index|
+        visit_field_value(v, field, locale, index, &block) unless v.nil?
       end
     end
   end
@@ -96,12 +117,10 @@ class WCC::Contentful::LinkVisitor
     end
   end
 
-  def visit_field_value(val, field, locale, &block)
-    if fields.empty? || fields.include?(field.type) || fields.include?(field.name)
-      yield(val, field, locale)
-    end
+  def visit_field_value(val, field, locale, index = nil, &block)
+    yield(val, field, locale, index) if should_yield_field?(field)
 
-    return unless depth > 0 && field.type == :Link && val.dig('sys', 'type') == 'Entry'
+    return unless should_walk_link?(field, val)
 
     self.class.new(val, *fields, depth: depth - 1).visit(&block)
   end
@@ -122,15 +141,13 @@ class WCC::Contentful::LinkVisitor
 
   def map_field_value(val, field, locale, &block)
     val =
-      if fields.empty? || fields.include?(field.type) || fields.include?(field.name)
+      if should_yield_field?(field)
         yield(val, field, locale)
       else
         val.dup
       end
 
-    if depth > 0 && field.type == :Link && val.dig('sys', 'type') == 'Entry'
-      val = self.class.new(val, *fields, depth: depth - 1).map(&block)
-    end
+    val = self.class.new(val, *fields, depth: depth - 1).map(&block) if should_walk_link?(field, val)
 
     val
   end
@@ -143,6 +160,24 @@ class WCC::Contentful::LinkVisitor
       raw_value&.each_with_object({}) do |(l, val), h|
         h[l] = yield(val, l)
       end
+    end
+  end
+
+  def should_yield_field?(field)
+    fields.empty? || fields.include?(field.type) || fields.include?(field.name)
+  end
+
+  def should_walk_link?(field, val, dep = depth)
+    dep > 0 && field.type == :Link && val.dig('sys', 'type') == 'Entry'
+  end
+
+  def set_field(field, locale, index, val)
+    current_field = (entry['fields'][field.name] ||= {})
+
+    if field.array
+      (current_field[locale] ||= [])[index] = val
+    else
+      current_field[locale] = val
     end
   end
 end
