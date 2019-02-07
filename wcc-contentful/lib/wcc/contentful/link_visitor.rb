@@ -42,11 +42,7 @@ class WCC::Contentful::LinkVisitor
   # @returns nil
   def visit(&block)
     type.fields.each_value do |f|
-      if f.array
-        visit_array_field(f, &block)
-      else
-        visit_field(f, &block)
-      end
+      visit_field(f, &block)
     end
 
     nil
@@ -64,11 +60,7 @@ class WCC::Contentful::LinkVisitor
       entry['fields'].each_with_object({}) do |(key, value), h|
         h[key] =
           if field_def = type.fields[key]
-            if field_def.array
-              map_array_field(field_def, &block)
-            else
-              map_field(field_def, &block)
-            end
+            map_field(field_def, &block)
           else
             value.deep_dup
           end
@@ -103,17 +95,15 @@ class WCC::Contentful::LinkVisitor
 
   private
 
-  def visit_array_field(field, &block)
-    each_locale(field) do |val, locale|
-      val&.each_with_index do |v, index|
-        visit_field_value(v, field, locale, index, &block) unless v.nil?
-      end
-    end
-  end
-
   def visit_field(field, &block)
     each_locale(field) do |val, locale|
-      visit_field_value(val, field, locale, &block) unless val.nil?
+      if field.array
+        val&.each_with_index do |v, index|
+          visit_field_value(v, field, locale, index, &block) unless v.nil?
+        end
+      else
+        visit_field_value(val, field, locale, &block) unless val.nil?
+      end
     end
   end
 
@@ -125,24 +115,22 @@ class WCC::Contentful::LinkVisitor
     self.class.new(val, *fields, depth: depth - 1).visit(&block)
   end
 
-  def map_array_field(field, &block)
+  def map_field(field, &block)
     each_locale(field) do |val, locale|
-      val&.map do |v|
-        map_field_value(v, field, locale, &block) unless v.nil?
+      if field.array
+        val&.map&.with_index do |v, index|
+          map_field_value(v, field, locale, index, &block) unless v.nil?
+        end
+      else
+        map_field_value(val, field, locale, &block) unless val.nil?
       end
     end
   end
 
-  def map_field(field, &block)
-    each_locale(field) do |val, locale|
-      map_field_value(val, field, locale, &block) unless val.nil?
-    end
-  end
-
-  def map_field_value(val, field, locale, &block)
+  def map_field_value(val, field, locale, index = nil, &block)
     val =
       if should_yield_field?(field)
-        yield(val, field, locale)
+        yield(val, field, locale, index)
       else
         val.dup
       end
