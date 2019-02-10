@@ -91,12 +91,14 @@ module WCC::Contentful
     FETCH_METHODS = %i[fetch find].freeze
     WRITE_METHODS = %i[write set].freeze
 
-    private
-
     def emit_event(event)
       type = event.dig('sys', 'type')
+      raise ArgumentError, "Unknown event type #{event}" unless type.present?
+
       emit(type, event)
     end
+
+    private
 
     def fetch
       store&.public_send(@fetch_method, @state_key)
