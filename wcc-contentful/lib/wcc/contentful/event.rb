@@ -20,7 +20,7 @@ module WCC::Contentful::Event
       raise StandardError, 'WCC::Contentful has not yet been configured!'
     end
 
-    WCC::Contentful.configuration.webhook_jobs*.each do |job|
+    WCC::Contentful.configuration.webhook_jobs&.each do |job|
       begin
         if job.respond_to?(:perform_later)
           job.perform_later(event.to_h)
