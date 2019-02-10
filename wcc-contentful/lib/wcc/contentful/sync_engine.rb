@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'active_job'
+require 'wcc/contentful/event'
 require 'wcc/contentful/event_emitter'
 
 module WCC::Contentful
@@ -72,9 +73,10 @@ module WCC::Contentful
           id = item.dig('sys', 'id')
           id_found ||= id == up_to_id
 
-          yield(item) if block_given?
           store.index(item) if store&.respond_to?(:index)
-          emit_item(item)
+          event = WCC::Contentful::Event.from_raw(item)
+          yield(event) if block_given?
+          emit_event(event)
 
           count += 1
         end
@@ -91,9 +93,9 @@ module WCC::Contentful
 
     private
 
-    def emit_item(item)
-      event = item.dig('sys', 'type')
-      emit(event, item)
+    def emit_event(event)
+      type = event.dig('sys', 'type')
+      emit(type, event)
     end
 
     def fetch

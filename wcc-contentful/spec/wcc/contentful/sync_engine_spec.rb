@@ -97,7 +97,14 @@ RSpec.describe WCC::Contentful::SyncEngine::Job, type: :job do
         expect(emitted_entries.count).to eq(2)
         expect(emitted_assets.count).to eq(0)
         expect(emitted_deletions.count).to eq(12)
+
+        emitted0 = emitted_entries[0]
+        expect(emitted0).to be_a WCC::Contentful::Event::Entry
+
         expect(emitted_entries.dig(0, 'sys', 'id')).to eq('47PsST8EicKgWIWwK2AsW6')
+        expect(emitted0['sys']['id']).to eq('47PsST8EicKgWIWwK2AsW6')
+        expect(emitted0.id).to eq('47PsST8EicKgWIWwK2AsW6')
+
         expect(emitted_entries.dig(1, 'sys', 'id')).to eq('1qLdW7i7g4Ycq6i4Cckg44')
       end
     end
