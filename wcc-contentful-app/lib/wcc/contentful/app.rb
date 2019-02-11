@@ -22,8 +22,12 @@ module WCC::Contentful::App
       raise InitializationError, 'Cannot configure after initialization'
     end
 
-    @configuration ||= Configuration.new
-    yield(configuration)
+    WCC::Contentful.configure do |wcc_contentful_config|
+      if @configuration&.wcc_contentful_config != wcc_contentful_config
+        @configuration = Configuration.new(wcc_contentful_config)
+      end
+      yield(configuration)
+    end
 
     configuration.validate!
 
@@ -38,8 +42,9 @@ module WCC::Contentful::App
   end
 
   def self.init!
-    raise ArgumentError, 'Please first call WCC::Contentful.init!' unless WCC::Contentful.initialized
     raise ArgumentError, 'Please first call WCC::Contentful::App.configure' if configuration.nil?
+
+    WCC::Contentful.init!
 
     # Extend all model types w/ validation & extra fields
     WCC::Contentful.types.each_value do |t|
@@ -54,7 +59,10 @@ module WCC::Contentful::App
         false
       end
 
-    @configuration = @configuration.freeze
+    @configuration = WCC::Contentful::App::Configuration::FrozenConfiguration.new(
+      configuration,
+      WCC::Contentful.configuration
+    )
     @initialized = true
   end
 

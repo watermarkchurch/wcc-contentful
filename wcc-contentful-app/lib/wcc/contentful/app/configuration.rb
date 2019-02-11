@@ -6,26 +6,40 @@ class WCC::Contentful::App::Configuration
   ATTRIBUTES = %i[
   ].freeze
 
-  def initialize
+  attr_reader :wcc_contentful_config
+
+  delegate(*WCC::Contentful::Configuration::ATTRIBUTES, to: :wcc_contentful_config)
+  delegate(*(WCC::Contentful::Configuration::ATTRIBUTES.map { |a| "#{a}=" }),
+    to: :wcc_contentful_config)
+
+  def initialize(wcc_contentful_config)
+    @wcc_contentful_config = wcc_contentful_config
   end
 
   # Validates the configuration, raising ArgumentError if anything is wrong.  This
   # is called by WCC::Contentful::App.init!
   def validate!
+    wcc_contentful_config.validate!
   end
 
   def frozen?
     false
   end
 
-  def freeze
-    FrozenConfiguration.new(self)
-  end
-
   class FrozenConfiguration
     attr_reader(*ATTRIBUTES)
 
-    def initialize(configuration)
+    attr_reader :wcc_contentful_config
+
+    delegate(*WCC::Contentful::Configuration::ATTRIBUTES, to: :wcc_contentful_config)
+
+    def initialize(configuration, frozen_wcc_contentful_config)
+      unless frozen_wcc_contentful_config.frozen?
+        raise ArgumentError, 'Please first freeze the wcc_contentful_config'
+      end
+
+      @wcc_contentful_config = frozen_wcc_contentful_config
+
       ATTRIBUTES.each do |att|
         val = configuration.public_send(att)
         val.freeze if val.respond_to?(:freeze)

@@ -2,7 +2,7 @@
 
 require 'wcc/contentful/app/rails'
 
-WCC::Contentful.configure do |config|
+WCC::Contentful::App.configure do |config|
   # Required
   config.access_token = ENV['CONTENTFUL_ACCESS_TOKEN'] || 'test1234'
   config.space = ENV['CONTENTFUL_SPACE_ID'] || 'test1xab'
@@ -20,9 +20,5 @@ WCC::Contentful.configure do |config|
   config.update_schema_file = :never
 end
 
-WCC::Contentful::App.configure do |config|
-end
-
 # Download content types, build models, and sync content
-WCC::Contentful.init!
 WCC::Contentful::App.init!
