@@ -38,19 +38,19 @@ RSpec.describe WCC::Contentful::Middleware::Store do
     end
   end
 
-  context 'has select' do
+  context 'has select?' do
     let(:implementation) {
       Class.new do
         include WCC::Contentful::Middleware::Store
 
-        def select(entry)
+        def select?(entry)
           entry.dig('fields', 'exclude', 'en-US') != true
         end
       end
     }
 
     describe '#find' do
-      it 'returns entry that matches select' do
+      it 'returns entry that matches select?' do
         entry = {
           'sys' => sys,
           'fields' => {
@@ -67,7 +67,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
         expect(found).to eq(entry)
       end
 
-      it 'returns nil for entry that doesnt match select' do
+      it 'returns nil for entry that doesnt match select?' do
         entry = {
           'sys' => sys,
           'fields' => {
@@ -86,7 +86,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
     end
 
     describe '#find_by' do
-      it 'returns entry that matches select' do
+      it 'returns entry that matches select?' do
         entry = {
           'sys' => sys,
           'fields' => {
@@ -103,7 +103,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
         expect(found).to eq(entry)
       end
 
-      it 'returns nil for entry that doesnt match select' do
+      it 'returns nil for entry that doesnt match select?' do
         entry = {
           'fields' => {
             'exclude' => { 'en-US' => true }
@@ -119,7 +119,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
         expect(found).to be nil
       end
 
-      it 'resolves as broken link for linked entry that doesnt match select' do
+      it 'resolves as broken link for linked entry that doesnt match select?' do
         entry = {
           'sys' => sys,
           'fields' => {
@@ -164,7 +164,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
     end
 
     describe '#find_all' do
-      it 'returns only entries that matches select' do
+      it 'returns only entries that matches select?' do
         entries = [
           {
             'sys' => sys,
@@ -196,7 +196,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
                             ])
       end
 
-      it 'resolves as broken link for linked entry that doesnt match select' do
+      it 'resolves as broken link for linked entry that doesnt match select?' do
         entries = [{
           'sys' => sys,
           'fields' => {

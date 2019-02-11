@@ -11,7 +11,7 @@ module WCC::Contentful::App::Middleware
       super
     end
 
-    def select(entry)
+    def select?(entry)
       publish_at = entry.dig('fields', 'publishAt', 'en-US')
       unpublish_at = entry.dig('fields', 'unpublishAt', 'en-US')
 

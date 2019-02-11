@@ -10,7 +10,7 @@
 #
 # Including this concern will define those methods to pass through to the next store.
 # Any of those methods can be overridden on the implementing middleware.
-# It will also expose two overridable methods, `#select` and `#transform`.  These
+# It will also expose two overridable methods, `#select?` and `#transform`.  These
 # methods are applied when reading values out of the store, and can be used to
 # apply a filter or transformation to each entry in the store.
 module WCC::Contentful::Middleware::Store
@@ -30,12 +30,12 @@ module WCC::Contentful::Middleware::Store
 
   def find(id)
     found = store.find(id)
-    return transform(found) if found && select(found)
+    return transform(found) if found && select?(found)
   end
 
   def find_by(options: nil, **args)
     result = store.find_by(**args.merge(options: options))
-    return unless result && select(result)
+    return unless result && select?(result)
 
     result = resolve_includes(result, options[:include]) if options && options[:include]
     transform(result)
@@ -44,7 +44,7 @@ module WCC::Contentful::Middleware::Store
   def find_all(options: nil, **args)
     result =
       store.find_all(**args.merge(options: options))
-        .select { |x| select(x) }
+        .select { |x| select?(x) }
 
     result = result.map { |x| resolve_includes(x, options[:include]) } if options && options[:include]
 
@@ -62,9 +62,9 @@ module WCC::Contentful::Middleware::Store
   end
 
   def resolve_link(val)
-    return val unless val.is_a?(Hash) && val.dig('sys', 'type') == 'Entry'
+    return val unless resolved_link?(val)
 
-    if select(val)
+    if select?(val)
       transform(val)
     else
       # Pretend it's an unresolved link -
@@ -73,10 +73,18 @@ module WCC::Contentful::Middleware::Store
     end
   end
 
-  def select(_entry)
+  def resolved_link?(value)
+    value.is_a?(Hash) && value.dig('sys', 'type') == 'Entry'
+  end
+
+  # The default version of `#select?` returns true for all entries.
+  # Override this with your own implementation.
+  def select?(_entry)
     true
   end
 
+  # The default version of `#transform` just returns the entry.
+  # Override this with your own implementation.
   def transform(entry)
     entry
   end
