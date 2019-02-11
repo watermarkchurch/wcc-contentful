@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# The LinkVisitor is a utility class for walking trees of linked entries.
+# The Linkeachor is a utility class for walking trees of linked entries.
 # It is used internally by the Store layer to compose the resulting resolved hashes.
 # But you can use it too!
 class WCC::Contentful::LinkVisitor
@@ -16,7 +16,7 @@ class WCC::Contentful::LinkVisitor
   #         recursive trees!
   # @example
   #   entry = store.find_by(id: id, include: 3)
-  #   WCC::Contentful::LinkVisitor.new(entry, 'slug', depth: 3)
+  #   WCC::Contentful::Linkeachor.new(entry, 'slug', depth: 3)
   #     .map { |slug| 'https://mirror-site' + slug }
   def initialize(entry, *fields, depth: 0)
     unless entry.is_a?(Hash) && entry.dig('sys', 'id')
@@ -40,44 +40,20 @@ class WCC::Contentful::LinkVisitor
   # @yieldparam [WCC::Contentful::IndexedRepresentation::Field] field The type of the selected field
   # @yieldparam [String] locale The locale of the current field value
   # @returns nil
-  def visit(&block)
-    _visit do |val, field, locale, index|
+  def each(&block)
+    _each do |val, field, locale, index|
       yield(val, field, locale, index) if should_yield_field?(field)
 
       next unless should_walk_link?(field, val)
 
-      self.class.new(val, *fields, depth: depth - 1).visit(&block)
+      self.class.new(val, *fields, depth: depth - 1).each(&block)
     end
 
     nil
   end
 
-  # Walks an entry and its resolved links, transforming the given values.
-  # @yield [value, field, locale]
-  # @yieldparam value The value of the selected field.
-  # @yieldparam [WCC::Contentful::IndexedRepresentation::Field] field The type of the selected field
-  # @yieldparam [String] locale The locale of the current field value
-  # @yieldreturn The new value of the field.
-  # @returns A new entry hash, with selected fields replaced by the results of the block
-  def map(&block)
-    fields =
-      entry['fields'].each_with_object({}) do |(key, value), h|
-        h[key] =
-          if field_def = type.fields[key]
-            map_field(field_def, &block)
-          else
-            value.deep_dup
-          end
-      end
-
-    entry.merge({
-      'sys' => entry['sys'].deep_dup,
-      'fields' => fields
-    })
-  end
-
-  def map_in_place(&block)
-    _visit do |val, field, locale, index|
+  def map!(&block)
+    _each do |val, field, locale, index|
       if should_yield_field?(field)
         val = yield(val, field, locale, index)
         set_field(field, locale, index, val)
@@ -85,7 +61,7 @@ class WCC::Contentful::LinkVisitor
 
       next unless should_walk_link?(field, val)
 
-      self.class.new(val, *fields, depth: depth - 1).map_in_place(&block)
+      self.class.new(val, *fields, depth: depth - 1).map!(&block)
     end
 
     entry
@@ -93,13 +69,13 @@ class WCC::Contentful::LinkVisitor
 
   private
 
-  def _visit(&block)
+  def _each(&block)
     type.fields.each_value do |f|
-      visit_field(f, &block)
+      each_field(f, &block)
     end
   end
 
-  def visit_field(field)
+  def each_field(field)
     each_locale(field) do |val, locale|
       if field.array
         val&.each_with_index do |v, index|
@@ -109,31 +85,6 @@ class WCC::Contentful::LinkVisitor
         yield(val, field, locale) unless val.nil?
       end
     end
-  end
-
-  def map_field(field, &block)
-    each_locale(field) do |val, locale|
-      if field.array
-        val&.map&.with_index do |v, index|
-          map_field_value(v, field, locale, index, &block) unless v.nil?
-        end
-      else
-        map_field_value(val, field, locale, &block) unless val.nil?
-      end
-    end
-  end
-
-  def map_field_value(val, field, locale, index = nil, &block)
-    val =
-      if should_yield_field?(field)
-        yield(val, field, locale, index)
-      else
-        val.dup
-      end
-
-    val = self.class.new(val, *fields, depth: depth - 1).map(&block) if should_walk_link?(field, val)
-
-    val
   end
 
   def each_locale(field)
