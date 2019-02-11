@@ -204,7 +204,7 @@ class WCC::Contentful::Configuration
     middleware.each do |m|
       next if m.respond_to?(:call)
 
-      raise ArgumentError, 'The middleware cannot be applied!  ' \
+      raise ArgumentError, "The middleware '#{m&.try(:name) || m}' cannot be applied!  " \
         'It must respond to :call'
     end
   end
