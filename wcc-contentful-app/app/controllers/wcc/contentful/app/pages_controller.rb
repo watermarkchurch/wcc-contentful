@@ -27,11 +27,15 @@ class WCC::Contentful::App::PagesController < ApplicationController
     return super if defined?(super)
 
     @preview ||=
-      if ENV['CONTENTFUL_PREVIEW_PASSWORD'].present?
-        params[:preview]&.chomp == ENV['CONTENTFUL_PREVIEW_PASSWORD']&.chomp
+      if preview_password.present?
+        params[:preview]&.chomp == preview_password.chomp
       else
         false
       end
+  end
+
+  def preview_password
+    WCC::Contentful::App.configuration.preview_password
   end
 
   def page_model

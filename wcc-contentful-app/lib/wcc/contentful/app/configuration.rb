@@ -4,7 +4,12 @@
 class WCC::Contentful::App::Configuration
   # TODO: things to configure in the app?
   ATTRIBUTES = %i[
+    preview_password
   ].freeze
+
+  # Sets the password that will be checked when the query string contains `preview=`,
+  # if it matches, then the Contentful entries are fetched via the preview API.
+  attr_accessor :preview_password
 
   attr_reader :wcc_contentful_config
 
@@ -14,6 +19,7 @@ class WCC::Contentful::App::Configuration
 
   def initialize(wcc_contentful_config)
     @wcc_contentful_config = wcc_contentful_config
+    @preview_password = ENV['CONTENTFUL_PREVIEW_PASSWORD']
   end
 
   # Validates the configuration, raising ArgumentError if anything is wrong.  This
