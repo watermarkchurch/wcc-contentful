@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# The Linkeachor is a utility class for walking trees of linked entries.
+# The LinkVisitor is a utility class for walking trees of linked entries.
 # It is used internally by the Store layer to compose the resulting resolved hashes.
 # But you can use it too!
 class WCC::Contentful::LinkVisitor
@@ -16,7 +16,7 @@ class WCC::Contentful::LinkVisitor
   #         recursive trees!
   # @example
   #   entry = store.find_by(id: id, include: 3)
-  #   WCC::Contentful::Linkeachor.new(entry, 'slug', depth: 3)
+  #   WCC::Contentful::LinkVisitor.new(entry, 'slug', depth: 3)
   #     .map { |slug| 'https://mirror-site' + slug }
   def initialize(entry, *fields, depth: 0)
     unless entry.is_a?(Hash) && entry.dig('sys', 'id')
