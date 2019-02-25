@@ -24,7 +24,7 @@ module WCC::Contentful
     attr_reader :client
 
     def should_sync?
-      store&.respond_to?(:index) || listeners.any?
+      store&.respond_to?(:index)
     end
 
     def initialize(state: nil, store: nil, client: nil, key: nil)
