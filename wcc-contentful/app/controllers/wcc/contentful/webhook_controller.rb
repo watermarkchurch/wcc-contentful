@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require_dependency 'wcc/contentful/application_controller'
+require_dependency 'wcc/contentful/event'
+require 'wisper'
 
 module WCC::Contentful
   # The WebhookController is mounted by the WCC::Contentful::Engine to receive
@@ -8,6 +10,7 @@ module WCC::Contentful
   # the jobs configured in {WCC::Contentful::Configuration WCC::Contentful::Configuration#webhook_jobs}
   class WebhookController < ApplicationController
     include WCC::Contentful::ServiceAccessors
+    include Wisper::Publisher
 
     before_action :authorize_contentful
     protect_from_forgery unless: -> { request.format.json? }
@@ -24,20 +27,8 @@ module WCC::Contentful
       # Immediately update the store, we may update again later using SyncEngine::Job.
       store.index(event) if store.respond_to?(:index)
 
-      jobs.each do |job|
-        begin
-          if job.respond_to?(:perform_later)
-            job.perform_later(event)
-          elsif job.respond_to?(:call)
-            job.call(event)
-          else
-            Rails.logger.error "Misconfigured webhook job: #{job} does not respond to " \
-              ':perform_later or :call'
-          end
-        rescue StandardError => e
-          Rails.logger.error "Error in job #{job}: #{e}"
-        end
-      end
+      event = WCC::Contentful::Event.from_raw(event, source: self)
+      emit_event(event)
     end
 
     private
@@ -62,10 +53,11 @@ module WCC::Contentful
       render json: { msg: 'This endpoint only responds to webhooks from Contentful' }, status: 406
     end
 
-    def jobs
-      jobs = []
-      jobs << WCC::Contentful::SyncEngine::Job if sync_engine&.should_sync?
-      jobs.push(*WCC::Contentful.configuration.webhook_jobs)
+    def emit_event(event)
+      type = event.dig('sys', 'type')
+      raise ArgumentError, "Unknown event type #{event}" unless type.present?
+
+      publish(type, event)
     end
   end
 end

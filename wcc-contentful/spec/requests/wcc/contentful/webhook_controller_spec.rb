@@ -89,70 +89,14 @@ RSpec.describe WCC::Contentful::WebhookController, type: :request do
         headers: good_headers
     end
 
-    it 'runs a sync on success' do
-      expect(WCC::Contentful::SyncEngine::Job).to receive(:perform_later)
-        .with(hash_including(JSON.parse(body)))
-
-      # act
-      post '/wcc/contentful/webhook/receive',
-        params: body,
-        headers: good_headers
-
-      # assert
-      expect(response).to have_http_status(:no_content)
-    end
-
-    it 'runs a sync even in master environment' do
-      WCC::Contentful.configure do |config|
-        config.environment = 'staging'
-      end
-
-      # expect
-      expect(WCC::Contentful::SyncEngine::Job).to receive(:perform_later)
-
-      # act
-      post '/wcc/contentful/webhook/receive',
-        params: body,
-        headers: good_headers
-
-      # assert
-      expect(response).to have_http_status(:no_content)
-    end
-
-    it 'runs configured jobs on success' do
+    it 'emits events on success' do
       events = []
-      my_job = double(perform_later: nil)
-      jobs = [
-        ->(evt) { events.push(evt) },
-        proc { |evt| events.push(evt) },
-        my_job
-      ]
-      expect(WCC::Contentful.configuration).to receive(:webhook_jobs)
-        .and_return(jobs)
-
       parsed_body = JSON.parse(body)
-      expect(my_job).to receive(:perform_later)
-        .with(hash_including(parsed_body))
 
-      # act
-      post '/wcc/contentful/webhook/receive',
-        params: body,
-        headers: good_headers
-
-      # assert
-      expect(events.length).to eq(2)
-      expect(events[0]).to eq(parsed_body)
-      expect(events[1]).to eq(parsed_body)
-    end
-
-    it 'continues running jobs even if one fails' do
-      events = []
-      jobs = [
-        ->(_evt) { raise ArgumentError, 'boom' },
-        proc { |evt| events.push(evt) }
-      ]
-      expect(WCC::Contentful.configuration).to receive(:webhook_jobs)
-        .and_return(jobs)
+      WCC::Contentful::WebhookController.subscribe(
+        proc { |event| events << event },
+        with: :call
+      )
 
       # act
       post '/wcc/contentful/webhook/receive',
@@ -161,7 +105,9 @@ RSpec.describe WCC::Contentful::WebhookController, type: :request do
 
       # assert
       expect(events.length).to eq(1)
-      expect(events[0]).to eq(JSON.parse(body))
+      expect(events[0]).to be_a WCC::Contentful::Event::Entry
+      expect(events[0].to_h).to eq(parsed_body)
+      expect(events[0].source).to eq(controller)
     end
 
     def basic_auth(user, password)
