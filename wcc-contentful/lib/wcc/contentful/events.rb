@@ -3,6 +3,10 @@
 require 'wisper'
 require 'singleton'
 
+# WCC::Contentful::Events is a singleton which rebroadcasts Contentful update
+# events.  You can subscribe to these events in your initializer using the
+# [wisper gem syntax](https://github.com/krisleech/wisper).
+# All published events are in the namespace WCC::Contentful::Event.
 class WCC::Contentful::Events
   include Singleton
   include Wisper::Publisher

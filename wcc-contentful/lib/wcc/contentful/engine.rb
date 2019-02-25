@@ -12,7 +12,6 @@ module WCC::Contentful
       jobs.push(*WCC::Contentful.configuration.webhook_jobs)
 
       jobs.each do |job|
-        puts "subscribe to #{job.inspect}"
         WCC::Contentful::WebhookController.subscribe(
           ->(event) do
             begin

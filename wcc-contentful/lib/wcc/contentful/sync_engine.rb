@@ -10,9 +10,14 @@ module WCC::Contentful
   # and the application is responsible to periodically call #next in order to hit
   # the sync API and update the store.
   #
-  # If you have mounted the WCC::Contentful::Engine, then
+  # If you have mounted the WCC::Contentful::Engine, AND the configured store is
+  # one that can be synced (i.e. it responds to `:index`), then
   # the WCC::Contentful::WebhookController will call #next automatically anytime
-  # a webhook is received.
+  # a webhook is received.  Otherwise you should hook up to the Webhook events
+  # and call the sync engine via your initializer:
+  #     WCC::Contentful::Events.subscribe(proc do |event|
+  #       WCC::Contentful::Services.instance.sync_engine.next(up_to: event.dig('sys', 'id'))
+  #     end, with: :call)
   class SyncEngine
     include ::Wisper::Publisher
 
