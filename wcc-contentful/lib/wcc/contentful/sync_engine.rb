@@ -2,7 +2,7 @@
 
 require 'active_job'
 require 'wcc/contentful/event'
-require 'wcc/contentful/event_emitter'
+require 'wisper'
 
 module WCC::Contentful
   # The SyncEngine is used to keep the currently configured store up to date
@@ -14,7 +14,7 @@ module WCC::Contentful
   # the WCC::Contentful::WebhookController will call #next automatically anytime
   # a webhook is received.
   class SyncEngine
-    include WCC::Contentful::EventEmitter
+    include ::Wisper::Publisher
 
     def state
       (@state&.dup || {}).freeze
@@ -24,7 +24,7 @@ module WCC::Contentful
     attr_reader :client
 
     def should_sync?
-      store&.respond_to?(:index) || has_listeners?
+      store&.respond_to?(:index) || listeners.any?
     end
 
     def initialize(state: nil, store: nil, client: nil, key: nil)
@@ -74,7 +74,7 @@ module WCC::Contentful
           id_found ||= id == up_to_id
 
           store.index(item) if store&.respond_to?(:index)
-          event = WCC::Contentful::Event.from_raw(item)
+          event = WCC::Contentful::Event.from_raw(item, source: self)
           yield(event) if block_given?
           emit_event(event)
 
@@ -95,7 +95,7 @@ module WCC::Contentful
       type = event.dig('sys', 'type')
       raise ArgumentError, "Unknown event type #{event}" unless type.present?
 
-      emit(type, event)
+      publish(type, event)
     end
 
     private

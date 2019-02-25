@@ -11,33 +11,6 @@ module WCC::Contentful::Event
     const.new(raw, context)
   end
 
-  # Raises an event as though it came through as a webhook and then through the
-  # sync API.  Use this to simulate a publish or unpublish event, calling all configured
-  # webhook jobs and sync store listeners without actually updating the configured store.
-  def self.global_emit(event)
-    raise ArgumentError, "Event has no type: #{event}" unless event.dig('sys', 'type')
-    if WCC::Contentful.configuration.nil?
-      raise StandardError, 'WCC::Contentful has not yet been configured!'
-    end
-
-    WCC::Contentful.configuration.webhook_jobs&.each do |job|
-      begin
-        if job.respond_to?(:perform_later)
-          job.perform_later(event.to_h)
-        elsif job.respond_to?(:call)
-          job.call(event)
-        else
-          Rails.logger.error "Misconfigured webhook job: #{job} does not respond to " \
-            ':perform_later or :call'
-        end
-      rescue StandardError => e
-        Rails.logger.error "Error in job #{job}: #{e}"
-      end
-    end
-
-    WCC::Contentful::Services.instance.sync_engine&.emit_event(event)
-  end
-
   class Registry
     include Singleton
 
@@ -60,8 +33,9 @@ module WCC::Contentful::Event
   included do
     Registry.instance.register(self)
 
-    def initialize(raw, context = nil)
+    def initialize(raw, context = nil, source: nil)
       @raw = raw.freeze
+      @source = source
 
       created_at = raw.dig('sys', 'createdAt')
       created_at = Time.parse(created_at) if created_at.present?
@@ -81,6 +55,7 @@ module WCC::Contentful::Event
 
     attr_reader :sys
     attr_reader :raw
+    attr_reader :source
     delegate :id, to: :sys
     delegate :type, to: :sys
     delegate :created_at, to: :sys
