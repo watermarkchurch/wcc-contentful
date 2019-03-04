@@ -45,7 +45,6 @@ RSpec.describe WCC::Contentful::Engine do
 
       # act
       Wisper::GlobalListeners.registrations.each do |registration|
-        puts "broadcast to #{registration.inspect}"
         registration.broadcast('Entry', webhook_controller, event)
       end
     end

@@ -8,16 +8,14 @@ require 'singleton'
 # [wisper gem syntax](https://github.com/krisleech/wisper).
 # All published events are in the namespace WCC::Contentful::Event.
 class WCC::Contentful::Events
-  include Singleton
   include Wisper::Publisher
 
+  def self.instance
+    @instance ||= new
+  end
+
   def initialize
-    [
-      WCC::Contentful::Services.sync_engine,
-      WCC::Contentful::WebhookController
-    ].each do |publisher|
-      publisher.subscribe(:self, with: :rebroadcast)
-    end
+    _attach_listeners
   end
 
   def rebroadcast(event)
@@ -25,5 +23,16 @@ class WCC::Contentful::Events
     raise ArgumentError, "Unknown event type #{event}" unless type.present?
 
     broadcast(type, event)
+  end
+
+  private
+
+  def _attach_listeners
+    [
+      WCC::Contentful::Services.instance.sync_engine,
+      WCC::Contentful::WebhookController
+    ].each do |publisher|
+      publisher.subscribe(self, with: :rebroadcast)
+    end
   end
 end
