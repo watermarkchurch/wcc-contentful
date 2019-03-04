@@ -57,7 +57,7 @@ module WCC::Contentful
       type = event.dig('sys', 'type')
       raise ArgumentError, "Unknown event type #{event}" unless type.present?
 
-      publish(type, event)
+      broadcast(type, event)
     end
   end
 end
