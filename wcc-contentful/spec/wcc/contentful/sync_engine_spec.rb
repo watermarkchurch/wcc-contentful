@@ -83,13 +83,13 @@ RSpec.describe WCC::Contentful::SyncEngine::Job, type: :job do
                       ))
 
         emitted_entries = []
-        sync_engine.add_listener('Entry', ->(item) { emitted_entries << item })
+        sync_engine.on('Entry') { |item| emitted_entries << item }
         emitted_assets = []
-        sync_engine.add_listener('Asset', ->(item) { emitted_assets << item })
+        sync_engine.on('Asset') { |item| emitted_assets << item }
         emitted_deletions = []
-        sync_engine.add_listener('DeletedEntry', ->(item) { emitted_deletions << item })
+        sync_engine.on('DeletedEntry') { |item| emitted_deletions << item }
         emitted_deletions = []
-        sync_engine.add_listener('DeletedAsset', ->(item) { emitted_deletions << item })
+        sync_engine.on('DeletedAsset') { |item| emitted_deletions << item }
 
         # act
         job.sync!
@@ -97,7 +97,15 @@ RSpec.describe WCC::Contentful::SyncEngine::Job, type: :job do
         expect(emitted_entries.count).to eq(2)
         expect(emitted_assets.count).to eq(0)
         expect(emitted_deletions.count).to eq(12)
+
+        emitted0 = emitted_entries[0]
+        expect(emitted0).to be_a WCC::Contentful::Event::Entry
+        expect(emitted0.source).to eq(sync_engine)
+
         expect(emitted_entries.dig(0, 'sys', 'id')).to eq('47PsST8EicKgWIWwK2AsW6')
+        expect(emitted0['sys']['id']).to eq('47PsST8EicKgWIWwK2AsW6')
+        expect(emitted0.id).to eq('47PsST8EicKgWIWwK2AsW6')
+
         expect(emitted_entries.dig(1, 'sys', 'id')).to eq('1qLdW7i7g4Ycq6i4Cckg44')
       end
     end
