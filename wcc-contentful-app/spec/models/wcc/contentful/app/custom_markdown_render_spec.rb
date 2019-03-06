@@ -17,6 +17,9 @@ RSpec.describe WCC::Contentful::App::CustomMarkdownRender, type: :model do
     let(:link_class) {
       'button white '
     }
+    let(:relative_link) {
+      '/some-page'
+    }
 
     it 'does not raise exception if link_attributes is nil' do
       options = {
@@ -41,6 +44,19 @@ RSpec.describe WCC::Contentful::App::CustomMarkdownRender, type: :model do
 
       renderer = WCC::Contentful::App::CustomMarkdownRender.new(options)
       expect(renderer.link(link, title, content)).to include('target="_blank"')
+    end
+
+    it 'respects relative links even when target blank is preferred' do
+      options = {
+        filter_html: true,
+        hard_wrap: true,
+        link_attributes: { target: '_blank' },
+        space_after_headers: true,
+        fenced_code_blocks: true
+      }
+
+      renderer = WCC::Contentful::App::CustomMarkdownRender.new(options)
+      expect(renderer.link(relative_link, title, content)).to_not include('target="_blank"')
     end
 
     context 'when link has a class' do
@@ -125,9 +141,10 @@ RSpec.describe WCC::Contentful::App::CustomMarkdownRender, type: :model do
       end
     end
   end
+
   describe '#use_target_blank?' do
     context 'when given a relative url' do
-      it 'returns nil' do
+      it 'returns false' do
         url = '/awaken'
         options = {
           filter_html: true,
@@ -144,7 +161,7 @@ RSpec.describe WCC::Contentful::App::CustomMarkdownRender, type: :model do
     end
 
     context 'when given a hash location as url' do
-      it 'returns nil' do
+      it 'returns false' do
         url = '#awaken'
         options = {
           filter_html: true,
@@ -161,7 +178,7 @@ RSpec.describe WCC::Contentful::App::CustomMarkdownRender, type: :model do
     end
 
     context 'when given an absolute url' do
-      it 'returns target=_blank' do
+      it 'returns true' do
         url = 'https://www.watermarkresources.com'
         options = {
           filter_html: true,
@@ -174,6 +191,23 @@ RSpec.describe WCC::Contentful::App::CustomMarkdownRender, type: :model do
 
         renderer = WCC::Contentful::App::CustomMarkdownRender.new(options)
         expect(renderer.use_target_blank?(url)).to be true
+      end
+    end
+
+    context 'when given a mailto url' do
+      it 'returns false' do
+        url = 'mailto:students@watermark.org'
+        options = {
+          filter_html: true,
+          hard_wrap: true,
+          link_attributes: { target: '_blank' },
+          space_after_headers: true,
+          fenced_code_blocks: true,
+          links_with_classes: []
+        }
+
+        renderer = WCC::Contentful::App::CustomMarkdownRender.new(options)
+        expect(renderer.use_target_blank?(url)).to be false
       end
     end
   end

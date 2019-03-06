@@ -59,6 +59,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'pg', '~> 1.0'
   spec.add_development_dependency 'typhoeus', '~> 1.3'
 
+  spec.add_dependency 'dry-validation', '~> 0.11.1'
   spec.add_dependency 'redcarpet', '~> 3.4'
   spec.add_dependency 'wcc-contentful', "~> #{WCC::Contentful::App::VERSION}"
 end

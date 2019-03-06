@@ -36,6 +36,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'simplecov', '~> 0.16.1'
   spec.add_development_dependency 'vcr', '~> 4.0'
   spec.add_development_dependency 'webmock', '~> 3.0'
+  spec.add_development_dependency 'wisper-rspec'
 
   # Makes testing easy via `bundle exec guard`
   spec.add_development_dependency 'guard', '~> 2.14'
@@ -60,6 +61,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'typhoeus', '~> 1.3'
 
   spec.add_dependency 'activesupport', '>= 5'
-  spec.add_dependency 'dry-validation', '~> 0.11.1'
   spec.add_dependency 'wcc-base', '~> 0.3.1'
+  spec.add_dependency 'wisper', '~> 2.0.0'
 end
