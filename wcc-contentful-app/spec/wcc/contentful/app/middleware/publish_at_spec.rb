@@ -111,4 +111,106 @@ RSpec.describe WCC::Contentful::App::Middleware::PublishAt do
       expect(result).to be entry
     end
   end
+
+  describe '#index' do
+    it 'does not drop a job when publish_at in the past' do
+      publish_at = Time.zone.now - 1.minute
+      entry = {
+        'sys' => { 'id' => 'test', 'type' => 'Entry' },
+        'fields' => {
+          'publishAt' => {
+            'en-US' => publish_at.to_s
+          }
+        }
+      }
+
+      expect(store).to receive(:index).with(entry)
+      expect(ActiveJob::Base.queue_adapter).to_not receive(:enqueue)
+      expect(ActiveJob::Base.queue_adapter).to_not receive(:enqueue_at)
+
+      instance.index(entry)
+    end
+
+    it 'does not drop a job when unpublish_at in the past' do
+      publish_at = Time.zone.now - 1.minute
+      entry = {
+        'sys' => { 'id' => 'test', 'type' => 'Entry' },
+        'fields' => {
+          'unpublishAt' => {
+            'en-US' => publish_at.to_s
+          }
+        }
+      }
+
+      expect(store).to receive(:index).with(entry)
+      expect(ActiveJob::Base.queue_adapter).to_not receive(:enqueue)
+      expect(ActiveJob::Base.queue_adapter).to_not receive(:enqueue_at)
+
+      instance.index(entry)
+    end
+
+    it 'drops a job for both publishAt and unpublishAt' do
+      publish_at = Time.zone.parse((Time.zone.now + 1.minute).to_s)
+      unpublish_at = Time.zone.parse((Time.zone.now + 2.minutes).to_s)
+      entry = {
+        'sys' => { 'id' => 'test', 'type' => 'Entry' },
+        'fields' => {
+          'publishAt' => {
+            'en-US' => publish_at.to_s
+          },
+          'unpublishAt' => {
+            'en-US' => unpublish_at.to_s
+          }
+        }
+      }
+
+      expect(store).to receive(:index).with(entry)
+
+      configured_publish_job = double
+      expect(WCC::Contentful::App::Middleware::PublishAt::Job).to receive(:set)
+        .with(wait_until: publish_at + 1.second)
+        .and_return(configured_publish_job)
+      expect(configured_publish_job).to receive(:perform_later)
+        .with(entry)
+
+      configured_unpublish_job = double
+      expect(WCC::Contentful::App::Middleware::PublishAt::Job).to receive(:set)
+        .with(wait_until: unpublish_at + 1.second)
+        .and_return(configured_unpublish_job)
+      expect(configured_unpublish_job).to receive(:perform_later)
+        .with(entry)
+
+      # act
+      instance.index(entry)
+    end
+  end
+
+  describe 'Job' do
+    describe '#perform' do
+      it 'emits the entry on WCC::Contentful::Events' do
+        expect(WCC::Contentful::Services)
+          .to receive(:instance)
+          .and_return(double(sync_engine: double(subscribe: nil)))
+
+        emitted = []
+        WCC::Contentful::Events.subscribe(
+          ->(entry) { emitted << entry },
+          with: :call
+        )
+
+        entry = {
+          'sys' => { 'id' => 'test', 'type' => 'Entry' },
+          'fields' => {
+          }
+        }
+
+        WCC::Contentful::App::Middleware::PublishAt::Job.perform_now(entry)
+
+        expect(emitted.length).to eq(1)
+        event = emitted[0]
+        expect(event).to be_a WCC::Contentful::Event::Entry
+        expect(event.raw).to eq(entry)
+      end
+    end
+  end
 end
