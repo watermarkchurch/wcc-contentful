@@ -28,10 +28,15 @@ class WCC::Contentful::Events
   private
 
   def _attach_listeners
-    [
-      WCC::Contentful::Services.instance.sync_engine,
-      WCC::Contentful::WebhookController
-    ].each do |publisher|
+    publishers = [
+      WCC::Contentful::Services.instance.sync_engine
+    ]
+
+    if defined?(Rails)
+      publishers << WCC::Contentful::WebhookController
+    end
+    
+    publishers.each do |publisher|
       publisher.subscribe(self, with: :rebroadcast)
     end
   end
