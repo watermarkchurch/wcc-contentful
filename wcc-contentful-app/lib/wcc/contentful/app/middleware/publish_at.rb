@@ -67,7 +67,28 @@ module WCC::Contentful::App::Middleware
         end
 
         def perform(entry)
+          publish_at = entry.dig('fields', 'publishAt', 'en-US')
+          unpublish_at = entry.dig('fields', 'unpublishAt', 'en-US')
+          latest_event =
+            [publish_at, unpublish_at]
+              .select { |x| x.present? && Time.zone.now >= Time.zone.parse(x) }
+              .max
+
+          if latest_event == publish_at
+            emit_entry(entry)
+          else
+            emit_deleted_entry(entry)
+          end
+        end
+
+        def emit_entry(entry)
           emit_event(entry)
+        end
+
+        def emit_deleted_entry(entry)
+          emit_event({
+            'sys' => entry['sys'].merge({ 'type' => 'DeletedEntry' })
+          })
         end
 
         def emit_event(entry)

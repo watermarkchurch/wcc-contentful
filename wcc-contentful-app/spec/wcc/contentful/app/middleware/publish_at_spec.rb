@@ -188,7 +188,7 @@ RSpec.describe WCC::Contentful::App::Middleware::PublishAt do
   describe 'Job' do
     describe '#perform' do
       it 'emits the entry on WCC::Contentful::Events' do
-        expect(WCC::Contentful::Services)
+        allow(WCC::Contentful::Services)
           .to receive(:instance)
           .and_return(double(sync_engine: double(subscribe: nil)))
 
@@ -198,9 +198,13 @@ RSpec.describe WCC::Contentful::App::Middleware::PublishAt do
           with: :call
         )
 
+        publish_at = Time.zone.parse((Time.zone.now - 1.minute).to_s)
         entry = {
           'sys' => { 'id' => 'test', 'type' => 'Entry' },
           'fields' => {
+            'publishAt' => {
+              'en-US' => publish_at.to_s
+            }
           }
         }
 
@@ -210,6 +214,38 @@ RSpec.describe WCC::Contentful::App::Middleware::PublishAt do
         event = emitted[0]
         expect(event).to be_a WCC::Contentful::Event::Entry
         expect(event.raw).to eq(entry)
+      end
+
+      it 'emits a DeletedEntry on WCC::Contentful::Events' do
+        allow(WCC::Contentful::Services)
+          .to receive(:instance)
+          .and_return(double(sync_engine: double(subscribe: nil)))
+
+        emitted = []
+        WCC::Contentful::Events.subscribe(
+          ->(entry) { emitted << entry },
+          with: :call
+        )
+
+        unpublish_at = Time.zone.parse((Time.zone.now - 1.minute).to_s)
+        entry = {
+          'sys' => { 'id' => 'test', 'type' => 'Entry' },
+          'fields' => {
+            'unpublishAt' => {
+              'en-US' => unpublish_at.to_s
+            }
+          }
+        }
+
+        WCC::Contentful::App::Middleware::PublishAt::Job.perform_now(entry)
+
+        expect(emitted.length).to eq(1)
+        event = emitted[0]
+        expect(event).to be_a WCC::Contentful::Event::DeletedEntry
+        expect(event.raw).to eq({
+          'sys' => { 'id' => 'test', 'type' => 'DeletedEntry' }
+          # no fields in a DeletedEntry
+        })
       end
     end
   end
