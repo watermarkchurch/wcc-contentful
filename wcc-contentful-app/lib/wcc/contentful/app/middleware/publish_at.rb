@@ -49,11 +49,13 @@ module WCC::Contentful::App::Middleware
 
       def drop_job_at(timestamp, entry)
         ts = Time.zone.parse(timestamp)
-        Job.set(wait_until: ts + 1.second).perform_later(entry)
+        Job.set(wait_until: ts + 1.second).perform_later(entry, store)
       end
 
       class Job < ActiveJob::Base
         include Wisper::Publisher
+
+        self.queue_adapter = :async
 
         def self.cache
           @cache ||= Rails.cache
@@ -66,7 +68,9 @@ module WCC::Contentful::App::Middleware
           subscribe(WCC::Contentful::Events.instance, with: :rebroadcast)
         end
 
-        def perform(entry)
+        def perform(entry, store)
+          return unless latest_entry_version?(entry, store)
+
           publish_at = entry.dig('fields', 'publishAt', 'en-US')
           unpublish_at = entry.dig('fields', 'unpublishAt', 'en-US')
           latest_event =
@@ -79,6 +83,13 @@ module WCC::Contentful::App::Middleware
           else
             emit_deleted_entry(entry)
           end
+        end
+
+        def latest_entry_version?(entry, store)
+          # If the entry isn't in the backing store, then something's changed.
+          return false unless from_store = store.find(entry.dig('sys', 'id'))
+
+          entry.dig('sys', 'revision') >= from_store.dig('sys', 'revision')
         end
 
         def emit_entry(entry)

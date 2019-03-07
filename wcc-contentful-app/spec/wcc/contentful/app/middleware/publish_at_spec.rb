@@ -171,14 +171,14 @@ RSpec.describe WCC::Contentful::App::Middleware::PublishAt do
         .with(wait_until: publish_at + 1.second)
         .and_return(configured_publish_job)
       expect(configured_publish_job).to receive(:perform_later)
-        .with(entry)
+        .with(entry, store)
 
       configured_unpublish_job = double
       expect(WCC::Contentful::App::Middleware::PublishAt::Job).to receive(:set)
         .with(wait_until: unpublish_at + 1.second)
         .and_return(configured_unpublish_job)
       expect(configured_unpublish_job).to receive(:perform_later)
-        .with(entry)
+        .with(entry, store)
 
       # act
       instance.index(entry)
@@ -186,12 +186,14 @@ RSpec.describe WCC::Contentful::App::Middleware::PublishAt do
   end
 
   describe 'Job' do
+    before do
+      allow(WCC::Contentful::Services)
+        .to receive(:instance)
+        .and_return(double(sync_engine: double(subscribe: nil)))
+    end
+
     describe '#perform' do
       it 'emits the entry on WCC::Contentful::Events' do
-        allow(WCC::Contentful::Services)
-          .to receive(:instance)
-          .and_return(double(sync_engine: double(subscribe: nil)))
-
         emitted = []
         WCC::Contentful::Events.subscribe(
           ->(entry) { emitted << entry },
@@ -200,7 +202,7 @@ RSpec.describe WCC::Contentful::App::Middleware::PublishAt do
 
         publish_at = Time.zone.parse((Time.zone.now - 1.minute).to_s)
         entry = {
-          'sys' => { 'id' => 'test', 'type' => 'Entry' },
+          'sys' => { 'id' => 'test', 'type' => 'Entry', 'revision' => 1 },
           'fields' => {
             'publishAt' => {
               'en-US' => publish_at.to_s
@@ -208,7 +210,9 @@ RSpec.describe WCC::Contentful::App::Middleware::PublishAt do
           }
         }
 
-        WCC::Contentful::App::Middleware::PublishAt::Job.perform_now(entry)
+        allow(store).to receive(:find).with('test').and_return(entry)
+
+        WCC::Contentful::App::Middleware::PublishAt::Job.perform_now(entry, store)
 
         expect(emitted.length).to eq(1)
         event = emitted[0]
@@ -217,10 +221,6 @@ RSpec.describe WCC::Contentful::App::Middleware::PublishAt do
       end
 
       it 'emits a DeletedEntry on WCC::Contentful::Events' do
-        allow(WCC::Contentful::Services)
-          .to receive(:instance)
-          .and_return(double(sync_engine: double(subscribe: nil)))
-
         emitted = []
         WCC::Contentful::Events.subscribe(
           ->(entry) { emitted << entry },
@@ -229,23 +229,51 @@ RSpec.describe WCC::Contentful::App::Middleware::PublishAt do
 
         unpublish_at = Time.zone.parse((Time.zone.now - 1.minute).to_s)
         entry = {
-          'sys' => { 'id' => 'test', 'type' => 'Entry' },
+          'sys' => { 'id' => 'test', 'type' => 'Entry', 'revision' => 1 },
           'fields' => {
             'unpublishAt' => {
               'en-US' => unpublish_at.to_s
             }
           }
         }
+        allow(store).to receive(:find).with('test').and_return(entry)
 
-        WCC::Contentful::App::Middleware::PublishAt::Job.perform_now(entry)
+        WCC::Contentful::App::Middleware::PublishAt::Job.perform_now(entry, store)
 
         expect(emitted.length).to eq(1)
         event = emitted[0]
         expect(event).to be_a WCC::Contentful::Event::DeletedEntry
         expect(event.raw).to eq({
-          'sys' => { 'id' => 'test', 'type' => 'DeletedEntry' }
+          'sys' => { 'id' => 'test', 'type' => 'DeletedEntry', 'revision' => 1 }
           # no fields in a DeletedEntry
         })
+      end
+
+      it 'does not emit if the entry has been updated' do
+        emitted = []
+        WCC::Contentful::Events.subscribe(
+          ->(entry) { emitted << entry },
+          with: :call
+        )
+
+        unpublish_at = Time.zone.parse((Time.zone.now - 1.minute).to_s)
+        entry = {
+          'sys' => { 'id' => 'test', 'type' => 'Entry', 'revision' => 1 },
+          'fields' => {
+            'unpublishAt' => {
+              'en-US' => unpublish_at.to_s
+            }
+          }
+        }
+        updated_entry = {
+          'sys' => { 'id' => 'test', 'type' => 'Entry', 'revision' => 2 }
+        }
+        allow(store).to receive(:find).with('test')
+          .and_return(updated_entry)
+
+        WCC::Contentful::App::Middleware::PublishAt::Job.perform_now(entry, store)
+
+        expect(emitted.length).to eq(0)
       end
     end
   end
