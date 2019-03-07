@@ -21,7 +21,12 @@ module WCC::Contentful::App::Middleware
     def index(entry)
       maybe_drop_job(entry) if entry.dig('sys', 'type') == 'Entry'
 
-      super
+      store.index(entry) if store.index?
+    end
+
+    # This middleware needs to receive :index even if the backing store doesn't.
+    def index?
+      true
     end
 
     private

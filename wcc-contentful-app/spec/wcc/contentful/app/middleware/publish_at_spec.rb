@@ -18,7 +18,7 @@ RSpec.describe WCC::Contentful::App::Middleware::PublishAt do
     end
   end
 
-  let(:store) { double('store') }
+  let(:store) { double('store', index?: false) }
 
   subject(:instance) {
     described_class.call(store, [], double('config'))
@@ -124,7 +124,6 @@ RSpec.describe WCC::Contentful::App::Middleware::PublishAt do
         }
       }
 
-      expect(store).to receive(:index).with(entry)
       expect(ActiveJob::Base.queue_adapter).to_not receive(:enqueue)
       expect(ActiveJob::Base.queue_adapter).to_not receive(:enqueue_at)
 
@@ -142,7 +141,6 @@ RSpec.describe WCC::Contentful::App::Middleware::PublishAt do
         }
       }
 
-      expect(store).to receive(:index).with(entry)
       expect(ActiveJob::Base.queue_adapter).to_not receive(:enqueue)
       expect(ActiveJob::Base.queue_adapter).to_not receive(:enqueue_at)
 
@@ -164,8 +162,6 @@ RSpec.describe WCC::Contentful::App::Middleware::PublishAt do
         }
       }
 
-      expect(store).to receive(:index).with(entry)
-
       configured_publish_job = double
       expect(WCC::Contentful::App::Middleware::PublishAt::Job).to receive(:set)
         .with(wait_until: publish_at + 1.second)
@@ -181,6 +177,31 @@ RSpec.describe WCC::Contentful::App::Middleware::PublishAt do
         .with(entry, store)
 
       # act
+      instance.index(entry)
+    end
+
+    it 'calls index on the backing store if it responds to index' do
+      entry = {
+        'sys' => { 'id' => 'test', 'type' => 'Entry' },
+        'fields' => {
+        }
+      }
+
+      allow(store).to receive(:index?).and_return(true)
+      expect(store).to receive(:index).with(entry)
+
+      instance.index(entry)
+    end
+
+    it 'does not call index on the backing store if it doesnt respond to index' do
+      entry = {
+        'sys' => { 'id' => 'test', 'type' => 'Entry' },
+        'fields' => {
+        }
+      }
+
+      expect(store).to_not receive(:index)
+
       instance.index(entry)
     end
   end
