@@ -24,11 +24,6 @@ module WCC::Contentful::App::Middleware
       store.index(entry) if store.index?
     end
 
-    # This middleware needs to receive :index even if the backing store doesn't.
-    def index?
-      true
-    end
-
     private
 
     def after(time)
