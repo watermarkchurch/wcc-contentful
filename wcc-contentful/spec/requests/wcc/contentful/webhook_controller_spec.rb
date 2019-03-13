@@ -110,6 +110,31 @@ RSpec.describe WCC::Contentful::WebhookController, type: :request do
       expect(events[0].source).to eq(controller)
     end
 
+    it 'does not update store or emit event when environment is wrong' do
+      store = double(fetch: nil, write: nil)
+      allow(WCC::Contentful::Services.instance)
+        .to receive(:store)
+        .and_return(store)
+
+      events = []
+      WCC::Contentful::WebhookController.subscribe(
+        proc { |event| events << event },
+        with: :call
+      )
+
+      expect(store).to_not receive(:index)
+
+      body = load_fixture('contentful/contentful_published_page_staging.json')
+
+      # act
+      post '/wcc/contentful/webhook/receive',
+        params: body,
+        headers: good_headers
+
+      # assert
+      expect(events.length).to eq(0)
+    end
+
     def basic_auth(user, password)
       ActionController::HttpAuthentication::Basic.encode_credentials(user, password)
     end

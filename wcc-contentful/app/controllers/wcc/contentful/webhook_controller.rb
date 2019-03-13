@@ -24,6 +24,8 @@ module WCC::Contentful
       event.require('sys').require(%w[id type])
       event = event.to_h
 
+      return unless check_environment(event)
+
       # Immediately update the store, we may update again later using SyncEngine::Job.
       store.index(event) if store.respond_to?(:index)
 
@@ -51,6 +53,14 @@ module WCC::Contentful
       return if request.headers['Content-Type'] == 'application/vnd.contentful.management.v1+json'
 
       render json: { msg: 'This endpoint only responds to webhooks from Contentful' }, status: 406
+    end
+
+    def check_environment(event)
+      environment_id = event.dig('sys', 'environment', 'sys', 'id')
+      return true unless environment_id.present?
+
+      configured_environment = WCC::Contentful.configuration.environment.presence || 'master'
+      configured_environment.casecmp(environment_id) == 0
     end
 
     def emit_event(event)
