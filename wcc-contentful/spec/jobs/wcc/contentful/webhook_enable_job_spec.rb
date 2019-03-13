@@ -100,5 +100,34 @@ RSpec.describe WCC::Contentful::WebhookEnableJob, type: :job do
         management_token: 'testtoken'
       })
     end
+
+    it 'gets default client params from WCC::Contentful.configuration' do
+      defaults = {
+        management_token: 'testtoken',
+        app_url: 'testurl',
+        space: 'testspace',
+        environment: 'testenv',
+        default_locale: 'testlocale',
+        http_adapter: :http,
+        webhook_username: 'testwebhookusername',
+        webhook_password: 'testwebhookpassword'
+      }
+
+      allow(WCC::Contentful).to receive(:configuration)
+        .and_return(double(**defaults))
+
+      expect(job).to receive(:enable_webhook) do |client|
+        expect(client).to be_a WCC::Contentful::SimpleClient::Management
+
+        options = client.instance_variable_get('@options')
+        expect(options.except(:adapter)).to eq(defaults.except(:space, :management_token, :http_adapter))
+        expect(client.space).to eq('testspace')
+        expect(client.instance_variable_get('@access_token')).to eq('testtoken')
+        expect(options[:adapter]).to eq(:http)
+      end
+
+      # act
+      job.perform
+    end
   end
 end
