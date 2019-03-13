@@ -60,6 +60,32 @@ RSpec.describe WCC::Contentful::WebhookEnableJob, type: :job do
         webhook_username: 'testuser',
         webhook_password: 'testpw')
     end
+
+    it 'posts with environment ID filter if environment given' do
+      config = double(environment: 'testtest')
+      allow(WCC::Contentful).to receive(:configuration)
+        .and_return(config)
+
+      response = double(items: [])
+      client = double(webhook_definitions: response)
+
+      expect(client).to receive(:post_webhook_definition)
+        .with(hash_including({
+          'filters' => [
+            {
+              'equals' => [
+                { 'doc' => 'sys.environment.sys.id' },
+                'testtest'
+              ]
+            }
+          ]
+        }))
+        .and_return(double(raw: {}))
+
+      # act
+      job.enable_webhook(client,
+        app_url: 'https://test.url/')
+    end
   end
 
   describe '#perform' do

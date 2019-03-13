@@ -26,7 +26,8 @@ module WCC::Contentful
         'topics' => [
           '*.publish',
           '*.unpublish'
-        ]
+        ],
+        'filters' => webhook_filters
       }
       body['httpBasicUsername'] = webhook_username if webhook_username.present?
       body['httpBasicPassword'] = webhook_password if webhook_password.present?
@@ -38,6 +39,22 @@ module WCC::Contentful
         logger.error "#{e.response.code}: #{e.response.raw}" if e.response
         raise
       end
+    end
+
+    private
+
+    def webhook_filters
+      filters = []
+
+      if (environment_id = WCC::Contentful.configuration&.environment).present?
+        filters << {
+          'equals' => [
+            { 'doc' => 'sys.environment.sys.id' },
+            environment_id
+          ]
+        }
+      end
+      filters
     end
   end
 end
