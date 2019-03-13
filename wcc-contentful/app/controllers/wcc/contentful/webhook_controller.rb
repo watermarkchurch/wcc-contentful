@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 require_dependency 'wcc/contentful/application_controller'
-require_dependency 'wcc/contentful/event'
-require 'wisper'
 
 module WCC::Contentful
   # The WebhookController is mounted by the WCC::Contentful::Engine to receive
