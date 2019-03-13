@@ -110,6 +110,32 @@ RSpec.describe WCC::Contentful::WebhookController, type: :request do
       expect(events[0].source).to eq(controller)
     end
 
+    it 'emits events on success for another environment' do
+      allow(WCC::Contentful.configuration)
+        .to receive(:environment)
+        .and_return('staging')
+
+      body = load_fixture('contentful/contentful_published_page_staging.json')
+      parsed_body = JSON.parse(body)
+
+      events = []
+      WCC::Contentful::WebhookController.subscribe(
+        proc { |event| events << event },
+        with: :call
+      )
+
+      # act
+      post '/wcc/contentful/webhook/receive',
+        params: body,
+        headers: good_headers
+
+      # assert
+      expect(events.length).to eq(1)
+      expect(events[0]).to be_a WCC::Contentful::Event::Entry
+      expect(events[0].to_h).to eq(parsed_body)
+      expect(events[0].source).to eq(controller)
+    end
+
     it 'does not update store or emit event when environment is wrong' do
       store = double(fetch: nil, write: nil)
       allow(WCC::Contentful::Services.instance)
