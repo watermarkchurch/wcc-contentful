@@ -32,10 +32,8 @@ class WCC::Contentful::Events
       WCC::Contentful::Services.instance.sync_engine
     ]
 
-    if defined?(Rails)
-      publishers << WCC::Contentful::WebhookController
-    end
-    
+    publishers << WCC::Contentful::WebhookController if defined?(Rails)
+
     publishers.each do |publisher|
       publisher.subscribe(self, with: :rebroadcast)
     end
