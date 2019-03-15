@@ -4,6 +4,35 @@ module WCC::Contentful::App::Middleware
   class PublishAt
     include WCC::Contentful::Middleware::Store
 
+    class << self
+      def job_entry_storage
+        @job_entry_storage ||= Redis::Store.new
+      end
+      attr_writer :job_entry_storage
+
+      def entry_key(entry)
+        [name, entry.dig('sys', 'type'), entry.dig('sys', 'id')].join('.')
+      end
+
+      def update_storage(entry, force = false)
+        key = entry_key(entry)
+        return job_entry_storage.set(key, entry) if force
+
+        return unless old_entry = job_entry_storage.get(key)
+        return unless old_revision = old_entry.dig('sys', 'revision')
+        return unless old_revision < entry.dig('sys', 'revision')
+
+        job_entry_storage.set(key, entry)
+      end
+
+      def latest_entry_version?(entry)
+        # If the entry isn't in the job storage, then something's changed.
+        return false unless from_storage = job_entry_storage.get(entry_key(entry))
+
+        entry.dig('sys', 'revision') >= from_storage.dig('sys', 'revision')
+      end
+    end
+
     def self.call(store, content_delivery_params, config)
       # This does not apply in preview mode
       return if content_delivery_params&.find { |h| h.is_a?(Hash) && (h[:preview] == true) }
@@ -20,6 +49,8 @@ module WCC::Contentful::App::Middleware
 
     def index(entry)
       maybe_drop_job(entry) if entry.dig('sys', 'type') == 'Entry'
+
+      self.class.update_storage(entry)
 
       store.index(entry) if store.index?
     end
@@ -49,7 +80,9 @@ module WCC::Contentful::App::Middleware
 
       def drop_job_at(timestamp, entry)
         ts = Time.zone.parse(timestamp)
-        Job.set(wait_until: ts + 1.second).perform_later(entry, store)
+
+        self.class.update_storage(entry, true)
+        Job.set(wait_until: ts + 1.second).perform_later(entry)
       end
 
       class Job < ActiveJob::Base
@@ -68,8 +101,8 @@ module WCC::Contentful::App::Middleware
           subscribe(WCC::Contentful::Events.instance, with: :rebroadcast)
         end
 
-        def perform(entry, store)
-          return unless latest_entry_version?(entry, store)
+        def perform(entry)
+          return unless WCC::Contentful::App::Middleware::PublishAt.latest_entry_version?(entry)
 
           publish_at = entry.dig('fields', 'publishAt', 'en-US')
           unpublish_at = entry.dig('fields', 'unpublishAt', 'en-US')
@@ -83,13 +116,6 @@ module WCC::Contentful::App::Middleware
           else
             emit_deleted_entry(entry)
           end
-        end
-
-        def latest_entry_version?(entry, store)
-          # If the entry isn't in the backing store, then something's changed.
-          return false unless from_store = store.find(entry.dig('sys', 'id'))
-
-          entry.dig('sys', 'revision') >= from_store.dig('sys', 'revision')
         end
 
         def emit_entry(entry)

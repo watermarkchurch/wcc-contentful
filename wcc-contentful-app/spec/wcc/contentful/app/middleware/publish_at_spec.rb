@@ -4,6 +4,18 @@ require 'spec_helper'
 require 'wcc/contentful/app/middleware/publish_at'
 
 RSpec.describe WCC::Contentful::App::Middleware::PublishAt do
+  let(:job_entry_storage) {
+    {}
+  }
+  before do
+    storage = double
+
+    allow(WCC::Contentful::App::Middleware::PublishAt).to receive(:job_entry_storage)
+      .and_return(storage)
+    allow(storage).to receive(:get) { |key| job_entry_storage[key] }
+    allow(storage).to receive(:set) { |k, v| job_entry_storage[k] = v }
+  end
+
   describe '.call' do
     it 'creates a middleware' do
       result = described_class.call(double('store'), [], double('config'))
@@ -167,17 +179,100 @@ RSpec.describe WCC::Contentful::App::Middleware::PublishAt do
         .with(wait_until: publish_at + 1.second)
         .and_return(configured_publish_job)
       expect(configured_publish_job).to receive(:perform_later)
-        .with(entry, store)
+        .with(entry)
 
       configured_unpublish_job = double
       expect(WCC::Contentful::App::Middleware::PublishAt::Job).to receive(:set)
         .with(wait_until: unpublish_at + 1.second)
         .and_return(configured_unpublish_job)
       expect(configured_unpublish_job).to receive(:perform_later)
-        .with(entry, store)
+        .with(entry)
 
       # act
       instance.index(entry)
+    end
+
+    it 'updates job entry storage when enqueuing job' do
+      publish_at = Time.zone.parse((Time.zone.now + 1.minute).to_s)
+      unpublish_at = Time.zone.parse((Time.zone.now + 2.minutes).to_s)
+      entry = {
+        'sys' => {
+          'id' => 'test',
+          'type' => 'Entry',
+          'revision' => 2
+        },
+        'fields' => {
+          'publishAt' => {
+            'en-US' => publish_at.to_s
+          },
+          'unpublishAt' => {
+            'en-US' => unpublish_at.to_s
+          }
+        }
+      }
+
+      configured_publish_job = double
+      allow(WCC::Contentful::App::Middleware::PublishAt::Job).to receive(:set)
+        .and_return(configured_publish_job)
+      allow(configured_publish_job).to receive(:perform_later)
+
+      configured_unpublish_job = double
+      allow(WCC::Contentful::App::Middleware::PublishAt::Job).to receive(:set)
+        .and_return(configured_unpublish_job)
+      allow(configured_unpublish_job).to receive(:perform_later)
+
+      # act
+      instance.index(entry)
+
+      # assert
+      expect(job_entry_storage['WCC::Contentful::App::Middleware::PublishAt.Entry.test'])
+        .to eq(entry)
+    end
+
+    it 'updates job entry storage when revision changes' do
+      old_entry = {
+        'sys' => {
+          'id' => 'test',
+          'type' => 'Entry',
+          'revision' => 1
+        },
+        'fields' => {}
+      }
+      entry = {
+        'sys' => {
+          'id' => 'test',
+          'type' => 'Entry',
+          'revision' => 2
+        },
+        'fields' => {}
+      }
+
+      job_entry_storage['WCC::Contentful::App::Middleware::PublishAt.Entry.test'] = old_entry
+
+      # act
+      instance.index(entry)
+
+      # assert
+      expect(job_entry_storage['WCC::Contentful::App::Middleware::PublishAt.Entry.test'])
+        .to eq(entry)
+    end
+
+    it 'does not add to job entry storage if no job to enqueue' do
+      publish_at = Time.zone.now - 1.minute
+      entry = {
+        'sys' => { 'id' => 'test', 'type' => 'Entry' },
+        'fields' => {
+          'publishAt' => {
+            'en-US' => publish_at.to_s
+          }
+        }
+      }
+
+      # act
+      instance.index(entry)
+
+      # assert
+      expect(job_entry_storage.count).to eq(0)
     end
 
     it 'calls index on the backing store if it responds to index' do
@@ -231,9 +326,9 @@ RSpec.describe WCC::Contentful::App::Middleware::PublishAt do
           }
         }
 
-        allow(store).to receive(:find).with('test').and_return(entry)
+        job_entry_storage['WCC::Contentful::App::Middleware::PublishAt.Entry.test'] = entry
 
-        WCC::Contentful::App::Middleware::PublishAt::Job.perform_now(entry, store)
+        WCC::Contentful::App::Middleware::PublishAt::Job.perform_now(entry)
 
         expect(emitted.length).to eq(1)
         event = emitted[0]
@@ -257,9 +352,9 @@ RSpec.describe WCC::Contentful::App::Middleware::PublishAt do
             }
           }
         }
-        allow(store).to receive(:find).with('test').and_return(entry)
+        job_entry_storage['WCC::Contentful::App::Middleware::PublishAt.Entry.test'] = entry
 
-        WCC::Contentful::App::Middleware::PublishAt::Job.perform_now(entry, store)
+        WCC::Contentful::App::Middleware::PublishAt::Job.perform_now(entry)
 
         expect(emitted.length).to eq(1)
         event = emitted[0]
@@ -289,10 +384,9 @@ RSpec.describe WCC::Contentful::App::Middleware::PublishAt do
         updated_entry = {
           'sys' => { 'id' => 'test', 'type' => 'Entry', 'revision' => 2 }
         }
-        allow(store).to receive(:find).with('test')
-          .and_return(updated_entry)
+        job_entry_storage['WCC::Contentful::App::Middleware::PublishAt.Entry.test'] = updated_entry
 
-        WCC::Contentful::App::Middleware::PublishAt::Job.perform_now(entry, store)
+        WCC::Contentful::App::Middleware::PublishAt::Job.perform_now(entry)
 
         expect(emitted.length).to eq(0)
       end
