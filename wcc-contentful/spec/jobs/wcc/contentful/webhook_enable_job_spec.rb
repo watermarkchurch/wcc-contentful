@@ -120,7 +120,8 @@ RSpec.describe WCC::Contentful::WebhookEnableJob, type: :job do
         expect(client).to be_a WCC::Contentful::SimpleClient::Management
 
         options = client.instance_variable_get('@options')
-        expect(options.except(:adapter)).to eq(defaults.except(:space, :management_token, :http_adapter))
+        expect(options.except(:adapter))
+          .to eq(defaults.except(:space, :management_token, :http_adapter))
         expect(client.space).to eq('testspace')
         expect(client.instance_variable_get('@access_token')).to eq('testtoken')
         expect(options[:adapter]).to eq(:http)
