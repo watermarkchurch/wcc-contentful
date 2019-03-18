@@ -7,7 +7,9 @@ module WCC::Contentful
     self.queue_adapter = :async
     queue_as :default
 
-    def perform(args)
+    def perform(args = {})
+      args = default_configuration.merge!(args)
+
       client = WCC::Contentful::SimpleClient::Management.new(
         args
       )
@@ -26,7 +28,8 @@ module WCC::Contentful
         'topics' => [
           '*.publish',
           '*.unpublish'
-        ]
+        ],
+        'filters' => webhook_filters
       }
       body['httpBasicUsername'] = webhook_username if webhook_username.present?
       body['httpBasicPassword'] = webhook_password if webhook_password.present?
@@ -38,6 +41,37 @@ module WCC::Contentful
         logger.error "#{e.response.code}: #{e.response.raw}" if e.response
         raise
       end
+    end
+
+    private
+
+    def default_configuration
+      return {} unless config = WCC::Contentful&.configuration
+
+      {
+        management_token: config.management_token,
+        app_url: config.app_url,
+        space: config.space,
+        environment: config.environment,
+        default_locale: config.default_locale,
+        adapter: config.http_adapter,
+        webhook_username: config.webhook_username,
+        webhook_password: config.webhook_password
+      }
+    end
+
+    def webhook_filters
+      filters = []
+
+      if (environment_id = WCC::Contentful.configuration&.environment).present?
+        filters << {
+          'equals' => [
+            { 'doc' => 'sys.environment.sys.id' },
+            environment_id
+          ]
+        }
+      end
+      filters
     end
   end
 end
