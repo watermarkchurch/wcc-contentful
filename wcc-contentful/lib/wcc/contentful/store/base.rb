@@ -109,9 +109,18 @@ module WCC::Contentful::Store
     # override the #result method to return an array-like containing the query
     # results.
     class Query
-      delegate :first, to: :result
-      delegate :map, to: :result
-      delegate :count, to: :result
+      delegate :first,
+        :map,
+        :flat_map,
+        :count,
+        :select,
+        :reject,
+        :take,
+        :take_while,
+        :drop,
+        :drop_while,
+        :zip,
+        to: :to_enum
 
       OPERATORS = %i[
         eq
@@ -130,7 +139,7 @@ module WCC::Contentful::Store
 
       # @abstract Subclasses should provide this in order to fetch the results
       #   of the query.
-      def result
+      def to_enum
         raise NotImplementedError
       end
 

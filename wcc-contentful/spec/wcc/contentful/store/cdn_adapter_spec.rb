@@ -365,8 +365,8 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       })
 
       # assert
-      expect(found.result).to be_a(Enumerator::Lazy)
-      items = found.result.force
+      expect(found.to_enum).to be_a(Enumerator::Lazy)
+      items = found.to_enum.force
       expect(items.count).to eq(11)
 
       page5 = items[5]
@@ -404,8 +404,8 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       })
 
       # assert
-      expect(found.result).to be_a(Enumerator::Lazy)
-      items = found.result.force
+      expect(found.to_enum).to be_a(Enumerator::Lazy)
+      items = found.to_enum.force
       expect(items.count).to eq(11)
 
       page5 = items[5]

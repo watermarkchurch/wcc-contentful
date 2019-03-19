@@ -52,7 +52,7 @@ module WCC::Contentful::Store
     class Query < Base::Query
       delegate :count, to: :response
 
-      def result
+      def to_enum
         return response.items unless @options[:include]
 
         response.items.map { |e| resolve_includes(e, @options[:include]) }

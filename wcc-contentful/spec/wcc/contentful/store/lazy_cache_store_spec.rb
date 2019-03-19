@@ -196,7 +196,7 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
           include: 2,
           cache_response: true
         })
-        _pages = found.result.take(5).force
+        _pages = found.take(5).force
 
         # assert
         stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
