@@ -1,0 +1,121 @@
+{
+  "sys": {
+    "type": "Entry",
+    "id": "2LJMdSxlrOkuSUYCoOQy2Y",
+    "space": {
+      "sys": {
+        "type": "Link",
+        "linkType": "Space",
+        "id": "7yx6ovlj39n5"
+      }
+    },
+    "environment": {
+      "sys": {
+        "id": "staging",
+        "type": "Link",
+        "linkType": "Environment"
+      }
+    },
+    "contentType": {
+      "sys": {
+        "type": "Link",
+        "linkType": "ContentType",
+        "id": "page"
+      }
+    },
+    "revision": 17,
+    "createdAt": "2018-04-18T18:19:46.611Z",
+    "updatedAt": "2019-03-13T19:59:04.548Z"
+  },
+  "fields": {
+    "internalTitle": {
+      "en-US": "Conferences"
+    },
+    "title": {
+      "en-US": "Conferences"
+    },
+    "slug": {
+      "en-US": "/conferences"
+    },
+    "header": {
+      "en-US": {
+        "sys": {
+          "type": "Link",
+          "linkType": "Entry",
+          "id": "68vwBQpGa4Cyse4OUaSAsI"
+        }
+      }
+    },
+    "sections": {
+      "en-US": [
+        {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "5bWVC3tXwWCsqii0kcsgo4"
+          }
+        },
+        {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "17JpHearMacQCiq06iSwEO"
+          }
+        }
+      ]
+    },
+    "subpages": {
+      "en-US": [
+        {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "5DMBXEqWdiGEOo4ICGGK8u"
+          }
+        },
+        {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "1x6xVb6hJeIAiKKMIOCOo6"
+          }
+        },
+        {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "5FsqsbMECsM62e04U8sY4Y"
+          }
+        },
+        {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "WvVdsSRyKq4Mi2mYUCYEu"
+          }
+        },
+        {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "4WSFtXJUZyqqgWco6Oi0yK"
+          }
+        },
+        {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "14zlUV8P36UywEoQQw804m"
+          }
+        },
+        {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "1nSH5Luy6cioukogkC64aG"
+          }
+        }
+      ]
+    }
+  }
+}
