@@ -35,7 +35,7 @@ class WCC::Contentful::Events
     publishers << WCC::Contentful::WebhookController if defined?(Rails)
 
     publishers.each do |publisher|
-      publisher.subscribe(self, with: :rebroadcast)
+      publisher.subscribe(self, with: :rebroadcast) if publisher.present?
     end
   end
 end
