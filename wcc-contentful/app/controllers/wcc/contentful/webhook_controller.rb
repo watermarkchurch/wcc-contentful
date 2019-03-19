@@ -10,6 +10,7 @@ module WCC::Contentful
     include WCC::Contentful::ServiceAccessors
     include Wisper::Publisher
 
+    wrap_parameters :webhook, include: [:sys, :fields]
     before_action :authorize_contentful
     protect_from_forgery unless: -> { request.format.json? }
 
