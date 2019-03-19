@@ -10,7 +10,6 @@ module WCC::Contentful
     include WCC::Contentful::ServiceAccessors
     include Wisper::Publisher
 
-    wrap_parameters :webhook, include: [:sys, :fields]
     before_action :authorize_contentful
     protect_from_forgery unless: -> { request.format.json? }
 
@@ -19,9 +18,10 @@ module WCC::Contentful
     end
 
     def receive
-      event = params.require('webhook').permit!
-      event.require('sys').require(%w[id type])
-      event = event.to_h
+      params.require('sys').require(%w[id type])
+      params.permit('sys', 'fields').permit!
+      event = params.slice('sys', 'fields')
+      event = event.permit!.to_h
 
       return unless check_environment(event)
 
