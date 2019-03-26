@@ -48,7 +48,7 @@ module WCC::Contentful::App::Middleware
     end
 
     def index(entry)
-      maybe_drop_job(entry) if entry.dig('sys', 'type') == 'Entry'
+      maybe_enqueue_job(entry) if entry.dig('sys', 'type') == 'Entry'
 
       self.class.update_storage(entry)
 
@@ -70,15 +70,15 @@ module WCC::Contentful::App::Middleware
     end
 
     if defined?(ActiveJob::Base)
-      def maybe_drop_job(entry)
+      def maybe_enqueue_job(entry)
         publish_at = entry.dig('fields', 'publishAt', 'en-US')
         unpublish_at = entry.dig('fields', 'unpublishAt', 'en-US')
 
-        drop_job_at(publish_at, entry) if publish_at.present? && before(publish_at)
-        drop_job_at(unpublish_at, entry) if unpublish_at.present? && before(unpublish_at)
+        enqueue_job_at(publish_at, entry) if publish_at.present? && before(publish_at)
+        enqueue_job_at(unpublish_at, entry) if unpublish_at.present? && before(unpublish_at)
       end
 
-      def drop_job_at(timestamp, entry)
+      def enqueue_job_at(timestamp, entry)
         ts = Time.zone.parse(timestamp)
 
         self.class.update_storage(entry, true)
@@ -137,7 +137,7 @@ module WCC::Contentful::App::Middleware
         end
       end
     else
-      def maybe_drop_job(entry)
+      def maybe_enqueue_job(entry)
       end
     end
   end
