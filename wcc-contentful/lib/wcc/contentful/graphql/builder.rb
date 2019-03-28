@@ -65,7 +65,7 @@ module WCC::Contentful::Graphql
                 filter[args[:filter]['field']] = { eq: args[:filter][:eq] }
                 relation = relation.apply(filter, ctx)
               end
-              relation.result
+              relation.to_enum
             }
           end
         end

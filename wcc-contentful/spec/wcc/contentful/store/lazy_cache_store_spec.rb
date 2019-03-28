@@ -10,6 +10,16 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
     )
   }
 
+  before do
+    content_types = JSON.parse(load_fixture('contentful/content_types_mgmt_api.json'))
+    indexer = WCC::Contentful::ContentTypeIndexer.new
+    content_types['items'].each do |raw_content_type|
+      indexer.index(raw_content_type)
+    end
+    allow(WCC::Contentful).to receive(:types)
+      .and_return(indexer.types)
+  end
+
   describe '#find' do
     it 'finds and caches items from the backing API' do
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
@@ -186,7 +196,7 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
           include: 2,
           cache_response: true
         })
-        _pages = found.result.take(5).force
+        _pages = found.take(5).force
 
         # assert
         stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\

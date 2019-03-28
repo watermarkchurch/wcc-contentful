@@ -50,7 +50,12 @@ module WCC::Contentful::Store
           raise ArgumentError, "Don't know how to build content delivery method #{cdn_method}"
         end
 
-        public_send("build_#{cdn_method}", config, *content_delivery_params)
+        built = public_send("build_#{cdn_method}", config, *content_delivery_params)
+        config.middleware.reverse
+          .reduce(built) do |memo, middleware|
+            middleware = middleware.call(memo, content_delivery_params, config)
+            middleware || memo
+          end
       end
 
       def validate!
@@ -76,7 +81,7 @@ module WCC::Contentful::Store
       end
 
       def build_direct(_config, *options)
-        if options.find { |array| array[:preview] == true }
+        if options.find { |array| array[:preview] }
           CDNAdapter.new(services.preview_client)
         else
           CDNAdapter.new(services.client)

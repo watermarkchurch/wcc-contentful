@@ -15,6 +15,7 @@ class WCC::Contentful::Configuration
     webhook_jobs
     content_delivery
     content_delivery_params
+    middleware
     store
     http_adapter
     update_schema_file
@@ -56,6 +57,12 @@ class WCC::Contentful::Configuration
   # See the source code for WCC::Contentful::SyncEngine::Job for an example of how
   # to implement a webhook job.
   attr_accessor :webhook_jobs
+
+  # An array of middlewares to be wrapped around the configured store.  The middlewares
+  # must implement a `store=` attribute writer in order to receive the next store in
+  # the middleware chain, and then must implement the store interface.
+  # See WCC::Contentful::Middleware::Store for more info.
+  attr_accessor :middleware
 
   # Returns true if the currently configured environment is pointing at `master`.
   def master?
@@ -172,6 +179,7 @@ class WCC::Contentful::Configuration
     @space = ''
     @default_locale = nil
     @content_delivery = :direct
+    @middleware = []
     @update_schema_file = :if_possible
     @schema_file = 'db/contentful-schema.json'
     @webhook_jobs = []
@@ -187,10 +195,17 @@ class WCC::Contentful::Configuration
       raise ArgumentError, 'A management_token is required in order to update the schema file.'
     end
 
-    webhook_jobs&.each do |job|
+    webhook_jobs.each do |job|
       next if job.respond_to?(:call) || job.respond_to?(:perform_later)
 
       raise ArgumentError, "The job '#{job}' must be an instance of ActiveJob::Base or respond to :call"
+    end
+
+    middleware.each do |m|
+      next if m.respond_to?(:call)
+
+      raise ArgumentError, "The middleware '#{m&.try(:name) || m}' cannot be applied!  " \
+        'It must respond to :call'
     end
   end
 

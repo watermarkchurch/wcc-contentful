@@ -10,7 +10,6 @@ module WCC::Contentful
     include WCC::Contentful::ServiceAccessors
     include Wisper::Publisher
 
-    wrap_parameters :webhook, include: [:sys, :fields]
     before_action :authorize_contentful
     protect_from_forgery unless: -> { request.format.json? }
 
@@ -19,14 +18,14 @@ module WCC::Contentful
     end
 
     def receive
-      event = params.require('webhook').permit!
-      event.require('sys').require(%w[id type])
-      event = event.to_h
+      params.require('sys').require(%w[id type])
+      params.permit('sys', 'fields')
+      event = params.slice('sys', 'fields').permit!.to_h
 
       return unless check_environment(event)
 
       # Immediately update the store, we may update again later using SyncEngine::Job.
-      store.index(event) if store.respond_to?(:index)
+      store.index(event) if store.index?
 
       event = WCC::Contentful::Event.from_raw(event, source: self)
       emit_event(event)

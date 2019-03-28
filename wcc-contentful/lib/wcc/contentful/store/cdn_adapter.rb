@@ -4,6 +4,11 @@ module WCC::Contentful::Store
   class CDNAdapter
     attr_reader :client
 
+    # The CDNAdapter cannot index data coming back from the Sync API.
+    def index?
+      false
+    end
+
     # Intentionally not implementing write methods
 
     def initialize(client)
@@ -47,7 +52,7 @@ module WCC::Contentful::Store
     class Query < Base::Query
       delegate :count, to: :response
 
-      def result
+      def to_enum
         return response.items unless @options[:include]
 
         response.items.map { |e| resolve_includes(e, @options[:include]) }
@@ -104,11 +109,11 @@ module WCC::Contentful::Store
           end
       end
 
-      def resolve_link(val, depth)
+      def resolve_link(val)
         return val unless val.is_a?(Hash) && val.dig('sys', 'type') == 'Link'
         return val unless included = response.includes[val.dig('sys', 'id')]
 
-        resolve_includes(included, depth - 1)
+        included
       end
 
       def parameter(field, operator: nil, context: nil, locale: false)

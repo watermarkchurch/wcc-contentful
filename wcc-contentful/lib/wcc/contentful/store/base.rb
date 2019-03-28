@@ -28,6 +28,11 @@ module WCC::Contentful::Store
       raise NotImplementedError, "#{self.class} does not implement #delete"
     end
 
+    # Returns true if this store can index values coming back from the sync API.
+    def index?
+      true
+    end
+
     # Processes a data point received via the Sync API.  This can be a published
     # entry or asset, or a 'DeletedEntry' or 'DeletedAsset'.  The default
     # implementation calls into #set and #delete to perform the appropriate
@@ -104,9 +109,18 @@ module WCC::Contentful::Store
     # override the #result method to return an array-like containing the query
     # results.
     class Query
-      delegate :first, to: :result
-      delegate :map, to: :result
-      delegate :count, to: :result
+      delegate :first,
+        :map,
+        :flat_map,
+        :count,
+        :select,
+        :reject,
+        :take,
+        :take_while,
+        :drop,
+        :drop_while,
+        :zip,
+        to: :to_enum
 
       OPERATORS = %i[
         eq
@@ -125,7 +139,7 @@ module WCC::Contentful::Store
 
       # @abstract Subclasses should provide this in order to fetch the results
       #   of the query.
-      def result
+      def to_enum
         raise NotImplementedError
       end
 
@@ -167,28 +181,18 @@ module WCC::Contentful::Store
       # @abstract Override this to provide a more efficient implementation for
       #   a given store.
       def resolve_includes(entry, depth)
-        return entry unless entry && depth && depth > 0 && fields = entry['fields']
+        return entry unless entry && depth && depth > 0
 
-        fields.each do |(_name, locales)|
-          # TODO: handle non-* locale
-          locales.each do |(locale, val)|
-            locales[locale] =
-              if val.is_a? Array
-                val.map { |e| resolve_link(e, depth) }
-              else
-                resolve_link(val, depth)
-              end
-          end
+        WCC::Contentful::LinkVisitor.new(entry, :Link, :Asset, depth: depth).map! do |val|
+          resolve_link(val)
         end
-
-        entry
       end
 
-      def resolve_link(val, depth)
+      def resolve_link(val)
         return val unless val.is_a?(Hash) && val.dig('sys', 'type') == 'Link'
         return val unless included = @store.find(val.dig('sys', 'id'))
 
-        resolve_includes(included, depth - 1)
+        included
       end
 
       private

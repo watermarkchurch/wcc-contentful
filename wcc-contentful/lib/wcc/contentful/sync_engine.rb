@@ -29,7 +29,7 @@ module WCC::Contentful
     attr_reader :client
 
     def should_sync?
-      store&.respond_to?(:index)
+      store&.index?
     end
 
     def initialize(state: nil, store: nil, client: nil, key: nil)
@@ -46,7 +46,7 @@ module WCC::Contentful
         end
 
         @store = store
-        @state = fetch
+        @state = fetch if should_sync?
       end
       if state
         @state = { 'token' => state } if state.is_a? String
@@ -78,7 +78,7 @@ module WCC::Contentful
           id = item.dig('sys', 'id')
           id_found ||= id == up_to_id
 
-          store.index(item) if store&.respond_to?(:index)
+          store.index(item) if store&.index?
           event = WCC::Contentful::Event.from_raw(item, source: self)
           yield(event) if block_given?
           emit_event(event)

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
+require 'wcc/contentful/link_visitor'
 
 ENV['RAILS_ENV'] ||= 'test'
 

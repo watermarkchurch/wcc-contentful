@@ -107,20 +107,7 @@ module WCC::Contentful::Store
         )
       end
 
-      def map
-        arr = []
-        resolve.each do |row|
-          arr << yield(
-          resolve_includes(
-            JSON.parse(row['data']),
-            @options[:include]
-          )
-          )
-        end
-        arr
-      end
-
-      def result
+      def to_enum
         arr = []
         resolve.each do |row|
           arr <<
