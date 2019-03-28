@@ -81,7 +81,7 @@ module WCC::Contentful::Store
       end
 
       def build_direct(_config, *options)
-        if options.find { |array| array[:preview] == true }
+        if options.find { |array| array[:preview] }
           CDNAdapter.new(services.preview_client)
         else
           CDNAdapter.new(services.client)

@@ -35,7 +35,7 @@ module WCC::Contentful::App::Middleware
 
     def self.call(store, content_delivery_params, config)
       # This does not apply in preview mode
-      return if content_delivery_params&.find { |h| h.is_a?(Hash) && (h[:preview] == true) }
+      return if content_delivery_params&.find { |h| h.is_a?(Hash) && h[:preview] }
 
       super
     end
