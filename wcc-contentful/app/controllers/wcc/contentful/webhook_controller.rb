@@ -19,9 +19,8 @@ module WCC::Contentful
 
     def receive
       params.require('sys').require(%w[id type])
-      params.permit('sys', 'fields').permit!
-      event = params.slice('sys', 'fields')
-      event = event.permit!.to_h
+      params.permit('sys', 'fields')
+      event = params.slice('sys', 'fields').permit!.to_h
 
       return unless check_environment(event)
 
