@@ -48,7 +48,7 @@ RSpec.describe WCC::Contentful::App::Middleware::PublishAt do
         }
       }
 
-      allow(store).to receive(:find).with('test').and_return(entry)
+      allow(store).to receive(:find).with('test', {}).and_return(entry)
 
       result = instance.find('test')
 
@@ -66,7 +66,7 @@ RSpec.describe WCC::Contentful::App::Middleware::PublishAt do
         }
       }
 
-      allow(store).to receive(:find).with('test').and_return(entry)
+      allow(store).to receive(:find).with('test', {}).and_return(entry)
 
       result = instance.find('test')
 
@@ -84,7 +84,7 @@ RSpec.describe WCC::Contentful::App::Middleware::PublishAt do
         }
       }
 
-      allow(store).to receive(:find).with('test').and_return(entry)
+      allow(store).to receive(:find).with('test', {}).and_return(entry)
 
       result = instance.find('test')
 
@@ -102,7 +102,7 @@ RSpec.describe WCC::Contentful::App::Middleware::PublishAt do
         }
       }
 
-      allow(store).to receive(:find).with('test').and_return(entry)
+      allow(store).to receive(:find).with('test', {}).and_return(entry)
 
       result = instance.find('test')
 
@@ -116,7 +116,7 @@ RSpec.describe WCC::Contentful::App::Middleware::PublishAt do
         }
       }
 
-      allow(store).to receive(:find).with('test').and_return(entry)
+      allow(store).to receive(:find).with('test', {}).and_return(entry)
 
       result = instance.find('test')
 
