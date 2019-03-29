@@ -96,7 +96,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
           .and_return(entry)
 
         # act
-        found = instance.find('1234', hint: 'test', option2: 'test2')
+        instance.find('1234', hint: 'test', option2: 'test2')
       end
     end
 
