@@ -58,7 +58,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
           }
         }
         expect(next_store).to receive(:find)
-          .with('1234')
+          .with('1234', {})
           .and_return(entry)
 
         # act
@@ -75,13 +75,28 @@ RSpec.describe WCC::Contentful::Middleware::Store do
           }
         }
         expect(next_store).to receive(:find)
-          .with('1234')
+          .with('1234', {})
           .and_return(entry)
 
         # act
         found = instance.find('1234')
 
         expect(found).to be nil
+      end
+
+      it 'passes hint options through' do
+        entry = {
+          'sys' => sys,
+          'fields' => {
+            'exclude' => { 'en-US' => true }
+          }
+        }
+        expect(next_store).to receive(:find)
+          .with('1234', { hint: 'test', option2: 'test2' })
+          .and_return(entry)
+
+        # act
+        instance.find('1234', hint: 'test', option2: 'test2')
       end
     end
 
@@ -262,7 +277,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
           }
         }
         expect(next_store).to receive(:find)
-          .with('1234')
+          .with('1234', {})
           .and_return(entry)
 
         # act
