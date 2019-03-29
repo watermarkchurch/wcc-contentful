@@ -28,8 +28,8 @@ module WCC::Contentful::Middleware::Store
     end
   end
 
-  def find(id)
-    found = store.find(id)
+  def find(id, **options)
+    found = store.find(id, **options)
     return transform(found) if found && select?(found)
   end
 
