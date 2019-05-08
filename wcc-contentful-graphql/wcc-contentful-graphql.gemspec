@@ -2,17 +2,17 @@
 
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'wcc/contentful/app/version'
+require 'wcc/contentful/graphql/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'wcc-contentful-app'
-  spec.version       = WCC::Contentful::App::VERSION
+  spec.name          = 'wcc-contentful-graphql'
+  spec.version       = WCC::Contentful::Graphql::VERSION
   spec.authors       = ['Watermark Dev']
   spec.email         = ['dev@watermark.org']
 
   spec.summary       = File.readlines(File.expand_path('README.md', __dir__)).join
-  spec.description   = 'Models, Controllers, and Views common to Watermark Church apps'
-  spec.homepage      = 'https://github.com/watermarkchurch/wcc-contentful/wcc-contentful-app'
+  spec.description   = 'GraphQL interface over WCC::Contentful store'
+  spec.homepage      = 'https://github.com/watermarkchurch/wcc-contentful/wcc-contentful-graphql'
   spec.license       = 'MIT'
 
   spec.required_ruby_version = '>= 2.3'
@@ -24,18 +24,14 @@ Gem::Specification.new do |spec|
 
   spec.require_paths = ['lib']
 
-  spec.add_development_dependency 'capybara', '~> 3.9'
   spec.add_development_dependency 'coveralls'
   spec.add_development_dependency 'dotenv', '~> 2.2'
-  spec.add_development_dependency 'erb_lint', '~> 0.0.26'
   spec.add_development_dependency 'httplog', '~> 1.0'
-  spec.add_development_dependency 'rails-controller-testing', '~> 1.0'
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rspec_junit_formatter', '~> 0.3.0'
   spec.add_development_dependency 'rubocop', '0.66'
   spec.add_development_dependency 'simplecov', '~> 0.16.1'
-  spec.add_development_dependency 'vcr', '~> 4.0'
   spec.add_development_dependency 'webmock', '~> 3.0'
 
   # Makes testing easy via `bundle exec guard`
@@ -59,7 +55,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'pg', '~> 1.0'
   spec.add_development_dependency 'typhoeus', '~> 1.3'
 
-  spec.add_dependency 'dry-validation', '~> 0.11.1'
-  spec.add_dependency 'redcarpet', '~> 3.4'
-  spec.add_dependency 'wcc-contentful', "~> #{WCC::Contentful::App::VERSION}"
+  spec.add_dependency 'graphql', '~> 1.7'
+  spec.add_dependency 'wcc-contentful', "~> #{WCC::Contentful::Graphql::VERSION}"
 end

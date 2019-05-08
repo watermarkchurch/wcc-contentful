@@ -1,0 +1,124 @@
+# frozen_string_literal: true
+
+require 'bundler/setup'
+require 'fileutils'
+
+require 'wcc/contentful'
+
+# rubocop:disable Metrics/LineLength
+# Disabling line length for contentful-schema-diff backtick execution
+
+namespace :app do
+  desc "Imports a set of models from a space as a single template for the ModelGenerator.\n" \
+    'Usage: rake wcc:import_model[content-type-id,space-id?,extra-content-type-1,extra-content-type-2...]'
+  task :import_model, [:model, :space] do |_t, args|
+    raise ArgumentError, 'Must give a content type' unless model = args[:model]
+
+    singular = model.downcase.singularize
+    plural = model.downcase.pluralize
+
+    all_models = [model, *args.extras]
+
+    unless space = args[:space].presence
+      space = ENV['CONTENTFUL_SPACE_ID']
+      space = "#{space}/#{ENV['CONTENTFUL_ENVIRONMENT']}" if ENV['CONTENTFUL_ENVIRONMENT']
+    end
+    raise ArgumentError, 'Must provide a space' unless space
+    unless mgmt_token = ENV['CONTENTFUL_MANAGEMENT_TOKEN']
+      raise ArgumentError, 'Must set CONTENTFUL_MANAGEMENT_TOKEN envvar'
+    end
+
+    client = WCC::Contentful::SimpleClient::Management.new(
+      space: space.split('/').first,
+      environment: space.split('/')[1],
+      management_token: mgmt_token
+    )
+
+    # Update the `content_types_mgmt_api.json` which we use to generate models in specs
+    content_types = JSON.parse(File.read('spec/fixtures/contentful/content_types_mgmt_api.json'))
+    all_models.each do |model_id|
+      content_type = client.content_type(model_id).raw
+
+      if index = content_types['items'].find_index { |ct| ct.dig('sys', 'id').casecmp(model_id) == 0 }
+        content_types['items'][index] = content_type
+      else
+        content_types['items'].push(content_type)
+      end
+    end
+    File.write('spec/fixtures/contentful/content_types_mgmt_api.json',
+      JSON.pretty_generate(content_types))
+
+    # Make the generator directory
+    FileUtils.mkdir_p("lib/generators/wcc/templates/#{singular}/models")
+
+    # Generate a migration for the content type
+    File.write('empty-export.json', <<~HEREDOC)
+      {
+        "contentTypes": [],
+        "editorInterfaces": [],
+        "entries": [],
+        "assets": [],
+        "locales": []
+      }
+    HEREDOC
+    begin
+      result = `contentful-schema-diff --from empty-export.json --to #{space} #{all_models.map { |m| "-c #{m}" }.join(' ')} -a '#{mgmt_token}' --out './' --one-file`
+      result = result.strip
+      raise StandardError, 'Error writing diff!' unless result.present?
+
+      FileUtils.mv(result, "lib/generators/wcc/templates/#{singular}/generated_add_#{plural}.ts")
+    ensure
+      File.unlink('empty-export.json')
+    end
+
+    const = WCC::Contentful::Helpers.constant_from_content_type(model)
+
+    # Write a model for the content type
+    File.write("lib/generators/wcc/templates/#{singular}/models/#{singular.tr('-', '_')}.rb", <<~HEREDOC)
+      # frozen_string_literal: true
+
+      # This model represents the '#{model}' content type in Contentful.  Any linked
+      # entries of the '#{model}' content type will be resolved as instances of this class.
+      # It exposes .find, .find_by, and .find_all methods to query Contentful.
+      class #{const} < WCC::Contentful::Model::#{const}
+        # Add custom validations to ensure that app-specific properties exist:
+        # validate_field :foo, :String, :required
+        # validate_field :bar_links, :Array, link_to: %w[bar baz]
+         # Override functionality or add utilities
+        #
+        # # Example: override equality
+        # def ===(other)
+        #   ...
+        # end
+        #
+        # # Example: override "title" attribute to always be titlecase.
+        # #          `@title` is populated by the gem in the initializer.
+        # def title
+        #   @title_titlecased ||= @title.titlecase
+        # end
+      end
+    HEREDOC
+
+    view_name = const.demodulize.underscore.sub('section_', '')
+    FileUtils.touch("app/views/sections/_#{view_name}.html.erb")
+    File.write("spec/views/sections/_#{view_name}.html.erb_spec.rb", <<~HEREDOC)
+      # frozen_string_literal: true
+
+      require 'rails_helper'
+
+      RSpec.describe 'sections/#{view_name}' do
+        helper WCC::Contentful::App::SectionHelper
+
+        it 'renders successfully' do
+          section = contentful_create('#{model}')
+
+          render partial: 'components/section', locals: { section: section }
+
+          expect(rendered).to have_css('section.#{model}.default')
+        end
+      end
+    HEREDOC
+  end
+end
+
+# rubocop:enable Metrics/LineLength
