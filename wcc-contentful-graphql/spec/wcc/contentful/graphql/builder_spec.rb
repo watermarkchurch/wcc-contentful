@@ -132,18 +132,20 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
       schema = subject.build_schema
 
       # act
-      query_string = '{
-        item: allMenuButton(filter: { field: "buttonStyle", eq: "rounded" }) {
+      query_string = '
+      query menuButtonByStyle($style: String!) {
+        buttons: allMenuButton(filter: { buttonStyle: { eq: $style } }) {
           id
           text
         }
       }'
-      result = schema.execute(query_string)
+      result = schema.execute(query_string, variables: { 'style' => 'rounded' })
 
       # assert
       expect(result.to_h['errors']).to be_nil
+      expect(result.to_h['data']['buttons'].count).to eq(3)
       expect(result.to_h['data']).to eq(
-        { 'item' => [
+        { 'buttons' => [
           {
             'id' => '3Jmk4yOwhOY0yKsI6mAQ2a',
             'text' => 'Find A Ministry for Your Church'
@@ -157,6 +159,31 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
             'text' => 'Cart'
           }
         ] }
+      )
+    end
+
+    it 'can query by arbitrary field' do
+      schema = subject.build_schema
+
+      # act
+      query_string = '
+      query menuButtonByStyle($text: String!) {
+        MenuButton(text: { eq: $text }) {
+          id
+          text
+        }
+      }'
+      result = schema.execute(query_string, variables: { 'text' => 'Ministries' })
+
+      # assert
+      expect(result.to_h['errors']).to be_nil
+      expect(result.to_h['data']).to eq(
+        {
+          'MenuButton' => {
+            'id' => '3bZRv5ISCkui6kguIwM2U0',
+            'text' => 'Ministries'
+          }
+        }
       )
     end
 

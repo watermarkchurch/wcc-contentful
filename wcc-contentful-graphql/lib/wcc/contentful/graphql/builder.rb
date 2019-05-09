@@ -42,11 +42,17 @@ module WCC::Contentful::Graphql
           field schema_type.name.to_sym do
             type schema_type
             argument :id, types.ID
-            description "Find a #{schema_type.name} by ID"
+            description "Find a #{schema_type.name}"
+
+            schema_type.fields.each do |(name, field)|
+              next unless input_type = Types::QueryOperatorInput.call(field.type)
+
+              argument name, input_type
+            end
 
             resolve ->(_obj, args, _ctx) {
               if args['id'].nil?
-                store.find_by(content_type: content_type)
+                store.find_by(content_type: content_type, filter: args.to_h)
               else
                 store.find(args['id'])
               end
@@ -55,16 +61,11 @@ module WCC::Contentful::Graphql
 
           field "all#{schema_type.name}".to_sym do
             type schema_type.to_list_type
-            argument :filter, Types::FilterType
+            argument :filter, Types::FilterInputType.call(schema_type)
 
             resolve ->(_obj, args, ctx) {
               relation = store.find_all(content_type: content_type)
-              # TODO: improve this POC
-              if args[:filter]
-                filter = {}
-                filter[args[:filter]['field']] = { eq: args[:filter][:eq] }
-                relation = relation.apply(filter, ctx)
-              end
+              relation = relation.apply(args[:filter].to_h, ctx) if args[:filter]
               relation.to_enum
             }
           end
