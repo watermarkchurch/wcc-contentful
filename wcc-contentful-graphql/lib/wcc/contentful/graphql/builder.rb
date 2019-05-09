@@ -17,6 +17,11 @@ module WCC::Contentful::Graphql
       @root_types = @schema_types.dup
     end
 
+    def configure(&block)
+      instance_exec(&block)
+      self
+    end
+
     def build_schema
       root_query_type = build_root_query(root_types)
 

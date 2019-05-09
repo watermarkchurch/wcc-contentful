@@ -544,5 +544,53 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
       expect(result2['errors']).to be nil
       expect(result2.dig('data', 'menu', 'secondGroup', 0, 'text')).to eq('Ministries')
     end
+
+    it 'can modify fields' do
+      markdownRedcarpetType =
+        GraphQL::ObjectType.define do
+          name 'markdownRedcarpet'
+
+          field :text, !types.String do
+            resolve ->(object, _args, _ctx) {
+              object
+            }
+          end
+          field :html, !types.String do
+            resolve ->(_object, _args, _ctx) {
+              '<div>Some HTML</div>'
+            }
+          end
+        end
+
+      schema = subject.configure do
+        schema_types['faq'].define do
+          field :answer, markdownRedcarpetType do
+            resolve ->(obj, _args, ctx) {
+              if obj.is_a? Array
+                obj.map { |o| o.dig('fields', 'answer', ctx[:locale] || 'en-US') }
+              else
+                obj.dig('fields', 'answer', ctx[:locale] || 'en-US')
+              end
+            }
+          end
+        end
+      end.build_schema
+
+      query_string = '{
+      faq: Faq(id: "1nzrZZShhWQsMcey28uOUQ") {
+        question
+        answer {
+          text
+          html
+        }
+      }
+      }'
+      result = schema.execute(query_string)
+
+      expect(result['errors']).to be nil
+      expect(result['data'].dig('faq', 'question')).to eq('A Faq')
+      expect(result['data'].dig('faq', 'answer', 'text')).to eq('This is my anwers')
+      expect(result['data'].dig('faq', 'answer', 'html')).to eq('<div>Some HTML</div>')
+    end
   end
 end
