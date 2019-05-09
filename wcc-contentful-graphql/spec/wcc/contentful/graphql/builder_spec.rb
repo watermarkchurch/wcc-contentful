@@ -514,5 +514,35 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
       expect(result.dig('data', 'homepage', 'favicons').length).to eq(4)
       expect(result.dig('data', 'homepage', 'favicons', 0, 'file', 'fileName')).to eq('favicon.ico')
     end
+
+    it 'can remove types from root' do
+      schema = subject.tap do |builder|
+        builder.root_types.delete('menuButton')
+      end.build_schema
+
+      # act
+      query1 = '{
+        button: MenuButton(text: { eq: "Ministries" }) {
+          id
+          text
+        }
+      }'
+      query2 = '{
+        menu: Menu(id: "FNlqULSV0sOy4IoGmyWOW") {
+          secondGroup {
+            ... on MenuButton {
+              id
+              text
+            }
+          }
+        }
+      }'
+      result1 = schema.execute(query1)
+      result2 = schema.execute(query2)
+
+      expect(result1['errors']).to_not be nil
+      expect(result2['errors']).to be nil
+      expect(result2.dig('data', 'menu', 'secondGroup', 0, 'text')).to eq('Ministries')
+    end
   end
 end

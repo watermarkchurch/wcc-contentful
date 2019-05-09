@@ -7,16 +7,18 @@ require_relative 'types'
 module WCC::Contentful::Graphql
   class Builder
     attr_reader :schema_types
+    attr_reader :root_types
 
     def initialize(types, store)
       @types = types
       @store = store
+
+      @schema_types = build_schema_types
+      @root_types = @schema_types.dup
     end
 
     def build_schema
-      @schema_types = build_schema_types
-
-      root_query_type = build_root_query(@schema_types)
+      root_query_type = build_root_query(root_types)
 
       builder = self
       GraphQL::Schema.define do
