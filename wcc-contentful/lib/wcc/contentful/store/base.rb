@@ -120,6 +120,7 @@ module WCC::Contentful::Store
         :drop,
         :drop_while,
         :zip,
+        :to_a,
         to: :to_enum
 
       OPERATORS = %i[

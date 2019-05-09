@@ -42,16 +42,12 @@ module WCC::Contentful::Middleware::Store
   end
 
   def find_all(options: nil, **args)
-    result =
-      store.find_all(**args.merge(options: options))
-        .select { |x| select?(x) }
-
-    result = result.map { |x| resolve_includes(x, options[:include]) } if options && options[:include]
-
-    result.map { |x| transform(x) }
+    Query.new(
+      store.find_all(**args.merge(options: options)),
+      self,
+      options
+    )   
   end
-
-  private
 
   def resolve_includes(entry, depth)
     return entry unless entry && depth && depth > 0
@@ -87,5 +83,26 @@ module WCC::Contentful::Middleware::Store
   # Override this with your own implementation.
   def transform(entry)
     entry
+  end
+
+  class Query < WCC::Contentful::Store::Base::Query
+    attr_reader :wrapped_query, :middleware, :options
+
+    delegate :apply, :apply_operator, to: :wrapped_query
+
+    def to_enum
+      result = wrapped_query.to_enum
+        .select { |x| middleware.select?(x) }
+
+      result = result.map { |x| middleware.resolve_includes(x, options[:include]) } if options && options[:include]
+
+      result.map { |x| middleware.transform(x) }
+    end
+
+    def initialize(wrapped_query, middleware, options)
+      @wrapped_query = wrapped_query
+      @middleware = middleware
+      @options = options
+    end
   end
 end
