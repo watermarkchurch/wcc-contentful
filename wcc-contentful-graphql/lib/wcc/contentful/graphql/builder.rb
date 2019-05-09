@@ -3,6 +3,9 @@
 require 'graphql'
 
 require_relative 'types'
+require_relative 'field_helper'
+
+GraphQL::Define::DefinedObjectProxy.__send__(:include, WCC::Contentful::Graphql::FieldHelper)
 
 module WCC::Contentful::Graphql
   class Builder
@@ -156,27 +159,7 @@ module WCC::Contentful::Graphql
               }
             end
           else
-            type =
-              case f.type
-              when :DateTime
-                Types::DateTimeType
-              when :Coordinates
-                Types::CoordinatesType
-              when :Json
-                Types::HashType
-              else
-                types.public_send(f.type)
-              end
-            type = type.to_list_type if f.array
-            field(f.name.to_sym, type) do
-              resolve ->(obj, _args, ctx) {
-                if obj.is_a? Array
-                  obj.map { |o| o.dig('fields', f.name, ctx[:locale] || 'en-US') }
-                else
-                  obj.dig('fields', f.name, ctx[:locale] || 'en-US')
-                end
-              }
-            end
+            contentful_field(f.name, f.type, array: f.array)
           end
         end
       end

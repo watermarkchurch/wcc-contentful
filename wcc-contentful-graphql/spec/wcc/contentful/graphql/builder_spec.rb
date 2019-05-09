@@ -546,7 +546,7 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
     end
 
     it 'can modify fields' do
-      markdownRedcarpetType =
+      markdown_redcarpet_type =
         GraphQL::ObjectType.define do
           name 'markdownRedcarpet'
 
@@ -564,15 +564,7 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
 
       schema = subject.configure do
         schema_types['faq'].define do
-          field :answer, markdownRedcarpetType do
-            resolve ->(obj, _args, ctx) {
-              if obj.is_a? Array
-                obj.map { |o| o.dig('fields', 'answer', ctx[:locale] || 'en-US') }
-              else
-                obj.dig('fields', 'answer', ctx[:locale] || 'en-US')
-              end
-            }
-          end
+          contentful_field :answer, markdown_redcarpet_type
         end
       end.build_schema
 
