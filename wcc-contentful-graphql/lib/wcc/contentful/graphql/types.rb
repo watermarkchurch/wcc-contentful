@@ -29,17 +29,35 @@ module WCC::Contentful::Graphql::Types
       field :lon, !types.Float, hash_key: 'lon'
     end
 
-  AnyScalarInputType =
-    GraphQL::ScalarType.define do
-      name 'Any'
+  StringQueryOperatorInput =
+    GraphQL::InputObjectType.define do
+      name 'StringQueryOperatorInput'
+
+      argument :eq, types.String
     end
 
-  FilterType =
-    GraphQL::InputObjectType.define do
-      name 'filter'
+  QueryOperatorInput =
+    ->(type) do
+      map = {
+        'String' => StringQueryOperatorInput
+        # 'Int' =>
+        # 'Boolean' =>
+      }
 
-      argument :field, !types.String
-      argument :eq, AnyScalarInputType
+      map[type.unwrap.name]
+    end
+
+  FilterInputType =
+    ->(schema_type) do
+      GraphQL::InputObjectType.define do
+        name "#{schema_type.name}FilterInput"
+
+        schema_type.fields.each do |(name, field)|
+          next unless input_type = QueryOperatorInput.call(field.type)
+
+          argument name, input_type
+        end
+      end
     end
 
   BuildUnionType =

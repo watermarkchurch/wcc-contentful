@@ -3,20 +3,30 @@
 require 'graphql'
 
 require_relative 'types'
+require_relative 'field_helper'
+
+GraphQL::Define::DefinedObjectProxy.__send__(:include, WCC::Contentful::Graphql::FieldHelper)
 
 module WCC::Contentful::Graphql
   class Builder
     attr_reader :schema_types
+    attr_reader :root_types
 
     def initialize(types, store)
       @types = types
       @store = store
+
+      @schema_types = build_schema_types
+      @root_types = @schema_types.dup
+    end
+
+    def configure(&block)
+      instance_exec(&block)
+      self
     end
 
     def build_schema
-      @schema_types = build_schema_types
-
-      root_query_type = build_root_query(@schema_types)
+      root_query_type = build_root_query(root_types)
 
       builder = self
       GraphQL::Schema.define do
@@ -42,11 +52,17 @@ module WCC::Contentful::Graphql
           field schema_type.name.to_sym do
             type schema_type
             argument :id, types.ID
-            description "Find a #{schema_type.name} by ID"
+            description "Find a #{schema_type.name}"
+
+            schema_type.fields.each do |(name, field)|
+              next unless input_type = Types::QueryOperatorInput.call(field.type)
+
+              argument name, input_type
+            end
 
             resolve ->(_obj, args, _ctx) {
               if args['id'].nil?
-                store.find_by(content_type: content_type)
+                store.find_by(content_type: content_type, filter: args.to_h)
               else
                 store.find(args['id'])
               end
@@ -55,16 +71,11 @@ module WCC::Contentful::Graphql
 
           field "all#{schema_type.name}".to_sym do
             type schema_type.to_list_type
-            argument :filter, Types::FilterType
+            argument :filter, Types::FilterInputType.call(schema_type)
 
             resolve ->(_obj, args, ctx) {
               relation = store.find_all(content_type: content_type)
-              # TODO: improve this POC
-              if args[:filter]
-                filter = {}
-                filter[args[:filter]['field']] = { eq: args[:filter][:eq] }
-                relation = relation.apply(filter, ctx)
-              end
+              relation = relation.apply(args[:filter].to_h, ctx) if args[:filter]
               relation.to_enum
             }
           end
@@ -148,27 +159,7 @@ module WCC::Contentful::Graphql
               }
             end
           else
-            type =
-              case f.type
-              when :DateTime
-                Types::DateTimeType
-              when :Coordinates
-                Types::CoordinatesType
-              when :Json
-                Types::HashType
-              else
-                types.public_send(f.type)
-              end
-            type = type.to_list_type if f.array
-            field(f.name.to_sym, type) do
-              resolve ->(obj, _args, ctx) {
-                if obj.is_a? Array
-                  obj.map { |o| o.dig('fields', f.name, ctx[:locale] || 'en-US') }
-                else
-                  obj.dig('fields', f.name, ctx[:locale] || 'en-US')
-                end
-              }
-            end
+            contentful_field(f.name, f.type, array: f.array)
           end
         end
       end

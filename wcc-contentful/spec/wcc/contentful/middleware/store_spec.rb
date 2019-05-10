@@ -205,10 +205,10 @@ RSpec.describe WCC::Contentful::Middleware::Store do
         # act
         found = instance.find_all(content_type: 'test', filter: { 'test' => 'ok' })
 
-        expect(found).to eq([
-                              entries[0],
-                              entries[2]
-                            ])
+        expect(found.to_a).to eq([
+                                   entries[0],
+                                   entries[2]
+                                 ])
       end
 
       it 'resolves as broken link for linked entry that doesnt match select?' do
@@ -238,7 +238,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
                                   filter: { 'sys.id' => '1234' },
                                   options: { include: 1 })
 
-        expect(found).to eq([{
+        expect(found.to_a).to eq([{
           'sys' => entries.dig(0, 'sys'),
           'fields' => {
             'link' => {
@@ -252,6 +252,47 @@ RSpec.describe WCC::Contentful::Middleware::Store do
             }
           }
         }])
+      end
+
+      it 'can apply filter' do
+        entries = [
+          {
+            'sys' => sys,
+            'fields' => {
+              'exclude' => nil
+            }
+          }, {
+            'sys' => sys,
+            'fields' => {
+              'exclude' => { 'en-US' => true }
+            }
+          }, {
+            'sys' => sys,
+            'fields' => {
+              'exclude' => { 'en-US' => false }
+            }
+          }
+        ]
+        query_double = double('query')
+        expect(next_store).to receive(:find_all)
+          .with(content_type: 'test', options: nil)
+          .and_return(query_double)
+
+        expect(query_double).to receive(:apply)
+          .with({ 'test' => 'ok' })
+          .and_return(query_double)
+        allow(query_double).to receive(:to_enum)
+          .and_return(entries)
+
+        # act
+        query = instance.find_all(content_type: 'test')
+        query.apply({ 'test' => 'ok' })
+        found = query.to_a
+
+        expect(found).to eq([
+                              entries[0],
+                              entries[2]
+                            ])
       end
     end
   end
@@ -364,7 +405,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
         # act
         found = instance.find_all(content_type: 'test', filter: { 'test' => 'ok' })
 
-        found.each do |entry|
+        found.to_a.each do |entry|
           expect(entry.dig('fields', 'excluded', 'en-US')).to eq 'no'
         end
       end
@@ -396,7 +437,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
                                   filter: { 'sys.id' => '1234' },
                                   options: { include: 1 })
 
-        expect(found[0].dig('fields', 'link', 'en-US', 'fields', 'excluded', 'en-US'))
+        expect(found.to_a[0].dig('fields', 'link', 'en-US', 'fields', 'excluded', 'en-US'))
           .to eq 'no'
       end
     end

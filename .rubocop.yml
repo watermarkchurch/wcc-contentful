@@ -45,14 +45,6 @@ Style/ClassAndModuleChildren:
 Style/FormatStringToken:
   EnforcedStyle: template
 
-Metrics/BlockLength:
-  Exclude:
-    # config files where we expect long blocks
-    - '*/*.gemspec'
-    # spec files that might have a big describe
-    - '*/spec/**/*.rb'
-    # dsl files https://stackoverflow.com/a/41187163
-
 Metrics/CyclomaticComplexity:
   Enabled: false
 
@@ -73,10 +65,6 @@ Metrics/ClassLength:
 
 Metrics/ModuleLength:
   Enabled: false
-
-Performance/UnfreezeString:
-  Exclude:
-    - '*/spec/**/*.rb'
 
 Style/BracesAroundHashParameters:
   Enabled: false
@@ -110,7 +98,10 @@ Style/SignalException:
 Layout/AlignParameters:
   EnforcedStyle: with_fixed_indentation
 
-Layout/IndentHash:
+Layout/AlignArguments:
+  EnforcedStyle: with_fixed_indentation
+
+Layout/IndentFirstHashElement:
   EnforcedStyle: consistent
 
 Layout/AlignHash:
