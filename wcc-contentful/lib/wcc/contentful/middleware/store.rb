@@ -46,7 +46,7 @@ module WCC::Contentful::Middleware::Store
       store.find_all(**args.merge(options: options)),
       self,
       options
-    )   
+    )
   end
 
   def resolve_includes(entry, depth)
@@ -91,8 +91,9 @@ module WCC::Contentful::Middleware::Store
     delegate :apply, :apply_operator, to: :wrapped_query
 
     def to_enum
-      result = wrapped_query.to_enum
-        .select { |x| middleware.select?(x) }
+      result =
+        wrapped_query.to_enum
+          .select { |x| middleware.select?(x) }
 
       result = result.map { |x| middleware.resolve_includes(x, options[:include]) } if options && options[:include]
 
