@@ -95,7 +95,9 @@ module WCC::Contentful::Middleware::Store
         wrapped_query.to_enum
           .select { |x| middleware.select?(x) }
 
-      result = result.map { |x| middleware.resolve_includes(x, options[:include]) } if options && options[:include]
+      if options && options[:include]
+        result = result.map { |x| middleware.resolve_includes(x, options[:include]) }
+      end
 
       result.map { |x| middleware.transform(x) }
     end
