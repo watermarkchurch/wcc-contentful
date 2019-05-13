@@ -13,7 +13,7 @@ group :development, :test do
   gem 'guard-rubocop'
   gem 'guard-shell', '~> 0.7.1'
   gem 'rake', '~> 12.3'
-  gem 'rubocop', require: false
+  gem 'rubocop', '0.68', require: false
 end
 
 gemspec path: './wcc-contentful'
