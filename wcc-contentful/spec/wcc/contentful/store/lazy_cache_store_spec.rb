@@ -211,6 +211,24 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
         expect(cached_product_list.dig('fields', 'collectionId', 'en-US')).to eq('Z2lk...')
       end
     end
+
+    context 'nil options' do
+      it 'does not blow up...' do
+        stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
+          .with(query: hash_including({
+            locale: '*',
+            content_type: 'menu',
+            'fields.name.en-US' => 'Main Menu'
+          }))
+          .to_return(body: load_fixture('contentful/lazy_cache_store/query_main_menu.json'))
+          .times(2)
+
+        # act
+        main_menu = store.find_all(content_type: 'menu')
+          .apply(name: 'Main Menu')
+          .first
+      end
+    end
   end
 
   describe '#find_by' do
