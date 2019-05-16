@@ -224,7 +224,7 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
           .times(2)
 
         # act
-        main_menu = store.find_all(content_type: 'menu')
+        store.find_all(content_type: 'menu')
           .apply(name: 'Main Menu')
           .first
       end
