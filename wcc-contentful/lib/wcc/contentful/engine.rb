@@ -39,5 +39,11 @@ module WCC::Contentful
     config.generators do |g|
       g.test_framework :rspec, fixture: false
     end
+
+    # Clear the model registry to allow dev reloads to work properly
+    # https://api.rubyonrails.org/classes/Rails/Railtie/Configuration.html#method-i-to_prepare
+    config.to_prepare do
+      WCC::Contentful::Model.clear_registry
+    end
   end
 end
