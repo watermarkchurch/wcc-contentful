@@ -457,13 +457,25 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     end
 
     after do
-      WCC::Contentful::Model.class_variable_get('@@registry').clear
+      WCC::Contentful::Model.clear_registry
 
       Object.send(:remove_const, :SUB_MENU) if defined?(SUB_MENU)
       Object.send(:remove_const, :SUB_MENU_BUTTON) if defined?(SUB_MENU_BUTTON)
       Object.send(:remove_const, :SUB_MENU_BUTTON_2) if defined?(SUB_MENU_BUTTON_2)
       Object.send(:remove_const, :SUB_MENU_BUTTON_3) if defined?(SUB_MENU_BUTTON_3)
       Object.send(:remove_const, :MenuButton) if defined?(MenuButton)
+    end
+
+    describe '.clear_registry' do
+      it 'clears the registry' do
+        _unused_class = Class.new(WCC::Contentful::Model::MenuButton)
+
+        expect(WCC::Contentful::Model.registry).to_not be_empty
+
+        WCC::Contentful::Model.clear_registry
+
+        expect(WCC::Contentful::Model.registry).to be_empty
+      end
     end
 
     it 'registered class is returned when a link is expanded' do

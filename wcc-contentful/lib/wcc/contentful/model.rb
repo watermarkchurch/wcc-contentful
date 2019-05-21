@@ -129,6 +129,11 @@ class WCC::Contentful::Model
     @@registry.dup.freeze
   end
 
+  # Sets registry to empty - useful for reloading environment in development
+  def self.clear_registry
+    @@registry&.clear
+  end
+
   # Checks if a content type has already been registered to a class and returns
   # that class.  If nil, the generated WCC::Contentful::Model::{content_type} class
   # will be resolved for this content type.
