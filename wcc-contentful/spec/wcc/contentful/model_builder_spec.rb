@@ -582,5 +582,32 @@ RSpec.describe WCC::Contentful::ModelBuilder do
         WCC::Contentful::Model.find('5NBhDw3i2kUqSwqYok4YQO')
       }.to raise_error(NameError)
     end
+
+    it 'uses the newest constant when rails auto-loading happens' do
+      file = Tempfile.open(['my_menu_button', '.rb'])
+      begin
+        begin
+          file.write(<<~RUBY)
+            class MenuButton < WCC::Contentful::Model::MenuButton
+            end
+          RUBY
+        ensure
+          file.close
+        end
+        load(file.path)
+
+        item = WCC::Contentful::Model.find '3Jmk4yOwhOY0yKsI6mAQ2a'
+        expect(item).to be_a MenuButton
+
+        # act: reload the file
+        Object.send(:remove_const, :MenuButton)
+        load(file.path)
+
+        item2 = WCC::Contentful::Model.find '3Jmk4yOwhOY0yKsI6mAQ2a'
+        expect(item2).to be_a MenuButton
+      ensure
+        file.unlink
+      end
+    end
   end
 end
