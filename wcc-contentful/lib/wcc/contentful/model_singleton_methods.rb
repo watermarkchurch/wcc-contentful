@@ -67,8 +67,13 @@ module WCC::Contentful::ModelSingletonMethods
   end
 
   def inherited(subclass)
-    # only register if it's not already registered
-    return if WCC::Contentful::Model.registered?(content_type)
+    # When rails does auto-reloading, a new class is created with the same name.
+    # Let's re-register the new class for this content type.
+    # However, if another different class is registered for this content type,
+    # don't register it.
+    if WCC::Contentful::Model.registered?(content_type)
+      return if WCC::Contentful::Model.registry[content_type].name != subclass.name
+    end
 
     WCC::Contentful::Model.register_for_content_type(content_type, klass: subclass)
   end
