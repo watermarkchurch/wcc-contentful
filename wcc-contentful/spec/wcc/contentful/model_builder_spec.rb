@@ -5,7 +5,12 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     WCC::Contentful::ModelBuilder.new(types)
   }
 
-  let(:types) { load_indexed_types }
+  let(:types) {
+    types = load_indexed_types
+    allow(WCC::Contentful).to receive(:types)
+      .and_return(types)
+    types
+  }
   let!(:store) {
     load_store_from_sync
   }
