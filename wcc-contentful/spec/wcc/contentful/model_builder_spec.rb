@@ -609,5 +609,34 @@ RSpec.describe WCC::Contentful::ModelBuilder do
         file.unlink
       end
     end
+
+    it 'uses the newest constant when it declares register_for_content_type' do
+      file = Tempfile.open(['my_menu_button', '.rb'])
+      begin
+        begin
+          file.write(<<~RUBY)
+            class MyButton < WCC::Contentful::Model::MenuButton
+              register_for_content_type 'menuButton'
+            end
+          RUBY
+        ensure
+          file.close
+        end
+        load(file.path)
+
+        item = WCC::Contentful::Model.find '3Jmk4yOwhOY0yKsI6mAQ2a'
+        expect(item).to be_a MyButton
+
+        # act: reload the file
+        Object.send(:remove_const, :MyButton)
+        load(file.path)
+
+        item2 = WCC::Contentful::Model.find '3Jmk4yOwhOY0yKsI6mAQ2a'
+        expect(item2).to be_a MyButton
+      ensure
+        Object.send(:remove_const, :MyButton)
+        file.unlink
+      end
+    end
   end
 end
