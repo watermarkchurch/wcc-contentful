@@ -469,6 +469,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       Object.send(:remove_const, :SUB_MENU_BUTTON_2) if defined?(SUB_MENU_BUTTON_2)
       Object.send(:remove_const, :SUB_MENU_BUTTON_3) if defined?(SUB_MENU_BUTTON_3)
       Object.send(:remove_const, :MenuButton) if defined?(MenuButton)
+      Object.send(:remove_const, :MyButton) if defined?(MyButton)
     end
 
     it 'registered class is returned when a link is expanded' do
@@ -583,60 +584,46 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       }.to raise_error(NameError)
     end
 
-    it 'uses the newest constant when rails auto-loading happens' do
-      file = Tempfile.open(['my_menu_button', '.rb'])
-      begin
-        begin
-          file.write(<<~RUBY)
-            class MenuButton < WCC::Contentful::Model::MenuButton
-            end
-          RUBY
-        ensure
-          file.close
+    it 'forces reloading after ActiveSupport triggers a reload' do
+      with_tempfile(['my_menu_button', '.rb'], <<~RUBY) do |file|
+        class MyButton < WCC::Contentful::Model::MenuButton
+          register_for_content_type 'menuButton'
         end
+      RUBY
+
         load(file.path)
-
-        item = WCC::Contentful::Model.find '3Jmk4yOwhOY0yKsI6mAQ2a'
-        expect(item).to be_a MenuButton
-
-        # act: reload the file
-        Object.send(:remove_const, :MenuButton)
-        load(file.path)
-
-        item2 = WCC::Contentful::Model.find '3Jmk4yOwhOY0yKsI6mAQ2a'
-        expect(item2).to be_a MenuButton
-      ensure
-        file.unlink
-      end
-    end
-
-    it 'uses the newest constant when it declares register_for_content_type' do
-      file = Tempfile.open(['my_menu_button', '.rb'])
-      begin
-        begin
-          file.write(<<~RUBY)
-            class MyButton < WCC::Contentful::Model::MenuButton
-              register_for_content_type 'menuButton'
-            end
-          RUBY
-        ensure
-          file.close
-        end
-        load(file.path)
-
         item = WCC::Contentful::Model.find '3Jmk4yOwhOY0yKsI6mAQ2a'
         expect(item).to be_a MyButton
 
-        # act: reload the file
+        # ActiveSupport removes constants and triggers to_prepare
         Object.send(:remove_const, :MyButton)
-        load(file.path)
+        expect(Object).to receive(:const_missing) do |name|
+          expect(name.to_s).to eq('MyButton')
+          load(file.path)
+          MyButton
+        end
+
+        # act
+        WCC::Contentful::Model.reload!
 
         item2 = WCC::Contentful::Model.find '3Jmk4yOwhOY0yKsI6mAQ2a'
         expect(item2).to be_a MyButton
-      ensure
-        Object.send(:remove_const, :MyButton)
-        file.unlink
       end
+    end
+  end
+
+  def with_tempfile(name, contents)
+    file = Tempfile.open(name)
+    begin
+      begin
+        file.write(contents)
+      ensure
+        file.close
+      end
+
+      yield file
+    ensure
+      file.unlink
     end
   end
 end
