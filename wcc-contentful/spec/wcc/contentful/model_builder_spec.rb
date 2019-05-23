@@ -584,26 +584,6 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       }.to raise_error(NameError)
     end
 
-    it 'uses the newest constant when rails auto-loading happens' do
-      with_tempfile(['my_menu_button', '.rb'], <<~RUBY) do |file|
-        class MenuButton < WCC::Contentful::Model::MenuButton
-        end
-      RUBY
-
-        load(file.path)
-
-        item = WCC::Contentful::Model.find '3Jmk4yOwhOY0yKsI6mAQ2a'
-        expect(item).to be_a MenuButton
-
-        # act: reload the file
-        Object.send(:remove_const, :MenuButton)
-        load(file.path)
-
-        item2 = WCC::Contentful::Model.find '3Jmk4yOwhOY0yKsI6mAQ2a'
-        expect(item2).to be_a MenuButton
-      end
-    end
-
     it 'forces reloading after ActiveSupport triggers a reload' do
       with_tempfile(['my_menu_button', '.rb'], <<~RUBY) do |file|
         class MyButton < WCC::Contentful::Model::MenuButton
