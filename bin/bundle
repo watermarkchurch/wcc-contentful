@@ -6,10 +6,15 @@ if [[ -z "$BUNDLE_GEMFILE" ]]; then
   export BUNDLE_GEMFILE=`pwd`/Gemfile
 fi
 
-cd wcc-contentful
-echo "$(basename `pwd`) $ bundle $*"
-bundle "$@"
-cd ../wcc-contentful-app
-echo "$(basename `pwd`) $ bundle $*"
-bundle "$@"
-cd ..
+gems=(wcc-*)
+
+for gem in "${gems[@]}"
+do
+  # in a subshell, CD into the directory and run the command
+  (
+    cd $gem;
+    echo "$(basename `pwd`) $ bundle $*";
+    bundle "$@";
+  )
+done
+
