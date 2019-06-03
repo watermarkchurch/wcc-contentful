@@ -1,20 +1,45 @@
 # frozen_string_literal: true
 
 require 'bump/tasks'
+require 'bundler/gem_helper'
+require 'active_support/inflector'
 
-task :check do
-  require_relative 'wcc-contentful/lib/wcc/contentful/version'
-  require_relative 'wcc-contentful-app/lib/wcc/contentful/app/version'
+require_relative 'wcc-contentful/lib/wcc/contentful/version'
+version = WCC::Contentful::VERSION
 
-  unless WCC::Contentful::App::VERSION == WCC::Contentful::VERSION
-    raise 'Versions are not synchronized!  Please update wcc-contentful-app/lib/wcc/contentful/app/version.rb'
+
+GEMS = [
+  'wcc-contentful',
+  'wcc-contentful-app',
+  'wcc-contentful-graphql'
+]
+
+GEMS.each do |name|
+  namespace name do
+    Dir.chdir(name) do
+      Bundler::GemHelper.install_tasks
+    end
   end
 end
 
 def sync_versions
   current = Bump::Bump.current
-  Dir.chdir('wcc-contentful-app') do
-    Bump::Bump.run('set', version: current, commit: false, bundle: false, tag: false)
+  GEMS.each do |gem|
+    Dir.chdir(gem) do
+      Bump::Bump.run('set', version: current, commit: false, bundle: false, tag: false)
+    end
+  end
+end
+
+task :check do
+  GEMS.each do |gem|
+    version_file = "#{gem}/lib/#{gem.gsub('-', '/')}/version"
+    require_relative version_file
+    version_const = to_const(gem).const_get('VERSION')
+
+    unless version_const == version
+      raise "Versions are not synchronized!  Please update #{version_file}.rb"
+    end
   end
 end
 
@@ -30,25 +55,14 @@ namespace :bump do
   end
 end
 
-require "bundler/gem_helper"
-
-gems = [
-  'wcc-contentful',
-  'wcc-contentful-app'
-]
-
-gems.each do |name|
-  namespace name do
-    Dir.chdir(name) do
-      Bundler::GemHelper.install_tasks
-    end
-  end
-end
-
 desc "Create tag and build and push all gems\n" \
   "To prevent publishing in RubyGems use `gem_push=no rake release`"
-task release: [:check].concat(gems.map { |g| "#{g}:release" })
-desc "Build #{gems.join(',')} into the pkg directory."
-task build: gems.map { |g| "#{g}:build" }
-task install: gems.map { |g| "#{g}:install" }
-task "install:local" => gems.map { |g| "#{g}:install:local" }
+task release: [:check].concat(GEMS.map { |g| "#{g}:release" })
+desc "Build #{GEMS.join(',')} into the pkg directory."
+task build: GEMS.map { |g| "#{g}:build" }
+task install: GEMS.map { |g| "#{g}:install" }
+task "install:local" => GEMS.map { |g| "#{g}:install:local" }
+
+def to_const(gem)
+  gem.split('-').map(&:titleize).join('::').gsub('Wcc', 'WCC').constantize
+end
