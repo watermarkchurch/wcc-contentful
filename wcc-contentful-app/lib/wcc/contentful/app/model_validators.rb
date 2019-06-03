@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+gem 'dry-validation'
 require 'dry-validation'
 
 require_relative 'model_validators/dsl'
