@@ -77,6 +77,8 @@ class WCC::Contentful::Model
   # Accepts a content type ID as a string and returns the Ruby constant
   # stored in the registry that represents this content type.
   def self.resolve_constant(content_type)
+    raise ArgumentError, 'content_type cannot be nil' unless content_type
+
     const = @@registry[content_type]
     return const if const
 
