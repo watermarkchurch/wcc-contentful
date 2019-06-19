@@ -583,6 +583,15 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
         expect(title).to be_nil
       end
     end
+
+    context 'when markdown link is missing protocol' do
+      it 'returns nil in the title slot' do
+        markdown_link = 'www.watermark.org'
+        url = helper.url_and_title(markdown_link)[0]
+
+        expect(url).to eq('www.watermark.org')
+      end
+    end
   end
 
   describe '#capture_individual_classes' do
