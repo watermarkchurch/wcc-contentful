@@ -18,11 +18,16 @@ $(function() {
   function handleResponse($form, event, status, xhr) {
     // Handle backwards compat for [rails/jquery]-ujs ajax callbacks
     var json
-    if (event.detail) {
-      json = JSON.parse(event.detail[2].response)
-      status = event.detail[1]
-    } else {
-      json = xhr.responseJSON
+    try {
+      if (event.detail) {
+        json = JSON.parse(event.detail[2].response)
+        status = event.detail[1]
+      } else {
+        json = xhr.responseJSON
+      }
+    } catch(ex) {
+      status = 'error'
+      json = {}
     }
 
     if (status == 'OK' || status == 'success') {
@@ -37,7 +42,7 @@ $(function() {
     } else if (json.message) {
       $form.append(warningAlert(json.message))
     } else {
-      alert('Sorry, something went wrong.')
+      $form.append(warningAlert('Sorry, something went wrong.'))
     }
   }
 
@@ -45,11 +50,21 @@ $(function() {
     var $form = $(input)
 
     $form.on('ajax:success', function(event, data, status, xhr) {
-      handleResponse($form, event, status, xhr)
+      try {
+        handleResponse($form, event, status, xhr)
+      } catch(ex) {
+        alert('Sorry, something went wrong.')
+        throw ex
+      }
     })
 
     $form.on('ajax:error', function(event, xhr, status) {
-      handleResponse($form, event, status, xhr)
+      try {
+        handleResponse($form, event, status, xhr)
+      } catch(ex) {
+        alert('Sorry, something went wrong.')
+        throw ex
+      }
     })
   })
 })
