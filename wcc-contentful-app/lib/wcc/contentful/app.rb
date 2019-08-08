@@ -19,7 +19,7 @@ module WCC::Contentful::App
 
   def self.configure
     if initialized || WCC::Contentful.initialized
-      raise InitializationError, 'Cannot configure after initialization'
+      raise WCC::Contentful::InitializationError, 'Cannot configure after initialization'
     end
 
     WCC::Contentful.configure do |wcc_contentful_config|
