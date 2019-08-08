@@ -77,6 +77,24 @@ RSpec.shared_examples 'contentful store' do
     JSON
   }
 
+  before do
+    allow(WCC::Contentful).to receive(:types)
+      .and_return({
+        'root' => double(fields: {
+          'name' => double(name: 'name', type: :String, array: false),
+          'link' => double(name: 'link', type: :Link, array: false),
+          'links' => double(name: 'links', type: :Link, array: true)
+        }),
+        'shallow' => double(fields: {
+          'name' => double(name: 'name', type: :String, array: false)
+        }),
+        'deep' => double(fields: {
+          'name' => double(name: 'name', type: :String, array: false),
+          'subLink' => double(name: 'subLink', type: :Link, array: false)
+        })
+      })
+  end
+
   describe '#set/#find' do
     describe 'ensures that the stored value is of type Hash' do
       it 'should not raise an error if value is a Hash' do
@@ -442,6 +460,7 @@ RSpec.shared_examples 'contentful store' do
       root = {
         'sys' => {
           'id' => 'root',
+          'type' => 'Entry',
           'contentType' => { 'sys' => { 'id' => 'root' } }
         },
         'fields' => {
@@ -456,14 +475,22 @@ RSpec.shared_examples 'contentful store' do
       shallow =
         1.upto(3).map do |i|
           {
-            'sys' => { 'id' => "shallow#{i}", 'contentType' => make_link_to('shallow', 'ContentType') },
+            'sys' => {
+              'id' => "shallow#{i}",
+              'type' => 'Entry',
+              'contentType' => make_link_to('shallow', 'ContentType')
+            },
             'fields' => { 'name' => { 'en-US' => "shallow#{i}" } }
           }
         end
       deep =
         1.upto(2).map do |i|
           {
-            'sys' => { 'id' => "deep#{i}", 'contentType' => make_link_to('deep', 'ContentType') },
+            'sys' => {
+              'id' => "deep#{i}",
+              'type' => 'Entry',
+              'contentType' => make_link_to('deep', 'ContentType')
+            },
             'fields' => {
               'name' => { 'en-US' => "deep#{i}" },
               'subLink' => { 'en-US' => make_link_to("shallow#{i}") }

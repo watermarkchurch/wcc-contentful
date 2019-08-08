@@ -35,5 +35,9 @@ module WCC::Contentful::App
     def use_target_blank?(url)
       url.scan(/(\s|^)(https?:\/\/\S*)/).present?
     end
+
+    def table(header, body)
+      "<table class=\"table\">#{header}#{body}</table>"
+    end
   end
 end

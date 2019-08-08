@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = File.readlines(File.expand_path('README.md', __dir__)).join
   spec.description   = 'Models, Controllers, and Views common to Watermark Church apps'
-  spec.homepage      = 'https://github.com/watermarkchurch/wcc-contentful/wcc-cms'
+  spec.homepage      = 'https://github.com/watermarkchurch/wcc-contentful/wcc-contentful-app'
   spec.license       = 'MIT'
 
   spec.required_ruby_version = '>= 2.3'
@@ -33,7 +33,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rspec_junit_formatter', '~> 0.3.0'
-  spec.add_development_dependency 'rubocop', '~> 0.52'
+  spec.add_development_dependency 'rubocop', '0.68'
   spec.add_development_dependency 'simplecov', '~> 0.16.1'
   spec.add_development_dependency 'vcr', '~> 4.0'
   spec.add_development_dependency 'webmock', '~> 3.0'
@@ -48,12 +48,13 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'generator_spec', '~> 0.9.4'
   spec.add_development_dependency 'rails', '~> 5.1'
   spec.add_development_dependency 'rspec-rails', '~> 3.7'
-  spec.add_development_dependency 'sqlite3'
+  spec.add_development_dependency 'sqlite3', '~> 1.3.6'
   spec.add_development_dependency 'timecop', '~> 0.9.1'
 
   # optional dependencies
   spec.add_development_dependency 'contentful', '2.6.0'
   spec.add_development_dependency 'contentful-management', '2.0.2'
+  spec.add_development_dependency 'dry-validation', '~> 0.11.1'
   spec.add_development_dependency 'graphql', '~> 1.7'
   spec.add_development_dependency 'http', '> 1.0', '< 3.0'
   spec.add_development_dependency 'pg', '~> 1.0'

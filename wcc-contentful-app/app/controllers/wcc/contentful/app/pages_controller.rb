@@ -27,11 +27,15 @@ class WCC::Contentful::App::PagesController < ApplicationController
     return super if defined?(super)
 
     @preview ||=
-      if ENV['CONTENTFUL_PREVIEW_PASSWORD'].present?
-        params[:preview]&.chomp == ENV['CONTENTFUL_PREVIEW_PASSWORD']&.chomp
+      if preview_password.present?
+        params[:preview]&.chomp == preview_password.chomp
       else
         false
       end
+  end
+
+  def preview_password
+    WCC::Contentful::App.configuration.preview_password
   end
 
   def page_model
@@ -42,10 +46,16 @@ class WCC::Contentful::App::PagesController < ApplicationController
     WCC::Contentful::Model.resolve_constant('redirect')
   end
 
-  def global_site_config
+  def site_config_model
     # They may have not installed `site-config` in the project
-    return unless defined?(WCC::Contentful::Model::SiteConfig)
+    WCC::Contentful::Model.resolve_constant('site-config')
+  rescue WCC::Contentful::ContentTypeNotFoundError
+    nil
+  end
 
-    @global_site_config ||= WCC::Contentful::Model::SiteConfig.instance(preview?)
+  def global_site_config
+    return unless model = site_config_model
+
+    @global_site_config ||= model.instance(preview?)
   end
 end

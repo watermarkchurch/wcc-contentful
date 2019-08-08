@@ -23,7 +23,7 @@ class WCC::Contentful::DownloadsSchema
   def update!
     FileUtils.mkdir_p(File.dirname(@file))
 
-    File.write(@file, JSON.pretty_generate({
+    File.write(@file, format_json({
       'contentTypes' => content_types,
       'editorInterfaces' => editor_interfaces
     }))
@@ -89,5 +89,13 @@ class WCC::Contentful::DownloadsSchema
     else
       expected == actual
     end
+  end
+
+  def format_json(hash)
+    json_string = JSON.pretty_generate(hash)
+
+    # The pretty_generate format differs from contentful-shell and nodejs formats
+    # only in its treatment of empty arrays in the "validations" field.
+    json_string.gsub(/\[\n\n\s+\]/, '[]')
   end
 end

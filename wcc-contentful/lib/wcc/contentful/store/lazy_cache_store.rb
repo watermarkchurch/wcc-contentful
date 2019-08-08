@@ -45,7 +45,7 @@ module WCC::Contentful::Store
     end
 
     def find_all(content_type:, options: nil)
-      build_query(content_type: content_type, options: options.dup)
+      build_query(content_type: content_type, options: options&.dup)
     end
 
     # #index is called whenever the sync API comes back with more data.
@@ -70,6 +70,10 @@ module WCC::Contentful::Store
       end
     end
 
+    def index?
+      true
+    end
+
     def set(key, value)
       ensure_hash value
       old = @cache.read(key)
@@ -86,7 +90,7 @@ module WCC::Contentful::Store
     private
 
     def build_query(content_type:, options: nil)
-      if options.delete(:cache_response)
+      if options&.delete(:cache_response)
         Query.new(
           store: self,
           client: @client,

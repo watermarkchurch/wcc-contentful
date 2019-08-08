@@ -9,6 +9,7 @@ require 'webmock/rspec'
 require 'vcr'
 require 'httplog'
 require 'byebug'
+require 'wisper/rspec/matchers'
 
 require 'bench_helper'
 
@@ -38,6 +39,7 @@ RSpec.configure do |config|
 
   config.include FixturesHelper
   config.include_context 'Contentful config'
+  config.include(Wisper::RSpec::BroadcastMatcher)
 
   config.before(:each) do
     WCC::Contentful.instance_variable_set('@configuration', nil)
@@ -54,6 +56,7 @@ RSpec.configure do |config|
       end
     end
     WCC::Contentful::Model.class_variable_get('@@registry').clear
+    Wisper.clear
   end
 end
 

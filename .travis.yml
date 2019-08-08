@@ -16,9 +16,6 @@ addons:
     packages:
     - postgresql-10
     - postgresql-client-10
-env:
-  global:
-  - PGPORT=5433
 before_install: gem install bundler -v 1.16.1
 install:
   - bundle install --path /tmp/vendor/bundle

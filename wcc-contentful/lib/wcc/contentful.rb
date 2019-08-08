@@ -10,6 +10,7 @@ require 'wcc/contentful/configuration'
 require 'wcc/contentful/downloads_schema'
 require 'wcc/contentful/exceptions'
 require 'wcc/contentful/helpers'
+require 'wcc/contentful/link_visitor'
 require 'wcc/contentful/services'
 require 'wcc/contentful/simple_client'
 require 'wcc/contentful/store'
@@ -19,6 +20,8 @@ require 'wcc/contentful/model_methods'
 require 'wcc/contentful/model_singleton_methods'
 require 'wcc/contentful/model_builder'
 require 'wcc/contentful/sync_engine'
+require 'wcc/contentful/events'
+require 'wcc/contentful/middleware'
 
 # The root namespace of the wcc-contentful gem
 #
@@ -26,6 +29,8 @@ require 'wcc/contentful/sync_engine'
 # initializer.
 module WCC::Contentful
   class << self
+    attr_reader :initialized
+
     # Gets the current configuration, after calling WCC::Contentful.configure
     attr_reader :configuration
 

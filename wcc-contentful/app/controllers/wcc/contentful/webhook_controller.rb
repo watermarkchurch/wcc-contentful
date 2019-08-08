@@ -8,6 +8,7 @@ module WCC::Contentful
   # the jobs configured in {WCC::Contentful::Configuration WCC::Contentful::Configuration#webhook_jobs}
   class WebhookController < ApplicationController
     include WCC::Contentful::ServiceAccessors
+    include Wisper::Publisher
 
     before_action :authorize_contentful
     protect_from_forgery unless: -> { request.format.json? }
@@ -17,27 +18,17 @@ module WCC::Contentful
     end
 
     def receive
-      event = params.require('webhook').permit!
-      event.require('sys').require(%w[id type])
-      event = event.to_h
+      params.require('sys').require(%w[id type])
+      params.permit('sys', 'fields')
+      event = params.slice('sys', 'fields').permit!.to_h
+
+      return unless check_environment(event)
 
       # Immediately update the store, we may update again later using SyncEngine::Job.
-      store.index(event) if store.respond_to?(:index)
+      store.index(event) if store.index?
 
-      jobs.each do |job|
-        begin
-          if job.respond_to?(:perform_later)
-            job.perform_later(event)
-          elsif job.respond_to?(:call)
-            job.call(event)
-          else
-            Rails.logger.error "Misconfigured webhook job: #{job} does not respond to " \
-              ':perform_later or :call'
-          end
-        rescue StandardError => e
-          Rails.logger.error "Error in job #{job}: #{e}"
-        end
-      end
+      event = WCC::Contentful::Event.from_raw(event, source: self)
+      emit_event(event)
     end
 
     private
@@ -62,10 +53,19 @@ module WCC::Contentful
       render json: { msg: 'This endpoint only responds to webhooks from Contentful' }, status: 406
     end
 
-    def jobs
-      jobs = []
-      jobs << WCC::Contentful::SyncEngine::Job if sync_engine&.should_sync?
-      jobs.push(*WCC::Contentful.configuration.webhook_jobs)
+    def check_environment(event)
+      environment_id = event.dig('sys', 'environment', 'sys', 'id')
+      return true unless environment_id.present?
+
+      configured_environment = WCC::Contentful.configuration.environment.presence || 'master'
+      configured_environment.casecmp(environment_id) == 0
+    end
+
+    def emit_event(event)
+      type = event.dig('sys', 'type')
+      raise ArgumentError, "Unknown event type #{event}" unless type.present?
+
+      broadcast(type, event)
     end
   end
 end

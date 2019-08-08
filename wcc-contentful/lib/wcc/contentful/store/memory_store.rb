@@ -45,7 +45,7 @@ module WCC::Contentful::Store
     end
 
     class Query < Base::Query
-      def result
+      def to_enum
         return @relation.dup unless @options[:include]
 
         @relation.map { |e| resolve_includes(e, @options[:include]) }

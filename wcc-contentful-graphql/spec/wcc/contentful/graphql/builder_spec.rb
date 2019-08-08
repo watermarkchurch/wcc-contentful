@@ -132,18 +132,20 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
       schema = subject.build_schema
 
       # act
-      query_string = '{
-        item: allMenuButton(filter: { field: "buttonStyle", eq: "rounded" }) {
+      query_string = '
+      query menuButtonByStyle($style: String!) {
+        buttons: allMenuButton(filter: { buttonStyle: { eq: $style } }) {
           id
           text
         }
       }'
-      result = schema.execute(query_string)
+      result = schema.execute(query_string, variables: { 'style' => 'rounded' })
 
       # assert
       expect(result.to_h['errors']).to be_nil
+      expect(result.to_h['data']['buttons'].count).to eq(3)
       expect(result.to_h['data']).to eq(
-        { 'item' => [
+        { 'buttons' => [
           {
             'id' => '3Jmk4yOwhOY0yKsI6mAQ2a',
             'text' => 'Find A Ministry for Your Church'
@@ -157,6 +159,31 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
             'text' => 'Cart'
           }
         ] }
+      )
+    end
+
+    it 'can query by arbitrary field' do
+      schema = subject.build_schema
+
+      # act
+      query_string = '
+      query menuButtonByStyle($text: String!) {
+        MenuButton(text: { eq: $text }) {
+          id
+          text
+        }
+      }'
+      result = schema.execute(query_string, variables: { 'text' => 'Ministries' })
+
+      # assert
+      expect(result.to_h['errors']).to be_nil
+      expect(result.to_h['data']).to eq(
+        {
+          'MenuButton' => {
+            'id' => '3bZRv5ISCkui6kguIwM2U0',
+            'text' => 'Ministries'
+          }
+        }
       )
     end
 
@@ -486,6 +513,76 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
 
       expect(result.dig('data', 'homepage', 'favicons').length).to eq(4)
       expect(result.dig('data', 'homepage', 'favicons', 0, 'file', 'fileName')).to eq('favicon.ico')
+    end
+
+    it 'can remove types from root' do
+      schema = subject.tap do |builder|
+        builder.root_types.delete('menuButton')
+      end.build_schema
+
+      # act
+      query1 = '{
+        button: MenuButton(text: { eq: "Ministries" }) {
+          id
+          text
+        }
+      }'
+      query2 = '{
+        menu: Menu(id: "FNlqULSV0sOy4IoGmyWOW") {
+          secondGroup {
+            ... on MenuButton {
+              id
+              text
+            }
+          }
+        }
+      }'
+      result1 = schema.execute(query1)
+      result2 = schema.execute(query2)
+
+      expect(result1['errors']).to_not be nil
+      expect(result2['errors']).to be nil
+      expect(result2.dig('data', 'menu', 'secondGroup', 0, 'text')).to eq('Ministries')
+    end
+
+    it 'can modify fields' do
+      markdown_redcarpet_type =
+        GraphQL::ObjectType.define do
+          name 'markdownRedcarpet'
+
+          field :text, !types.String do
+            resolve ->(object, _args, _ctx) {
+              object
+            }
+          end
+          field :html, !types.String do
+            resolve ->(_object, _args, _ctx) {
+              '<div>Some HTML</div>'
+            }
+          end
+        end
+
+      schema = subject.configure do
+        schema_types['faq'].define do
+          contentful_field :answer, markdown_redcarpet_type
+        end
+      end.build_schema
+
+      query_string = '{
+      faq: Faq(id: "1nzrZZShhWQsMcey28uOUQ") {
+        question
+        answer {
+          text
+          html
+        }
+      }
+      }'
+      result = schema.execute(query_string)
+
+      expect(result['errors']).to be nil
+      expect(result['data'].dig('faq', 'question')).to eq('A Faq')
+      expect(result['data'].dig('faq', 'answer', 'text')).to eq('This is my anwers')
+      expect(result['data'].dig('faq', 'answer', 'html')).to eq('<div>Some HTML</div>')
     end
   end
 end

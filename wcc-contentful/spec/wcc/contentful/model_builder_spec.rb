@@ -5,7 +5,12 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     WCC::Contentful::ModelBuilder.new(types)
   }
 
-  let(:types) { load_indexed_types }
+  let(:types) {
+    types = load_indexed_types
+    allow(WCC::Contentful).to receive(:types)
+      .and_return(types)
+    types
+  }
   let!(:store) {
     load_store_from_sync
   }
@@ -464,6 +469,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       Object.send(:remove_const, :SUB_MENU_BUTTON_2) if defined?(SUB_MENU_BUTTON_2)
       Object.send(:remove_const, :SUB_MENU_BUTTON_3) if defined?(SUB_MENU_BUTTON_3)
       Object.send(:remove_const, :MenuButton) if defined?(MenuButton)
+      Object.send(:remove_const, :MyButton) if defined?(MyButton)
     end
 
     it 'registered class is returned when a link is expanded' do
@@ -576,6 +582,48 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       expect {
         WCC::Contentful::Model.find('5NBhDw3i2kUqSwqYok4YQO')
       }.to raise_error(NameError)
+    end
+
+    it 'forces reloading after ActiveSupport triggers a reload' do
+      with_tempfile(['my_menu_button', '.rb'], <<~RUBY) do |file|
+        class MyButton < WCC::Contentful::Model::MenuButton
+          register_for_content_type 'menuButton'
+        end
+      RUBY
+
+        load(file.path)
+        item = WCC::Contentful::Model.find '3Jmk4yOwhOY0yKsI6mAQ2a'
+        expect(item).to be_a MyButton
+
+        # ActiveSupport removes constants and triggers to_prepare
+        Object.send(:remove_const, :MyButton)
+        expect(Object).to receive(:const_missing) do |name|
+          expect(name.to_s).to eq('MyButton')
+          load(file.path)
+          MyButton
+        end
+
+        # act
+        WCC::Contentful::Model.reload!
+
+        item2 = WCC::Contentful::Model.find '3Jmk4yOwhOY0yKsI6mAQ2a'
+        expect(item2).to be_a MyButton
+      end
+    end
+  end
+
+  def with_tempfile(name, contents)
+    file = Tempfile.open(name)
+    begin
+      begin
+        file.write(contents)
+      ensure
+        file.close
+      end
+
+      yield file
+    ensure
+      file.unlink
     end
   end
 end

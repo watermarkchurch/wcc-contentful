@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 require 'active_job'
-require 'wcc/contentful/event_emitter'
+require 'wcc/contentful/event'
+require 'wisper'
 
 module WCC::Contentful
   # The SyncEngine is used to keep the currently configured store up to date
@@ -9,11 +10,16 @@ module WCC::Contentful
   # and the application is responsible to periodically call #next in order to hit
   # the sync API and update the store.
   #
-  # If you have mounted the WCC::Contentful::Engine, then
+  # If you have mounted the WCC::Contentful::Engine, AND the configured store is
+  # one that can be synced (i.e. it responds to `:index`), then
   # the WCC::Contentful::WebhookController will call #next automatically anytime
-  # a webhook is received.
+  # a webhook is received.  Otherwise you should hook up to the Webhook events
+  # and call the sync engine via your initializer:
+  #     WCC::Contentful::Events.subscribe(proc do |event|
+  #       WCC::Contentful::Services.instance.sync_engine.next(up_to: event.dig('sys', 'id'))
+  #     end, with: :call)
   class SyncEngine
-    include WCC::Contentful::EventEmitter
+    include ::Wisper::Publisher
 
     def state
       (@state&.dup || {}).freeze
@@ -23,7 +29,7 @@ module WCC::Contentful
     attr_reader :client
 
     def should_sync?
-      store&.respond_to?(:index) || has_listeners?
+      store&.index?
     end
 
     def initialize(state: nil, store: nil, client: nil, key: nil)
@@ -40,7 +46,7 @@ module WCC::Contentful
         end
 
         @store = store
-        @state = fetch
+        @state = fetch if should_sync?
       end
       if state
         @state = { 'token' => state } if state.is_a? String
@@ -72,9 +78,10 @@ module WCC::Contentful
           id = item.dig('sys', 'id')
           id_found ||= id == up_to_id
 
-          yield(item) if block_given?
-          store.index(item) if store&.respond_to?(:index)
-          emit_item(item)
+          store.index(item) if store&.index?
+          event = WCC::Contentful::Event.from_raw(item, source: self)
+          yield(event) if block_given?
+          emit_event(event)
 
           count += 1
         end
@@ -89,12 +96,14 @@ module WCC::Contentful
     FETCH_METHODS = %i[fetch find].freeze
     WRITE_METHODS = %i[write set].freeze
 
-    private
+    def emit_event(event)
+      type = event.dig('sys', 'type')
+      raise ArgumentError, "Unknown event type #{event}" unless type.present?
 
-    def emit_item(item)
-      event = item.dig('sys', 'type')
-      emit(event, item)
+      broadcast(type, event)
     end
+
+    private
 
     def fetch
       store&.public_send(@fetch_method, @state_key)

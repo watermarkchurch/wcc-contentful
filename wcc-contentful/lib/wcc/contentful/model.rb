@@ -129,6 +129,24 @@ class WCC::Contentful::Model
     @@registry.dup.freeze
   end
 
+  def self.reload!
+    registry = self.registry
+    registry.each do |(content_type, klass)|
+      const_name = klass.name
+      begin
+        const = Object.const_missing(const_name)
+        register_for_content_type(content_type, klass: const) if const
+      rescue NameError => e
+        msg = "Error when reloading constant #{const_name} - #{e}"
+        if defined?(Rails) && Rails.logger
+          Rails.logger.error msg
+        else
+          puts msg
+        end
+      end
+    end
+  end
+
   # Checks if a content type has already been registered to a class and returns
   # that class.  If nil, the generated WCC::Contentful::Model::{content_type} class
   # will be resolved for this content type.

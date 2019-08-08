@@ -67,7 +67,8 @@ module WCC::Contentful::ModelSingletonMethods
   end
 
   def inherited(subclass)
-    # only register if it's not already registered
+    # If another different class is already registered for this content type,
+    # don't auto-register this one.
     return if WCC::Contentful::Model.registered?(content_type)
 
     WCC::Contentful::Model.register_for_content_type(content_type, klass: subclass)

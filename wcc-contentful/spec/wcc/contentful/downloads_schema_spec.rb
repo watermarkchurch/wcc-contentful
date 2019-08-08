@@ -106,8 +106,8 @@ RSpec.describe WCC::Contentful::DownloadsSchema do
           expected = JSON.parse(load_fixture('contentful/contentful-schema.json'))
           # testimonial section
           expected.dig('contentTypes', 1, 'fields') << brand
-          expect(File.read('db/contentful-schema.json'))
-            .to eq(JSON.pretty_generate(expected))
+          expect(JSON.parse(File.read('db/contentful-schema.json')))
+            .to eq(expected)
         end
       end
     end

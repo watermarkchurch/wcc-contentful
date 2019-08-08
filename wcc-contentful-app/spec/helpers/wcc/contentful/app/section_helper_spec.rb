@@ -358,6 +358,18 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
         expect(html_to_render).to include('class="text "')
       end
     end
+
+    it 'renders tables with bootstrap .table class' do
+      html = helper.markdown(<<~MARKDOWN)
+        | col1 | col2 |
+        | ---- | ---- |
+        | val1 | val2 |
+        | val3 | val4 |
+      MARKDOWN
+
+      expect(html).to include('<table class="table')
+      expect(html).to match(/<tr>\s*<th>\s*col1/)
+    end
   end
 
   describe '#links_within_markdown' do

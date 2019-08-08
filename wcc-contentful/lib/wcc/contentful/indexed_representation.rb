@@ -29,8 +29,8 @@ module WCC::Contentful
       ret
     end
 
-    def to_json
-      @types.to_json
+    def to_json(*args)
+      @types.to_json(*args)
     end
 
     def deep_dup

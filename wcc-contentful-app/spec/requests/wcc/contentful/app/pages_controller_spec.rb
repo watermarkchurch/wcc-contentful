@@ -157,11 +157,8 @@ RSpec.describe WCC::Contentful::App::PagesController, type: :request do
   end
 
   def with_preview_password
-    previous = ENV['CONTENTFUL_PREVIEW_PASSWORD']
-    ENV['CONTENTFUL_PREVIEW_PASSWORD'] = 'topsecret'
-
+    allow(WCC::Contentful::App.configuration).to receive(:preview_password)
+      .and_return('topsecret')
     yield 'topsecret'
-  ensure
-    ENV['CONTENTFUL_PREVIEW_PASSWORD'] = previous
   end
 end

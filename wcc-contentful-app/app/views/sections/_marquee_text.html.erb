@@ -5,7 +5,7 @@
     <% end %>
     <h2 class="section-marquee-text__title"><%= section.title %></h2>
     <% if section.body.present? %>
-      <hr class="section-marquee-text__divider" />
+      <hr class="section-marquee-text__divider">
       <p class="section-marquee-text__body safe-line-break"><%= safe_line_break(section.body) %></p>
     <% end %>
   </div>
