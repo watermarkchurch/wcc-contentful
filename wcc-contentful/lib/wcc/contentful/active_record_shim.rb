@@ -7,6 +7,26 @@ module WCC::Contentful::ActiveRecordShim
     @attributes ||= to_h['fields'].tap { |fields| fields['id'] = id }
   end
 
+  def cache_key
+    key = "#{self.class.model_name}/#{id}"
+    key += "-#{cache_version}" unless ActiveRecord::Base.try(:cache_versioning) == true
+    key
+  end
+
+  def cache_key_with_version
+    "#{self.class.model_name}/#{id}-#{cache_version}"
+  end
+
+  def cache_version
+    sys.revision.to_s
+  end
+
+  included do
+    unless defined?(ActiveRecord)
+      raise NotImplementedError, 'WCC::Contentful::ActiveRecordShim requires ActiveRecord to be loaded'
+    end
+  end
+
   class_methods do
     def model_name
       WCC::Contentful::Helpers.constant_from_content_type(content_type)
