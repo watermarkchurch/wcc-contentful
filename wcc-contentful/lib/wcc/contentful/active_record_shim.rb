@@ -8,9 +8,9 @@ module WCC::Contentful::ActiveRecordShim
   end
 
   def cache_key
-    key = "#{self.class.model_name}/#{id}"
-    key += "-#{cache_version}" unless ActiveRecord::Base.try(:cache_versioning) == true
-    key
+    return cache_key_with_version unless ActiveRecord::Base.try(:cache_versioning) == true
+
+    "#{self.class.model_name}/#{id}"
   end
 
   def cache_key_with_version
