@@ -1,9 +1,37 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
+require 'active_record'
 
 class ShimTest
   include WCC::Contentful::ActiveRecordShim
+
+  def initialize(raw)
+    @raw = raw.freeze
+
+    created_at = raw.dig('sys', 'createdAt')
+    created_at = Time.parse(created_at) if created_at.present?
+    updated_at = raw.dig('sys', 'updatedAt')
+    updated_at = Time.parse(updated_at) if updated_at.present?
+    @sys = WCC::Contentful::Sys.new(
+      raw.dig('sys', 'id'),
+      raw.dig('sys', 'type'),
+      raw.dig('sys', 'locale') || 'en-US',
+      raw.dig('sys', 'space', 'sys', 'id'),
+      created_at,
+      updated_at,
+      raw.dig('sys', 'revision'),
+      OpenStruct.new.freeze
+    )
+  end
+
+  attr_reader :sys
+  attr_reader :raw
+  delegate :id, to: :sys
+  delegate :created_at, to: :sys
+  delegate :updated_at, to: :sys
+  delegate :revision, to: :sys
+  delegate :space, to: :sys
 
   def self.content_type
     'shim-test'
@@ -80,6 +108,50 @@ RSpec.describe WCC::Contentful::ActiveRecordShim do
       got = ConstGetTest.const_get('ConstGetTest')
 
       expect(got).to eq(ConstGetTest)
+    end
+  end
+
+  describe '#cache_key' do
+    let(:raw) {
+      {
+        'sys' => {
+          'id' => 'ax1234',
+          'type' => 'Entry',
+          'createdAt' => '2019-05-10T18:59:25.828Z',
+          'updatedAt' => '2019-05-10T18:59:25.828Z',
+          'revision' => 1
+        },
+        'fields' => {}
+      }
+    }
+    let(:subject) { ShimTest.new(raw) }
+
+    context 'Rails 5.2' do
+      before do
+        allow(ActiveRecord::Base).to receive(:try)
+          .with(:cache_versioning)
+          .and_return(true)
+      end
+
+      it { expect(subject.cache_key).to eq('ShimTest/ax1234') }
+
+      it '#cache_version' do
+        expect(subject.cache_version).to eq('1')
+      end
+
+      it '#cache_key_with_version' do
+        expect(subject.cache_key_with_version).to eq('ShimTest/ax1234-1')
+      end
+    end
+
+    context 'Rails 5.1 and before' do
+      before do
+        allow(ActiveRecord::Base).to receive(:try)
+          .with(:cache_versioning)
+          .and_return(nil)
+      end
+
+      it { expect(subject.cache_key).to eq('ShimTest/ax1234-1') }
     end
   end
 end
