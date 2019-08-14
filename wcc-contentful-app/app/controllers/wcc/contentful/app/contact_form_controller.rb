@@ -2,7 +2,10 @@
 
 class WCC::Contentful::App::ContactFormController < ApplicationController
   def create
-    address = params[:email_object_id] ? email_address(email_model) : form_model.notification_email
+    unless address = params[:opportunity_email]
+      address = params[:email_object_id] ? email_address(email_model) : form_model.notification_email
+    end
+
     form_model.send_email(
       form_params.merge!(
         {
