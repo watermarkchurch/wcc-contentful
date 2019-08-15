@@ -3,7 +3,7 @@
 class WCC::Contentful::App::ContactFormController < ApplicationController
   def create
     address = form_model.to_address(
-      email: params[:email],
+      recipient_email: params[:recipient_email],
       email_object_id: params[:email_object_id]
     )
 
