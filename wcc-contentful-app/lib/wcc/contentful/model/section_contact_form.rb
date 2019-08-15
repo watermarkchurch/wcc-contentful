@@ -11,7 +11,27 @@ class WCC::Contentful::Model::SectionContactForm < WCC::Contentful::Model
     ::WCC::Contentful::Model::Page.find_by(sections: { id: id })
   end
 
+  def to_address(opportunity_email: nil, email_object_id: nil)
+    return opportunity_email if opportunity_email.present?
+    return email_address(email_model(email_object_id)) if email_object_id.present?
+
+    notification_email
+  end
+
   private
+
+  def email_address(entry)
+    return entry.email if defined?(entry.email)
+
+    raise ArgumentError, 'email is not defined on this entry'
+  end
+
+  def email_model(email_object_id)
+    raise ArgumentError, 'contentful entry does not exist' unless
+      entry = ::WCC::Contentful::Model.find(email_object_id)
+
+    entry
+  end
 
   def save_contact_form(data)
     return unless ::WCC::Contentful::App.db_connected?
