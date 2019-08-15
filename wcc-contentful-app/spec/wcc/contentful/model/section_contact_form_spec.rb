@@ -19,24 +19,24 @@ RSpec.describe WCC::Contentful::Model::SectionContactForm do
       expect(section_contact_form.to_address).to eq(section_contact_form.notification_email)
     end
 
-    it 'returns opportunity_email if provided without email_object_id' do
+    it 'returns email if provided without email_object_id' do
       expect(
-        section_contact_form.to_address(opportunity_email: 'test@email.com', email_object_id: nil)
+        section_contact_form.to_address(email: 'test@email.com', email_object_id: nil)
       ).to eq('test@email.com')
     end
 
-    it 'returns opportunity_email if provided with email_object_id' do
+    it 'returns email if provided with email_object_id' do
       expect(
-        section_contact_form.to_address(opportunity_email: 'test@email.com', email_object_id: person.id)
+        section_contact_form.to_address(email: 'test@email.com', email_object_id: person.id)
       ).to eq('test@email.com')
     end
 
-    it 'returns person email if email_object_id given without an opportunity_email' do
+    it 'returns person email if email_object_id given without an email' do
       allow(WCC::Contentful::Model).to receive(:find).with(person.id)
         .and_return(person)
 
       expect(
-        section_contact_form.to_address(opportunity_email: nil, email_object_id: person.id)
+        section_contact_form.to_address(email: nil, email_object_id: person.id)
       ).to eq(person.email)
     end
   end
