@@ -11,8 +11,7 @@ class WCC::Contentful::Model::SectionContactForm < WCC::Contentful::Model
     ::WCC::Contentful::Model::Page.find_by(sections: { id: id })
   end
 
-  def to_address(recipient_email: nil, email_object_id: nil)
-    return recipient_email if recipient_email.present?
+  def to_address(email_object_id: nil)
     return email_address(email_model(email_object_id)) if email_object_id.present?
 
     notification_email

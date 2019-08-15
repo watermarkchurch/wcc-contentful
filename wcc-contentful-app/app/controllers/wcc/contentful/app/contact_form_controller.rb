@@ -2,10 +2,7 @@
 
 class WCC::Contentful::App::ContactFormController < ApplicationController
   def create
-    address = form_model.to_address(
-      recipient_email: params[:recipient_email],
-      email_object_id: params[:email_object_id]
-    )
+    address = params[:recipient_email] || form_model.to_address(params[:email_object_id])
 
     form_model.send_email(
       form_params.merge!(
