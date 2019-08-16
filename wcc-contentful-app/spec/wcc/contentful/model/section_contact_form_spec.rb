@@ -16,7 +16,7 @@ RSpec.describe WCC::Contentful::Model::SectionContactForm do
     let(:person) { Person.new('84', 'test', 'testerson', 'test@test.com') }
 
     it 'defaults to notification email' do
-      expect(section_contact_form.to_address).to eq(section_contact_form.notification_email)
+      expect(section_contact_form.to_address(email_object_id: nil)).to eq(section_contact_form.notification_email)
     end
 
     it 'returns person email if email_object_id provided' do
