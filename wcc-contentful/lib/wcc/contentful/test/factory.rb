@@ -13,22 +13,21 @@ module WCC::Contentful::Test::Factory
 
     id = attrs.delete('id')
     sys = attrs.delete('sys')
+    raw = attrs.delete('raw') || default_raw(const, id)
     bad_attrs = attrs.reject { |a| const.content_type_definition.fields.key?(a) }
     raise ArgumentError, "Attribute(s) do not exist on #{const}: #{bad_attrs.keys}" if bad_attrs.any?
 
-    instance_raw =
-      default_raw(const, id).tap do |raw|
-        raw['sys'].merge!(sys) if sys
+    raw['sys'].merge!(sys) if sys
 
-        attrs.each do |k, v|
-          field = const.content_type_definition.fields[k]
+    attrs.each do |k, v|
+      field = const.content_type_definition.fields[k]
 
-          raw_value = v
-          raw_value = to_raw(v, field.type) if %i[Asset Link].include?(field.type)
-          raw['fields'][field.name][raw.dig('sys', 'locale')] = raw_value
-        end
-      end
-    instance = const.new(instance_raw, context)
+      raw_value = v
+      raw_value = to_raw(v, field.type) if %i[Asset Link].include?(field.type)
+      raw['fields'][field.name][raw.dig('sys', 'locale')] = raw_value
+    end
+
+    instance = const.new(raw, context)
 
     attrs.each do |k, v|
       field = const.content_type_definition.fields[k]

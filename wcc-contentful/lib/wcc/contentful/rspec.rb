@@ -20,12 +20,12 @@ module WCC::Contentful::RSpec
     # find, find_by, etc always return a new instance from the same raw
     allow(WCC::Contentful::Model).to receive(:find)
       .with(instance.id) do
-        contentful_create(content_type, sys: instance.raw['sys'], **attrs)
+        contentful_create(content_type, raw: instance.raw, **attrs)
       end
     allow(WCC::Contentful::Model).to receive(:find)
       .with(instance.id, anything) do |_id, options|
 
-        contentful_create(content_type, options, sys: instance.raw['sys'], **attrs)
+        contentful_create(content_type, options, raw: instance.raw, **attrs)
       end
     allow(const).to receive(:find) { |id, options| WCC::Contentful::Model.find(id, options) }
 
@@ -35,7 +35,7 @@ module WCC::Contentful::RSpec
           filter = filter&.dup
           options = filter&.delete(:options) || {}
 
-          contentful_create(content_type, options, sys: instance.raw['sys'], **attrs)
+          contentful_create(content_type, options, raw: instance.raw, **attrs)
         end
     end
 
