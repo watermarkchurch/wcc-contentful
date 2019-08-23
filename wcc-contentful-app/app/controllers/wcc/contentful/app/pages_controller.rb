@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class WCC::Contentful::App::PagesController < ApplicationController
+  include WCC::Contentful::App::PreviewPassword
+
   helper ::WCC::Contentful::App::SectionHelper
 
   def index
@@ -22,21 +24,6 @@ class WCC::Contentful::App::PagesController < ApplicationController
   end
 
   private
-
-  def preview?
-    return super if defined?(super)
-
-    @preview ||=
-      if preview_password.present?
-        params[:preview]&.chomp == preview_password.chomp
-      else
-        false
-      end
-  end
-
-  def preview_password
-    WCC::Contentful::App.configuration.preview_password
-  end
 
   def page_model
     WCC::Contentful::Model.resolve_constant('page')

@@ -12,6 +12,8 @@ WCC::Contentful::App.configure do |config|
   config.webhook_username = 'tester1'
   config.webhook_password = 'password1'
 
+  config.preview_password = 'test-preview-pw'
+
   # Optional
   # config.management_token = # Contentful API management token
   # config.content_delivery = # :direct, :eager_sync, or :lazy_sync
