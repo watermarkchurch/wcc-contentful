@@ -6,6 +6,10 @@ class MyPage < WCC::Contentful::Model::Page
 end
 
 RSpec.describe WCC::Contentful::App::PagesController, type: :request do
+  before do
+    MyPage.register_for_content_type('page')
+  end
+
   it 'loads homepage off of site config' do
     page = contentful_create('page', slug: '/')
     _config = contentful_stub('siteConfig',
