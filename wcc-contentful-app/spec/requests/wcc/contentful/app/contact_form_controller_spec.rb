@@ -48,13 +48,13 @@ RSpec.describe WCC::Contentful::App::ContactFormController, type: :request do
     before do
       expect(WCC::Contentful::Model::SectionContactForm)
         .to_not receive(:find)
-        .with(form.id, hash_including(preview: false))
+        .with(form.id, options: hash_including(preview: false))
     end
 
     it 'looks up person in preview API' do
       person = double(id: 'TestPerson', email: 'test-person@test.com')
       allow(::WCC::Contentful::Model).to receive(:find)
-        .with('TestPerson', hash_including(preview: true))
+        .with('TestPerson', options: hash_including(preview: true))
         .and_return(person)
 
       expect(::WCC::Contentful::App::ContactMailer).to receive(:contact_form_email)
