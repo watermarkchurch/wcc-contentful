@@ -7,17 +7,27 @@ require 'active_support/inflector'
 require_relative 'wcc-contentful/lib/wcc/contentful/version'
 version = WCC::Contentful::VERSION
 
-
 GEMS = [
   'wcc-contentful',
   'wcc-contentful-app',
   'wcc-contentful-graphql'
-]
+].freeze
 
 GEMS.each do |name|
   namespace name do
     Dir.chdir(name) do
       Bundler::GemHelper.install_tasks
+    end
+
+    task :coverage do
+      require 'simplecov'
+      require 'rspec'
+
+      specs = Dir.glob("#{__dir__}/#{name}/spec/**/*_spec.rb")
+
+      Dir.chdir(name) do
+        RSpec::Core::Runner.run([*specs])
+      end
     end
   end
 end
@@ -56,13 +66,16 @@ namespace :bump do
 end
 
 desc "Create tag and build and push all gems\n" \
-  "To prevent publishing in RubyGems use `gem_push=no rake release`"
+  'To prevent publishing in RubyGems use `gem_push=no rake release`'
 task release: [:check].concat(GEMS.map { |g| "#{g}:release" })
 desc "Build #{GEMS.join(',')} into the pkg directory."
 task build: GEMS.map { |g| "#{g}:build" }
 task install: GEMS.map { |g| "#{g}:install" }
-task "install:local" => GEMS.map { |g| "#{g}:install:local" }
+task 'install:local' => GEMS.map { |g| "#{g}:install:local" }
 
 def to_const(gem)
   gem.split('-').map(&:titleize).join('::').gsub('Wcc', 'WCC').constantize
+end
+
+task coverage: GEMS.map { |g| "#{g}:coverage" } do
 end

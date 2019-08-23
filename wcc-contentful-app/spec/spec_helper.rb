@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'simplecov'
-
 require 'bundler/setup'
 require 'dotenv/load'
 require 'wcc/contentful'
