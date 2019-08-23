@@ -16,18 +16,27 @@ module WCC::Contentful::RSpec
     const = WCC::Contentful::Model.resolve_constant(content_type.to_s)
     instance = contentful_create(content_type, **attrs)
 
+    # mimic what's going on inside model_singleton_methods.rb
+    # find, find_by, etc always return a new instance from the same raw
     allow(WCC::Contentful::Model).to receive(:find)
-      .with(instance.id)
-      .and_return(instance)
+      .with(instance.id) do
+        contentful_create(content_type, raw: instance.raw, **attrs)
+      end
     allow(WCC::Contentful::Model).to receive(:find)
-      .with(instance.id, anything)
-      .and_return(instance)
+      .with(instance.id, anything) do |_id, options|
+
+        contentful_create(content_type, options, raw: instance.raw, **attrs)
+      end
     allow(const).to receive(:find) { |id, options| WCC::Contentful::Model.find(id, options) }
 
     attrs.each do |k, v|
       allow(const).to receive(:find_by)
-        .with(hash_including(k => v))
-        .and_return(instance)
+        .with(hash_including(k => v)) do |filter|
+          filter = filter&.dup
+          options = filter&.delete(:options) || {}
+
+          contentful_create(content_type, options, raw: instance.raw, **attrs)
+        end
     end
 
     instance

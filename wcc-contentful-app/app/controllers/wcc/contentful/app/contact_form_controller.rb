@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 class WCC::Contentful::App::ContactFormController < ApplicationController
+  include WCC::Contentful::App::PreviewPassword
+
   def create
-    address = params[:recipient_email] || form_model.to_address(email_object_id: params[:email_object_id])
+    address =
+      form_model.to_address(email_object_id: params[:email_object_id])
 
     form_model.send_email(
       form_params.merge!(
@@ -21,7 +24,9 @@ class WCC::Contentful::App::ContactFormController < ApplicationController
   def form_model
     raise ArgumentError, 'missing form ID' unless params[:id]
 
-    @form_model ||= WCC::Contentful::Model::SectionContactForm.find(params[:id])
+    @form_model ||= WCC::Contentful::Model::SectionContactForm.find(
+      params[:id], options: { preview: preview? }
+    )
   end
 
   def form_params

@@ -7,23 +7,27 @@ module WCC::Contentful::Test::Factory
   # Builds a in-memory instance of the Contentful model for the given content_type.
   # All attributes that are known to be required fields on the content type
   # will return a default value based on the field type.
-  def contentful_create(content_type, **attrs)
+  def contentful_create(content_type, context = nil, **attrs)
     const = WCC::Contentful::Model.resolve_constant(content_type.to_s)
     attrs = attrs.transform_keys { |a| a.to_s.camelize(:lower) }
 
     id = attrs.delete('id')
+    sys = attrs.delete('sys')
+    raw = attrs.delete('raw') || default_raw(const, id)
     bad_attrs = attrs.reject { |a| const.content_type_definition.fields.key?(a) }
     raise ArgumentError, "Attribute(s) do not exist on #{const}: #{bad_attrs.keys}" if bad_attrs.any?
 
-    instance = const.new(default_raw(const, id).tap do |raw|
-      attrs.each do |k, v|
-        field = const.content_type_definition.fields[k]
+    raw['sys'].merge!(sys) if sys
 
-        raw_value = v
-        raw_value = to_raw(v, field.type) if %i[Asset Link].include?(field.type)
-        raw['fields'][field.name][raw.dig('sys', 'locale')] = raw_value
-      end
-    end)
+    attrs.each do |k, v|
+      field = const.content_type_definition.fields[k]
+
+      raw_value = v
+      raw_value = to_raw(v, field.type) if %i[Asset Link].include?(field.type)
+      raw['fields'][field.name][raw.dig('sys', 'locale')] = raw_value
+    end
+
+    instance = const.new(raw, context)
 
     attrs.each do |k, v|
       field = const.content_type_definition.fields[k]

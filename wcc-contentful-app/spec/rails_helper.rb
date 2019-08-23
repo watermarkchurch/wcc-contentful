@@ -30,4 +30,9 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
 
   config.use_transactional_fixtures = true
+
+  config.before(:each) do
+    WCC::Contentful::Model.class_variable_get('@@registry').clear
+    Wisper.clear
+  end
 end
