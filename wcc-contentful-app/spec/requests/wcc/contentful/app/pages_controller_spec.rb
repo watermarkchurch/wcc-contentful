@@ -15,7 +15,8 @@ RSpec.describe WCC::Contentful::App::PagesController, type: :request do
     get '/'
 
     expect(response).to render_template('pages/show')
-    expect(assigns(:page)).to eq(page)
+    expect(assigns(:page)).to be_a(page.class)
+    expect(assigns(:page).raw).to eq(page.raw)
   end
 
   it 'loads the "/" page when no site config exists' do
@@ -26,7 +27,8 @@ RSpec.describe WCC::Contentful::App::PagesController, type: :request do
     get '/'
 
     expect(response).to render_template('pages/show')
-    expect(assigns(:page)).to eq(page)
+    expect(assigns(:page)).to be_a(page.class)
+    expect(assigns(:page).raw).to eq(page.raw)
   end
 
   it 'allows overloading the Page model' do
@@ -47,7 +49,8 @@ RSpec.describe WCC::Contentful::App::PagesController, type: :request do
 
     get '/test'
 
-    expect(assigns(:page)).to eq(page)
+    expect(assigns(:page)).to be_a(page.class)
+    expect(assigns(:page).raw).to eq(page.raw)
   end
 
   it 'uses redirect when given' do
@@ -86,7 +89,8 @@ RSpec.describe WCC::Contentful::App::PagesController, type: :request do
       get '/test', params: { preview: pw }
     end
 
-    expect(assigns(:page)).to eq(page)
+    expect(assigns(:page)).to be_a(page.class)
+    expect(assigns(:page).raw).to eq(page.raw)
   end
 
   it 'uses preview in redirect as well' do
