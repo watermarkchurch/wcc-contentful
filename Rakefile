@@ -20,14 +20,7 @@ GEMS.each do |name|
     end
 
     task :coverage do
-      require 'simplecov'
-      require 'rspec'
-
-      specs = Dir.glob("#{__dir__}/#{name}/spec/**/*_spec.rb")
-
-      Dir.chdir(name) do
-        RSpec::Core::Runner.run([*specs])
-      end
+      system('rspec', chdir: name)
     end
   end
 end
@@ -77,5 +70,40 @@ def to_const(gem)
   gem.split('-').map(&:titleize).join('::').gsub('Wcc', 'WCC').constantize
 end
 
-task coverage: GEMS.map { |g| "#{g}:coverage" } do
+namespace :coverage do
+  task :aggregate do
+    require 'simplecov'
+
+    # https://github.com/colszowka/simplecov/issues/219#issuecomment-377991535
+    results =
+      GEMS.map { |g| "#{g}/coverage/.resultset.json" }.map do |result_file_name|
+        puts "Processing #{result_file_name}"
+        SimpleCov::Result.from_hash(JSON.parse(File.read(result_file_name)))
+      end
+    merged_result = SimpleCov::ResultMerger.merge_results(*results)
+    FileUtils.mkdir_p('./coverage')
+    File.write('./coverage/.resultset.json', JSON.pretty_generate(merged_result.to_hash))
+  end
+
+  task html: 'coverage:aggregate' do
+    require 'simplecov'
+
+    result = SimpleCov::Result.from_hash(JSON.parse(File.read('./coverage/.resultset.json')))
+    formatter = SimpleCov::Formatter::HTMLFormatter.new
+    formatter.format(result)
+
+    system('open ./coverage/index.html')
+  end
+
+  task coveralls: 'coverage:aggregate' do
+    require 'simplecov'
+    require 'coveralls'
+
+    result = SimpleCov::Result.from_hash(JSON.parse(File.read('./coverage/.resultset.json')))
+    formatter = Coveralls::SimpleCov::Formatter.new
+    formatter.format(result)
+  end
+end
+
+task coverage: [*GEMS.map { |g| "#{g}:coverage" }, 'coverage:aggregate'] do
 end
