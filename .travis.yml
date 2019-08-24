@@ -20,10 +20,10 @@ before_install: gem install bundler -v 1.16.1
 install:
   - bundle install --path /tmp/vendor/bundle
 script:
+  - export COVERALLS_PARALLEL=true
   - bin/bundle exec rspec --format documentation --order rand
   # only run coverage on the wcc-contentful gem
-  - export COVERALLS_PARALLEL=true
-  - rake wcc-contentful:coverage
+  - bundle exec rake wcc-contentful:coverage
 jobs:
   include:
     - stage: lint
