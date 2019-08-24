@@ -1,5 +1,13 @@
 # frozen_string_literal: true
 
+require 'simplecov'
+
+SimpleCov.start do
+  root File.expand_path('../..', __dir__)
+  add_filter "/spec/"
+  coverage_dir "#{File.expand_path('..', __dir__)}/coverage"
+end
+
 require 'bundler/setup'
 require 'dotenv/load'
 require 'wcc/contentful'
