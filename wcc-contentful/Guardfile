@@ -81,6 +81,13 @@ group :red_green_refactor, halt_on_fail: true do
   end
 
   guard :shell, all_on_start: false do
+    watch_async(%r{(.+\.rb)$}) { |matches|
+      matches = matches.map { |m| "--file #{File.absolute_path(m[0])}" }
+      system("bundle exec srb tc #{matches.join(' ')}")
+    }
+  end
+
+  guard :shell, all_on_start: false do
     watch_async(%r{app/views/(.+\.html.*\.erb)}) { |matches|
       
       matches = matches.map { |m| File.absolute_path(m[0]) }
