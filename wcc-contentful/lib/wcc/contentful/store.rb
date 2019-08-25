@@ -1,4 +1,4 @@
-# typed: false
+# typed: true
 # frozen_string_literal: true
 
 require_relative 'store/base'
@@ -31,9 +31,10 @@ require_relative 'store/lazy_cache_store'
 module WCC::Contentful::Store
   SYNC_STORES = {
     memory: ->(_config) { WCC::Contentful::Store::MemoryStore.new },
-    postgres: ->(config, *options) {
+    postgres: ->(config, options) {
       require_relative 'store/postgres_store'
-      WCC::Contentful::Store::PostgresStore.new(config, *options)
+      connection_options, pool_options = options
+      WCC::Contentful::Store::PostgresStore.new(config, connection_options, pool_options)
     }
   }.freeze
 
@@ -51,7 +52,7 @@ module WCC::Contentful::Store
           raise ArgumentError, "Don't know how to build content delivery method #{cdn_method}"
         end
 
-        built = public_send("build_#{cdn_method}", config, *content_delivery_params)
+        built = public_send("build_#{cdn_method}", config, content_delivery_params || [])
         config.middleware.reverse
           .reduce(built) do |memo, middleware|
             middleware = middleware.call(memo, content_delivery_params, config)
@@ -66,22 +67,23 @@ module WCC::Contentful::Store
 
         return unless respond_to?("validate_#{cdn_method}")
 
-        public_send("validate_#{cdn_method}", config, *content_delivery_params)
+        public_send("validate_#{cdn_method}", config, content_delivery_params || [])
       end
 
-      def build_eager_sync(config, store = nil, *options)
-        store = SYNC_STORES[store].call(config, *options) if store.is_a?(Symbol)
+      def build_eager_sync(config, options)
+        store, *options = options
+        store = SYNC_STORES[store].call(config, options) if store.is_a?(Symbol)
         store || MemoryStore.new
       end
 
-      def build_lazy_sync(_config, *options)
+      def build_lazy_sync(_config, options)
         WCC::Contentful::Store::LazyCacheStore.new(
           services.client,
           cache: ActiveSupport::Cache.lookup_store(*options)
         )
       end
 
-      def build_direct(_config, *options)
+      def build_direct(_config, options)
         if options.find { |array| array[:preview] }
           CDNAdapter.new(services.preview_client)
         else
@@ -89,14 +91,15 @@ module WCC::Contentful::Store
         end
       end
 
-      def build_custom(config, *options)
+      def build_custom(config, options)
         store = config.store
         return store unless store&.respond_to?(:new)
 
         store.new(config, options)
       end
 
-      def validate_eager_sync(_config, store = nil, *_options)
+      def validate_eager_sync(_config, options)
+        store, *options = options
         return unless store.is_a?(Symbol)
 
         return if SYNC_STORES.key?(store)
