@@ -1,3 +1,4 @@
+# typed: true
 # frozen_string_literal: true
 
 # This is the top layer of the WCC::Contentful gem.  It exposes an API by which

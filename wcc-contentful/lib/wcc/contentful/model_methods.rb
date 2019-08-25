@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 # This module is included by all {WCC::Contentful::Model models} and defines instance

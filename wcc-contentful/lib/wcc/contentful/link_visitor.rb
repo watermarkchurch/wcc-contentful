@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 # The LinkVisitor is a utility class for walking trees of linked entries.

@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 # This module is extended by all models and defines singleton

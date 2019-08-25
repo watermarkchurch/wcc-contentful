@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 # A Store middleware wraps the Store interface to perform any desired transformations

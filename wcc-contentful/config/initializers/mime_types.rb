@@ -1,3 +1,4 @@
+# typed: strict
 # frozen_string_literal: true
 
 # https://www.contentful.com/developers/docs/references/content-management-api/

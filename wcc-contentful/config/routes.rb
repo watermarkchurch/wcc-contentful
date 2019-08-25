@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 WCC::Contentful::Engine.routes.draw do

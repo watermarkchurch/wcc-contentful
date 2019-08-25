@@ -14,7 +14,9 @@ group :development, :test do
   gem 'guard-shell', '~> 0.7.1'
   gem 'rake', '~> 12.3'
   gem 'rubocop', '0.68', require: false
+  gem 'sorbet'
 end
 
 gemspec path: './wcc-contentful'
 gemspec path: './wcc-contentful-app'
+gemspec path: './wcc-contentful-graphql'

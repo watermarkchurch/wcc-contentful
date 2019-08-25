@@ -34,6 +34,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec_junit_formatter', '~> 0.3.0'
   spec.add_development_dependency 'rubocop', '0.68'
   spec.add_development_dependency 'simplecov', '~> 0.16.1'
+  spec.add_development_dependency 'sorbet'
   spec.add_development_dependency 'vcr', '~> 4.0'
   spec.add_development_dependency 'webmock', '~> 3.0'
   spec.add_development_dependency 'wisper-rspec'
@@ -61,6 +62,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'typhoeus', '~> 1.3'
 
   spec.add_dependency 'activesupport', '>= 5'
+  spec.add_dependency 'sorbet-runtime'
   spec.add_dependency 'wcc-base', '~> 0.3.1'
   spec.add_dependency 'wisper', '~> 2.0.0'
 end

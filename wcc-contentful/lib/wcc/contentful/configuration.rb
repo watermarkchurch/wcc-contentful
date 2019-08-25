@@ -1,3 +1,4 @@
+# typed: true
 # frozen_string_literal: true
 
 # This object contains all the configuration options for the `wcc-contentful` gem.

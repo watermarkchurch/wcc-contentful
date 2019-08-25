@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 require_dependency 'wcc/contentful/application_controller'

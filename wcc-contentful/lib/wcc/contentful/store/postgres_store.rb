@@ -1,3 +1,4 @@
+# typed: true
 # frozen_string_literal: true
 
 gem 'pg', '~> 1.0'
