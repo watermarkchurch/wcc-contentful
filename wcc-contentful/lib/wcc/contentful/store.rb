@@ -30,7 +30,7 @@ require_relative 'store/lazy_cache_store'
 # The currently configured store is available on WCC::Contentful::Services.instance.store
 module WCC::Contentful::Store
   SYNC_STORES = {
-    memory: ->(_config) { WCC::Contentful::Store::MemoryStore.new },
+    memory: ->(_config, options) { WCC::Contentful::Store::MemoryStore.new },
     postgres: ->(config, options) {
       require_relative 'store/postgres_store'
       connection_options, pool_options = options
