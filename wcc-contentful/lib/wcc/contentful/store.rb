@@ -99,7 +99,7 @@ module WCC::Contentful::Store
       end
 
       def validate_eager_sync(_config, options)
-        store, *options = options
+        store, = options
         return unless store.is_a?(Symbol)
 
         return if SYNC_STORES.key?(store)

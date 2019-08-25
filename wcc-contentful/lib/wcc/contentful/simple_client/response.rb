@@ -1,4 +1,4 @@
-# typed: false
+# typed: true
 # frozen_string_literal: true
 
 class WCC::Contentful::SimpleClient
@@ -65,7 +65,7 @@ class WCC::Contentful::SimpleClient
     def assert_ok!
       return self if code >= 200 && code < 300
 
-      raise ApiError[code], self
+      raise ApiError[code].new(self) # rubocop:disable Style/RaiseArgs
     end
 
     def each_page(&block)
@@ -145,7 +145,7 @@ class WCC::Contentful::SimpleClient
         )
     end
 
-    def each_page
+    def each_page(&block)
       raise ArgumentError, 'Not a collection response' unless page_items
 
       ret =
