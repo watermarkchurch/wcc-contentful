@@ -29,6 +29,7 @@ jobs:
         - npm install
       script:
         - bundle exec danger
+        - bin/bundle exec srb tc
         - bundle exec rubocop
         - bundle exec erblint '*/app/views/**/*.erb'
         - npm run lint
