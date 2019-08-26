@@ -23,8 +23,8 @@ module WCC::Contentful::RSpec
         contentful_create(content_type, raw: instance.raw, **attrs)
       end
     allow(WCC::Contentful::Model).to receive(:find)
-      .with(instance.id, anything) do |_id, options|
-
+      .with(instance.id, anything) do |_id, keyword_params|
+        options = keyword_params && keyword_params[:options]
         contentful_create(content_type, options, raw: instance.raw, **attrs)
       end
     allow(const).to receive(:find) { |id, options| WCC::Contentful::Model.find(id, options) }
