@@ -56,13 +56,13 @@ class WCC::Contentful::Model
 
   def self.store(preview = false)
     if preview
-      if WCC::Contentful::Model.preview_store.nil?
+      if preview_store.nil?
         raise ArgumentError,
           'You must include a contentful preview token in your WCC::Contentful.configure block'
       end
-      WCC::Contentful::Model.preview_store
+      preview_store
     else
-      WCC::Contentful::Model.store
+      super()
     end
   end
 
