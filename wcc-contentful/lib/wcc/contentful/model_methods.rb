@@ -22,7 +22,7 @@ module WCC::Contentful::ModelMethods
   #   handled.  `:raise` causes a {WCC::Contentful::CircularReferenceError} to be raised,
   #   `:ignore` will cause the field to remain unresolved, and any other value (or nil)
   #   will cause the field to point to the previously resolved ruby object for that ID.
-  def resolve(depth: 1, fields: nil, context: {}, **options)
+  def resolve(depth: 1, fields: nil, context: sys.context.to_h, **options)
     raise ArgumentError, "Depth must be > 0 (was #{depth})" unless depth && depth > 0
     return self if resolved?(depth: depth, fields: fields)
 
@@ -32,20 +32,22 @@ module WCC::Contentful::ModelMethods
     typedef = self.class.content_type_definition
     links = fields.select { |f| %i[Asset Link].include?(typedef.fields[f].type) }
 
-    raw_links =
-      links.any? do |field_name|
-        raw_value = raw.dig('fields', field_name, sys.locale)
-        if raw_value&.is_a? Array
-          raw_value.any? { |v| v&.dig('sys', 'type') == 'Link' }
-        elsif raw_value
-          raw_value.dig('sys', 'type') == 'Link'
+    raw_link_ids =
+      links.map { |field_name| raw.dig('fields', field_name, sys.locale) }
+        .flat_map do |raw_value|
+          _try_map(raw_value) { |v| v.dig('sys', 'id') if v.dig('sys', 'type') == 'Link' }
         end
-      end
-    if raw_links
+    raw_link_ids = raw_link_ids.compact
+    backlinked_ids = (context[:backlinks]&.map { |m| m.id } || [])
+
+    has_unresolved_raw_links = (raw_link_ids - backlinked_ids).any?
+    if has_unresolved_raw_links
       # use include param to do resolution
       raw = self.class.store.find_by(content_type: self.class.content_type,
                                      filter: { 'sys.id' => id },
-                                     options: { include: [depth, 10].min })
+                                     options: context.except(:backlinks).merge!({
+                                       include: [depth, 10].min
+                                     }))
       unless raw
         raise WCC::Contentful::ResolveError, "Cannot find #{self.class.content_type} with ID #{id}"
       end
@@ -147,7 +149,7 @@ module WCC::Contentful::ModelMethods
         # instantiate from already resolved raw entry data.
         m = already_resolved ||
           if raw.dig('sys', 'type') == 'Link'
-            WCC::Contentful::Model.find(id, new_context)
+            WCC::Contentful::Model.find(id, options: new_context)
           else
             WCC::Contentful::Model.new_from_raw(raw, new_context)
           end

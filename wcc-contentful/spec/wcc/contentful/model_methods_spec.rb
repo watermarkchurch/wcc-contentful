@@ -202,6 +202,58 @@ RSpec.describe WCC::Contentful::ModelMethods do
       )
     end
 
+    it 'passes preview param down when using preview API' do
+      resolved = make_resolved(depth: 10, fields: ['someLink'])
+      deep_resolved = raw.deep_dup
+      deep_resolved['sys']['id'] = '1.2'
+      deep_resolved['fields'].merge!({
+        'items' => nil,
+        'someLink' => { 'en-US' => {
+          'sys' => { 'id' => 'deep1', 'type' => 'Entry', 'contentType' => content_type },
+          'fields' => { 'name' => { 'en-US' => 'number 11' } }
+        } }
+      })
+
+      expect(store).to receive(:find_by)
+        .with(content_type: 'toJsonTest',
+              filter: { 'sys.id' => '1' },
+              options: { include: 10, preview: true }).once
+        .and_return(resolved)
+      expect(store).to receive(:find_by)
+        .with(content_type: 'toJsonTest',
+              filter: { 'sys.id' => '1.2' },
+              options: { include: 1, preview: true }).once
+        .and_return(deep_resolved)
+
+      # act
+      subject = WCC::Contentful::Model::ToJsonTest.new(raw, preview: true)
+      subject.resolve(depth: 11, fields: [:some_link])
+
+      # assert
+      # walk the whole tree down to number 11
+      links = []
+      current = subject
+      while current = current.some_link
+        links << current.name
+      end
+
+      expect(links).to eq(
+        [
+          'resolved9',
+          'resolved8',
+          'resolved7',
+          'resolved6',
+          'resolved5',
+          'resolved4',
+          'resolved3',
+          'resolved2',
+          'resolved1',
+          'unresolved1.2',
+          'number 11'
+        ]
+      )
+    end
+
     it 'stops when it hits a circular reference' do
       raw['fields']['someLink'] = nil
 
@@ -209,7 +261,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
       raw3['sys']['id'] = '3'
       # circular back to 1
       raw3['fields']['items']['en-US'] = [
-        { 'sys' => { 'id' => '1' } }
+        { 'sys' => { 'type' => 'Link', 'linkType' => 'Entry', 'id' => '1' } }
       ]
 
       resolved = raw.deep_dup
@@ -237,7 +289,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
       raw3['sys']['id'] = '3'
       # circular back to 1
       raw3['fields']['items']['en-US'] = [
-        { 'sys' => { 'id' => '1' } }
+        { 'sys' => { 'type' => 'Link', 'linkType' => 'Entry', 'id' => '1' } }
       ]
 
       resolved = raw.deep_dup
@@ -264,7 +316,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
       raw3['sys']['id'] = '3'
       # circular back to 1
       raw3['fields']['items']['en-US'] = [
-        { 'sys' => { 'id' => '1' } }
+        { 'sys' => { 'type' => 'Link', 'linkType' => 'Entry', 'id' => '1' } }
       ]
 
       resolved = raw.deep_dup
@@ -385,7 +437,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
       raw3['fields']['someLink'] = nil
       # circular back to 1
       raw3['fields']['items']['en-US'] = [
-        { 'sys' => { 'type' => 'Link', 'id' => '1' } }
+        { 'sys' => { 'type' => 'Link', 'linkType' => 'Entry', 'id' => '1' } }
       ]
       resolved1['fields']['items'] = { 'en-US' => [raw3] }
 
@@ -460,7 +512,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
       raw2['sys']['id'] = '2'
       # circular back to 1
       raw2['fields']['items']['en-US'] = [
-        { 'sys' => { 'id' => '1' } }
+        { 'sys' => { 'type' => 'Link', 'linkType' => 'Entry', 'id' => '1' } }
       ]
 
       raw['fields']['items'] = nil
@@ -476,10 +528,11 @@ RSpec.describe WCC::Contentful::ModelMethods do
               options: { include: 10 }).once
         .and_return(resolved2)
 
-      expect(WCC::Contentful::Model).to receive(:find) do |id, ctx|
+      expect(WCC::Contentful::Model).to receive(:find) do |id, keyword_params|
         raise ArgumentError unless id == '2'
 
-        WCC::Contentful::Model::ToJsonTest.new(raw2, ctx)
+        options = keyword_params[:options]
+        WCC::Contentful::Model::ToJsonTest.new(raw2, options)
       end
 
       # act
@@ -496,7 +549,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
       raw2['sys']['id'] = '2'
       # circular back to 1
       raw2['fields']['items']['en-US'] = [
-        { 'sys' => { 'id' => '1' } }
+        { 'sys' => { 'type' => 'Link', 'linkType' => 'Entry', 'id' => '1' } }
       ]
 
       raw['fields']['items'] = nil
@@ -512,10 +565,11 @@ RSpec.describe WCC::Contentful::ModelMethods do
               options: { include: 10 }).once
         .and_return(resolved2)
 
-      expect(WCC::Contentful::Model).to receive(:find) do |id, ctx|
+      expect(WCC::Contentful::Model).to receive(:find) do |id, keyword_params|
         raise ArgumentError unless id == '2'
 
-        WCC::Contentful::Model::ToJsonTest.new(raw2, ctx)
+        options = keyword_params[:options]
+        WCC::Contentful::Model::ToJsonTest.new(raw2, options)
       end
 
       # act
@@ -755,7 +809,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
       raw3['sys']['id'] = '3'
       # circular back to 1
       raw3['fields']['items']['en-US'] = [
-        { 'sys' => { 'id' => '1' } }
+        { 'sys' => { 'type' => 'Link', 'linkType' => 'Entry', 'id' => '1' } }
       ]
 
       resolved = raw.deep_dup

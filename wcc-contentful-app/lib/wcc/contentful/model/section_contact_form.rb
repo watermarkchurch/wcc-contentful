@@ -27,7 +27,7 @@ class WCC::Contentful::Model::SectionContactForm < WCC::Contentful::Model
 
   def email_model(email_object_id)
     raise ArgumentError, 'contentful entry does not exist' unless
-      entry = ::WCC::Contentful::Model.find(email_object_id, sys.context.to_h)
+      entry = ::WCC::Contentful::Model.find(email_object_id, options: sys.context.to_h)
 
     entry
   end
