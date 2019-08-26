@@ -202,6 +202,59 @@ RSpec.describe WCC::Contentful::ModelMethods do
       )
     end
 
+    it 'passes preview param down when using preview API' do
+      resolved = make_resolved(depth: 10, fields: ['someLink'])
+      deep_resolved = raw.deep_dup
+      deep_resolved['sys']['id'] = '1.2'
+      deep_resolved['fields'].merge!({
+        'items' => nil,
+        'someLink' => { 'en-US' => {
+          'sys' => { 'id' => 'deep1', 'type' => 'Entry', 'contentType' => content_type },
+          'fields' => { 'name' => { 'en-US' => 'number 11' } }
+        } }
+      })
+
+      expect(store).to receive(:find_by)
+        .with(content_type: 'toJsonTest',
+              filter: { 'sys.id' => '1' },
+              options: { include: 10, preview: true }).once
+        .and_return(resolved)
+      expect(store).to receive(:find_by)
+        .with(content_type: 'toJsonTest',
+              filter: { 'sys.id' => '1.2' },
+              options: { include: 1, preview: true }).once
+        .and_return(deep_resolved)
+
+      # act
+      subject = WCC::Contentful::Model::ToJsonTest.new(raw, preview: true)
+      puts "ctx: #{subject.sys.context.to_h}"
+      subject.resolve(depth: 11, fields: [:some_link])
+
+      # assert
+      # walk the whole tree down to number 11
+      links = []
+      current = subject
+      while current = current.some_link
+        links << current.name
+      end
+
+      expect(links).to eq(
+        [
+          'resolved9',
+          'resolved8',
+          'resolved7',
+          'resolved6',
+          'resolved5',
+          'resolved4',
+          'resolved3',
+          'resolved2',
+          'resolved1',
+          'unresolved1.2',
+          'number 11'
+        ]
+      )
+    end
+
     it 'stops when it hits a circular reference' do
       raw['fields']['someLink'] = nil
 

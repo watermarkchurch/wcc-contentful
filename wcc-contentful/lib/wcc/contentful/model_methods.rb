@@ -22,7 +22,7 @@ module WCC::Contentful::ModelMethods
   #   handled.  `:raise` causes a {WCC::Contentful::CircularReferenceError} to be raised,
   #   `:ignore` will cause the field to remain unresolved, and any other value (or nil)
   #   will cause the field to point to the previously resolved ruby object for that ID.
-  def resolve(depth: 1, fields: nil, context: {}, **options)
+  def resolve(depth: 1, fields: nil, context: sys.context.to_h, **options)
     raise ArgumentError, "Depth must be > 0 (was #{depth})" unless depth && depth > 0
     return self if resolved?(depth: depth, fields: fields)
 
@@ -45,7 +45,9 @@ module WCC::Contentful::ModelMethods
       # use include param to do resolution
       raw = self.class.store.find_by(content_type: self.class.content_type,
                                      filter: { 'sys.id' => id },
-                                     options: { include: [depth, 10].min })
+                                     options: context.except(:backlinks).merge!({
+                                       include: [depth, 10].min
+                                     }))
       unless raw
         raise WCC::Contentful::ResolveError, "Cannot find #{self.class.content_type} with ID #{id}"
       end
