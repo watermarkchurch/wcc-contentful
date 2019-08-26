@@ -54,15 +54,29 @@ class WCC::Contentful::Model
 
   @@registry = {}
 
+  def self.store(preview = false)
+    if preview
+      if WCC::Contentful::Model.preview_store.nil?
+        raise ArgumentError,
+          'You must include a contentful preview token in your WCC::Contentful.configure block'
+      end
+      WCC::Contentful::Model.preview_store
+    else
+      WCC::Contentful::Model.store
+    end
+  end
+
   # Finds an Entry or Asset by ID in the configured contentful space
   # and returns an initialized instance of the appropriate model type.
   #
   # Makes use of the {WCC::Contentful::Services#store configured store}
   # to access the Contentful CDN.
-  def self.find(id, context = nil)
-    return unless raw = store.find(id)
+  def self.find(id, options: nil)
+    options ||= {}
+    raw = store(options[:preview])
+      .find(id, options.except(:preview))
 
-    new_from_raw(raw, context)
+    new_from_raw(raw, options) if raw.present?
   end
 
   # Creates a new initialized instance of the appropriate model type for the

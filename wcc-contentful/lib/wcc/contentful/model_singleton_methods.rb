@@ -4,18 +4,6 @@
 # methods that are not dynamically generated.
 # @api Model
 module WCC::Contentful::ModelSingletonMethods
-  def store(preview = false)
-    if preview
-      if WCC::Contentful::Model.preview_store.nil?
-        raise ArgumentError,
-          'You must include a contentful preview token in your WCC::Contentful.configure block'
-      end
-      WCC::Contentful::Model.preview_store
-    else
-      WCC::Contentful::Model.store
-    end
-  end
-
   # Finds an instance of this content type.
   #
   # @return [nil, WCC::Contentful::Model] An instance of the appropriate model class
