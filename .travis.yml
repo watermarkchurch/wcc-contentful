@@ -22,6 +22,9 @@ install:
 script:
   - export COVERALLS_PARALLEL=true
   - bin/bundle exec rspec --format documentation --order rand
+  # only run coverage on the wcc-contentful gem
+  - bundle exec rake coverage
+  - bundle exec rake coverage:coveralls
 jobs:
   include:
     - stage: lint
