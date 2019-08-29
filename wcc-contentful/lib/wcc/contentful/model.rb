@@ -74,7 +74,7 @@ class WCC::Contentful::Model
   def self.find(id, options: nil)
     options ||= {}
     raw = store(options[:preview])
-      .find(id, options.except(:preview))
+      .find(id, options.except(*WCC::Contentful::ModelMethods::MODEL_LAYER_CONTEXT_KEYS))
 
     new_from_raw(raw, options) if raw.present?
   end

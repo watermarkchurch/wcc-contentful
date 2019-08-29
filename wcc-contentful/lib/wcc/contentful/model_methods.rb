@@ -5,6 +5,13 @@
 #
 # @api Model
 module WCC::Contentful::ModelMethods
+  # The set of options keys that are specific to the Model layer and shouldn't
+  # be passed down to the Store layer.
+  MODEL_LAYER_CONTEXT_KEYS = %i[
+    preview
+    backlinks
+  ].freeze
+
   # Resolves all links in an entry to the specified depth.
   #
   # Each link in the entry is recursively retrieved from the store until the given
@@ -43,11 +50,12 @@ module WCC::Contentful::ModelMethods
     has_unresolved_raw_links = (raw_link_ids - backlinked_ids).any?
     if has_unresolved_raw_links
       # use include param to do resolution
-      raw = self.class.store.find_by(content_type: self.class.content_type,
-                                     filter: { 'sys.id' => id },
-                                     options: context.except(:backlinks).merge!({
-                                       include: [depth, 10].min
-                                     }))
+      raw = self.class.store(context[:preview])
+        .find_by(content_type: self.class.content_type,
+                 filter: { 'sys.id' => id },
+                 options: context.except(*MODEL_LAYER_CONTEXT_KEYS).merge!({
+                   include: [depth, 10].min
+                 }))
       unless raw
         raise WCC::Contentful::ResolveError, "Cannot find #{self.class.content_type} with ID #{id}"
       end
