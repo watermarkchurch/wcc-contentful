@@ -109,7 +109,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
   }
 
   let(:store) {
-    double
+    double('store')
   }
 
   subject {
@@ -121,6 +121,13 @@ RSpec.describe WCC::Contentful::ModelMethods do
     builder.build_models
 
     allow(WCC::Contentful::Model).to receive(:store)
+      .with(no_args)
+      .and_return(store)
+    allow(WCC::Contentful::Model).to receive(:store)
+      .with(nil)
+      .and_return(store)
+    allow(WCC::Contentful::Model).to receive(:store)
+      .with(false)
       .and_return(store)
   end
 
@@ -214,15 +221,21 @@ RSpec.describe WCC::Contentful::ModelMethods do
         } }
       })
 
-      expect(store).to receive(:find_by)
+      preview_store = double('preview_store')
+      allow(WCC::Contentful::Model).to receive(:store)
+        .with(true)
+        .and_return(preview_store)
+
+      expect(store).to_not receive(:find_by)
+      expect(preview_store).to receive(:find_by)
         .with(content_type: 'toJsonTest',
               filter: { 'sys.id' => '1' },
-              options: { include: 10, preview: true }).once
+              options: { include: 10 }).once
         .and_return(resolved)
-      expect(store).to receive(:find_by)
+      expect(preview_store).to receive(:find_by)
         .with(content_type: 'toJsonTest',
               filter: { 'sys.id' => '1.2' },
-              options: { include: 1, preview: true }).once
+              options: { include: 1 }).once
         .and_return(deep_resolved)
 
       # act
@@ -599,7 +612,8 @@ RSpec.describe WCC::Contentful::ModelMethods do
         end
       end
 
-      allow(store).to receive(:find) do |id|
+      allow(store).to receive(:find) do |id, keyword_params|
+        expect(keyword_params.keys).to_not include(:backlinks)
         linked_item_for_id.call(id)
       end
 
