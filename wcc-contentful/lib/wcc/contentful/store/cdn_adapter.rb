@@ -62,9 +62,8 @@ module WCC::Contentful::Store
 
       def initialize(store:, client:, relation:, options: nil, **extra)
         raise ArgumentError, 'Client cannot be nil' unless client.present?
-        raise ArgumentError, 'content_type must be provided' unless relation[:content_type].present?
 
-        super(store)
+        super(store, relation[:content_type])
         @client = client
         @relation = relation
         @options = options || {}
@@ -89,12 +88,6 @@ module WCC::Contentful::Store
 
         conditions.reduce(self) do |query, (ref, value)|
           query.apply({ "#{base_param}.#{parameter(ref)}" => value }, context)
-        end
-      end
-
-      Base::Query::OPERATORS.each do |op|
-        define_method(op) do |field, expected, context = nil|
-          apply_operator(op, field, expected, context)
         end
       end
 

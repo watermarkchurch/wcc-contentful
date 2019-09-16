@@ -63,12 +63,18 @@ module WCC::Contentful::Store
 
     class Query < Base::Query
       def initialize(store, connection_pool, statement = nil, params = nil, options = nil)
-        super(store)
+        super(store, params[0])
         @connection_pool = connection_pool
         @statement = statement ||
           "WHERE data->'sys'->>'id' IS NOT NULL"
         @params = params || []
         @options = options || {}
+      end
+
+      def apply_operator(operator, field, expected, context = nil)
+        raise NotSupportedError, "operator #{operator} not yet supported" unless operator == :eq
+
+        eq(field, expected, context)
       end
 
       def eq(field, expected, context = nil)

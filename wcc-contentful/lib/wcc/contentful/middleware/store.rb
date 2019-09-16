@@ -42,10 +42,10 @@ module WCC::Contentful::Middleware::Store
   end
 
   def find_all(options: nil, **args)
-    Query.new(
-      store.find_all(**args.merge(options: options)),
-      self,
-      options
+    DelegatingQuery.new(
+      query: store.find_all(**args.merge(options: options)),
+      middleware: self,
+      options: options
     )
   end
 
@@ -85,10 +85,14 @@ module WCC::Contentful::Middleware::Store
     entry
   end
 
-  class Query < WCC::Contentful::Store::Base::Query
+  class DelegatingQuery < WCC::Contentful::Store::Base::DelegatingQuery
     attr_reader :wrapped_query, :middleware, :options
 
-    delegate :apply, :apply_operator, to: :wrapped_query
+    def initialize(middleware:, options:, **extra)
+      super(middleware: middleware, options: options, **extra)
+      @middleware = middleware
+      @options = options
+    end
 
     def to_enum
       result =
@@ -100,12 +104,6 @@ module WCC::Contentful::Middleware::Store
       end
 
       result.map { |x| middleware.transform(x) }
-    end
-
-    def initialize(wrapped_query, middleware, options)
-      @wrapped_query = wrapped_query
-      @middleware = middleware
-      @options = options
     end
   end
 end

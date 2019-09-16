@@ -138,24 +138,25 @@ module WCC::Contentful::Store
         match
       ].freeze
 
+      attr_reader :content_type
+
       # @abstract Subclasses should provide this in order to fetch the results
       #   of the query.
       def to_enum
         raise NotImplementedError
       end
 
-      def initialize(store)
+      def initialize(store, content_type)
+        raise ArgumentError, 'content_type must be provided' unless content_type.present?
+
         @store = store
+        @content_type = content_type
       end
 
-      # @abstract Subclasses can either override this method to properly respond
-      #   to find_by query objects, or they can define a method for each supported
-      #   operator.  Ex. `#eq`, `#ne`, `#gt`.
-      def apply_operator(operator, field, expected, context = nil)
-        respond_to?(operator) ||
-          raise(ArgumentError, "Operator not implemented: #{operator}")
-
-        public_send(operator, field, expected, context)
+      Base::Query::OPERATORS.each do |op|
+        define_method(op) do |field, expected, context = nil|
+          apply_operator(op, field, expected, context)
+        end
       end
 
       # Called with a filter object by {Base#find_by} in order to apply the filter.
@@ -171,6 +172,19 @@ module WCC::Contentful::Store
             query.apply_operator(:eq, field.to_s, value)
           end
         end
+      end
+
+      # @abstract Subclasses can either override this method to properly respond
+      #   to find_by query objects, or they can define a method for each supported
+      #   operator.  Ex. `#eq`, `#ne`, `#gt`.
+      def apply_operator(_operator, _field, _expected, _context = nil)
+        raise NotImplementedError, "apply_operator not implemented in #{self.class.name}"
+      end
+
+      # @abstract Subclasses can override this method to implement support for
+      #   nested conditions.
+      def nested_conditions(_field, _conditions, _context)
+        raise NotImplementedError, "nested_conditions not implemented in #{self.class.name}"
       end
 
       protected
@@ -208,6 +222,54 @@ module WCC::Contentful::Store
 
       def id?(field)
         field.to_sym == :id
+      end
+    end
+
+    class DelegatingQuery < Query
+      def initialize(query:, **extra)
+        @wrapped_query = query
+        @extra = extra || {}
+      end
+
+      protected
+
+      # @abstract Subclasses can either override this method to properly respond
+      #   to find_by query objects, or they can define a method for each supported
+      #   operator.  Ex. `#eq`, `#ne`, `#gt`.
+      def apply_operator(operator, field, expected, context = nil)
+        new_query = @wrapped_query.apply_operator(operator, field, expected, context)
+        self.class.new(
+          query: new_query,
+          **@extra
+        )
+      end
+
+      def nested_conditions(field, conditions, context)
+        new_query = @wrapped_query.nested_conditions(field, conditions, context)
+        self.class.new(
+          query: new_query,
+          **@extra
+        )
+      end
+
+      Base::Query::OPERATORS.each do |op|
+        define_method(op) do |field, _expected, context = nil|
+          new_query = @wrapped_query.public_send(op, field, conditions, context)
+          self.class.new(
+            query: new_query,
+            **@extra
+          )
+        end
+      end
+
+      private
+
+      def respond_to_missing?(name, include_private = false)
+        @wrapped_query.respond_to?(name, include_private)
+      end
+
+      def method_missing(method, *args, &block) # rubocop:disable Style/MethodMissingSuper
+        @wrapped_query.public_send(method, *args, &block)
       end
     end
   end

@@ -278,8 +278,8 @@ RSpec.describe WCC::Contentful::Middleware::Store do
           .with(content_type: 'test', options: nil)
           .and_return(query_double)
 
-        expect(query_double).to receive(:apply)
-          .with({ 'test' => 'ok' })
+        expect(query_double).to receive(:apply_operator)
+          .with(:eq, 'test', 'ok', nil)
           .and_return(query_double)
         allow(query_double).to receive(:to_enum)
           .and_return(entries)

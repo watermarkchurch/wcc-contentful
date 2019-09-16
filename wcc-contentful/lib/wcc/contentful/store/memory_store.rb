@@ -45,7 +45,7 @@ module WCC::Contentful::Store
           value_content_type = v.try(:dig, 'sys', 'contentType', 'sys', 'id')
           value_content_type.nil? || value_content_type != content_type
         end
-      Query.new(self, relation, options)
+      Query.new(self, content_type, relation, options)
     end
 
     class Query < Base::Query
@@ -55,16 +55,22 @@ module WCC::Contentful::Store
         @relation.map { |e| resolve_includes(e, @options[:include]) }
       end
 
-      def initialize(store, relation, options = nil)
-        super(store)
+      def initialize(store, content_type, relation, options = nil)
+        super(store, content_type)
         @relation = relation
         @options = options || {}
+      end
+
+      def apply_operator(operator, field, expected, context = nil)
+        raise NotSupportedError, "operator #{operator} not yet supported" unless operator == :eq
+
+        eq(field, expected, context)
       end
 
       def eq(field, expected, context = nil)
         locale = context[:locale] if context.present?
         locale ||= 'en-US'
-        Query.new(@store, @relation.select do |v|
+        Query.new(@store, content_type, @relation.select do |v|
           val = v.dig('fields', field, locale)
           if val.is_a? Array
             val.include?(expected)
