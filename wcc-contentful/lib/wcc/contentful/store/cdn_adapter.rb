@@ -75,11 +75,11 @@ module WCC::Contentful::Store
         param = parameter(field, operator: op, context: context, locale: true)
 
         self.class.new(
+          **@extra,
           store: @store,
           client: @client,
           relation: @relation.merge(param => expected),
-          options: @options,
-          **@extra
+          options: @options
         )
       end
 
@@ -89,6 +89,11 @@ module WCC::Contentful::Store
         conditions.reduce(self) do |query, (ref, value)|
           query.apply({ "#{base_param}.#{parameter(ref)}" => value }, context)
         end
+      end
+
+      def to_s
+        "<CDNAdapter::Query \"#{@relation[:content_type] == 'Asset' ? 'assets' : 'entries'}" \
+          "?#{@relation.to_param}\" >"
       end
 
       private

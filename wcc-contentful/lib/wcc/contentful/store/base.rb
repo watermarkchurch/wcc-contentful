@@ -13,19 +13,19 @@ module WCC::Contentful::Store
     # @abstract Subclasses should implement this at a minimum to provide data
     #   to the WCC::Contentful::Model API.
     def find(_id)
-      raise NotImplementedError, "#{self.class} does not implement #find"
+      raise NoMethodError, "#{self.class} does not implement #find"
     end
 
     # Sets the value of the entry with the given ID in the store.
     # @abstract
     def set(_id, _value)
-      raise NotImplementedError, "#{self.class} does not implement #set"
+      raise NoMethodError, "#{self.class} does not implement #set"
     end
 
     # Removes the entry by ID from the store.
     # @abstract
     def delete(_id)
-      raise NotImplementedError, "#{self.class} does not implement #delete"
+      raise NoMethodError, "#{self.class} does not implement #delete"
     end
 
     # Returns true if this store can index values coming back from the sync API.
@@ -89,7 +89,7 @@ module WCC::Contentful::Store
     # @return [Query] A query object that exposes methods to apply filters
     # rubocop:disable Lint/UnusedMethodArgument
     def find_all(content_type:, options: nil)
-      raise NotImplementedError, "#{self.class} does not implement find_all"
+      raise NoMethodError, "#{self.class} does not implement find_all"
     end
     # rubocop:enable Lint/UnusedMethodArgument
 
@@ -174,6 +174,12 @@ module WCC::Contentful::Store
         end
       end
 
+      def to_s
+        "<Query content_type: \"#{content_type}\" >"
+      end
+
+      protected
+
       # @abstract Subclasses can either override this method to properly respond
       #   to find_by query objects, or they can define a method for each supported
       #   operator.  Ex. `#eq`, `#ne`, `#gt`.
@@ -186,8 +192,6 @@ module WCC::Contentful::Store
       def nested_conditions(_field, _conditions, _context)
         raise NotImplementedError, "nested_conditions not implemented in #{self.class.name}"
       end
-
-      protected
 
       # naive implementation recursively descends the graph to turns links into
       # the actual entry data.  This calls {Base#find} for each link and so it is
@@ -226,8 +230,9 @@ module WCC::Contentful::Store
     end
 
     class DelegatingQuery < Query
-      def initialize(query:, **extra)
+      def initialize(query:, options:, **extra)
         @wrapped_query = query
+        @options = options || {}
         @extra = extra || {}
       end
 
@@ -239,16 +244,18 @@ module WCC::Contentful::Store
       def apply_operator(operator, field, expected, context = nil)
         new_query = @wrapped_query.apply_operator(operator, field, expected, context)
         self.class.new(
+          **@extra,
           query: new_query,
-          **@extra
+          options: @options
         )
       end
 
       def nested_conditions(field, conditions, context)
         new_query = @wrapped_query.nested_conditions(field, conditions, context)
         self.class.new(
+          **@extra,
           query: new_query,
-          **@extra
+          options: @options
         )
       end
 
@@ -256,8 +263,9 @@ module WCC::Contentful::Store
         define_method(op) do |field, _expected, context = nil|
           new_query = @wrapped_query.public_send(op, field, conditions, context)
           self.class.new(
+            **@extra,
             query: new_query,
-            **@extra
+            options: @options
           )
         end
       end

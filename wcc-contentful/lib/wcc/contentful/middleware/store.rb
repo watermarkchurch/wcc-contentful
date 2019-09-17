@@ -88,10 +88,9 @@ module WCC::Contentful::Middleware::Store
   class DelegatingQuery < WCC::Contentful::Store::Base::DelegatingQuery
     attr_reader :wrapped_query, :middleware, :options
 
-    def initialize(middleware:, options:, **extra)
-      super(middleware: middleware, options: options, **extra)
+    def initialize(middleware:, **extra)
+      super(middleware: middleware, **extra)
       @middleware = middleware
-      @options = options
     end
 
     def to_enum
