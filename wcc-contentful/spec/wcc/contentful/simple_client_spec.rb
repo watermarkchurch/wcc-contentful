@@ -39,23 +39,6 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
       }.to raise_error(ArgumentError)
     end
 
-    it 'loads proc as adapter' do
-      WCC::Contentful::SimpleClient::ADAPTERS = {}.freeze
-      resp = double(body: 'test body', status: 200)
-
-      # act
-      client = WCC::Contentful::SimpleClient.new(
-        api_url: 'https://cdn.contentful.com',
-        access_token: contentful_access_token,
-        space: contentful_space_id,
-        adapter: proc { resp }
-      )
-      resp = client.get('http://asdf.com')
-
-      # assert
-      expect(resp.body).to eq('test body')
-    end
-
     it 'fails to load when adapter is not invokeable' do
       WCC::Contentful::SimpleClient::ADAPTERS = {}.freeze
 

@@ -63,6 +63,7 @@ module WCC::Contentful
     end
 
     ADAPTERS = {
+      faraday: ['faraday', '~> 0.9'],
       http: ['http', '> 1.0', '< 3.0'],
       typhoeus: ['typhoeus', '~> 1.0']
     }.freeze
@@ -80,6 +81,12 @@ module WCC::Contentful
         end
         raise ArgumentError, 'Unable to load adapter!  Please install one of '\
           "#{ADAPTERS.values.map(&:join).join(',')}"
+      when :faraday
+        require 'faraday'
+        ::Faraday.new do |faraday|
+          faraday.response :logger, (Rails.logger if defined?(Rails)), { headers: false, bodies: false }
+          faraday.adapter :net_http
+        end
       when :http
         require_relative 'simple_client/http_adapter'
         HttpAdapter.new
@@ -87,9 +94,9 @@ module WCC::Contentful
         require_relative 'simple_client/typhoeus_adapter'
         TyphoeusAdapter.new
       else
-        unless adapter.respond_to?(:call)
+        unless adapter.respond_to?(:get)
           raise ArgumentError, "Adapter #{adapter} is not invokeable!  Please "\
-            "pass a proc or use one of #{ADAPTERS.keys}"
+            "pass use one of #{ADAPTERS.keys} or create a Faraday-compatible adapter"
         end
         adapter
       end
@@ -105,9 +112,9 @@ module WCC::Contentful
       q = @query_defaults.dup
       q = q.merge(query) if query
 
-      resp = @adapter.call(url, q, headers, proxy)
+      resp = @adapter.get(url, q, headers)
 
-      if [301, 302, 307].include?(resp.code) && !@options[:no_follow_redirects]
+      if [301, 302, 307].include?(resp.status) && !@options[:no_follow_redirects]
         resp = get_http(resp.headers['location'], nil, headers, proxy)
       end
       resp

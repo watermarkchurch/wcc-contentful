@@ -59,6 +59,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'http', '> 1.0', '< 3.0'
   spec.add_development_dependency 'pg', '~> 1.0'
   spec.add_development_dependency 'typhoeus', '~> 1.3'
+  spec.add_development_dependency 'faraday', '~> 0.9'
 
   spec.add_dependency 'activesupport', '>= 5'
   spec.add_dependency 'wcc-base', '~> 0.3.1'
