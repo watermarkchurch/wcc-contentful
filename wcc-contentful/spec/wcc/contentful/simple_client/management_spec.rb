@@ -153,7 +153,7 @@ RSpec.describe WCC::Contentful::SimpleClient::Management do
 
           # act
           expect {
-            resp = client.post_webhook_definition('test' => 'body')
+            client.post_webhook_definition('test' => 'body')
           }.to raise_error(WCC::Contentful::SimpleClient::RateLimitError)
         end
       end
