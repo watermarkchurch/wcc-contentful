@@ -104,7 +104,7 @@ module WCC::Contentful
 
     private
 
-    def get_http(url, query, headers = {}, proxy = {})
+    def get_http(url, query, headers = {})
       headers = {
         Authorization: "Bearer #{@access_token}"
       }.merge(headers || {})
@@ -115,7 +115,7 @@ module WCC::Contentful
       resp = @adapter.get(url, q, headers)
 
       if [301, 302, 307].include?(resp.status) && !@options[:no_follow_redirects]
-        resp = get_http(resp.headers['location'], nil, headers, proxy)
+        resp = get_http(resp.headers['location'], nil, headers)
       end
       resp
     end

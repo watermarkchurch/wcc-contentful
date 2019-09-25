@@ -55,11 +55,11 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'connection_pool', '~> 2.2'
   spec.add_development_dependency 'contentful', '2.6.0'
   spec.add_development_dependency 'contentful-management', '2.0.2'
+  spec.add_development_dependency 'faraday', '~> 0.9'
   spec.add_development_dependency 'graphql', '~> 1.7'
   spec.add_development_dependency 'http', '> 1.0', '< 3.0'
   spec.add_development_dependency 'pg', '~> 1.0'
   spec.add_development_dependency 'typhoeus', '~> 1.3'
-  spec.add_development_dependency 'faraday', '~> 0.9'
 
   spec.add_dependency 'activesupport', '>= 5'
   spec.add_dependency 'wcc-base', '~> 0.3.1'
