@@ -141,6 +141,21 @@ RSpec.describe WCC::Contentful::SimpleClient::Management do
             'sys' => { 'type' => 'WebhookDefinition', 'id' => '5GvfGrfrshJT6g0kZIvph8' }
           })
         end
+
+        it 'never retries a webhook post on 429' do
+          stub_request(:post, 'https://api.contentful.com/spaces/testspace/webhook_definitions')
+            .to_return(status: 429,
+                       headers: {
+                         'X-Contentful-RateLimit-Reset': 1
+                       })
+            .then
+            .to_raise(StandardError, 'Should have bailed!')
+
+          # act
+          expect {
+            resp = client.post_webhook_definition('test' => 'body')
+          }.to raise_error(WCC::Contentful::SimpleClient::RateLimitError)
+        end
       end
     end
   end
