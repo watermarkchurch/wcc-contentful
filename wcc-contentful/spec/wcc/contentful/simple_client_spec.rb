@@ -400,6 +400,9 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
 
         describe 'sync' do
           it 'gets all sync items' do
+            stub_request(:get, cdn_base + '/sync?initial=true')
+              .to_return(body: load_fixture('contentful/simple_client/sync_initial.json'))
+
             # act
             resp = client.sync
 
@@ -415,6 +418,23 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
           end
 
           it 'pages when theres a lot of items' do
+            stub_request(:get, cdn_base + '/sync?initial=true')
+              .to_return(body: load_fixture('contentful/simple_client/sync_paginated_initial.json'))
+
+            sync_token = 'wonDrcKnRgcSOF4-wrDCgcKefWzCgsOxwrfCq8KOfMOdXUPCvEnChwEEO8KFwqHDj8KxwrzDmk' \
+              'TCrsKWUwnDiFczCULDs08Pw5LDj1DCr8KQwoEVw7dBdhPDi23DrsKlwoPDkcKESGfCt8Kyw5hnDcOEwrkMOjL' \
+              'CtsOZwqzDh8OAI3ZEW8K0fELDqMKAw73DoFo-RV_DsRVteRhXw7LDulU4worCgsOlRsOVworCtgrCpnkqTBdG' \
+              'w6PDt8OYOcOHDw'
+            stub_request(:get, cdn_base + '/sync?sync_token=' + sync_token)
+              .to_return(body: load_fixture('contentful/simple_client/sync_paginated_page_2.json'))
+
+            sync_token = 'wonDrcKnRgcSOF4-wrDCgcKefWzCgsOxwrfCq8KOfMOdXUPCvEnChwEEO8KFwqHDj8KxwrzDmk' \
+              'TCrsKWUwnDiFczCULDs08Pw5LDj1DCr8KQwoEVw7dBdhPDi23DrsKlwoPDkcKESGfCt8Kyw5hnDcOEwrkMOjL' \
+              'CtsOZCiV0HMKKw4rDpcKXwpXCh1vDlVMPRcOLYMKzw7HDucOFbsKSZ3pqTcONwqxXw43CssKgP8Oqw7HCqnPC' \
+              'nsOpdXfCksO1fVfDsDM'
+            stub_request(:get, cdn_base + '/sync?sync_token=' + sync_token)
+              .to_return(body: load_fixture('contentful/simple_client/sync_paginated_page_3.json'))
+
             # act
             resp = client.sync
 
@@ -424,23 +444,34 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
             expect(items.count).to be > 200
           end
 
-          let(:sync_token) {
-            'w5ZGw6JFwqZmVcKsE8Kow4grw45QdybCpsOKdcK_ZjDCpMOFwpXDq8KRUE1F'\
-                'w613K8KyA8OIwqvCtDfChhbCpsO7CjfDssOKw7YtXMOnwobDjcKrw7XDjMKHw7jCq'\
-                '8K1wrRRwpHCqMKIwr_DoMKSwrnCqS0qw47DkShzZ8K3V8KR'
-          }
-
           it 'returns next sync token' do
+            stub_request(:get, cdn_base + '/sync?initial=true')
+              .to_return(body: load_fixture('contentful/simple_client/sync_initial.json'))
+
             # act
             resp = client.sync
 
             # assert
             resp.assert_ok!
             expect(resp.next_sync_token)
-              .to eq(sync_token)
+              .to eq('w5ZGw6JFwqZmVcKsE8Kow4grw45QdybCpsOKdcK_ZjDCpMOFwpXDq8KRUE1Fw613K8KyA8OIwqv' \
+                'CtDfChhbCpsO7CjfDssOKw7YtXMOnwobDjcKrw7XDjMKHw7jCq8K1wrRRwpHCqMKIwr_DoMKSwrnCqS0' \
+                'qw47DkShzZ8K3V8KR')
           end
 
           it 'accepts sync token' do
+            sync_token = 'w5ZGw6JFwqZmVcKsE8Kow4grw45QdybCpsOKdcK_ZjDCpMOFwpXDq8' \
+              'KRUE1Fw613K8KyA8OIwqvCtDfChhbCpsO7CjfDssOKw7YtXMOnwobDjcKrw7XDjMK' \
+              'Hw7jCq8K1wrRRwpHCqMKIwr_DoMKSwrnCqS0qw47DkShzZ8K3V8KR'
+            stub_request(:get, cdn_base + '/sync?sync_token=' + sync_token)
+              .to_return(body: {
+                'sys' => {
+                  'type' => 'Array'
+                },
+                'items' => [],
+                "nextSyncUrl": cdn_base + '/sync?sync_token=another-sync-token'
+              }.to_json)
+
             # act
             resp = client.sync(sync_token: sync_token)
 
@@ -466,6 +497,14 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
 
         describe 'get' do
           it 'gets entries with query params from environment' do
+            fixture = JSON.parse(load_fixture('contentful/simple_client/entries_limit_2.json'))
+            fixture['items'].each do |entry|
+              entry['sys']['environment'] = { 'sys' => { 'id' => 'specs' } }
+            end
+
+            stub_request(:get, cdn_base + '/environments/specs/entries?limit=2')
+              .to_return(body: fixture.to_json)
+
             # act
             resp = client.get('entries', { limit: 2 })
 
@@ -473,7 +512,7 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
             resp.assert_ok!
             expect(resp.status).to eq(200)
             expect(resp.to_json['items'].map { |i| i.dig('sys', 'id') }).to eq(
-              %w[ym4r3nweSywSuw042uUUk 1qXeLjFXoIuqEqgckoMyAM]
+              %w[1tPGouM76soIsM2e0uikgw 1IJEXB4AKEqQYEm4WuceG2]
             )
             resp.to_json['items'].each do |item|
               expect(item.dig('sys', 'environment', 'sys', 'id')).to eq('specs')
@@ -481,29 +520,32 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
           end
 
           it 'paginates all items' do
+            stub_request(:get, cdn_base + '/environments/specs/entries?content_type=page&limit=5')
+              .to_return(body: load_fixture('contentful/simple_client/pages_first_page.json'))
+            stub_request(:get, cdn_base +
+                '/environments/specs/entries?content_type=page&limit=5&skip=5')
+              .to_return(body: load_fixture('contentful/simple_client/pages_2nd_page.json'))
+
             # act
-            resp = client.get('entries', { content_type: 'faq', limit: 5 })
+            resp = client.get('entries', { content_type: 'page', limit: 5 })
 
             # assert
             resp.assert_ok!
-            items = resp.items.force
-            ids =
-              items.map do |item|
+            items =
+              resp.items.map do |item|
                 item.dig('sys', 'id')
               end
-            expect(ids)
+            expect(items.force)
               .to eq(%w[
-                       6ktgj3Bc88kmWuM4gSM686
-                       PqDxIBykmq2sucqQGUeCC
-                       ym4r3nweSywSuw042uUUk
-                       4jZvAKqv4AmqqO2sAmgqUc
-                       5P5NEDpjNYo6AoQo28gWcK
-                       1Au9nhG1I4sWMugOCUakE4
-                       4Seuo60ERySe6SmiyeMqGg
-                       2xiwkMS0z2k4sSWKKASU4C
+                       47PsST8EicKgWIWwK2AsW6
+                       1loILDsvKYkmGWoiKOOgkE
+                       1UojJt7YoMiemCq2mGGUmQ
+                       3Azc4SjWSsYIuYO8m8qqQE
+                       4lD8cHrr0QSAcY0sguqmss
+                       1tPGouM76soIsM2e0uikgw
+                       32EYWhG184SgoiYo2e6iOo
+                       JhYhSfZPAOMqsaK8cYOUK
                      ])
-
-            expect(items[5].dig('fields', 'answer')).to include('specs environment')
           end
         end
       end
