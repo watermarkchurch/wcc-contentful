@@ -61,7 +61,7 @@ module WCC::Contentful
             access_token: config.access_token,
             space: config.space,
             default_locale: config.default_locale,
-            adapter: config.http_adapter,
+            connection: config.connection,
             environment: config.environment
           )
         end
@@ -79,7 +79,7 @@ module WCC::Contentful
               preview_token: config.preview_token,
               space: config.space,
               default_locale: config.default_locale,
-              adapter: config.http_adapter,
+              connection: config.connection,
               environment: config.environment
             )
           end
@@ -98,7 +98,7 @@ module WCC::Contentful
               management_token: config.management_token,
               space: config.space,
               default_locale: config.default_locale,
-              adapter: config.http_adapter,
+              connection: config.connection,
               environment: config.environment
             )
           end

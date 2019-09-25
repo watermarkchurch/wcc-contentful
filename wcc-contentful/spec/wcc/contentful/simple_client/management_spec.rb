@@ -8,7 +8,7 @@ RSpec.describe WCC::Contentful::SimpleClient::Management do
           management_token: 'testtoken',
           space: 'testspace',
           environment: 'testenv',
-          adapter: adapter
+          connection: adapter
         )
       }
       describe '#content_types' do

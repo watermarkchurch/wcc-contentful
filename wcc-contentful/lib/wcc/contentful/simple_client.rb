@@ -16,8 +16,8 @@ module WCC::Contentful
   # `get`.  This method returns a WCC::Contentful::SimpleClient::Response
   # that handles paging automatically.
   #
-  # The SimpleClient by default uses 'http' to perform the gets, but any HTTP
-  # client can be injected by passing a proc as the `adapter:` option.
+  # The SimpleClient by default uses 'faraday' to perform the gets, but any HTTP
+  # client adapter be injected by passing the `connection:` option.
   #
   # @api Client
   class SimpleClient
@@ -30,7 +30,7 @@ module WCC::Contentful
     # @param [String] space The Space ID to access
     # @param [String] access_token A Contentful Access Token to be sent in the Authorization header
     # @param [Hash] options The remaining optional parameters, defined below
-    # @option options [Symbol, Object] adapter The Adapter to use to make requests.
+    # @option options [Symbol, Object] connection The Faraday connection to use to make requests.
     #   Auto-discovered based on what gems are installed if this is not provided.
     # @option options [String] default_locale The locale query param to set by default.
     # @option options [String] environment The contentful environment to access. Defaults to 'master'.
@@ -40,7 +40,7 @@ module WCC::Contentful
       @space = space
       @access_token = access_token
 
-      @adapter = SimpleClient.load_adapter(options[:adapter])
+      @adapter = SimpleClient.load_adapter(options[:connection])
 
       @options = options
       @query_defaults = {}

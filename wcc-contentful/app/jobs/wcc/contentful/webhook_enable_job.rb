@@ -54,7 +54,7 @@ module WCC::Contentful
         space: config.space,
         environment: config.environment,
         default_locale: config.default_locale,
-        adapter: config.http_adapter,
+        connection: config.connection,
         webhook_username: config.webhook_username,
         webhook_password: config.webhook_password
       }

@@ -17,7 +17,7 @@ class WCC::Contentful::Configuration
     content_delivery_params
     middleware
     store
-    http_adapter
+    connection
     update_schema_file
     schema_file
   ].freeze
@@ -129,12 +129,11 @@ class WCC::Contentful::Configuration
 
   attr_reader :store
 
-  # Sets the adapter which is used to make HTTP requests.
-  # If left unset, the gem attempts to load either 'http' or 'typhoeus'.
-  # You can pass your own adapter which responds to 'call', or even a lambda
-  # that accepts the following parameters:
-  #  ->(url, query, headers = {}, proxy = {}) { ... }
-  attr_accessor :http_adapter
+  # Sets the connection which is used to make HTTP requests.
+  # If left unset, the gem attempts to load 'faraday', 'http' or 'typhoeus'.
+  # You can pass your own adapter which responds to 'get' and 'post', and returns
+  # a response that quacks like Faraday.
+  attr_accessor :connection
 
   # Indicates whether to update the contentful-schema.json file for building models.
   # The schema can also be updated with `rake wcc_contentful:download_schema`

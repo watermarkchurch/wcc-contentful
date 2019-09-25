@@ -312,8 +312,14 @@ WCC::Contentful.configure do |config|
   # incompatible with config.content_delivery
   # config.store = MyCustomStore.new
 
-  # Implement some adapter like this to use another HTTP client
-  config.http_adapter = MyFaradayAdapter.new
+  # Use a custom Faraday connection
+  config.connection = Faraday.new do |builder|
+    f.request :retry
+    f.request MyFaradayRequestAdapter.new
+    ...
+  end
+  # OR implement some adapter like this to use another HTTP client
+  config.connection = MyNetHttpAdapter.new
 
   config.update_schema_file = :never
 end

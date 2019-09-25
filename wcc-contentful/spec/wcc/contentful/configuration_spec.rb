@@ -234,7 +234,7 @@ RSpec.describe WCC::Contentful::Configuration do
       config.webhook_password = 'test-wh-pword'
       config.webhook_jobs = [-> { 'one' }, WCC::Contentful::SyncEngine::Job]
       config.content_delivery = :lazy_sync, ActiveSupport::Cache::MemoryStore.new
-      config.http_adapter = -> { 'test' }
+      config.connection = -> { 'test' }
       config
     }
 

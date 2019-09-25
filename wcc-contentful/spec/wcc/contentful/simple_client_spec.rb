@@ -51,7 +51,7 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
           api_url: 'https://cdn.contentful.com',
           access_token: contentful_access_token,
           space: contentful_space_id,
-          adapter: :whoopsie
+          connection: :whoopsie
         )
       }.to raise_error(ArgumentError)
     end
@@ -64,7 +64,7 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
           api_url: 'https://cdn.contentful.com',
           access_token: contentful_access_token,
           space: contentful_space_id,
-          adapter: adapter
+          connection: adapter
         )
       }
 
@@ -377,7 +377,7 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
           WCC::Contentful::SimpleClient::Cdn.new(
             access_token: contentful_access_token,
             space: contentful_space_id,
-            adapter: adapter
+            connection: adapter
           )
         }
 
@@ -473,7 +473,7 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
             api_url: 'https://cdn.contentful.com',
             access_token: contentful_access_token,
             space: contentful_space_id,
-            adapter: adapter,
+            connection: adapter,
             environment: 'specs'
           )
         }
