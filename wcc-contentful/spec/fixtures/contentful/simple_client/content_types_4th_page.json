@@ -1,0 +1,69 @@
+{
+  "sys": {
+    "type": "Array"
+  },
+  "total": 16,
+  "skip": 15,
+  "limit": 5,
+  "items": [
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "<CONTENTFUL_SPACE_ID>"
+          }
+        },
+        "id": "section-VideoHighlight",
+        "type": "ContentType",
+        "createdAt": "2018-02-12T19:41:52.801Z",
+        "updatedAt": "2018-02-14T18:29:57.500Z",
+        "revision": 4
+      },
+      "displayField": "text",
+      "name": "Section: Video Highlight",
+      "description": "The Video Highlight section includes a player for Youtube videos.",
+      "fields": [
+        {
+          "id": "text",
+          "name": "Text",
+          "type": "Text",
+          "localized": false,
+          "required": true,
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "youtubeLink",
+          "name": "youtubeLink",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "video",
+          "name": "Video",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Asset"
+        },
+        {
+          "id": "theme",
+          "name": "Theme",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe WCC::Contentful::SimpleClient, :vcr do
+  let(:cdn_base) { "https://cdn.contentful.com/spaces/#{contentful_space_id}" }
+
   describe 'initialize' do
     after do
       WCC::Contentful::SimpleClient::ADAPTERS = {
@@ -39,7 +41,7 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
 
     it 'loads proc as adapter' do
       WCC::Contentful::SimpleClient::ADAPTERS = {}.freeze
-      resp = double(body: 'test body', code: 200)
+      resp = double(body: 'test body', status: 200)
 
       # act
       client = WCC::Contentful::SimpleClient.new(
@@ -85,18 +87,24 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
 
       describe 'get' do
         it 'gets entries with query params' do
+          stub_request(:get, cdn_base + '/entries?limit=2')
+            .to_return(body: load_fixture('contentful/simple_client/entries_limit_2.json'))
+
           # act
           resp = client.get('entries', { limit: 2 })
 
           # assert
           resp.assert_ok!
-          expect(resp.code).to eq(200)
+          expect(resp.status).to eq(200)
           expect(resp.to_json['items'].map { |i| i.dig('sys', 'id') }).to eq(
             %w[1tPGouM76soIsM2e0uikgw 1IJEXB4AKEqQYEm4WuceG2]
           )
         end
 
         it 'can query entries with query param' do
+          stub_request(:get, cdn_base + '/entries?content_type=menuButton&fields.text=Ministries')
+            .to_return(body: load_fixture('contentful/simple_client/menu_buttons_limit_1.json'))
+
           # act
           resp = client.get('entries',
             {
@@ -106,15 +114,22 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
 
           # assert
           resp.assert_ok!
-          expect(resp.code).to eq(200)
+          expect(resp.status).to eq(200)
           expect(resp.to_json['items'].map { |i| i.dig('sys', 'id') }).to eq(
             %w[3bZRv5ISCkui6kguIwM2U0]
           )
         end
 
         it 'follows redirects' do
+          stub_request(:get, 'http://other-contentful-api.com/api')
+            .to_return(status: 301, headers: {
+              'Location' => 'https://redirected-contentful-api.com/api'
+            })
+          stub_request(:get, 'https://redirected-contentful-api.com/api')
+            .to_return(body: load_fixture('contentful/simple_client/menu_buttons_limit_1.json'))
+
           client = WCC::Contentful::SimpleClient.new(
-            api_url: 'http://jtj.watermark.org',
+            api_url: 'http://other-contentful-api.com/api',
             access_token: contentful_access_token,
             space: contentful_space_id
           )
@@ -124,10 +139,22 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
 
           # assert
           resp.assert_ok!
-          expect(resp.to_json['links']).to_not be_nil
+          expect(resp.status).to eq(200)
+          expect(resp.to_json['items'].map { |i| i.dig('sys', 'id') }).to eq(
+            %w[3bZRv5ISCkui6kguIwM2U0]
+          )
         end
 
         it 'paginates directly when block given' do
+          stub_request(:get, cdn_base + '/content_types?limit=5')
+            .to_return(body: load_fixture('contentful/simple_client/content_types_first_page.json'))
+          stub_request(:get, cdn_base + '/content_types?limit=5&skip=5')
+            .to_return(body: load_fixture('contentful/simple_client/content_types_2nd_page.json'))
+          stub_request(:get, cdn_base + '/content_types?limit=5&skip=10')
+            .to_return(body: load_fixture('contentful/simple_client/content_types_3rd_page.json'))
+          stub_request(:get, cdn_base + '/content_types?limit=5&skip=15')
+            .to_return(body: load_fixture('contentful/simple_client/content_types_4th_page.json'))
+
           # act
           resp = client.get('content_types', { limit: 5 })
 
@@ -142,6 +169,15 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
         end
 
         it 'does lazy pagination' do
+          stub_request(:get, cdn_base + '/content_types?limit=5')
+            .to_return(body: load_fixture('contentful/simple_client/content_types_first_page.json'))
+          stub_request(:get, cdn_base + '/content_types?limit=5&skip=5')
+            .to_return(body: load_fixture('contentful/simple_client/content_types_2nd_page.json'))
+          stub_request(:get, cdn_base + '/content_types?limit=5&skip=10')
+            .to_return(body: load_fixture('contentful/simple_client/content_types_3rd_page.json'))
+          stub_request(:get, cdn_base + '/content_types?limit=5&skip=15')
+            .to_return(body: load_fixture('contentful/simple_client/content_types_4th_page.json'))
+
           # act
           resp = client.get('content_types', { limit: 5 })
 
@@ -231,7 +267,12 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
                    ])
         end
 
-        it 'paginates all items' do
+        it 'paginates all items when enumerable forced' do
+          stub_request(:get, cdn_base + '/entries?content_type=page&limit=5')
+            .to_return(body: load_fixture('contentful/simple_client/pages_first_page.json'))
+          stub_request(:get, cdn_base + '/entries?content_type=page&limit=5&skip=5')
+            .to_return(body: load_fixture('contentful/simple_client/pages_2nd_page.json'))
+
           # act
           resp = client.get('entries', { content_type: 'page', limit: 5 })
 
@@ -255,6 +296,10 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
         end
 
         it 'builds a hash of included links by ID' do
+          stub_request(:get, cdn_base + '/entries?content_type=page&limit=5&include=2')
+            .to_return(body: load_fixture('contentful/simple_client/pages_with_includes_page_1.json'))
+          stub_request(:get, cdn_base + '/entries?content_type=page&limit=5&skip=5&include=2')
+            .to_return(body: load_fixture('contentful/simple_client/pages_with_includes_page_2.json'))
           # act
           resp = client.get('entries', { content_type: 'page', limit: 5, include: 2 })
           # range the pages to load up the whole hash
@@ -426,7 +471,7 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
 
             # assert
             resp.assert_ok!
-            expect(resp.code).to eq(200)
+            expect(resp.status).to eq(200)
             expect(resp.to_json['items'].map { |i| i.dig('sys', 'id') }).to eq(
               %w[ym4r3nweSywSuw042uUUk 1qXeLjFXoIuqEqgckoMyAM]
             )

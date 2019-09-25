@@ -3,7 +3,11 @@
 module FixturesHelper
   def load_fixture(file_name)
     file = File.join(fixture_root, file_name)
-    return File.read(file).gsub(/343qxys30lid/i, contentful_space_id) if File.exist?(file)
+    return unless File.exist?(file)
+
+    File.read(file)
+      .gsub(/343qxys30lid/i, contentful_space_id)
+      .gsub('<CONTENTFUL_SPACE_ID>', contentful_space_id)
   end
 
   def fixture_root
