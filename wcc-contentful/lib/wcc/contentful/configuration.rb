@@ -18,6 +18,7 @@ class WCC::Contentful::Configuration
     middleware
     store
     connection
+    connection_options
     update_schema_file
     schema_file
   ].freeze
@@ -135,6 +136,11 @@ class WCC::Contentful::Configuration
   # a response that quacks like Faraday.
   attr_accessor :connection
 
+  # Sets the connection options which are given to the client.  This can include
+  # an alternative Cdn API URL, timeouts, etc.
+  # See WCC::Contentful::SimpleClient constructor for details.
+  attr_accessor :connection_options
+
   # Indicates whether to update the contentful-schema.json file for building models.
   # The schema can also be updated with `rake wcc_contentful:download_schema`
   # Valid values are:
@@ -173,6 +179,11 @@ class WCC::Contentful::Configuration
   def initialize
     @access_token = ''
     @app_url = ENV['APP_URL']
+    @connection_options = {
+      api_url: 'https://cdn.contentful.com/',
+      preview_api_url: 'https://preview.contentful.com/',
+      management_api_url: 'https://api.contentful.com'
+    }
     @management_token = ''
     @preview_token = ''
     @space = ''

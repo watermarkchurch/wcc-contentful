@@ -193,10 +193,10 @@ module WCC::Contentful
     class Preview < Cdn
       def initialize(space:, preview_token:, **options)
         super(
-          api_url: options[:api_url] || 'https://preview.contentful.com/',
+          **options,
+          api_url: options[:preview_api_url] || 'https://preview.contentful.com/',
           space: space,
-          access_token: preview_token,
-          **options
+          access_token: preview_token
         )
       end
 

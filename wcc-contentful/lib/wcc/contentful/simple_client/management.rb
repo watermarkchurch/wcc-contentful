@@ -4,10 +4,10 @@
 class WCC::Contentful::SimpleClient::Management < WCC::Contentful::SimpleClient
   def initialize(space:, management_token:, **options)
     super(
-      api_url: options[:api_url] || 'https://api.contentful.com',
+      **options,
+      api_url: options[:management_api_url] || 'https://api.contentful.com',
       space: space,
       access_token: management_token,
-      **options
     )
 
     @post_adapter = @adapter if @adapter.respond_to?(:post)
