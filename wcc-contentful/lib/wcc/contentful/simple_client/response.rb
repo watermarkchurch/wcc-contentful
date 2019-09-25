@@ -187,6 +187,8 @@ class WCC::Contentful::SimpleClient
         NotFoundError
       when 401
         UnauthorizedError
+      when 429
+        RateLimitError
       else
         ApiError
       end
@@ -202,5 +204,8 @@ class WCC::Contentful::SimpleClient
   end
 
   class UnauthorizedError < ApiError
+  end
+
+  class RateLimitError < ApiError
   end
 end

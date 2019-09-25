@@ -370,6 +370,69 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
             }
           })
         end
+
+        it 'retries GETs on 429 rate limit' do
+          stub_request(:get, cdn_base + '/entries?limit=2')
+            .to_return(status: 429,
+                       headers: {
+                         # 20 per second
+                         'X-Contentful-RateLimit-Reset': 1
+                       })
+            .then
+            .to_return(body: load_fixture('contentful/simple_client/entries_limit_2.json'))
+
+          # act
+          start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+          resp = client.get('entries', { limit: 2 })
+          finish = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+
+          # assert
+          resp.assert_ok!
+          expect(resp.status).to eq(200)
+          expect(resp.to_json['items'].map { |i| i.dig('sys', 'id') }).to eq(
+            %w[1tPGouM76soIsM2e0uikgw 1IJEXB4AKEqQYEm4WuceG2]
+          )
+          expect(finish - start).to be > 1.0
+        end
+
+        it 'times out on a long 429 rate limit reset' do
+          stub_request(:get, cdn_base + '/entries?limit=2')
+            .to_return(status: 429,
+                       headers: {
+                         # 7200 per hour for preview API
+                         'X-Contentful-RateLimit-Reset': 3600
+                       })
+            .then
+            .to_raise(StandardError, 'Should have bailed!')
+
+          resp = client.get('entries', { limit: 2 })
+
+          expect {
+            resp.assert_ok!
+          }.to raise_error(WCC::Contentful::SimpleClient::RateLimitError)
+        end
+
+        it 'times out on multiple rate limits' do
+          # just keep returning rate limit error
+          stub_request(:get, cdn_base + '/entries?limit=2')
+            .to_return(status: 429,
+                       headers: {
+                         'X-Contentful-RateLimit-Reset': 1
+                       })
+
+          # act
+          start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+          resp = client.get('entries', { limit: 2 })
+          finish = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+
+          # assert
+          expect {
+            resp.assert_ok!
+          }.to raise_error(WCC::Contentful::SimpleClient::RateLimitError)
+          # It should have at least waited the default wait time to see if
+          # rate limits clear up.
+          expect(finish - start).to be > 1.0
+        end
       end
 
       describe 'Cdn' do

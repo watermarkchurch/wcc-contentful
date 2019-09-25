@@ -35,6 +35,8 @@ module WCC::Contentful
     # @option options [String] default_locale The locale query param to set by default.
     # @option options [String] environment The contentful environment to access. Defaults to 'master'.
     # @option options [Boolean] no_follow_redirects If true, do not follow 300 level redirects.
+    # @option options [Number] rate_limit_wait_timeout The maximum time to block the thread waiting
+    #   on a rate limit response.  By default will wait for one 429 and then fail on the second 429.
     def initialize(api_url:, space:, access_token:, **options)
       @api_url = URI.join(api_url, '/spaces/', space + '/')
       @space = space
@@ -45,6 +47,7 @@ module WCC::Contentful
       @options = options
       @query_defaults = {}
       @query_defaults[:locale] = @options[:default_locale] if @options[:default_locale]
+      @rate_limit_wait_timeout = @options[:rate_limit_wait_timeout] || 1.5
 
       return unless options[:environment].present?
 
@@ -112,12 +115,27 @@ module WCC::Contentful
       q = @query_defaults.dup
       q = q.merge(query) if query
 
-      resp = @adapter.get(url, q, headers)
+      start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+      loop do
+        resp = @adapter.get(url, q, headers)
 
-      if [301, 302, 307].include?(resp.status) && !@options[:no_follow_redirects]
-        resp = get_http(resp.headers['location'], nil, headers)
+        if [301, 302, 307].include?(resp.status) && !@options[:no_follow_redirects]
+          url = resp.headers['Location']
+          next
+        end
+
+        if resp.status == 429 &&
+            reset = resp.headers['X-Contentful-RateLimit-Reset'].presence
+          reset = reset.to_f
+          now = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+          if (now - start) + reset < @rate_limit_wait_timeout
+            sleep(reset)
+            next
+          end
+        end
+
+        return resp
       end
-      resp
     end
 
     # The CDN SimpleClient accesses 'https://cdn.contentful.com' to get raw
