@@ -272,5 +272,15 @@ RSpec.describe WCC::Contentful::Configuration do
         )
       end
     end
+
+    it 'does not freeze a Faraday Connection' do
+      conn = double
+      expect(conn).to_not receive(:freeze)
+      config.connection = conn
+
+      frozen = config.freeze
+
+      expect(frozen.connection).to be conn
+    end
   end
 end

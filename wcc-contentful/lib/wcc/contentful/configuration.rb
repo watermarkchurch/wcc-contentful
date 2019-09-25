@@ -233,7 +233,7 @@ class WCC::Contentful::Configuration
     def initialize(configuration)
       ATTRIBUTES.each do |att|
         val = configuration.public_send(att)
-        val.freeze if val.respond_to?(:freeze)
+        val.freeze if val.is_a?(Hash) || val.is_a?(Array)
         instance_variable_set("@#{att}", val)
       end
     end
