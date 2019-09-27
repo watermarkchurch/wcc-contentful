@@ -25,14 +25,13 @@ class WCC::Contentful::SimpleClient::HttpAdapter
     )
   end
 
-  Response =
-    Struct.new(:raw) do
-      extend Forwardable
-
-      def_delegators :raw, :body, :to_s, :status, :headers
-
-      def status
-        raw.code
-      end
+  class Response < SimpleDelegator
+    def raw
+      __getobj__
     end
+
+    def status
+      code
+    end
+  end
 end

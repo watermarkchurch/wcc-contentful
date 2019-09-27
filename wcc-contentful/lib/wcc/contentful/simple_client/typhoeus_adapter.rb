@@ -28,15 +28,15 @@ class WCC::Contentful::SimpleClient::TyphoeusAdapter
     )
   end
 
-  Response =
-    Struct.new(:raw) do
-      delegate :body, to: :raw
-      delegate :to_s, to: :body
-      delegate :code, to: :raw
-      delegate :headers, to: :raw
+  class Response < SimpleDelegator
+    delegate :to_s, to: :body
 
-      def status
-        raw.code
-      end
+    def raw
+      __getobj__
     end
+
+    def status
+      code
+    end
+  end
 end
