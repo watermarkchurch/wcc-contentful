@@ -47,6 +47,8 @@ module WCC::Contentful
       @options = options
       @query_defaults = {}
       @query_defaults[:locale] = @options[:default_locale] if @options[:default_locale]
+      # default 1.5 so that we retry one time then fail if still rate limited
+      # https://www.contentful.com/developers/docs/references/content-preview-api/#/introduction/api-rate-limits
       @rate_limit_wait_timeout = @options[:rate_limit_wait_timeout] || 1.5
 
       return unless options[:environment].present?
