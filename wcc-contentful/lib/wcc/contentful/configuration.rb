@@ -17,7 +17,8 @@ class WCC::Contentful::Configuration
     content_delivery_params
     middleware
     store
-    http_adapter
+    connection
+    connection_options
     update_schema_file
     schema_file
   ].freeze
@@ -129,12 +130,16 @@ class WCC::Contentful::Configuration
 
   attr_reader :store
 
-  # Sets the adapter which is used to make HTTP requests.
-  # If left unset, the gem attempts to load either 'http' or 'typhoeus'.
-  # You can pass your own adapter which responds to 'call', or even a lambda
-  # that accepts the following parameters:
-  #  ->(url, query, headers = {}, proxy = {}) { ... }
-  attr_accessor :http_adapter
+  # Sets the connection which is used to make HTTP requests.
+  # If left unset, the gem attempts to load 'faraday', 'http' or 'typhoeus'.
+  # You can pass your own adapter which responds to 'get' and 'post', and returns
+  # a response that quacks like Faraday.
+  attr_accessor :connection
+
+  # Sets the connection options which are given to the client.  This can include
+  # an alternative Cdn API URL, timeouts, etc.
+  # See WCC::Contentful::SimpleClient constructor for details.
+  attr_accessor :connection_options
 
   # Indicates whether to update the contentful-schema.json file for building models.
   # The schema can also be updated with `rake wcc_contentful:download_schema`
@@ -174,6 +179,11 @@ class WCC::Contentful::Configuration
   def initialize
     @access_token = ''
     @app_url = ENV['APP_URL']
+    @connection_options = {
+      api_url: 'https://cdn.contentful.com/',
+      preview_api_url: 'https://preview.contentful.com/',
+      management_api_url: 'https://api.contentful.com'
+    }
     @management_token = ''
     @preview_token = ''
     @space = ''
@@ -223,7 +233,7 @@ class WCC::Contentful::Configuration
     def initialize(configuration)
       ATTRIBUTES.each do |att|
         val = configuration.public_send(att)
-        val.freeze if val.respond_to?(:freeze)
+        val.freeze if val.is_a?(Hash) || val.is_a?(Array)
         instance_variable_set("@#{att}", val)
       end
     end

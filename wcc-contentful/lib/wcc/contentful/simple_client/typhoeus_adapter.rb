@@ -3,15 +3,15 @@
 gem 'typhoeus'
 require 'typhoeus'
 
-class TyphoeusAdapter
-  def call(url, query, headers = {}, proxy = {})
-    raise NotImplementedError, 'Proxying Not Yet Implemented' if proxy[:host]
-
-    TyphoeusAdapter::Response.new(
+class WCC::Contentful::SimpleClient::TyphoeusAdapter
+  def get(url, params = {}, headers = {})
+    req = OpenStruct.new(params: params, headers: headers)
+    yield req if block_given?
+    Response.new(
       Typhoeus.get(
         url,
-        params: query,
-        headers: headers
+        params: req.params,
+        headers: req.headers
       )
     )
   end
@@ -19,7 +19,7 @@ class TyphoeusAdapter
   def post(url, body, headers = {}, proxy = {})
     raise NotImplementedError, 'Proxying Not Yet Implemented' if proxy[:host]
 
-    TyphoeusAdapter::Response.new(
+    Response.new(
       Typhoeus.post(
         url,
         body: body.to_json,
@@ -28,15 +28,15 @@ class TyphoeusAdapter
     )
   end
 
-  Response =
-    Struct.new(:raw) do
-      delegate :body, to: :raw
-      delegate :to_s, to: :body
-      delegate :code, to: :raw
-      delegate :headers, to: :raw
+  class Response < SimpleDelegator
+    delegate :to_s, to: :body
 
-      def status
-        raw.code
-      end
+    def raw
+      __getobj__
     end
+
+    def status
+      code
+    end
+  end
 end

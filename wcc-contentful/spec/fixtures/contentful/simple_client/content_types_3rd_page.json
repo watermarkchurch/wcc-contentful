@@ -1,0 +1,298 @@
+{
+  "sys": {
+    "type": "Array"
+  },
+  "total": 16,
+  "skip": 10,
+  "limit": 5,
+  "items": [
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "<CONTENTFUL_SPACE_ID>"
+          }
+        },
+        "id": "theme",
+        "type": "ContentType",
+        "createdAt": "2018-02-14T18:23:43.243Z",
+        "updatedAt": "2018-02-14T18:28:37.615Z",
+        "revision": 7
+      },
+      "displayField": "name",
+      "name": "Theme",
+      "description": "A Theme can be applied to a section to give it a certain style, for example by changing colors or positioning certain elements",
+      "fields": [
+        {
+          "id": "name",
+          "name": "Name",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "foregroundColor",
+          "name": "Foreground Color",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "backgroundColor",
+          "name": "Background Color",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "highlightColor",
+          "name": "Highlight Color",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "borderColor",
+          "name": "Border Color",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "<CONTENTFUL_SPACE_ID>"
+          }
+        },
+        "id": "redirect",
+        "type": "ContentType",
+        "createdAt": "2018-02-23T14:44:32.240Z",
+        "updatedAt": "2018-03-09T00:31:20.136Z",
+        "revision": 3
+      },
+      "displayField": "slug",
+      "name": "Redirect2",
+      "description": "",
+      "fields": [
+        {
+          "id": "slug",
+          "name": "Slug",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "url",
+          "name": "Url",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "pageReference",
+          "name": "Page Reference",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "<CONTENTFUL_SPACE_ID>"
+          }
+        },
+        "id": "faq",
+        "type": "ContentType",
+        "createdAt": "2018-02-14T18:32:16.249Z",
+        "updatedAt": "2018-02-23T16:36:13.245Z",
+        "revision": 2
+      },
+      "displayField": "question",
+      "name": "FAQ",
+      "description": "",
+      "fields": [
+        {
+          "id": "question",
+          "name": "Question",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "answer",
+          "name": "Answer",
+          "type": "Text",
+          "localized": false,
+          "required": true,
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "numFaqs",
+          "name": "numFaqs",
+          "type": "Integer",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "numFaqsFloat",
+          "name": "numFaqsFloat",
+          "type": "Number",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "dateOfFaq",
+          "name": "DateOfFaq",
+          "type": "Date",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "truthyOrFalsy",
+          "name": "TruthyOrFalsy",
+          "type": "Boolean",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "placeOfFaq",
+          "name": "PlaceOfFaq",
+          "type": "Location",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "<CONTENTFUL_SPACE_ID>"
+          }
+        },
+        "id": "dog",
+        "type": "ContentType",
+        "createdAt": "2018-02-22T21:12:46.484Z",
+        "updatedAt": "2018-03-05T14:45:22.954Z",
+        "revision": 2
+      },
+      "displayField": "name",
+      "name": "Dog",
+      "description": null,
+      "fields": [
+        {
+          "id": "name",
+          "name": "Name",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "woofs",
+          "name": "Number Of Woofs",
+          "type": "Integer",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "<CONTENTFUL_SPACE_ID>"
+          }
+        },
+        "id": "section-Testimonials",
+        "type": "ContentType",
+        "createdAt": "2018-02-12T19:17:55.556Z",
+        "updatedAt": "2018-02-12T19:48:08.620Z",
+        "revision": 6
+      },
+      "displayField": "title",
+      "name": "Section: Testimonials",
+      "description": "The Testimonials section shows a set of testimonials with associated photo and text.",
+      "fields": [
+        {
+          "id": "title",
+          "name": "Title",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "testimonials",
+          "name": "Testimonials",
+          "type": "Array",
+          "localized": false,
+          "required": false,
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Link",
+            "validations": [
+              {
+                "linkContentType": [
+                  "testimonial"
+                ]
+              }
+            ],
+            "linkType": "Entry"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -4,10 +4,10 @@
 class WCC::Contentful::SimpleClient::Management < WCC::Contentful::SimpleClient
   def initialize(space:, management_token:, **options)
     super(
-      api_url: options[:api_url] || 'https://api.contentful.com',
+      **options,
+      api_url: options[:management_api_url] || 'https://api.contentful.com',
       space: space,
       access_token: management_token,
-      **options
     )
 
     @post_adapter = @adapter if @adapter.respond_to?(:post)
@@ -75,16 +75,19 @@ class WCC::Contentful::SimpleClient::Management < WCC::Contentful::SimpleClient
 
   private
 
-  def post_http(url, body, headers = {}, proxy = {})
+  def post_http(url, body, headers = {})
     headers = {
       Authorization: "Bearer #{@access_token}",
       'Content-Type' => 'application/vnd.contentful.management.v1+json'
     }.merge(headers || {})
 
-    resp = @post_adapter.post(url, body, headers, proxy)
+    body = body.to_json unless body.is_a? String
+    resp = @post_adapter.post(url, body, headers)
 
-    if [301, 302, 307].include?(resp.code) && !@options[:no_follow_redirects]
-      resp = get_http(resp.headers['location'], nil, headers, proxy)
+    if [301, 302, 307].include?(resp.status) && !@options[:no_follow_redirects]
+      resp = get_http(resp.headers['location'], nil, headers)
+    elsif resp.status == 308 && !@options[:no_follow_redirects]
+      resp = post_http(resp.headers['location'], body, headers)
     end
     resp
   end

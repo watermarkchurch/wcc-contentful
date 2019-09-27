@@ -16,8 +16,8 @@ module WCC::Contentful
   # `get`.  This method returns a WCC::Contentful::SimpleClient::Response
   # that handles paging automatically.
   #
-  # The SimpleClient by default uses 'http' to perform the gets, but any HTTP
-  # client can be injected by passing a proc as the `adapter:` option.
+  # The SimpleClient by default uses 'faraday' to perform the gets, but any HTTP
+  # client adapter be injected by passing the `connection:` option.
   #
   # @api Client
   class SimpleClient
@@ -30,21 +30,26 @@ module WCC::Contentful
     # @param [String] space The Space ID to access
     # @param [String] access_token A Contentful Access Token to be sent in the Authorization header
     # @param [Hash] options The remaining optional parameters, defined below
-    # @option options [Symbol, Object] adapter The Adapter to use to make requests.
+    # @option options [Symbol, Object] connection The Faraday connection to use to make requests.
     #   Auto-discovered based on what gems are installed if this is not provided.
     # @option options [String] default_locale The locale query param to set by default.
     # @option options [String] environment The contentful environment to access. Defaults to 'master'.
     # @option options [Boolean] no_follow_redirects If true, do not follow 300 level redirects.
+    # @option options [Number] rate_limit_wait_timeout The maximum time to block the thread waiting
+    #   on a rate limit response.  By default will wait for one 429 and then fail on the second 429.
     def initialize(api_url:, space:, access_token:, **options)
       @api_url = URI.join(api_url, '/spaces/', space + '/')
       @space = space
       @access_token = access_token
 
-      @adapter = SimpleClient.load_adapter(options[:adapter])
+      @adapter = SimpleClient.load_adapter(options[:connection])
 
       @options = options
       @query_defaults = {}
       @query_defaults[:locale] = @options[:default_locale] if @options[:default_locale]
+      # default 1.5 so that we retry one time then fail if still rate limited
+      # https://www.contentful.com/developers/docs/references/content-preview-api/#/introduction/api-rate-limits
+      @rate_limit_wait_timeout = @options[:rate_limit_wait_timeout] || 1.5
 
       return unless options[:environment].present?
 
@@ -63,6 +68,7 @@ module WCC::Contentful
     end
 
     ADAPTERS = {
+      faraday: ['faraday', '~> 0.9'],
       http: ['http', '> 1.0', '< 3.0'],
       typhoeus: ['typhoeus', '~> 1.0']
     }.freeze
@@ -80,6 +86,12 @@ module WCC::Contentful
         end
         raise ArgumentError, 'Unable to load adapter!  Please install one of '\
           "#{ADAPTERS.values.map(&:join).join(',')}"
+      when :faraday
+        require 'faraday'
+        ::Faraday.new do |faraday|
+          faraday.response :logger, (Rails.logger if defined?(Rails)), { headers: false, bodies: false }
+          faraday.adapter :net_http
+        end
       when :http
         require_relative 'simple_client/http_adapter'
         HttpAdapter.new
@@ -87,9 +99,9 @@ module WCC::Contentful
         require_relative 'simple_client/typhoeus_adapter'
         TyphoeusAdapter.new
       else
-        unless adapter.respond_to?(:call)
+        unless adapter.respond_to?(:get)
           raise ArgumentError, "Adapter #{adapter} is not invokeable!  Please "\
-            "pass a proc or use one of #{ADAPTERS.keys}"
+            "pass use one of #{ADAPTERS.keys} or create a Faraday-compatible adapter"
         end
         adapter
       end
@@ -97,7 +109,7 @@ module WCC::Contentful
 
     private
 
-    def get_http(url, query, headers = {}, proxy = {})
+    def get_http(url, query, headers = {})
       headers = {
         Authorization: "Bearer #{@access_token}"
       }.merge(headers || {})
@@ -105,12 +117,27 @@ module WCC::Contentful
       q = @query_defaults.dup
       q = q.merge(query) if query
 
-      resp = @adapter.call(url, q, headers, proxy)
+      start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+      loop do
+        resp = @adapter.get(url, q, headers)
 
-      if [301, 302, 307].include?(resp.code) && !@options[:no_follow_redirects]
-        resp = get_http(resp.headers['location'], nil, headers, proxy)
+        if [301, 302, 307].include?(resp.status) && !@options[:no_follow_redirects]
+          url = resp.headers['Location']
+          next
+        end
+
+        if resp.status == 429 &&
+            reset = resp.headers['X-Contentful-RateLimit-Reset'].presence
+          reset = reset.to_f
+          now = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+          if (now - start) + reset < @rate_limit_wait_timeout
+            sleep(reset)
+            next
+          end
+        end
+
+        return resp
       end
-      resp
     end
 
     # The CDN SimpleClient accesses 'https://cdn.contentful.com' to get raw
@@ -186,10 +213,10 @@ module WCC::Contentful
     class Preview < Cdn
       def initialize(space:, preview_token:, **options)
         super(
-          api_url: options[:api_url] || 'https://preview.contentful.com/',
+          **options,
+          api_url: options[:preview_api_url] || 'https://preview.contentful.com/',
           space: space,
-          access_token: preview_token,
-          **options
+          access_token: preview_token
         )
       end
 

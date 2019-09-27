@@ -234,7 +234,7 @@ RSpec.describe WCC::Contentful::Configuration do
       config.webhook_password = 'test-wh-pword'
       config.webhook_jobs = [-> { 'one' }, WCC::Contentful::SyncEngine::Job]
       config.content_delivery = :lazy_sync, ActiveSupport::Cache::MemoryStore.new
-      config.http_adapter = -> { 'test' }
+      config.connection = -> { 'test' }
       config
     }
 
@@ -271,6 +271,16 @@ RSpec.describe WCC::Contentful::Configuration do
           end
         )
       end
+    end
+
+    it 'does not freeze a Faraday Connection' do
+      conn = double
+      expect(conn).to_not receive(:freeze)
+      config.connection = conn
+
+      frozen = config.freeze
+
+      expect(frozen.connection).to be conn
     end
   end
 end

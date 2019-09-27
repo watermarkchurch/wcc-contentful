@@ -6,7 +6,8 @@ class WCC::Contentful::SimpleClient
     attr_reader :client
     attr_reader :request
 
-    delegate :code, to: :raw_response
+    delegate :status, to: :raw_response
+    alias_method :code, :status
     delegate :headers, to: :raw_response
 
     def body
@@ -62,9 +63,9 @@ class WCC::Contentful::SimpleClient
     end
 
     def assert_ok!
-      return self if code >= 200 && code < 300
+      return self if status >= 200 && status < 300
 
-      raise ApiError[code], self
+      raise ApiError[status], self
     end
 
     def each_page(&block)
@@ -186,6 +187,8 @@ class WCC::Contentful::SimpleClient
         NotFoundError
       when 401
         UnauthorizedError
+      when 429
+        RateLimitError
       else
         ApiError
       end
@@ -201,5 +204,8 @@ class WCC::Contentful::SimpleClient
   end
 
   class UnauthorizedError < ApiError
+  end
+
+  class RateLimitError < ApiError
   end
 end

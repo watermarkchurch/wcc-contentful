@@ -58,10 +58,11 @@ module WCC::Contentful
       @client ||=
         ensure_configured do |config|
           WCC::Contentful::SimpleClient::Cdn.new(
+            **config.connection_options,
             access_token: config.access_token,
             space: config.space,
             default_locale: config.default_locale,
-            adapter: config.http_adapter,
+            connection: config.connection,
             environment: config.environment
           )
         end
@@ -76,10 +77,11 @@ module WCC::Contentful
         ensure_configured do |config|
           if config.preview_token.present?
             WCC::Contentful::SimpleClient::Preview.new(
+              **config.connection_options,
               preview_token: config.preview_token,
               space: config.space,
               default_locale: config.default_locale,
-              adapter: config.http_adapter,
+              connection: config.connection,
               environment: config.environment
             )
           end
@@ -95,10 +97,11 @@ module WCC::Contentful
         ensure_configured do |config|
           if config.management_token.present?
             WCC::Contentful::SimpleClient::Management.new(
+              **config.connection_options,
               management_token: config.management_token,
               space: config.space,
               default_locale: config.default_locale,
-              adapter: config.http_adapter,
+              connection: config.connection,
               environment: config.environment
             )
           end
