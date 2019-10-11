@@ -4,10 +4,6 @@
 # entries of the 'section-contact-form' content type will be resolved as instances of this class.
 # It exposes .find, .find_by, and .find_all methods to query Contentful.
 class SectionContactForm < WCC::Contentful::Model::SectionContactForm
-  # Add custom validations to ensure that app-specific properties exist:
-  # validate_field :foo, :String, :required
-  # validate_field :bar_links, :Array, link_to: %w[bar baz]
-
   # Override functionality or add utilities
   #
   # # Example: override equality
