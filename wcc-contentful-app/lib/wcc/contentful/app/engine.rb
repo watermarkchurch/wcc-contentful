@@ -7,7 +7,7 @@ module WCC::Contentful::App
       [
         'config/manifest.js'
       ].map { |f| File.expand_path("../../../../../app/assets/#{f}", __FILE__) }
-    
+
     config.generators do |g|
       g.test_framework :rspec, fixture: false
     end
