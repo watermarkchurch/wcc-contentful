@@ -2,9 +2,11 @@
 
 module WCC::Contentful::App
   class Engine < ::Rails::Engine
-    initializer 'WCC::Contentful::App::Engine.assets' do |app|
-      app.config.assets.precompile += %w[*.jpg *.png *.svg]
-    end
+    config.assets.precompile += %w[*.jpg *.png *.svg]
+    config.assets.precompile +=
+      [
+        'config/manifest.js'
+      ].map { |f| File.expand_path("../../../../../app/assets/#{f}", __FILE__) }
 
     config.generators do |g|
       g.test_framework :rspec, fixture: false
