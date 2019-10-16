@@ -19,7 +19,7 @@ module WCC::Contentful::RSpec
     # mimic what's going on inside model_singleton_methods.rb
     # find, find_by, etc always return a new instance from the same raw
     allow(WCC::Contentful::Model).to receive(:find)
-      .with(instance.id, any_args) do
+      .with(instance.id, any_args) do |_id, keyword_params|
         options = keyword_params && keyword_params[:options]
         contentful_create(content_type, options, raw: instance.raw, **attrs)
       end
