@@ -32,11 +32,11 @@ RSpec.describe WCC::Contentful::SimpleClient::Management do
 
           expect {
             client.content_types(limit: 1000)
-          }.to instrument('get_http.simple_client.contentful.wcc')
+          }.to instrument('get_http.simpleclient.contentful.wcc')
 
           expect {
             client.content_types(limit: 1000)
-          }.to instrument('content_types.simple_client.contentful.wcc')
+          }.to instrument('content_types.simpleclient.contentful.wcc')
         end
       end
 
