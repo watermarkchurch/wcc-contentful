@@ -19,12 +19,18 @@ class WCC::Contentful::SimpleClient::Management < WCC::Contentful::SimpleClient
   end
 
   def content_types(**query)
-    resp = get('content_types', query)
+    resp =
+      instrument 'content_types', query: query do
+        get('content_types', query)
+      end
     resp.assert_ok!
   end
 
   def content_type(key, query = {})
-    resp = get("content_types/#{key}", query)
+    resp =
+      instrument 'content_type', content_type: key, query: query do
+        get("content_types/#{key}", query)
+      end
     resp.assert_ok!
   end
 

@@ -371,6 +371,25 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
           })
         end
 
+        it 'instruments pagination' do
+          stub_request(:get, cdn_base + '/content_types?limit=5')
+            .to_return(body: load_fixture('contentful/simple_client/content_types_first_page.json'))
+          stub_request(:get, cdn_base + '/content_types?limit=5&skip=5')
+            .to_return(body: load_fixture('contentful/simple_client/content_types_2nd_page.json'))
+
+          # act
+          resp = client.get('content_types', { limit: 5 })
+
+          # assert
+          pages = resp.each_page
+          _p0 = pages.next
+          expect {
+            expect {
+              _p1 = pages.next
+            }.to instrument('page.response.simpleclient.contentful.wcc')
+          }.to instrument('get_http.simpleclient.contentful.wcc')
+        end
+
         it 'retries GETs on 429 rate limit' do
           stub_request(:get, cdn_base + '/entries?limit=2')
             .to_return(status: 429,
@@ -443,6 +462,20 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
             connection: adapter
           )
         }
+
+        it 'notifies' do
+          fixture = JSON.parse(load_fixture('contentful/simple_client/entries_limit_2.json'))
+          stub_request(:get, cdn_base + '/entries?limit=2')
+            .to_return(body: fixture.to_json)
+
+          expect {
+            client.entries({ limit: 2 })
+          }.to instrument('get_http.simpleclient.contentful.wcc')
+
+          expect {
+            client.entries({ limit: 2 })
+          }.to instrument('entries.simpleclient.contentful.wcc')
+        end
 
         describe 'sync' do
           it 'gets all sync items' do
@@ -526,6 +559,19 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
             items = resp.items.map { |i| i.dig('sys', 'id') }
             expect(resp.items.count).to eq(0)
             expect(items.force).to eq([])
+          end
+
+          it 'notifies' do
+            stub_request(:get, cdn_base + '/sync?initial=true')
+              .to_return(body: load_fixture('contentful/simple_client/sync_initial.json'))
+
+            expect {
+              client.sync
+            }.to instrument('get_http.simpleclient.contentful.wcc')
+
+            expect {
+              client.sync
+            }.to instrument('sync.simpleclient.contentful.wcc')
           end
         end
       end

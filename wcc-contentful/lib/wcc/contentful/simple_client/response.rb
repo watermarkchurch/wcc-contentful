@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
+require_relative '../instrumentation'
+
 class WCC::Contentful::SimpleClient
   class Response
+    include ::WCC::Contentful::Instrumentation
+
     attr_reader :raw_response
     attr_reader :client
     attr_reader :request
@@ -45,14 +49,16 @@ class WCC::Contentful::SimpleClient
 
     def next_page
       return unless next_page?
+      return @next_page if @next_page
 
-      @next_page ||= @client.get(
-        @request[:url],
-        (@request[:query] || {}).merge({
-          skip: page_items.length + skip
-        })
-      )
-      @next_page.assert_ok!
+      query = (@request[:query] || {}).merge({
+        skip: page_items.length + skip
+      })
+      np =
+        instrument 'page', url: @request[:url], query: query do
+          @client.get(@request[:url], query)
+        end
+      @next_page = np.assert_ok!
     end
 
     def initialize(client, request, raw_response)
@@ -132,7 +138,13 @@ class WCC::Contentful::SimpleClient
     def next_page
       return unless next_page?
 
-      @next_page ||= SyncResponse.new(@client.get(raw['nextPageUrl']))
+      url = raw['nextPageUrl']
+      next_page =
+        instrument 'page', url: url do
+          @client.get(url)
+        end
+
+      @next_page ||= SyncResponse.new(next_page)
       @next_page.assert_ok!
     end
 
