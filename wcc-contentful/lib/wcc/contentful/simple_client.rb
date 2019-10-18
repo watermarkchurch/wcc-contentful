@@ -48,7 +48,7 @@ module WCC::Contentful
       @adapter = SimpleClient.load_adapter(options[:connection])
 
       @options = options
-      @instrumentation = @options[:instrumentation]
+      @_instrumentation = @options[:instrumentation]
       @query_defaults = {}
       @query_defaults[:locale] = @options[:default_locale] if @options[:default_locale]
       # default 1.5 so that we retry one time then fail if still rate limited
@@ -67,7 +67,7 @@ module WCC::Contentful
       url = URI.join(@api_url, path)
 
       resp =
-        instrument 'get_http', url: url, query: query do
+        _instrument 'get_http', url: url, query: query do
           get_http(url, query)
         end
       Response.new(self,
@@ -117,7 +117,7 @@ module WCC::Contentful
 
     private
 
-    def instrumentation_event_prefix
+    def _instrumentation_event_prefix
       # Unify all CDN, Management, Preview notifications under same namespace
       '.simpleclient.contentful.wcc'
     end
@@ -176,7 +176,7 @@ module WCC::Contentful
       # Gets an entry by ID
       def entry(key, query = {})
         resp =
-          instrument 'entries', id: key, type: 'Entry', query: query do
+          _instrument 'entries', id: key, type: 'Entry', query: query do
             get("entries/#{key}", query)
           end
         resp.assert_ok!
@@ -185,7 +185,7 @@ module WCC::Contentful
       # Queries entries with optional query parameters
       def entries(query = {})
         resp =
-          instrument 'entries', type: 'Entry', query: query do
+          _instrument 'entries', type: 'Entry', query: query do
             get('entries', query)
           end
         resp.assert_ok!
@@ -194,7 +194,7 @@ module WCC::Contentful
       # Gets an asset by ID
       def asset(key, query = {})
         resp =
-          instrument 'entries', type: 'Asset', id: key, query: query do
+          _instrument 'entries', type: 'Asset', id: key, query: query do
             get("assets/#{key}", query)
           end
         resp.assert_ok!
@@ -203,7 +203,7 @@ module WCC::Contentful
       # Queries assets with optional query parameters
       def assets(query = {})
         resp =
-          instrument 'entries', type: 'Asset', query: query do
+          _instrument 'entries', type: 'Asset', query: query do
             get('assets', query)
           end
         resp.assert_ok!
@@ -212,7 +212,7 @@ module WCC::Contentful
       # Queries content types with optional query parameters
       def content_types(query = {})
         resp =
-          instrument 'content_types', query: query do
+          _instrument 'content_types', query: query do
             get('content_types', query)
           end
         resp.assert_ok!
@@ -233,7 +233,7 @@ module WCC::Contentful
           end
         query = query.merge(sync_token)
         resp =
-          instrument 'sync', sync_token: sync_token, query: query do
+          _instrument 'sync', sync_token: sync_token, query: query do
             get('sync', query)
           end
         resp = SyncResponse.new(resp)

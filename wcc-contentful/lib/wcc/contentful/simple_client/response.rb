@@ -55,7 +55,7 @@ class WCC::Contentful::SimpleClient
         skip: page_items.length + skip
       })
       np =
-        instrument 'page', url: @request[:url], query: query do
+        _instrument 'page', url: @request[:url], query: query do
           @client.get(@request[:url], query)
         end
       @next_page = np.assert_ok!
@@ -140,7 +140,7 @@ class WCC::Contentful::SimpleClient
 
       url = raw['nextPageUrl']
       next_page =
-        instrument 'page', url: url do
+        _instrument 'page', url: url do
           @client.get(url)
         end
 

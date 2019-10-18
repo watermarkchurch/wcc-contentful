@@ -4,19 +4,27 @@ module WCC::Contentful
   module Instrumentation
     extend ActiveSupport::Concern
 
-    def instrumentation_event_prefix
-      @instrumentation_event_prefix ||=
+    def _instrumentation_event_prefix
+      @_instrumentation_event_prefix ||=
         # WCC::Contentful => contentful.wcc
-        '.' + self.class.name.parameterize.split('-').reverse.join('.')
+        '.' + (is_a?(Class) || is_a?(Module) ? self : self.class)
+          .name.parameterize.split('-').reverse.join('.')
     end
 
     included do
-      private
+      protected
 
-      def instrument(name, payload = {}, &block)
-        name += instrumentation_event_prefix
+      def _instrument(name, payload = {}, &block)
+        name += _instrumentation_event_prefix
         (@_instrumentation ||= ActiveSupport::Notifications)
           .instrument(name, payload, &block)
+      end
+    end
+
+    class << self
+      def instrument(name, payload = {}, &block)
+        # TODO: load config
+        ActiveSupport::Notifications.instrument(name, payload, &block)
       end
     end
   end
