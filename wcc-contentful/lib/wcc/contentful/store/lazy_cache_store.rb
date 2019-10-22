@@ -71,8 +71,10 @@ module WCC::Contentful::Store
 
       case json.dig('sys', 'type')
       when 'DeletedEntry', 'DeletedAsset'
+        _instrument 'delete', id: id
         nil
       else
+        _instrument 'set', id: id
         json
       end
     end

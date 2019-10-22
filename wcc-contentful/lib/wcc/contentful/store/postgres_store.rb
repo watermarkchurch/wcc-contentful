@@ -4,9 +4,12 @@ gem 'pg', '~> 1.0'
 gem 'connection_pool', '~> 2.2'
 require 'pg'
 require 'connection_pool'
+require_relative 'instrumentation'
 
 module WCC::Contentful::Store
   class PostgresStore < Base
+    include WCC::Contentful::Store::Instrumentation
+
     attr_reader :connection_pool
 
     def initialize(_config = nil, connection_options = nil, pool_options = nil)
