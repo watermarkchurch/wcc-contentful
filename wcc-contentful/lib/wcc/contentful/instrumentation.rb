@@ -23,7 +23,6 @@ module WCC::Contentful
 
     class << self
       def instrument(name, payload = {}, &block)
-        # TODO: load config
         WCC::Contentful::Services.instance
           .instrumentation.instrument(name, payload, &block)
       end
