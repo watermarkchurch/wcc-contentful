@@ -129,6 +129,8 @@ RSpec.describe WCC::Contentful::ModelMethods do
     allow(WCC::Contentful::Model).to receive(:store)
       .with(false)
       .and_return(store)
+    allow(WCC::Contentful::Services).to receive(:instance)
+      .and_return(double('services', instrumentation: ActiveSupport::Notifications))
   end
 
   describe '#resolve' do
@@ -156,6 +158,39 @@ RSpec.describe WCC::Contentful::ModelMethods do
       expect(subject.some_link.name).to eq('unresolved1.2')
       expect(subject.items.map(&:name)).to eq(%w[unresolved1.3 unresolved1.4])
       expect(result).to equal(subject)
+    end
+
+    it 'instruments resolve with find_by' do
+      resolved = make_resolved(depth: 1)
+
+      allow(store).to receive(:find_by)
+        .with(content_type: 'toJsonTest',
+              filter: { 'sys.id' => '1' },
+              options: { include: 1 }).once
+        .and_return(resolved)
+
+      expect {
+        subject.resolve
+      }.to instrument('resolve.model.contentful.wcc')
+        .with(hash_including(id: '1', depth: 1))
+        .times(1)
+    end
+
+    it 'instruments resolve with model.find' do
+      # This store's find_by doesn't respect the include parameter.
+      allow(store).to receive(:find_by)
+        .with(content_type: 'toJsonTest',
+              filter: { 'sys.id' => '1' },
+              options: { include: 1 }).once
+        .and_return(raw)
+
+      allow(WCC::Contentful::Model).to receive(:find)
+        .and_return(nil)
+
+      expect {
+        subject.resolve
+      }.to instrument('resolve.model.contentful.wcc')
+        .with(hash_including(id: '1', depth: 1))
     end
 
     it 'recursively resolves links for further depth' do
