@@ -127,10 +127,12 @@ module WCC::Contentful
     end
 
     def instrumentation
+      return @instrumentation if @instrumentation
+      return ActiveSupport::Notifications if WCC::Contentful.configuration.nil?
+
       @instrumentation ||=
-        ensure_configured do |config|
-          config.instrumentation_adapter || ActiveSupport::Notifications
-        end
+        WCC::Contentful.configuration.instrumentation_adapter ||
+        ActiveSupport::Notifications
     end
 
     private
