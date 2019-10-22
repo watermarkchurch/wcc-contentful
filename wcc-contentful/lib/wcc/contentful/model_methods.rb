@@ -168,7 +168,8 @@ module WCC::Contentful::ModelMethods
         # instantiate from already resolved raw entry data.
         m = already_resolved ||
           if raw.dig('sys', 'type') == 'Link'
-            _instrument 'resolve', id: self.id, depth: depth, backlinks: context[:backlinks]&.map(&:id) do
+            _instrument 'resolve',
+              id: self.id, depth: depth, backlinks: context[:backlinks]&.map(&:id) do
               WCC::Contentful::Model.find(id, options: new_context)
             end
           else
