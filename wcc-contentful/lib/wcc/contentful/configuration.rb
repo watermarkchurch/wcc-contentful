@@ -21,6 +21,7 @@ class WCC::Contentful::Configuration
     connection_options
     update_schema_file
     schema_file
+    instrumentation_adapter
   ].freeze
 
   # (required) Sets the Contentful Space ID.
@@ -175,6 +176,11 @@ class WCC::Contentful::Configuration
   def schema_file
     Rails.root.join(@schema_file)
   end
+
+  # Overrides the use of ActiveSupport::Notifications throughout this library to
+  # emit instrumentation events.  The object or module provided here must respond
+  # to :instrument like ActiveSupport::Notifications.instrument
+  attr_accessor :instrumentation_adapter
 
   def initialize
     @access_token = ''

@@ -16,7 +16,7 @@ module WCC::Contentful
 
       def _instrument(name, payload = {}, &block)
         name += _instrumentation_event_prefix
-        (@_instrumentation ||= ActiveSupport::Notifications)
+        (@_instrumentation ||= WCC::Contentful::Services.instance.instrumentation)
           .instrument(name, payload, &block)
       end
     end
@@ -24,7 +24,8 @@ module WCC::Contentful
     class << self
       def instrument(name, payload = {}, &block)
         # TODO: load config
-        ActiveSupport::Notifications.instrument(name, payload, &block)
+        WCC::Contentful::Services.instance
+          .instrumentation.instrument(name, payload, &block)
       end
     end
   end

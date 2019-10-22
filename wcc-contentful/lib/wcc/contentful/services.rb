@@ -126,6 +126,13 @@ module WCC::Contentful
         end
     end
 
+    def instrumentation
+      @instrumentation ||=
+        ensure_configured do |config|
+          config.instrumentation_adapter || ActiveSupport::Notifications
+        end
+    end
+
     private
 
     def ensure_configured

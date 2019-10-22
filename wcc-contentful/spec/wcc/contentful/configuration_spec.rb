@@ -153,6 +153,23 @@ RSpec.describe WCC::Contentful::Configuration do
     end
   end
 
+  describe '#instrumentation_adapter' do
+    it 'applies custom instrumentation adapter to the whole stack' do
+      instrumentation = double('instrumentation')
+      config.instrumentation_adapter = instrumentation
+
+      stub_request(:get, /\/(entries|assets)\/test/)
+        .to_return(status: 404)
+
+      expect(ActiveSupport::Notifications).to_not receive(:instrument)
+      expect(instrumentation).to receive(:instrument) { |_, _, &block| block.call }
+        .at_least(:once)
+
+      # act
+      WCC::Contentful::Model.find('test')
+    end
+  end
+
   describe '#validate!' do
     it 'permits non-master environment combined with sync delivery strategy' do
       config.space = 'test_space'
