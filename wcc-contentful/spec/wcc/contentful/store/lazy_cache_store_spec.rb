@@ -1,12 +1,17 @@
 # frozen_string_literal: true
 
 RSpec.describe WCC::Contentful::Store::LazyCacheStore do
+  let(:cache) {
+    ActiveSupport::Cache::MemoryStore.new
+  }
+
   subject(:store) {
     WCC::Contentful::Store::LazyCacheStore.new(
       WCC::Contentful::SimpleClient::Cdn.new(
         access_token: contentful_access_token,
         space: contentful_space_id
-      )
+      ),
+      cache: cache
     )
   }
 
@@ -38,6 +43,37 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
       # should not hit the API again
       page2 = store.find('47PsST8EicKgWIWwK2AsW6')
       expect(page2).to eq(page)
+    end
+
+    it 'instruments a find' do
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
+          '/entries/47PsST8EicKgWIWwK2AsW6')
+        .with(query: hash_including({ locale: '*' }))
+        .to_return(body: load_fixture('contentful/lazy_cache_store/page_about.json'))
+
+      expect {
+        store.find('47PsST8EicKgWIWwK2AsW6')
+      }.to instrument('find.store.contentful.wcc')
+    end
+
+    it 'instruments a cache hit' do
+      cache.write('47PsST8EicKgWIWwK2AsW6',
+        JSON.parse(load_fixture('contentful/lazy_cache_store/page_about.json')))
+
+      expect {
+        store.find('47PsST8EicKgWIWwK2AsW6')
+      }.to instrument('fresh.lazycachestore.store.contentful.wcc')
+    end
+
+    it 'instruments a cache miss' do
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
+          '/entries/47PsST8EicKgWIWwK2AsW6')
+        .with(query: hash_including({ locale: '*' }))
+        .to_return(body: load_fixture('contentful/lazy_cache_store/page_about.json'))
+
+      expect {
+        store.find('47PsST8EicKgWIWwK2AsW6')
+      }.to instrument('miss.lazycachestore.store.contentful.wcc')
     end
 
     let(:not_found) {
