@@ -142,6 +142,7 @@ module WCC::Contentful
         if resp.status == 429 &&
             reset = resp.headers['X-Contentful-RateLimit-Reset'].presence
           reset = reset.to_f
+          _instrument 'rate_limit', start: start, reset: reset, timeout: @rate_limit_wait_timeout
           now = Process.clock_gettime(Process::CLOCK_MONOTONIC)
           if (now - start) + reset < @rate_limit_wait_timeout
             sleep(reset)

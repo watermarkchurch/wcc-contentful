@@ -452,6 +452,22 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
           # rate limits clear up.
           expect(finish - start).to be > 1.0
         end
+
+        it 'instruments rate limit' do
+          stub_request(:get, cdn_base + '/entries?limit=2')
+            .to_return(status: 429,
+                       headers: {
+                         # 20 per second
+                         'X-Contentful-RateLimit-Reset': 1
+                       })
+            .then
+            .to_return(body: load_fixture('contentful/simple_client/entries_limit_2.json'))
+
+          # act
+          expect {
+            client.get('entries', { limit: 2 })
+          }.to instrument('rate_limit.simpleclient.contentful.wcc')
+        end
       end
 
       describe 'Cdn' do
