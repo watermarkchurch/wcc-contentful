@@ -24,6 +24,20 @@ RSpec.describe WCC::Contentful::SimpleClient::Management do
           resp.assert_ok!
           expect(resp.items.force).to eq([])
         end
+
+        it 'notifies' do
+          stub_request(:get, 'https://api.contentful.com/spaces/testspace/environments/testenv/content_types?limit=1000')
+            .with(headers: { Authorization: 'Bearer testtoken' })
+            .to_return(body: '{ "skip": 0, "total": 0, "items": [] }')
+
+          expect {
+            client.content_types(limit: 1000)
+          }.to instrument('get_http.simpleclient.contentful.wcc')
+
+          expect {
+            client.content_types(limit: 1000)
+          }.to instrument('content_types.simpleclient.contentful.wcc')
+        end
       end
 
       describe '#content_type' do

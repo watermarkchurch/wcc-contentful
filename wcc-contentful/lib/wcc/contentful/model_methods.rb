@@ -5,6 +5,8 @@
 #
 # @api Model
 module WCC::Contentful::ModelMethods
+  include WCC::Contentful::Instrumentation
+
   # The set of options keys that are specific to the Model layer and shouldn't
   # be passed down to the Store layer.
   MODEL_LAYER_CONTEXT_KEYS = %i[
@@ -49,13 +51,16 @@ module WCC::Contentful::ModelMethods
 
     has_unresolved_raw_links = (raw_link_ids - backlinked_ids).any?
     if has_unresolved_raw_links
-      # use include param to do resolution
-      raw = self.class.store(context[:preview])
-        .find_by(content_type: self.class.content_type,
-                 filter: { 'sys.id' => id },
-                 options: context.except(*MODEL_LAYER_CONTEXT_KEYS).merge!({
-                   include: [depth, 10].min
-                 }))
+      raw =
+        _instrument 'resolve', id: id, depth: depth, backlinks: backlinked_ids do
+          # use include param to do resolution
+          self.class.store(context[:preview])
+            .find_by(content_type: self.class.content_type,
+                     filter: { 'sys.id' => id },
+                     options: context.except(*MODEL_LAYER_CONTEXT_KEYS).merge!({
+                       include: [depth, 10].min
+                     }))
+        end
       unless raw
         raise WCC::Contentful::ResolveError, "Cannot find #{self.class.content_type} with ID #{id}"
       end
@@ -128,6 +133,12 @@ module WCC::Contentful::ModelMethods
 
   delegate :to_json, to: :to_h
 
+  protected
+
+  def _instrumentation_event_prefix
+    '.model.contentful.wcc'
+  end
+
   private
 
   def _resolve_field(field_name, depth = 1, context = {}, options = {})
@@ -157,7 +168,10 @@ module WCC::Contentful::ModelMethods
         # instantiate from already resolved raw entry data.
         m = already_resolved ||
           if raw.dig('sys', 'type') == 'Link'
-            WCC::Contentful::Model.find(id, options: new_context)
+            _instrument 'resolve',
+              id: self.id, depth: depth, backlinks: context[:backlinks]&.map(&:id) do
+              WCC::Contentful::Model.find(id, options: new_context)
+            end
           else
             WCC::Contentful::Model.new_from_raw(raw, new_context)
           end

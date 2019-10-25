@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
+require_relative 'instrumentation'
+
 module WCC::Contentful::Store
   class MemoryStore < Base
+    include WCC::Contentful::Store::Instrumentation
+
     def initialize
       super
       @hash = {}

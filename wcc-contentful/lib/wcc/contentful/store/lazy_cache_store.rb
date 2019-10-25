@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
+require_relative 'instrumentation'
+
 module WCC::Contentful::Store
   class LazyCacheStore
+    include WCC::Contentful::Store::Instrumentation
+
     def initialize(client, cache: nil)
       @cdn = CDNAdapter.new(client)
       @cache = cache || ActiveSupport::Cache::MemoryStore.new
@@ -9,12 +13,15 @@ module WCC::Contentful::Store
     end
 
     def find(key, **options)
+      event = 'fresh'
       found =
         @cache.fetch(key) do
+          event = 'miss'
           # if it's not a contentful ID don't hit the API.
           # Store a nil object if we can't find the object on the CDN.
           (@cdn.find(key, options) || nil_obj(key)) if key =~ /^\w+$/
         end
+      _instrument(event + '.lazycachestore', key: key, options: options)
 
       case found.try(:dig, 'sys', 'type')
       when 'Nil', 'DeletedEntry', 'DeletedAsset'
@@ -64,8 +71,10 @@ module WCC::Contentful::Store
 
       case json.dig('sys', 'type')
       when 'DeletedEntry', 'DeletedAsset'
+        _instrument 'delete', id: id
         nil
       else
+        _instrument 'set', id: id
         json
       end
     end

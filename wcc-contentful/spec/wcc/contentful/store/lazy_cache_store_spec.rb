@@ -1,12 +1,17 @@
 # frozen_string_literal: true
 
 RSpec.describe WCC::Contentful::Store::LazyCacheStore do
+  let(:cache) {
+    ActiveSupport::Cache::MemoryStore.new
+  }
+
   subject(:store) {
     WCC::Contentful::Store::LazyCacheStore.new(
       WCC::Contentful::SimpleClient::Cdn.new(
         access_token: contentful_access_token,
         space: contentful_space_id
-      )
+      ),
+      cache: cache
     )
   }
 
@@ -38,6 +43,37 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
       # should not hit the API again
       page2 = store.find('47PsST8EicKgWIWwK2AsW6')
       expect(page2).to eq(page)
+    end
+
+    it 'instruments a find' do
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
+          '/entries/47PsST8EicKgWIWwK2AsW6')
+        .with(query: hash_including({ locale: '*' }))
+        .to_return(body: load_fixture('contentful/lazy_cache_store/page_about.json'))
+
+      expect {
+        store.find('47PsST8EicKgWIWwK2AsW6')
+      }.to instrument('find.store.contentful.wcc')
+    end
+
+    it 'instruments a cache hit' do
+      cache.write('47PsST8EicKgWIWwK2AsW6',
+        JSON.parse(load_fixture('contentful/lazy_cache_store/page_about.json')))
+
+      expect {
+        store.find('47PsST8EicKgWIWwK2AsW6')
+      }.to instrument('fresh.lazycachestore.store.contentful.wcc')
+    end
+
+    it 'instruments a cache miss' do
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
+          '/entries/47PsST8EicKgWIWwK2AsW6')
+        .with(query: hash_including({ locale: '*' }))
+        .to_return(body: load_fixture('contentful/lazy_cache_store/page_about.json'))
+
+      expect {
+        store.find('47PsST8EicKgWIWwK2AsW6')
+      }.to instrument('miss.lazycachestore.store.contentful.wcc')
     end
 
     let(:not_found) {
@@ -154,6 +190,23 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
         .apply(name: 'Main Menu')
         .first
       expect(main_menu2).to eq(main_menu)
+    end
+
+    it 'instruments find_all' do
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
+        .with(query: hash_including({
+          include: '2',
+          content_type: 'menu'
+        }))
+        .to_return(body: load_fixture('contentful/lazy_cache_store/query_main_menu.json'))
+
+      expect {
+        store.find_all(content_type: 'menu', options: { include: 2 })
+      }.to instrument('find_all.store.contentful.wcc')
+        .with(hash_including(
+                content_type: 'menu',
+                options: { include: 2 }
+              ))
     end
 
     context 'cache_response: true' do
@@ -349,6 +402,18 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
       expect(section0.dig('sys', 'type')).to eq('Link')
       section1 = queried_page.dig('fields', 'sections', 'en-US', 1)
       expect(section1.dig('sys', 'type')).to eq('Entry')
+    end
+
+    it 'instruments find_by' do
+      store.set(page.dig('sys', 'id'), page)
+
+      expect {
+        store.find_by(content_type: 'page', filter: { 'sys.id' => page.dig('sys', 'id') })
+      }.to instrument('find_by.store.contentful.wcc')
+        .with(hash_including(
+                content_type: 'page',
+                filter: { 'sys.id' => page.dig('sys', 'id') }
+              ))
     end
 
     context 'cache_response: true' do
@@ -601,6 +666,46 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
       # assert
       expect(latest).to eq(existing)
       expect(subject.find(deleted_entry.dig('sys', 'id'))).to eq(existing)
+    end
+
+    it 'instruments index - no set when entry not cached' do
+      expect {
+        expect {
+          # act
+          subject.index(entry)
+        }.to instrument('index.store.contentful.wcc')
+          .with(hash_including(id: '1qLdW7i7g4Ycq6i4Cckg44'))
+      }.to_not instrument('set.store.contentful.wcc')
+    end
+
+    it 'instruments index - set when entry cached' do
+      new_entry = entry.merge({
+        'sys' => entry['sys'].merge({ 'revision': 2 })
+      })
+      subject.set('1qLdW7i7g4Ycq6i4Cckg44', entry)
+
+      expect {
+        expect {
+          # act
+          subject.index(new_entry)
+        }.to instrument('index.store.contentful.wcc')
+          .with(hash_including(id: '1qLdW7i7g4Ycq6i4Cckg44'))
+      }.to instrument('set.store.contentful.wcc')
+        .with(hash_including(id: '1qLdW7i7g4Ycq6i4Cckg44'))
+    end
+
+    it 'instruments index delete' do
+      existing = { 'test' => { 'data' => 'asdf' } }
+      subject.set('6HQsABhZDiWmi0ekCouUuy', existing)
+
+      expect {
+        expect {
+          # act
+          subject.index(deleted_entry)
+        }.to instrument('index.store.contentful.wcc')
+          .with(hash_including(id: '6HQsABhZDiWmi0ekCouUuy'))
+      }.to instrument('delete.store.contentful.wcc')
+        .with(hash_including(id: '6HQsABhZDiWmi0ekCouUuy'))
     end
   end
 end

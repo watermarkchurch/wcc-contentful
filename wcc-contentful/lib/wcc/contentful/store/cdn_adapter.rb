@@ -2,6 +2,8 @@
 
 module WCC::Contentful::Store
   class CDNAdapter
+    # Note: CDNAdapter should not instrument store events cause it's not a store.
+
     attr_reader :client
 
     # The CDNAdapter cannot index data coming back from the Sync API.

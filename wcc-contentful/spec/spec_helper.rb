@@ -16,6 +16,7 @@ require 'vcr'
 require 'httplog'
 require 'byebug'
 require 'wisper/rspec/matchers'
+require 'rspec-instrumentation-matcher'
 
 require 'bench_helper'
 

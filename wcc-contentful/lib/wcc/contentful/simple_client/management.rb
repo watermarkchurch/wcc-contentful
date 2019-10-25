@@ -19,22 +19,34 @@ class WCC::Contentful::SimpleClient::Management < WCC::Contentful::SimpleClient
   end
 
   def content_types(**query)
-    resp = get('content_types', query)
+    resp =
+      _instrument 'content_types', query: query do
+        get('content_types', query)
+      end
     resp.assert_ok!
   end
 
   def content_type(key, query = {})
-    resp = get("content_types/#{key}", query)
+    resp =
+      _instrument 'content_types', content_type: key, query: query do
+        get("content_types/#{key}", query)
+      end
     resp.assert_ok!
   end
 
   def editor_interface(content_type_id, query = {})
-    resp = get("content_types/#{content_type_id}/editor_interface", query)
+    resp =
+      _instrument 'editor_interfaces', content_type: content_type_id, query: query do
+        get("content_types/#{content_type_id}/editor_interface", query)
+      end
     resp.assert_ok!
   end
 
   def webhook_definitions(**query)
-    resp = get("/spaces/#{space}/webhook_definitions", query)
+    resp =
+      _instrument 'webhook_definitions', query: query do
+        get("/spaces/#{space}/webhook_definitions", query)
+      end
     resp.assert_ok!
   end
 
@@ -61,16 +73,24 @@ class WCC::Contentful::SimpleClient::Management < WCC::Contentful::SimpleClient
   #   ]
   # }
   def post_webhook_definition(webhook)
-    resp = post("/spaces/#{space}/webhook_definitions", webhook)
+    resp =
+      _instrument 'post.webhook_definitions' do
+        post("/spaces/#{space}/webhook_definitions", webhook)
+      end
     resp.assert_ok!
   end
 
   def post(path, body)
     url = URI.join(@api_url, path)
 
+    resp =
+      _instrument 'post_http', url: url do
+        post_http(url, body)
+      end
+
     Response.new(self,
       { url: url, body: body },
-      post_http(url, body))
+      resp)
   end
 
   private

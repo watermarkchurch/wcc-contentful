@@ -158,6 +158,24 @@ RSpec.shared_examples 'contentful store' do
       expect(prior2).to eq(data)
       expect(subject.find('1234')).to eq(data2)
     end
+
+    it 'instruments set' do
+      data = { 'key' => 'val', '1' => { 'deep' => 9 } }
+
+      expect {
+        # act
+        subject.set('1234', data)
+      }.to instrument('set.store.contentful.wcc')
+        .with(hash_including(id: '1234'))
+    end
+
+    it 'instruments find' do
+      expect {
+        # act
+        subject.find('1234')
+      }.to instrument('find.store.contentful.wcc')
+        .with(hash_including(id: '1234'))
+    end
   end
 
   describe '#delete' do
@@ -183,6 +201,14 @@ RSpec.shared_examples 'contentful store' do
       # assert
       expect(deleted).to be_nil
       expect(subject.find('9999')).to eq(data)
+    end
+
+    it 'instruments delete' do
+      expect {
+        # act
+        subject.delete('1234')
+      }.to instrument('delete.store.contentful.wcc')
+        .with(hash_including(id: '1234'))
     end
   end
 
@@ -369,6 +395,31 @@ RSpec.shared_examples 'contentful store' do
       # assert
       expect(latest).to eq(existing)
       expect(subject.find(deleted_asset.dig('sys', 'id'))).to eq(existing)
+    end
+
+    it 'instruments index set' do
+      expect {
+        expect {
+          # act
+          subject.index(entry)
+        }.to instrument('index.store.contentful.wcc')
+          .with(hash_including(id: '1qLdW7i7g4Ycq6i4Cckg44'))
+      }.to instrument('set.store.contentful.wcc')
+        .with(hash_including(id: '1qLdW7i7g4Ycq6i4Cckg44'))
+    end
+
+    it 'instruments index delete' do
+      existing = { 'test' => { 'data' => 'asdf' } }
+      subject.set('6HQsABhZDiWmi0ekCouUuy', existing)
+
+      expect {
+        expect {
+          # act
+          subject.index(deleted_entry)
+        }.to instrument('index.store.contentful.wcc')
+          .with(hash_including(id: '6HQsABhZDiWmi0ekCouUuy'))
+      }.to instrument('delete.store.contentful.wcc')
+        .with(hash_including(id: '6HQsABhZDiWmi0ekCouUuy'))
     end
   end
 
@@ -576,6 +627,13 @@ RSpec.shared_examples 'contentful store' do
       expect(links[1].dig('fields', 'subLink', 'en-US', 'sys', 'type'))
         .to eq('Link')
     end
+
+    it 'instruments find_by' do
+      expect {
+        subject.find_by(content_type: 'test2')
+      }.to instrument('find_by.store.contentful.wcc')
+        .with(hash_including(content_type: 'test2'))
+    end
   end
 
   describe '#find_all' do
@@ -642,6 +700,13 @@ RSpec.shared_examples 'contentful store' do
       # assert
       expect(found.count).to eq(1)
       expect(found.first.dig('sys', 'id')).to eq('k5')
+    end
+
+    it 'instruments find_all' do
+      expect {
+        subject.find_all(content_type: 'test2')
+      }.to instrument('find_all.store.contentful.wcc')
+        .with(hash_including(content_type: 'test2'))
     end
   end
 

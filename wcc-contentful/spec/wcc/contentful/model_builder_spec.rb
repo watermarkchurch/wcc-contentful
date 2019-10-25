@@ -84,6 +84,15 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     expect(main_menu.name).to eq('Main Menu')
   end
 
+  it 'instruments find' do
+    @schema = subject.build_models
+
+    # act
+    expect {
+      WCC::Contentful::Model::Menu.find('FNlqULSV0sOy4IoGmyWOW')
+    }.to instrument('find.model.contentful.wcc')
+  end
+
   it 'returns nil if cannot find ID' do
     @schema = subject.build_models
 
@@ -148,6 +157,15 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     )
   end
 
+  it 'instruments find_all' do
+    @schema = subject.build_models
+
+    # act
+    expect {
+      WCC::Contentful::Model::MenuButton.find_all(button_style: 'custom')
+    }.to instrument('find_all.model.contentful.wcc')
+  end
+
   it 'returns empty array if find_all finds nothing' do
     @schema = subject.build_models
     store_resp = double
@@ -174,6 +192,15 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     # assert
     expect(redirect).to_not be_nil
     expect(redirect.pageReference.title).to eq('Conferences')
+  end
+
+  it 'instruments find_by' do
+    @schema = subject.build_models
+
+    # act
+    expect {
+      WCC::Contentful::Model::Redirect2.find_by(slug: 'mister_roboto')
+    }.to instrument('find_by.model.contentful.wcc')
   end
 
   it 'returns nil if find_by finds nothing' do
