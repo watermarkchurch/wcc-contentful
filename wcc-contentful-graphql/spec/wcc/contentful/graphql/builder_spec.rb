@@ -585,4 +585,16 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
       expect(result['data'].dig('faq', 'answer', 'html')).to eq('<div>Some HTML</div>')
     end
   end
+
+  context 'when types is a string' do
+    let(:types) { File.join(fixture_root, 'contentful/contentful-schema.json') }
+    let(:store) { double('store') }
+
+    it 'attempts to load from file' do
+      schema = subject.build_schema
+
+      expect(schema.types['Menu']&.name).to eq('Menu')
+      expect(schema.types['Testimonial']&.name).to eq('Testimonial')
+    end
+  end
 end

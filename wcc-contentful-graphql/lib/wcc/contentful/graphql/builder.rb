@@ -13,7 +13,17 @@ module WCC::Contentful::Graphql
     attr_reader :root_types
 
     def initialize(types, store)
-      @types = types
+      @types = types if types.is_a? WCC::Contentful::IndexedRepresentation
+      @types ||=
+        if types.is_a?(String) && File.exist?(types)
+          WCC::Contentful::ContentTypeIndexer.load(types).types
+        end
+
+      unless @types
+        raise ArgumentError, 'Cannot parse types - not an IndexedRepresentation ' \
+          "nor a schema file on disk: #{types}"
+      end
+
       @store = store
 
       @schema_types = build_schema_types
