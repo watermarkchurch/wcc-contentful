@@ -4,7 +4,19 @@ require 'singleton'
 
 module WCC::Contentful
   class Services
-    include Singleton
+    class << self
+      def instance
+        @singleton__instance__ ||= new # rubocop:disable Naming/MemoizedInstanceVariableName
+      end
+    end
+
+    def configuration
+      @configuration ||= WCC::Contentful.configuration
+    end
+
+    def initialize(configuration = nil)
+      @configuration = configuration
+    end
 
     # Gets the data-store which executes the queries run against the dynamic
     # models in the WCC::Contentful::Model namespace.
@@ -138,11 +150,9 @@ module WCC::Contentful
     private
 
     def ensure_configured
-      if WCC::Contentful.configuration.nil?
-        raise StandardError, 'WCC::Contentful has not yet been configured!'
-      end
+      raise StandardError, 'WCC::Contentful has not yet been configured!' if configuration.nil?
 
-      yield WCC::Contentful.configuration
+      yield configuration
     end
   end
 
