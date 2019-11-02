@@ -21,7 +21,7 @@ module WCC::Contentful::Graphql::FieldHelper
     type =
       case type
       when :DateTime
-        WCC::Contentful::Graphql::Types::DateTimeType
+        types.String
       when :Coordinates
         WCC::Contentful::Graphql::Types::CoordinatesType
       when :Json
