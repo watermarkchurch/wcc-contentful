@@ -130,16 +130,7 @@ module WCC::Contentful::Graphql
               type = type.to_list_type if f.array
               type
             }) do
-              resolve ->(obj, _args, ctx) {
-                links = obj.dig('fields', f.name, ctx[:locale] || 'en-US')
-                return if links.nil?
-
-                if links.is_a? Array
-                  links.reject(&:nil?).map { |l| store.find(l.dig('sys', 'id')) }
-                else
-                  store.find(links.dig('sys', 'id'))
-                end
-              }
+              resolve contentful_link_resolver(f.name, store: store)
             end
           when :Link
             field(f.name.to_sym, -> {
@@ -157,16 +148,7 @@ module WCC::Contentful::Graphql
               type = type.to_list_type if f.array
               type
             }) do
-              resolve ->(obj, _args, ctx) {
-                links = obj.dig('fields', f.name, ctx[:locale] || 'en-US')
-                return if links.nil?
-
-                if links.is_a? Array
-                  links.reject(&:nil?).map { |l| store.find(l.dig('sys', 'id')) }
-                else
-                  store.find(links.dig('sys', 'id'))
-                end
-              }
+              resolve contentful_link_resolver(f.name, store: store)
             end
           else
             contentful_field(f.name, f.type, array: f.array)

@@ -42,4 +42,17 @@ module WCC::Contentful::Graphql::FieldHelper
       instance_exec(&block) if block_given?
     end
   end
+
+  def contentful_link_resolver(field_name, store:)
+    ->(obj, _args, ctx) {
+      links = obj.dig('fields', field_name, ctx[:locale] || 'en-US')
+      return if links.nil?
+
+      if links.is_a? Array
+        links.reject(&:nil?).map { |l| store.find(l.dig('sys', 'id')) }
+      else
+        store.find(links.dig('sys', 'id'))
+      end
+    }
+  end
 end
