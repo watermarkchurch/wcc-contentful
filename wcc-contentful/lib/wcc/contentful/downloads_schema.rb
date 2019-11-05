@@ -105,6 +105,8 @@ class WCC::Contentful::DownloadsSchema
 
     # The pretty_generate format differs from contentful-shell and nodejs formats
     # only in its treatment of empty arrays in the "validations" field.
-    json_string.gsub(/\[\n\n\s+\]/, '[]')
+    json_string = json_string.gsub(/\[\n\n\s+\]/, '[]')
+    # contentful-shell also adds a newline at the end.
+    json_string + "\n"
   end
 end
