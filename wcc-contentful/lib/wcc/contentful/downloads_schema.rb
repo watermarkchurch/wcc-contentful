@@ -61,7 +61,7 @@ class WCC::Contentful::DownloadsSchema
     @editor_interfaces ||=
       content_types
         .map { |ct| @client.editor_interface(ct.dig('sys', 'id')).raw }
-        .map { |i| strip_sys(i) }
+        .map { |i| sort_controls(strip_sys(i)) }
         .sort_by { |i| i.dig('sys', 'contentType', 'sys', 'id') }
   end
 
@@ -71,6 +71,15 @@ class WCC::Contentful::DownloadsSchema
     obj.merge!({
       'sys' => obj['sys'].slice('id', 'type', 'contentType')
     })
+  end
+
+  def sort_controls(editor_interface)
+    {
+      'sys' => editor_interface['sys'],
+      'controls' => editor_interface['controls']
+        .sort_by { |c| c['fieldId'] }
+        .map { |c| c.slice('fieldId', 'settings', 'widgetId') }
+    }
   end
 
   def deep_contains_all(expected, actual)
