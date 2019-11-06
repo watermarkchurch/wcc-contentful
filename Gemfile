@@ -5,7 +5,7 @@ source 'https://rubygems.org'
 # Development tools intended to be run in the root
 group :development, :test do
   gem 'appraisal'
-  gem 'bump', '~> 0.6.1'
+  gem 'bump', '~> 0.8.0'
   gem 'danger-wcc', '~> 0.0.5'
   gem 'erb_lint', require: false
   gem 'guard'
