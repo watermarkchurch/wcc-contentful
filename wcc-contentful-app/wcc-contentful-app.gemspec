@@ -35,7 +35,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec_junit_formatter', '~> 0.4.1'
   spec.add_development_dependency 'rubocop', '0.68'
   spec.add_development_dependency 'simplecov', '~> 0.16.1'
-  spec.add_development_dependency 'vcr', '~> 4.0'
+  spec.add_development_dependency 'vcr', '~> 5.0'
   spec.add_development_dependency 'webmock', '~> 3.0'
 
   # Makes testing easy via `bundle exec guard`
