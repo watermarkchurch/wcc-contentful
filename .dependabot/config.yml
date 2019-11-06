@@ -9,7 +9,7 @@ update_configs:
           update_type: "security"
     automerged_updates:
       - match:
-          dependency_type: "production"
+          dependency_type: "all"
           update_type: "all"
   - directory: "/wcc-contentful"
     package_manager: "ruby:bundler"    
@@ -19,7 +19,7 @@ update_configs:
           update_type: "security"
     automerged_updates:
       - match:
-          dependency_type: "production"
+          dependency_type: "all"
           update_type: "all"
   - directory: "/wcc-contentful-app"
     package_manager: "ruby:bundler"    
@@ -29,7 +29,7 @@ update_configs:
           update_type: "security"
     automerged_updates:
       - match:
-          dependency_type: "production"
+          dependency_type: "all"
           update_type: "all"
   - directory: "/wcc-contentful-graphql"
     package_manager: "ruby:bundler"    
@@ -39,5 +39,5 @@ update_configs:
           update_type: "security"
     automerged_updates:
       - match:
-          dependency_type: "production"
+          dependency_type: "all"
           update_type: "all"
