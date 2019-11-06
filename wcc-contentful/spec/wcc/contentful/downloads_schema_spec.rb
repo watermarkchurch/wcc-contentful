@@ -66,14 +66,13 @@ RSpec.describe WCC::Contentful::DownloadsSchema do
         Dir.chdir(dir) do
           FileUtils.mkdir_p('db')
           FileUtils.cp(
-            File.join(fixture_root, 'contentful/contentful-schema-from-export.json'),
+            File.join(fixture_root, 'contentful/contentful-schema.json'),
             'db/contentful-schema.json'
           )
 
-          subject.call
+          expect(File).to_not receive(:write)
 
-          expect(File.read('db/contentful-schema.json'))
-            .to eq(load_fixture('contentful/contentful-schema-from-export.json'))
+          subject.call
         end
       end
     end
