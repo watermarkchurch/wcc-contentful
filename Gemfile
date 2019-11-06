@@ -12,7 +12,7 @@ group :development, :test do
   gem 'guard-rspec'
   gem 'guard-rubocop'
   gem 'guard-shell', '~> 0.7.1'
-  gem 'rake', '~> 12.3'
+  gem 'rake', '~> 13.0'
   gem 'rubocop', '0.68', require: false
 end
 
