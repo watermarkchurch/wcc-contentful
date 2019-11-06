@@ -1,6 +1,4 @@
 version: 1
-aliases:
-  - &base_config
     
 update_configs:
   - directory: "/"
