@@ -21,23 +21,3 @@ update_configs:
       - match:
           dependency_type: "all"
           update_type: "all"
-  - directory: "/wcc-contentful-app"
-    package_manager: "ruby:bundler"    
-    update_schedule: "weekly"
-    allowed_updates:
-      - match:
-          update_type: "security"
-    automerged_updates:
-      - match:
-          dependency_type: "all"
-          update_type: "all"
-  - directory: "/wcc-contentful-graphql"
-    package_manager: "ruby:bundler"    
-    update_schedule: "weekly"
-    allowed_updates:
-      - match:
-          update_type: "security"
-    automerged_updates:
-      - match:
-          dependency_type: "all"
-          update_type: "all"
