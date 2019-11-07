@@ -53,7 +53,7 @@ Gem::Specification.new do |spec|
 
   # optional dependencies
   spec.add_development_dependency 'contentful', '2.6.0'
-  spec.add_development_dependency 'contentful-management', '2.0.2'
+  spec.add_development_dependency 'contentful-management', '2.11.0'
   spec.add_development_dependency 'dry-validation', '~> 0.11.1'
   spec.add_development_dependency 'graphql', '~> 1.7'
   spec.add_development_dependency 'http', '> 1.0', '< 3.0'
