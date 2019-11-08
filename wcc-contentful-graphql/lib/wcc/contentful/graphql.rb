@@ -12,3 +12,4 @@ module WCC::Contentful
 end
 
 require_relative 'graphql/builder'
+require_relative 'graphql/federation'
