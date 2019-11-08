@@ -27,7 +27,7 @@ module WCC::Contentful::Graphql::Federation
               argument arg_name, ns.namespaced(arg.type)
             end
 
-            resolve GraphQL::Federation.delegate_to_schema(schema)
+            resolve delegate_to_schema(schema)
           end
         end
       }
