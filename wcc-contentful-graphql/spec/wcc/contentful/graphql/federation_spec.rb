@@ -188,6 +188,114 @@ RSpec.describe WCC::Contentful::Graphql::Federation do
       })
     end
   end
+
+  describe '.schema_stitch' do
+    it 'adds the schema in at root' do
+      query_type2 = root_query_type_2
+      schema2 =
+        GraphQL::Schema.define do
+          query query_type2
+        end
+
+      # in the first schema's root query
+      root_query_type_1.define do
+        schema_stitch(schema2)
+      end
+
+      expected_query = <<~QUERY
+        query {
+          b {
+            c
+          }
+        }
+      QUERY
+
+      expect(schema2).to receive(:execute)
+        .with(expected_query.strip, any_args)
+        .and_return({ 'data' => { 'b' => { 'c' => 'test c' } } })
+
+      # act
+      result = schema1.execute(<<~QUERY)
+        {
+          field1
+          b {
+            c
+          }
+        }
+      QUERY
+
+      expect(result['errors']).to eq nil
+      expect(result['data']).to eq({
+        'field1' => 'field1 test string',
+        'b' => {
+          'c' => 'test c'
+        }
+      })
+    end
+
+    it 'adds the schema in under a namespace' do
+      query_type2 = root_query_type_2
+      schema2 =
+        GraphQL::Schema.define do
+          query query_type2
+        end
+
+      # in the first schema's root query
+      root_query_type_1.define do
+        schema_stitch(schema2, namespace: 'other')
+      end
+
+      expected_query = <<~QUERY
+        query {
+          b {
+            c
+          }
+        }
+      QUERY
+
+      expect(schema2).to receive(:execute)
+        .with(expected_query.strip, any_args)
+        .and_return({ 'data' => { 'b' => { 'c' => 'test c' } } })
+
+      # act
+      result = schema1.execute(<<~QUERY)
+        {
+          field1
+          other {
+            b {
+              c
+            }
+          }
+        }
+      QUERY
+
+      expect(result['errors']).to eq nil
+      expect(result['data']).to eq({
+        'field1' => 'field1 test string',
+        'other' => {
+          'b' => {
+            'c' => 'test c'
+          }
+        }
+      })
+    end
+
+    it 'puts the other schemas types under a namespace' do
+      query_type2 = root_query_type_2
+      schema2 =
+        GraphQL::Schema.define do
+          query query_type2
+        end
+
+      # in the first schema's root query
+      root_query_type_1.define do
+        schema_stitch(schema2, namespace: 'other')
+      end
+
+      expect(schema1.types['B_type']).to be nil
+      expect(schema1.types['Other_B_type']).to_not be nil
+    end
+  end
 end
 
 RSpec::Matchers.define :graphql_variables do |expected|
