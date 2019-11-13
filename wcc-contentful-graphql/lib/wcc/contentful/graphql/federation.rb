@@ -19,8 +19,7 @@ module WCC::Contentful::Graphql::Federation
     def_fields =
       proc {
         schema.query.fields.each do |(key, field_def)|
-          field key do
-            type ns.namespaced(field_def.type)
+          field key, ns.namespaced(field_def.type) do
             description field_def.description
 
             field_def.arguments.each do |(arg_name, arg)|
@@ -34,14 +33,14 @@ module WCC::Contentful::Graphql::Federation
 
     if namespace
       stub_class = Struct.new(:name)
-
-      field namespace do
-        type(GraphQL::ObjectType.define do
+      namespaced_type =
+        GraphQL::ObjectType.define do
           name ns_titleized
 
           instance_exec(&def_fields)
-        end)
+        end
 
+      field namespace, namespaced_type do
         resolve ->(_obj, _arguments, _context) { stub_class.new(namespace) }
       end
     else

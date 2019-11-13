@@ -13,3 +13,4 @@ end
 
 require_relative 'graphql/builder'
 require_relative 'graphql/federation'
+require_relative 'ext/services'
