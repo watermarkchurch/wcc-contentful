@@ -136,6 +136,7 @@ module WCC::Contentful
         end
     end
 
+    # Gets the configured instrumentation adapter, defaulting to ActiveSupport::Notifications
     def instrumentation
       return @instrumentation if @instrumentation
       return ActiveSupport::Notifications if WCC::Contentful.configuration.nil?
@@ -174,8 +175,7 @@ module WCC::Contentful
   # @see Services
   module ServiceAccessors
     SERVICES = (WCC::Contentful::Services.instance_methods -
-      Object.instance_methods -
-      Singleton.instance_methods)
+      Object.instance_methods)
 
     SERVICES.each do |m|
       define_method m do
