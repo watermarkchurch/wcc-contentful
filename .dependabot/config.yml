@@ -11,6 +11,19 @@ update_configs:
       - match:
           dependency_type: "all"
           update_type: "all"
+  - directory: "/"
+    package_manager: "javascript"    
+    update_schedule: "weekly"
+    allowed_updates:
+      - match:
+          update_type: "security"
+      - match:
+          dependency_type: "development"
+          update_type: "all"
+    automerged_updates:
+      - match:
+          dependency_type: "all"
+          update_type: "all"
   - directory: "/wcc-contentful"
     package_manager: "ruby:bundler"    
     update_schedule: "weekly"
