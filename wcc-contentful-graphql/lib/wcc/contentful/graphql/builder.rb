@@ -13,7 +13,17 @@ module WCC::Contentful::Graphql
     attr_reader :root_types
 
     def initialize(types, store)
-      @types = types
+      @types = types if types.is_a? WCC::Contentful::IndexedRepresentation
+      @types ||=
+        if types.is_a?(String) && File.exist?(types)
+          WCC::Contentful::ContentTypeIndexer.load(types).types
+        end
+
+      unless @types
+        raise ArgumentError, 'Cannot parse types - not an IndexedRepresentation ' \
+          "nor a schema file on disk: #{types}"
+      end
+
       @store = store
 
       @schema_types = build_schema_types
@@ -120,16 +130,7 @@ module WCC::Contentful::Graphql
               type = type.to_list_type if f.array
               type
             }) do
-              resolve ->(obj, _args, ctx) {
-                links = obj.dig('fields', f.name, ctx[:locale] || 'en-US')
-                return if links.nil?
-
-                if links.is_a? Array
-                  links.reject(&:nil?).map { |l| store.find(l.dig('sys', 'id')) }
-                else
-                  store.find(links.dig('sys', 'id'))
-                end
-              }
+              resolve contentful_link_resolver(f.name, store: store)
             end
           when :Link
             field(f.name.to_sym, -> {
@@ -147,16 +148,7 @@ module WCC::Contentful::Graphql
               type = type.to_list_type if f.array
               type
             }) do
-              resolve ->(obj, _args, ctx) {
-                links = obj.dig('fields', f.name, ctx[:locale] || 'en-US')
-                return if links.nil?
-
-                if links.is_a? Array
-                  links.reject(&:nil?).map { |l| store.find(l.dig('sys', 'id')) }
-                else
-                  store.find(links.dig('sys', 'id'))
-                end
-              }
+              resolve contentful_link_resolver(f.name, store: store)
             end
           else
             contentful_field(f.name, f.type, array: f.array)

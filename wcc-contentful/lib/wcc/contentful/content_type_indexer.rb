@@ -6,6 +6,20 @@ module WCC::Contentful
   class ContentTypeIndexer
     include WCC::Contentful::Helpers
 
+    class << self
+      def load(schema_file)
+        from_json_schema(
+          JSON.parse(File.read(schema_file))['contentTypes']
+        )
+      end
+
+      def from_json_schema(schema)
+        new.tap do |ixr|
+          schema.each { |type| ixr.index(type) }
+        end
+      end
+    end
+
     attr_reader :types
 
     def initialize

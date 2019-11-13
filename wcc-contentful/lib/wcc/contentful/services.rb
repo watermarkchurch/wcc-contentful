@@ -1,10 +1,20 @@
 # frozen_string_literal: true
 
-require 'singleton'
-
 module WCC::Contentful
   class Services
-    include Singleton
+    class << self
+      def instance
+        @singleton__instance__ ||= new # rubocop:disable Naming/MemoizedInstanceVariableName
+      end
+    end
+
+    def configuration
+      @configuration ||= WCC::Contentful.configuration
+    end
+
+    def initialize(configuration = nil)
+      @configuration = configuration
+    end
 
     # Gets the data-store which executes the queries run against the dynamic
     # models in the WCC::Contentful::Model namespace.
@@ -126,6 +136,7 @@ module WCC::Contentful
         end
     end
 
+    # Gets the configured instrumentation adapter, defaulting to ActiveSupport::Notifications
     def instrumentation
       return @instrumentation if @instrumentation
       return ActiveSupport::Notifications if WCC::Contentful.configuration.nil?
@@ -138,11 +149,9 @@ module WCC::Contentful
     private
 
     def ensure_configured
-      if WCC::Contentful.configuration.nil?
-        raise StandardError, 'WCC::Contentful has not yet been configured!'
-      end
+      raise StandardError, 'WCC::Contentful has not yet been configured!' if configuration.nil?
 
-      yield WCC::Contentful.configuration
+      yield configuration
     end
   end
 
@@ -166,8 +175,7 @@ module WCC::Contentful
   # @see Services
   module ServiceAccessors
     SERVICES = (WCC::Contentful::Services.instance_methods -
-      Object.instance_methods -
-      Singleton.instance_methods)
+      Object.instance_methods)
 
     SERVICES.each do |m|
       define_method m do

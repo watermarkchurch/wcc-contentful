@@ -6,6 +6,7 @@ Contentful.
 
 * [wcc-contentful](./wcc-contentful) [![Gem Version](https://badge.fury.io/rb/wcc-contentful.svg)](https://rubygems.org/gems/wcc-contentful)
 * [wcc-contentful-app](./wcc-contentful-app) [![Gem Version](https://badge.fury.io/rb/wcc-contentful-app.svg)](https://rubygems.org/gems/wcc-contentful-app)
+* [wcc-contentful-graphql](./wcc-contentful-app) [![Gem Version](https://badge.fury.io/rb/wcc-contentful-graphql.svg)](https://rubygems.org/gems/wcc-contentful-graphql)
 
 ## Supported Rails versions
 

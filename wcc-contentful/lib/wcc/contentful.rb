@@ -107,10 +107,7 @@ module WCC::Contentful
         ' Check your access token and space ID.'
     end
 
-    indexer =
-      ContentTypeIndexer.new.tap do |ixr|
-        @content_types.each { |type| ixr.index(type) }
-      end
+    indexer = ContentTypeIndexer.from_json_schema(@content_types)
     @types = indexer.types
 
     if Services.instance.sync_engine&.should_sync?

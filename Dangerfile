@@ -23,4 +23,4 @@ unless declared_trivial
 end
 
 # Run all checks in WM plugin
-wcc.all(reek: false)
+wcc.all(reek: false, rubocop: false)
