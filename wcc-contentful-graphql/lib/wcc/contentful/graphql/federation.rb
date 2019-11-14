@@ -13,8 +13,7 @@ module WCC::Contentful::Graphql::Federation
   # will be inserted into the current object.  The `resolve` method for those
   # fields will execute a query on the external schema, returning the results.
   def schema_stitch(schema, namespace: nil)
-    ns_titleized = namespace&.titleize
-    ns = NamespacesTypes.new(namespace: ns_titleized)
+    ns = NamespacesTypes.new(namespace: namespace)
 
     def_fields =
       proc {
@@ -26,7 +25,9 @@ module WCC::Contentful::Graphql::Federation
               argument arg_name, ns.namespaced(arg.type)
             end
 
-            resolve delegate_to_schema(schema)
+            resolve delegate_to_schema(schema,
+              field_name: key,
+              namespace: namespace)
           end
         end
       }
@@ -35,7 +36,7 @@ module WCC::Contentful::Graphql::Federation
       stub_class = Struct.new(:name)
       namespaced_type =
         GraphQL::ObjectType.define do
-          name ns_titleized
+          name namespace.titleize
 
           instance_exec(&def_fields)
         end
@@ -48,25 +49,30 @@ module WCC::Contentful::Graphql::Federation
     end
   end
 
-  def delegate_to_schema(schema, field_name: nil, arguments: nil)
+  def delegate_to_schema(schema, field_name: nil, arguments: nil, namespace: nil)
     ->(obj, inner_args, context) {
       field_name ||= context.ast_node.name
 
-      arguments = arguments.call(obj, inner_args, context) if arguments&.respond_to?(:call)
-      arguments = BuildsArguments.call(arguments) if arguments
-      arguments ||= context.ast_node.arguments
+      args = arguments.call(obj, inner_args, context) if arguments&.respond_to?(:call)
+      args = BuildsArguments.call(args) if args
+      args ||= context.ast_node.arguments
 
       field_node = GraphQL::Language::Nodes::Field.new(
         name: field_name,
-        arguments: arguments,
+        arguments: args,
         selections: context.ast_node.selections,
         directives: context.ast_node.directives
       )
 
+      vars = context.query.selected_operation.variables
+      if namespace
+        ns = NamespacesTypes.new(namespace: namespace)
+        vars = vars.map { |v| ns.de_namespace_variable(v) }
+      end
       query_node = GraphQL::Language::Nodes::OperationDefinition.new(
         name: context.query.operation_name,
         operation_type: 'query',
-        variables: context.query.selected_operation.variables,
+        variables: vars,
         selections: [
           field_node
         ]
@@ -77,6 +83,9 @@ module WCC::Contentful::Graphql::Federation
       # schema.
       query = query_node.to_query_string
 
+      if defined?(Rails) && Rails.logger
+        Rails.logger.debug("delegate #{query_node.name} to #{schema.query.name}:\n#{query}")
+      end
       result = schema.execute(query,
         variables: context.query.variables)
 

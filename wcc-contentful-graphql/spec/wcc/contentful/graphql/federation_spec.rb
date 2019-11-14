@@ -25,6 +25,7 @@ RSpec.describe WCC::Contentful::Graphql::Federation do
 
   let(:root_query_type_2) {
     type_b = schema_2_type_b
+    field_arg_type = field_b_argument_type
     GraphQL::ObjectType.define do
       name 'Query2'
 
@@ -34,7 +35,17 @@ RSpec.describe WCC::Contentful::Graphql::Federation do
         resolve(proc { "field 'a' test string" })
       end
       # remote delegated type
-      field 'b', type_b
+      field 'b', type_b do
+        argument 'some_arg', field_arg_type
+      end
+    end
+  }
+
+  let(:field_b_argument_type) {
+    GraphQL::InputObjectType.define do
+      name 'FilterInput'
+
+      argument 'eq', types.String
     end
   }
 
@@ -294,6 +305,44 @@ RSpec.describe WCC::Contentful::Graphql::Federation do
 
       expect(schema1.types['B_type']).to be nil
       expect(schema1.types['Other_B_type']).to_not be nil
+    end
+
+    it 'allows explicit variable naming of input types' do
+      query_type2 = root_query_type_2
+      schema2 =
+        GraphQL::Schema.define do
+          query query_type2
+        end
+
+      # in the first schema's root query
+      root_query_type_1.define do
+        schema_stitch(schema2, namespace: 'other')
+      end
+
+      expected_query = <<~QUERY
+        query withFilter($filter: FilterInput) {
+          b(some_arg: $filter) {
+            c
+          }
+        }
+      QUERY
+
+      expect(schema2).to receive(:execute)
+        .with(expected_query.strip, any_args)
+        .and_return({ 'data' => { 'b' => { 'c' => 'test c' } } })
+
+      # act
+      result = schema1.execute(<<~QUERY, variables: { filter: { eq: 'test' } })
+        query withFilter($filter: Other_FilterInput) {
+          other {
+            b(some_arg: $filter) {
+              c
+            }
+          }
+        }
+      QUERY
+
+      expect(result['errors']).to eq nil
     end
   end
 end

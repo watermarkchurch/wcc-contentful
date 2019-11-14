@@ -13,7 +13,7 @@ class WCC::Contentful::Graphql::Federation::NamespacesTypes
   attr_reader :namespace
 
   def initialize(namespace:)
-    @namespace = namespace
+    @namespace = namespace&.titleize
   end
 
   # Gets the graphql type definition for the externally resolved field
@@ -71,4 +71,23 @@ class WCC::Contentful::Graphql::Federation::NamespacesTypes
       end
   end
   # rubocop:enable
+
+  def de_namespace_variable(variable_definition)
+    variable_definition.merge(
+      type: de_namespace_type(variable_definition.type)
+    )
+  end
+
+  def de_namespace_type(type_node)
+    of_type = type_node.try(:of_type)
+    if of_type
+      return type_node.merge(
+        of_type: de_namespace_type(of_type)
+      )
+    end
+
+    type_node.merge(
+      name: type_node.name.sub(namespace + '_', '')
+    )
+  end
 end
