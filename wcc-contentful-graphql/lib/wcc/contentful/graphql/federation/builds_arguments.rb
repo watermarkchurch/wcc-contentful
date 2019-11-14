@@ -16,7 +16,7 @@ module WCC::Contentful::Graphql::Federation
       private
 
       def key
-        argument[0]
+        argument[0].to_s
       end
 
       def value

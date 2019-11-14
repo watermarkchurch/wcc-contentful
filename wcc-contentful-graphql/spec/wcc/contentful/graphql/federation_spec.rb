@@ -1,14 +1,15 @@
 # frozen_string_literal: true
 
-require 'graphql'
 require 'diffy'
-require 'wcc/contentful/graphql/federation'
+require 'wcc/contentful/graphql'
 
 RSpec.describe WCC::Contentful::Graphql::Federation do
   let(:schema1) {
     query_type = root_query_type_1
     GraphQL::Schema.define do
       query query_type
+
+      resolve_type ->(_obj, _ctx) { raise StandardError, 'should not be invoked!' }
     end
   }
 
@@ -198,6 +199,48 @@ RSpec.describe WCC::Contentful::Graphql::Federation do
         'b' => {
           'd' => {
             'e' => 'test e value'
+          }
+        }
+      })
+    end
+
+    it 'can delegate to a Contentful schema type' do
+      indexed_types = load_indexed_types
+      store = load_store_from_sync
+      contentful_schema = WCC::Contentful::Graphql::Builder.new(indexed_types, store).build_schema
+
+      root_query_type_1.define do
+        field(:MenuButton, -> { contentful_schema.types['MenuButton'] }) do
+          argument :id, types.String
+
+          resolve delegate_to_schema(contentful_schema,
+            field_name: 'MenuButton')
+        end
+      end
+
+      result = schema1.execute(<<~QUERY)
+        {
+          MenuButton(id: "ZosJIuGfgkky0cA2GsymW") {
+            id
+            text
+            link {
+              id
+              title
+              slug
+            }
+          }
+        }
+      QUERY
+
+      expect(result['errors']).to eq nil
+      expect(result['data']).to eq({
+        'MenuButton' => {
+          'id' => 'ZosJIuGfgkky0cA2GsymW',
+          'text' => 'Terms & Conditions',
+          'link' => {
+            'id' => '1loILDsvKYkmGWoiKOOgkE',
+            'title' => 'Terms & Conditions',
+            'slug' => 'terms-and-conditions'
           }
         }
       })

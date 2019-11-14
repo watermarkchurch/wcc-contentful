@@ -111,6 +111,8 @@ module WCC::Contentful::Graphql
 
         field :id, !types.ID do
           resolve ->(obj, _args, _ctx) {
+            next obj['id'] if obj.key?('id')
+
             obj.dig('sys', 'id')
           }
         end
