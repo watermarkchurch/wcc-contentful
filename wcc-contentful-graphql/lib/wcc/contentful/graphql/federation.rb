@@ -12,7 +12,7 @@ module WCC::Contentful::Graphql::Federation
   # All fields on the external query object like `resource()`, `allResource()`
   # will be inserted into the current object.  The `resolve` method for those
   # fields will execute a query on the external schema, returning the results.
-  def schema_stitch(schema, namespace: nil)
+  def schema_stitch(schema, namespace: nil, field: nil)
     ns = NamespacesTypes.new(namespace: namespace)
 
     def_fields =
@@ -32,16 +32,16 @@ module WCC::Contentful::Graphql::Federation
         end
       }
 
-    if namespace
+    if field
       stub_class = Struct.new(:name)
-      namespaced_type =
+      root_field_type =
         GraphQL::ObjectType.define do
-          name namespace.titleize
+          name field.titleize
 
           instance_exec(&def_fields)
         end
 
-      field namespace, namespaced_type do
+      field field, root_field_type do
         resolve ->(_obj, _arguments, _context) { stub_class.new(namespace) }
       end
     else

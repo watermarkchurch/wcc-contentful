@@ -258,7 +258,7 @@ RSpec.describe WCC::Contentful::Graphql::Federation do
 
       # in the first schema's root query
       root_query_type_1.define do
-        schema_stitch(schema2, namespace: 'other')
+        schema_stitch(schema2, namespace: 'Other', field: 'other')
       end
 
       expected_query = <<~QUERY
@@ -306,7 +306,7 @@ RSpec.describe WCC::Contentful::Graphql::Federation do
 
       # in the first schema's root query
       root_query_type_1.define do
-        schema_stitch(schema2, namespace: 'other')
+        schema_stitch(schema2, namespace: 'Other')
       end
 
       expect(schema1.types['B_type']).to be nil
@@ -322,7 +322,7 @@ RSpec.describe WCC::Contentful::Graphql::Federation do
 
       # in the first schema's root query
       root_query_type_1.define do
-        schema_stitch(schema2, namespace: 'other')
+        schema_stitch(schema2, namespace: 'Other', field: 'other')
       end
 
       expected_query = <<~QUERY
