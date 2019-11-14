@@ -77,17 +77,14 @@ module WCC::Contentful::Graphql::Federation
           field_node
         ]
       )
+      document = GraphQL::Language::Nodes::Document.new(
+        definitions: [query_node]
+      )
 
-      # the ast_node.to_query_string prints the relevant section of the query to
-      # a string.  We build a query out of that which we execute on the external
-      # schema.
-      query = query_node.to_query_string
-
-      if defined?(Rails) && Rails.logger
-        Rails.logger.debug("delegate #{query_node.name} to #{schema.query.name}:\n#{query}")
-      end
-      result = schema.execute(query,
-        variables: context.query.variables)
+      result = schema.execute(
+        document: document,
+        variables: context.query.variables
+      )
 
       if result['errors'].present?
         raise GraphQL::ExecutionError.new(

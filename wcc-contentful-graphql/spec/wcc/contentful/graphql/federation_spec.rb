@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'graphql'
+require 'diffy'
 require 'wcc/contentful/graphql/federation'
 
 RSpec.describe WCC::Contentful::Graphql::Federation do
@@ -78,9 +79,10 @@ RSpec.describe WCC::Contentful::Graphql::Federation do
         }
       QUERY
 
-      expect(schema2).to receive(:execute)
-        .with(expected_query.strip, any_args)
-        .and_return({ 'data' => { 'b' => { 'c' => 'test c' } } })
+      expect(schema2).to receive(:execute) do |params|
+        expect(params[:document]).to match_query(expected_query.strip)
+        { 'data' => { 'b' => { 'c' => 'test c' } } }
+      end
 
       result = schema1.execute(<<~QUERY)
         {
@@ -119,9 +121,10 @@ RSpec.describe WCC::Contentful::Graphql::Federation do
         }
       QUERY
 
-      expect(schema2).to receive(:execute)
-        .with(expected_query.strip, any_args)
-        .and_return({ 'data' => { 'b' => { 'c' => 'test c' } } })
+      expect(schema2).to receive(:execute) do |params|
+        expect(params[:document]).to match_query(expected_query.strip)
+        { 'data' => { 'b' => { 'c' => 'test c' } } }
+      end
 
       result = schema1.execute(<<~QUERY)
         {
@@ -175,9 +178,10 @@ RSpec.describe WCC::Contentful::Graphql::Federation do
         }
       QUERY
 
-      expect(schema2).to receive(:execute)
-        .with(expected_query.strip, variables: graphql_variables({ 'myvar' => 'testvar' }))
-        .and_return({ 'data' => { 'b' => { 'd' => { 'e' => 'test e value' } } } })
+      expect(schema2).to receive(:execute) do |params|
+        expect(params[:document]).to match_query(expected_query.strip)
+        { 'data' => { 'b' => { 'd' => { 'e' => 'test e value' } } } }
+      end
 
       result = schema1.execute(<<~QUERY, variables: { 'myvar' => 'testvar' })
         query myQuery($myvar: String!) {
@@ -221,9 +225,10 @@ RSpec.describe WCC::Contentful::Graphql::Federation do
         }
       QUERY
 
-      expect(schema2).to receive(:execute)
-        .with(expected_query.strip, any_args)
-        .and_return({ 'data' => { 'b' => { 'c' => 'test c' } } })
+      expect(schema2).to receive(:execute) do |params|
+        expect(params[:document]).to match_query(expected_query.strip)
+        { 'data' => { 'b' => { 'c' => 'test c' } } }
+      end
 
       # act
       result = schema1.execute(<<~QUERY)
@@ -264,9 +269,10 @@ RSpec.describe WCC::Contentful::Graphql::Federation do
         }
       QUERY
 
-      expect(schema2).to receive(:execute)
-        .with(expected_query.strip, any_args)
-        .and_return({ 'data' => { 'b' => { 'c' => 'test c' } } })
+      expect(schema2).to receive(:execute) do |params|
+        expect(params[:document]).to match_query(expected_query.strip)
+        { 'data' => { 'b' => { 'c' => 'test c' } } }
+      end
 
       # act
       result = schema1.execute(<<~QUERY)
@@ -327,9 +333,10 @@ RSpec.describe WCC::Contentful::Graphql::Federation do
         }
       QUERY
 
-      expect(schema2).to receive(:execute)
-        .with(expected_query.strip, any_args)
-        .and_return({ 'data' => { 'b' => { 'c' => 'test c' } } })
+      expect(schema2).to receive(:execute) do |params|
+        expect(params[:document]).to match_query(expected_query.strip)
+        { 'data' => { 'b' => { 'c' => 'test c' } } }
+      end
 
       # act
       result = schema1.execute(<<~QUERY, variables: { filter: { eq: 'test' } })
@@ -350,5 +357,16 @@ end
 RSpec::Matchers.define :graphql_variables do |expected|
   match do |actual|
     actual.instance_variable_get('@provided_variables') == expected
+  end
+end
+
+RSpec::Matchers.define :match_query do |expected|
+  match do |actual|
+    diff = Diffy::Diff.new(expected, actual.to_query_string)
+    diff.count == 0
+  end
+
+  failure_message do |actual|
+    Diffy::Diff.new(expected, actual.to_query_string).to_s(:color)
   end
 end
