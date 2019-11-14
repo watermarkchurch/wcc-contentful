@@ -19,7 +19,6 @@ addons:
 before_install: gem install bundler -v 1.16.1
 install:
   - bundle install --path /tmp/vendor/bundle
-  - bin/bundle install --path /tmp/vendor/bundle
 script:
   - export COVERALLS_PARALLEL=true
   - bin/bundle exec rspec --format documentation --order rand

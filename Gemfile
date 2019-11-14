@@ -18,3 +18,4 @@ end
 
 gemspec path: './wcc-contentful'
 gemspec path: './wcc-contentful-app'
+gemspec path: './wcc-contentful-graphql'
