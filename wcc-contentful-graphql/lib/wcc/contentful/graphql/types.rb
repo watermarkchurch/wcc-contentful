@@ -69,4 +69,8 @@ module WCC::Contentful::Graphql::Types
         possible_types possible_types
       end
     end
+
+  module Generated
+    # Filled in by the Builder
+  end
 end
