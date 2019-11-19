@@ -38,6 +38,10 @@ module WCC::Contentful::Graphql::Types
 
   QueryOperatorInput =
     ->(type) do
+      puts
+      next QueryOperatorInput.call(type.of_type) if type.respond_to?(:of_type)
+      next type if type.try(:<, GraphQL::Schema::Scalar)
+
       map = {
         'String' => StringQueryOperatorInput
         # 'Int' =>
@@ -50,10 +54,11 @@ module WCC::Contentful::Graphql::Types
   FilterInputType =
     ->(schema_type) do
       GraphQL::InputObjectType.define do
-        name "#{schema_type.name}FilterInput"
+        name "#{schema_type.name.demodulize}FilterInput"
 
         schema_type.fields.each do |(name, field)|
-          next unless input_type = QueryOperatorInput.call(field.type)
+          input_type = QueryOperatorInput.call(field.type)
+          next unless input_type
 
           argument name, input_type
         end

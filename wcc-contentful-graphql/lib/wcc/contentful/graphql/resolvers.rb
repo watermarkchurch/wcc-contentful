@@ -80,8 +80,10 @@ module WCC::Contentful::Graphql::Resolvers
 
   def root_field_all_resolver(content_type, schema_type)
     Class.new(GraphQL::Schema::Resolver) do
-      argument :filter, WCC::Contentful::Graphql::Types::FilterInputType.call(schema_type),
-        required: false
+      unless schema_type.fields.empty?
+        argument :filter, WCC::Contentful::Graphql::Types::FilterInputType.call(schema_type),
+          required: false
+      end
 
       define_method(:resolve) do |**args|
         relation = store.find_all(content_type: content_type)

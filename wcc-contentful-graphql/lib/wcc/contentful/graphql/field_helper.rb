@@ -23,7 +23,7 @@ module WCC::Contentful::Graphql
       type =
         case type
         when :DateTime
-          types.String
+          String
         when :Coordinates
           WCC::Contentful::Graphql::Types::CoordinatesType
         when :Json
@@ -37,7 +37,7 @@ module WCC::Contentful::Graphql
             raise ArgumentError, "Unknown type arg '#{type}' for field #{field_name}"
           end
         end
-      type = type.to_list_type if array
+      type = [type] if array
       type
     end
   end

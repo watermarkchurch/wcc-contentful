@@ -63,7 +63,7 @@ module WCC::Contentful::Graphql
       # types have to be built on-demand since we may have circular references
       @schema_types ||=
         Hash.new do |h, k|
-          h[k] = build_schema_type(_types[k])
+          h[k] = build_schema_type(_types[k]) if _types[k]
         end
     end
 
@@ -135,10 +135,10 @@ module WCC::Contentful::Graphql
           closed_root_types.each do |content_type|
             schema_type = closed_schema_types[content_type]
 
-            field schema_type.name.to_sym, schema_type,
+            field schema_type.name.demodulize.to_sym, schema_type,
               null: false, resolver: root_field_single_resolver(content_type, schema_type)
 
-            field "all#{schema_type.name}".to_sym, schema_type.to_list_type,
+            field "all#{schema_type.name.demodulize}".to_sym, [schema_type],
               null: false, resolver: root_field_all_resolver(content_type, schema_type)
           end
         end)
@@ -174,13 +174,14 @@ module WCC::Contentful::Graphql
           null: false, resolver: content_type_resolver(content_type)
       end)
 
-      root_module.const_get(const).class_eval do
+      klass = root_module.const_get(const)
+      klass.class_eval do
         # Make a field for each column:
         typedef.fields.each_value do |f|
           case f.type
           when :Asset
             type = builder.schema_types['Asset']
-            type = type.to_list_type if f.array
+            type = [type] if f.array
             field(f.name.to_sym, type,
               null: true,
               resolver: link_resolver(f.name, store: store))
@@ -190,13 +191,15 @@ module WCC::Contentful::Graphql
                 builder.schema_types['AnyContentful'] ||=
                   Types::BuildUnionType.call(builder.schema_types, 'AnyContentful')
               elsif f.link_types.length == 1
-                builder.schema_types[f.link_types.first]
+                result = builder.schema_types[f.link_types.first]
+                result
               else
                 from_types = builder.schema_types.select { |key| f.link_types.include?(key) }
                 name = "#{typedef.name}_#{f.name}"
                 builder.schema_types[name] ||= Types::BuildUnionType.call(from_types, name)
               end
-            type = type.to_list_type if f.array
+            type = [type] if f.array
+
             field(f.name.to_sym, type,
               null: true,
               resolver: link_resolver(f.name, store: store))
@@ -205,6 +208,7 @@ module WCC::Contentful::Graphql
           end
         end
       end
+      klass
     end
 
     def _get_or_create(const_name)

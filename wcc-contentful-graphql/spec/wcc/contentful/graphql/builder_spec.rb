@@ -563,7 +563,7 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
         end
 
       schema = subject.configure do
-        schema_types['faq'].define do
+        schema_types['faq'].class_exec do
           contentful_field :answer, markdown_redcarpet_type
         end
       end.build_schema
