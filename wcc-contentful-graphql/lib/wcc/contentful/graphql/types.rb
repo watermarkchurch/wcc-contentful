@@ -38,7 +38,6 @@ module WCC::Contentful::Graphql::Types
 
   QueryOperatorInput =
     ->(type) do
-      puts
       next QueryOperatorInput.call(type.of_type) if type.respond_to?(:of_type)
       next type if type.try(:<, GraphQL::Schema::Scalar)
 
@@ -62,16 +61,6 @@ module WCC::Contentful::Graphql::Types
 
           argument name, input_type
         end
-      end
-    end
-
-  BuildUnionType =
-    ->(from_types, union_type_name) do
-      possible_types = from_types.values.reject { |t| t.is_a? GraphQL::UnionType }
-
-      GraphQL::UnionType.define do
-        name union_type_name
-        possible_types possible_types
       end
     end
 

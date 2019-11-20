@@ -10,11 +10,10 @@ GraphQL::Define::DefinedObjectProxy.__send__(:include, WCC::Contentful::Graphql:
 
 module WCC::Contentful::Graphql
   class Builder
-    attr_reader :root_module
+    def root_module(new_module = nil)
+      return @root_module unless new_module
 
-    def root_module=(new_module)
       @root_module = new_module
-      @generated_module = nil
       @schema_types = nil
       @root_types = nil
       @base_field = nil
@@ -23,17 +22,15 @@ module WCC::Contentful::Graphql
       @base_schema = nil
     end
 
-    attr_writer :generated_module
-    def generated_module
-      @generated_module ||= _get_or_create('Generated') { Module.new }
-    end
+    def base_field(new_base_field = nil)
+      return @base_field = new_base_field if new_base_field
 
-    attr_writer :base_field, :base_object, :base_schema, :base_interface
-    def base_field
       @base_field ||= _get_or_create('BaseField') { Class.new(GraphQL::Schema::Field) }
     end
 
-    def base_object
+    def base_object(new_base_object = nil)
+      return @base_object = new_base_object if new_base_object
+
       field = base_field
       @base_object ||=
         _get_or_create('BaseObject') do
@@ -43,7 +40,9 @@ module WCC::Contentful::Graphql
         end
     end
 
-    def base_interface
+    def base_interface(new_base_interface = nil)
+      return @base_interface = new_base_field if new_base_interface
+
       field = base_field
       @base_interface ||=
         _get_or_create('BaseInterface') do
@@ -54,21 +53,28 @@ module WCC::Contentful::Graphql
         end
     end
 
-    def base_schema
+    def base_schema(new_base_schema = nil)
+      return @base_schema = new_base_schema if new_base_schema
+
       @base_schema ||= _get_or_create('BaseSchema') { Class.new(GraphQL::Schema) }
     end
 
+    # A hash of content-type => Ruby class extending from base_object in the schema
     def schema_types
-      _types = @types
-      # types have to be built on-demand since we may have circular references
       @schema_types ||=
-        Hash.new do |h, k|
-          h[k] = build_schema_type(_types[k]) if _types[k]
+        @types.each_with_object({}) do |(k, v), h|
+          h[k] = _get_or_create(v.name) { Class.new(base_object) }
         end
     end
 
+    # The content types which will become fields on the root query object
     def root_types
       @root_types ||= @types.keys
+    end
+
+    # Union types and
+    def extra_types
+      @extra_types ||= {}
     end
 
     def initialize(types, store)
@@ -88,21 +94,21 @@ module WCC::Contentful::Graphql
     end
 
     def configure(&block)
-      ensure_schema_types
-
       instance_exec(&block)
       self
     end
 
-    def build_schema
-      ensure_schema_types
-      root_query_type = build_root_query
+    def build_schema(klass = nil, query_type: nil)
+      schema_types.each do |(k, v)|
+        build_schema_type(@types[k], v)
+      end
 
       builder = self
       frozen_schema_types = schema_types.dup.freeze
       closed_store = @store
-      Class.new(base_schema) do
-        query root_query_type
+      klass ||= _get_or_create('Schema') { Class.new(base_schema) }
+      klass.class_eval do
+        query(builder.build_root_query(query_type))
 
         define_singleton_method(:resolve_type) do |_type, obj, _ctx|
           content_type = WCC::Contentful::Helpers.content_type_from_raw(obj)
@@ -117,43 +123,49 @@ module WCC::Contentful::Graphql
           object.try(:id) || object.dig('id') || object.dig('sys', 'id')
         end
       end
+      klass
+    end
+
+    def build_root_query(klass = nil)
+      closed_schema_types = schema_types
+      closed_root_types = root_types
+      closed_store = @store
+      klass ||= _get_or_create('Query') { Class.new(base_object) }
+      klass.class_eval do
+        extend WCC::Contentful::Graphql::Resolvers
+        extend WCC::Contentful::Graphql::FieldHelper
+
+        description 'The query root of this schema'
+
+        closed_root_types.each do |content_type|
+          schema_type = closed_schema_types[content_type]
+          field schema_type.name.demodulize, schema_type,
+            null: true, resolver: root_field_single_resolver(content_type, schema_type,
+              store: closed_store)
+
+          field "all#{schema_type.name.demodulize}", [schema_type],
+            null: false, resolver: root_field_all_resolver(content_type, schema_type,
+              store: closed_store)
+        end
+      end
+      klass
+    end
+
+    def build_union_type(from_types, name)
+      if arr = from_types.find { |t| t.is_a? Array }
+        raise ArgumentError, "array within array - #{arr.inspect}"
+      end
+
+      _get_or_create(name) do
+        Class.new(GraphQL::Schema::Union) do
+          possible_types(*from_types)
+        end
+      end
     end
 
     private
 
-    def build_root_query
-      closed_store = @store
-      closed_schema_types = schema_types
-      closed_root_types = root_types
-      root_module.const_set('ContentfulGraphQLQuery',
-        Class.new(base_object) do
-          extend WCC::Contentful::Graphql::Resolvers
-          extend WCC::Contentful::Graphql::FieldHelper
-
-          description 'The query root of this schema'
-
-          closed_root_types.each do |content_type|
-            schema_type = closed_schema_types[content_type]
-
-            field schema_type.name.demodulize.to_sym, schema_type,
-              null: false, resolver: root_field_single_resolver(content_type, schema_type)
-
-            field "all#{schema_type.name.demodulize}".to_sym, [schema_type],
-              null: false, resolver: root_field_all_resolver(content_type, schema_type)
-          end
-        end)
-    end
-
-    def ensure_schema_types
-      @types.each_with_object({}) do |(k, v), h|
-        h[k] ||= build_schema_type(v)
-      end
-    end
-
-    def build_schema_type(typedef)
-      const = typedef.name
-      return @root_module.const_get(const) if @root_module.const_defined?(const)
-
+    def build_schema_type(typedef, klass)
       typedef = typedef.deep_dup.freeze
       store = @store
       builder = self
@@ -161,7 +173,7 @@ module WCC::Contentful::Graphql
       # do this in two steps - set first, then eval fields.  This lets us have circular
       # references.  If another class's definition refers back to me, i'm already
       # set so we bail above in the return.
-      root_module.const_set(const, Class.new(base_object) do
+      klass.class_eval do
         extend WCC::Contentful::Graphql::Resolvers
         extend WCC::Contentful::Graphql::FieldHelper
 
@@ -170,12 +182,9 @@ module WCC::Contentful::Graphql
         field :id, String,
           null: false, resolver: WCC::Contentful::Graphql::Resolvers::IDResolver
 
-        field :_content_type, String,
-          null: false, resolver: content_type_resolver(content_type)
-      end)
+        field '_content_type', String,
+          null: false, camelize: false, resolver: content_type_resolver(content_type)
 
-      klass = root_module.const_get(const)
-      klass.class_eval do
         # Make a field for each column:
         typedef.fields.each_value do |f|
           case f.type
@@ -188,15 +197,15 @@ module WCC::Contentful::Graphql
           when :Link
             type =
               if f.link_types.nil? || f.link_types.empty?
-                builder.schema_types['AnyContentful'] ||=
-                  Types::BuildUnionType.call(builder.schema_types, 'AnyContentful')
+                builder.extra_types['AnyContentful'] ||=
+                  builder.build_union_type(builder.schema_types.values, 'AnyContentful')
               elsif f.link_types.length == 1
                 result = builder.schema_types[f.link_types.first]
                 result
               else
-                from_types = builder.schema_types.select { |key| f.link_types.include?(key) }
+                from_types = builder.schema_types.select { |(key, _)| f.link_types.include?(key) }
                 name = "#{typedef.name}_#{f.name}"
-                builder.schema_types[name] ||= Types::BuildUnionType.call(from_types, name)
+                builder.extra_types[name] ||= builder.build_union_type(from_types.values, name)
               end
             type = [type] if f.array
 

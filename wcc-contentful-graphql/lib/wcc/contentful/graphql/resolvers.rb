@@ -20,7 +20,7 @@ module WCC::Contentful::Graphql::Resolvers
           end
         return if links.nil?
 
-        locale = ctx[:locale] || 'en-US'
+        locale = context[:locale] || 'en-US'
         links = links[locale] if links.key?(locale)
 
         if links.is_a? Array
@@ -42,23 +42,23 @@ module WCC::Contentful::Graphql::Resolvers
     field_name = field_name.to_s
 
     Class.new(GraphQL::Schema::Resolver) do
-      define_method(:resolve) do
-        next obj.map { |o| resolver.call(o, args, ctx) } if obj.is_a? Array
+      define_method(:resolve) do |**args|
+        next object.map { |o| new(object: o, context: context).resolve(**args) } if object.is_a? Array
 
         result =
-          if obj.key?(field_name)
-            obj.dig(field_name)
+          if object.key?(field_name)
+            object.dig(field_name)
           else
-            obj.dig('fields', field_name)
+            object.dig('fields', field_name)
           end
-        locale = ctx[:locale] || 'en-US'
+        locale = context[:locale] || 'en-US'
         result = result[locale] if result.try(:key?, locale)
         result
       end
     end
   end
 
-  def root_field_single_resolver(content_type, schema_type)
+  def root_field_single_resolver(content_type, schema_type, store:)
     Class.new(GraphQL::Schema::Resolver) do
       argument :id, String, required: false
 
@@ -70,15 +70,15 @@ module WCC::Contentful::Graphql::Resolvers
 
       define_method(:resolve) do |**args|
         if args['id'].nil?
-          closed_store.find_by(content_type: content_type, filter: args.to_h)
+          store.find_by(content_type: content_type, filter: args.to_h)
         else
-          closed_store.find(args['id'])
+          store.find(args['id'])
         end
       end
     end
   end
 
-  def root_field_all_resolver(content_type, schema_type)
+  def root_field_all_resolver(content_type, schema_type, store:)
     Class.new(GraphQL::Schema::Resolver) do
       unless schema_type.fields.empty?
         argument :filter, WCC::Contentful::Graphql::Types::FilterInputType.call(schema_type),
@@ -87,7 +87,7 @@ module WCC::Contentful::Graphql::Resolvers
 
       define_method(:resolve) do |**args|
         relation = store.find_all(content_type: content_type)
-        relation = relation.apply(args[:filter].to_h, ctx) if args[:filter]
+        relation = relation.apply(args[:filter].to_h, context) if args[:filter]
         relation.to_enum
       end
     end
@@ -95,9 +95,9 @@ module WCC::Contentful::Graphql::Resolvers
 
   class IDResolver < GraphQL::Schema::Resolver
     def resolve
-      return obj['id'] if obj.key?('id')
+      return object['id'] if object.key?('id')
 
-      obj.dig('sys', 'id')
+      object.dig('sys', 'id')
     end
   end
 end
