@@ -4,8 +4,29 @@ require 'wcc/contentful/graphql'
 
 RSpec.describe WCC::Contentful::Graphql::Builder do
   subject {
-    WCC::Contentful::Graphql::Builder.new(types, store)
+    WCC::Contentful::Graphql::Builder.new(types, store).configure do
+      root_module WCC::Contentful::Graphql::Types::Test
+    end
   }
+
+  module WCC::Contentful::Graphql::Types::Test
+  end
+
+  let(:namespace) {
+    WCC::Contentful::Graphql::Types::Test
+  }
+
+  before do
+    # clean out everything in the generated namespace
+    consts = WCC::Contentful::Graphql::Types::Test.constants(false).map(&:to_s).uniq
+    consts.each do |c|
+      begin
+        WCC::Contentful::Graphql::Types::Test.send(:remove_const, c.split(':').last)
+      rescue StandardError => e
+        warn e
+      end
+    end
+  end
 
   context 'from sync indexer' do
     let(:types) { load_indexed_types }
@@ -562,11 +583,10 @@ RSpec.describe WCC::Contentful::Graphql::Builder do
           end
         end
 
-      schema = subject.configure do
-        schema_types['faq'].class_exec do
-          contentful_field :answer, markdown_redcarpet_type
-        end
-      end.build_schema
+      schema = subject.build_schema
+      WCC::Contentful::Graphql::Types::Test::Faq.class_exec do
+        contentful_field :answer, markdown_redcarpet_type
+      end
 
       query_string = '{
       faq: Faq(id: "1nzrZZShhWQsMcey28uOUQ") {

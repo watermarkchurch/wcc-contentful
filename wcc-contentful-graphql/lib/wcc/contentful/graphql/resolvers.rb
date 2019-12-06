@@ -11,7 +11,10 @@ module WCC::Contentful::Graphql::Resolvers
 
   def link_resolver(field_name, store:)
     Class.new(GraphQL::Schema::Resolver) do
-      define_method(:resolve) do
+      define_method(:field_name) { field_name }
+      define_method(:store) { store }
+
+      def resolve(**_args)
         links =
           if object.key?(field_name)
             object[field_name]
@@ -30,7 +33,7 @@ module WCC::Contentful::Graphql::Resolvers
         end
       end
 
-      define_method(:find) do
+      def find(link)
         return link unless id = link.try(:dig, 'sys', 'id')
 
         store.find(id)
@@ -69,10 +72,11 @@ module WCC::Contentful::Graphql::Resolvers
       end
 
       define_method(:resolve) do |**args|
-        if args['id'].nil?
+        if args[:id].nil?
+          args = args.transform_values(&:to_h)
           store.find_by(content_type: content_type, filter: args.to_h)
         else
-          store.find(args['id'])
+          store.find(args[:id])
         end
       end
     end

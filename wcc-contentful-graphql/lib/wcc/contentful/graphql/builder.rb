@@ -144,7 +144,7 @@ module WCC::Contentful::Graphql
               store: closed_store)
 
           field "all#{schema_type.name.demodulize}", [schema_type],
-            null: false, resolver: root_field_all_resolver(content_type, schema_type,
+            null: true, resolver: root_field_all_resolver(content_type, schema_type,
               store: closed_store)
         end
       end
@@ -179,7 +179,7 @@ module WCC::Contentful::Graphql
 
         description("Generated from content type #{content_type}")
 
-        field :id, String,
+        field :id, GraphQL::Types::ID,
           null: false, resolver: WCC::Contentful::Graphql::Resolvers::IDResolver
 
         field '_content_type', String,
@@ -207,7 +207,9 @@ module WCC::Contentful::Graphql
                 name = "#{typedef.name}_#{f.name}"
                 builder.extra_types[name] ||= builder.build_union_type(from_types.values, name)
               end
-            type = [type] if f.array
+            # null: true allows nil elements in the array
+            # https://github.com/rmosolgo/graphql-ruby/issues/2169#issuecomment-470268252
+            type = [type, null: true] if f.array
 
             field(f.name.to_sym, type,
               null: true,
