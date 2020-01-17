@@ -504,5 +504,33 @@ RSpec.describe WCC::Contentful, :vcr do
         expect(button2.text).to eq('About')
       end
     end
+
+    context 'content_delivery = eager_sync' do
+      before(:each) do
+        WCC::Contentful.configure do |config|
+          config.management_token = contentful_management_token
+          config.store = nil
+          config.content_delivery = :eager_sync
+        end
+      end
+
+      # Checking and advancing the sync engine needs to happen post initialization
+      # in an asynchronous background job.  It should never be advanced during
+      # the rails init process or it will interfere with rake tasks.
+      it 'should not access the sync engine during initialization' do
+        expect(WCC::Contentful::Services.instance).to_not receive(:sync_engine)
+        allow(WCC::Contentful::SyncEngine::Job).to receive(:perform_later)
+
+        # act
+        WCC::Contentful.init!
+      end
+
+      it 'should perform a sync job' do
+        expect(WCC::Contentful::SyncEngine::Job).to receive(:perform_later)
+
+        # act
+        WCC::Contentful.init!
+      end
+    end
   end
 end
