@@ -49,4 +49,39 @@ RSpec.describe WCC::Contentful::Store::PostgresStore do
     # assert
     expect(results).to eq([data, data, data])
   end
+
+  context 'db does not exist' do
+    subject {
+      WCC::Contentful::Store::PostgresStore.new(double('Configuration'),
+        { dbname: 'asdf' }, size: 5)
+    }
+
+    it '#set raises error' do
+      expect {
+        subject.set('foo', { 'key' => 'val' })
+      }.to raise_error(PG::ConnectionBad)
+    end
+
+    it '#delete raises error' do
+      expect {
+        subject.delete('foo')
+      }.to raise_error(PG::ConnectionBad)
+    end
+
+    # DB should not need to exist in order to run rake db:setup
+    it '#find returns nil' do
+      result = subject.find('foo')
+      expect(result).to be nil
+    end
+
+    it '#find_all returns empty' do
+      result = subject.find_all(content_type: 'foo').to_a
+      expect(result).to eq([])
+    end
+
+    it '#keys returns empty' do
+      result = subject.keys.to_a
+      expect(result).to eq([])
+    end
+  end
 end
