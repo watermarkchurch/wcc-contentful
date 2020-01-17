@@ -38,15 +38,15 @@ module WCC::Contentful
       @mutex = Mutex.new
 
       if store
-        @fetch_method = FETCH_METHODS.find { |m| store.respond_to?(m) }
+        @read_method = READ_METHODS.find { |m| store.respond_to?(m) }
         @write_method = WRITE_METHODS.find { |m| store.respond_to?(m) }
-        unless @fetch_method && @write_method
-          raise ArgumentError, ":store param must implement one of #{FETCH_METHODS}" \
+        unless @read_method && @write_method
+          raise ArgumentError, ":store param must implement one of #{READ_METHODS}" \
             " AND one of #{WRITE_METHODS}"
         end
 
         @store = store
-        @state = fetch if should_sync?
+        @state = read_state if should_sync?
       end
       if state
         @state = { 'token' => state } if state.is_a? String
@@ -70,7 +70,7 @@ module WCC::Contentful
       count = 0
 
       @mutex.synchronize do
-        @state ||= fetch || {}
+        @state ||= read_state || {}
         next_sync_token = @state['token']
 
         sync_resp = client.sync(sync_token: next_sync_token)
@@ -87,13 +87,13 @@ module WCC::Contentful
         end
 
         @state['token'] = sync_resp.next_sync_token
-        write
+        write_state
       end
 
       [id_found, count]
     end
 
-    FETCH_METHODS = %i[fetch find].freeze
+    READ_METHODS = %i[fetch find].freeze
     WRITE_METHODS = %i[write set].freeze
 
     def emit_event(event)
@@ -105,11 +105,11 @@ module WCC::Contentful
 
     private
 
-    def fetch
-      store&.public_send(@fetch_method, @state_key)
+    def read_state
+      store&.public_send(@read_method, @state_key)
     end
 
-    def write
+    def write_state
       store&.public_send(@write_method, @state_key, @state)
     end
 
@@ -124,6 +124,8 @@ module WCC::Contentful
         queue_as :default
 
         def perform(event = nil)
+          return unless sync_engine&.should_sync?
+
           up_to_id = nil
           up_to_id = event[:up_to_id] || event.dig('sys', 'id') if event
           sync!(up_to_id: up_to_id)

@@ -110,10 +110,8 @@ module WCC::Contentful
     indexer = ContentTypeIndexer.from_json_schema(@content_types)
     @types = indexer.types
 
-    if Services.instance.sync_engine&.should_sync?
-      # Drop an initial sync
-      WCC::Contentful::SyncEngine::Job.perform_later if defined?(WCC::Contentful::SyncEngine::Job)
-    end
+    # Drop an initial sync
+    WCC::Contentful::SyncEngine::Job.perform_later if defined?(WCC::Contentful::SyncEngine::Job)
 
     WCC::Contentful::ModelBuilder.new(@types).build_models
     @configuration = @configuration.freeze
