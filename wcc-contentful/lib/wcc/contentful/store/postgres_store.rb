@@ -34,6 +34,8 @@ module WCC::Contentful::Store
       arr = []
       result.each { |r| arr << r['id'].strip }
       arr
+    rescue PG::ConnectionBad
+      []
     end
 
     def delete(key)
@@ -48,6 +50,8 @@ module WCC::Contentful::Store
       return if result.num_tuples == 0
 
       JSON.parse(result.getvalue(0, 1))
+    rescue PG::ConnectionBad
+      nil
     end
 
     def find_all(content_type:, options: nil)
@@ -131,6 +135,8 @@ module WCC::Contentful::Store
 
         statement = 'SELECT * FROM contentful_raw ' + @statement
         @resolved = @connection_pool.with { |conn| conn.exec(statement, @params) }
+      rescue PG::ConnectionBad
+        []
       end
 
       def push_param(param, params)
