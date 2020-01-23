@@ -76,6 +76,9 @@ Lint/AmbiguousBlockAssociation:
   Exclude:
     - '*/spec/generators/**/*.rb'
 
+Lint/UnneededCopDisableDirective:
+  Enabled: false
+
 Style/EmptyMethod:
   EnforcedStyle: expanded
 

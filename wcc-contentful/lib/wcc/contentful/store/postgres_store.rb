@@ -55,25 +55,35 @@ module WCC::Contentful::Store
     end
 
     def find_all(content_type:, options: nil)
-      statement = "WHERE data->'sys'->'contentType'->'sys'->>'id' = $1"
+      statement = "WHERE t.data->'sys'->'contentType'->'sys'->>'id' = $1"
       Query.new(
         self,
         @connection_pool,
-        statement,
-        [content_type],
-        options
+        statement: statement,
+        params: [content_type],
+        options: options
       )
     end
 
     class Query < Base::Query
-      def initialize(store, connection_pool, statement = nil, params = nil, options = nil)
+      # rubocop:disable Metrics/ParameterLists
+      def initialize(
+        store,
+        connection_pool,
+        statement: nil,
+        joins: nil,
+        params: nil,
+        options: nil
+      )
         super(store)
         @connection_pool = connection_pool
         @statement = statement ||
-          "WHERE data->'sys'->>'id' IS NOT NULL"
+          "WHERE t.data->'sys'->>'id' IS NOT NULL"
         @params = params || []
         @options = options || {}
+        @joins = joins || []
       end
+      # rubocop:enable Metrics/ParameterLists
 
       def eq(field, expected, context = nil)
         locale = context[:locale] if context.present?
@@ -81,22 +91,54 @@ module WCC::Contentful::Store
 
         params = @params.dup
 
-        statement = @statement + " AND data->'fields'->$#{push_param(field, params)}" \
-          "->$#{push_param(locale, params)} ? $#{push_param(expected, params)}"
+        statement = @statement + " AND t.data->#{parameter(field, locale, false)}" \
+          " ? $#{push_param(expected, params)}::text"
 
         Query.new(
           @store,
           @connection_pool,
-          statement,
-          params,
-          @options
+          statement: statement,
+          joins: @joins,
+          params: params,
+          options: @options
+        )
+      end
+
+      def nested_conditions(field, conditions, context)
+        locale = context[:locale] if context.present?
+        locale ||= 'en-US'
+
+        params = @params.dup
+        joins = @joins.dup
+
+        join_table_alias = push_join(field, locale, params, joins)
+
+        statement =
+          conditions.reduce(@statement) do |memo, (f, expected)|
+            if expected.is_a?(Hash)
+              raise ArgumentError, "unable to apply #{expected}" if expected.keys != [:eq]
+
+              expected = expected[:eq]
+            end
+
+            memo + " AND #{join_table_alias}.data->#{parameter(f, locale)}" \
+              " ? $#{push_param(expected, params)}::text"
+          end
+
+        Query.new(
+          @store,
+          @connection_pool,
+          statement: statement,
+          joins: joins,
+          params: params,
+          options: @options
         )
       end
 
       def count
         return @count if @count
 
-        statement = 'SELECT count(*) FROM contentful_raw ' + @statement
+        statement = finalize_statement('SELECT count(*)')
         result = @connection_pool.with { |conn| conn.exec(statement, @params) }
         @count = result.getvalue(0, 0).to_i
       end
@@ -104,7 +146,7 @@ module WCC::Contentful::Store
       def first
         return @first if @first
 
-        statement = 'SELECT * FROM contentful_raw ' + @statement + ' LIMIT 1'
+        statement = finalize_statement('SELECT *', ' LIMIT 1')
         result = @connection_pool.with { |conn| conn.exec(statement, @params) }
         return if result.num_tuples == 0
 
@@ -133,7 +175,7 @@ module WCC::Contentful::Store
       def resolve
         return @resolved if @resolved
 
-        statement = 'SELECT * FROM contentful_raw ' + @statement
+        statement = finalize_statement('SELECT *')
         @resolved = @connection_pool.with { |conn| conn.exec(statement, @params) }
       rescue PG::ConnectionBad
         []
@@ -142,6 +184,37 @@ module WCC::Contentful::Store
       def push_param(param, params)
         params << param
         params.length
+      end
+
+      def parameter(field, locale, as_text = false)
+        path = field.to_s.split('.')
+        path = path.unshift('fields') unless %w[sys fields].include?(path[0])
+        # add locale after each "fields.*.'en-US'", i.e. every 2nd path part
+        path =
+          path.each_with_index.flat_map do |p, i|
+            next p unless path[i - 1] == 'fields'
+
+            [p, locale]
+          end
+
+        path = path.map { |f| "'#{f}'" }
+        last = path.pop
+        path.join('->') + (as_text ? '->>' : '->') + last
+      end
+
+      def push_join(field, locale, _params, joins)
+        table_alias = "s#{joins.length}"
+        joins << "JOIN contentful_raw AS #{table_alias} ON " \
+          "t.data->#{parameter(field, locale, false)}" \
+            "->'sys'->>'id'=#{table_alias}.id"
+        table_alias
+      end
+
+      def finalize_statement(select_statement, limit_statement = nil)
+        select_statement + " FROM contentful_raw AS t \n" +
+          @joins.join("\n") + "\n" +
+          @statement +
+          (limit_statement || '')
       end
     end
 
@@ -154,8 +227,7 @@ module WCC::Contentful::Store
         CREATE INDEX IF NOT EXISTS contentful_raw_value_type ON contentful_raw ((data->'sys'->>'type'));
         CREATE INDEX IF NOT EXISTS contentful_raw_value_content_type ON contentful_raw ((data->'sys'->'contentType'->'sys'->>'id'));
 
-        DROP FUNCTION IF EXISTS "upsert_entry"(_id varchar, _data jsonb);
-        CREATE FUNCTION "upsert_entry"(_id varchar, _data jsonb) RETURNS jsonb AS $$
+        CREATE or replace FUNCTION "upsert_entry"(_id varchar, _data jsonb) RETURNS jsonb AS $$
         DECLARE
           prev jsonb;
         BEGIN
