@@ -227,7 +227,7 @@ module WCC::Contentful::Store
       def reduce_conditions(conditions, locale, params, path = [])
         conditions.flat_map do |f, expected|
           if expected.is_a? Hash
-            path = parameter_path(f, locale)
+            path = parameter_path(f, locale, path)
             next reduce_conditions(expected, locale, params, path)
           end
 

@@ -204,7 +204,7 @@ module WCC::Contentful::Store
       def nested_conditions(field, value, context)
         if value.keys.length == 1
           k, v = value.first
-          return _apply([field, k].join('.'), v, context) if %w[sys id].include?(k)
+          return _apply([field, k].join('.'), v, context) if k == 'id' || (k == 'sys' && v == 'id')
         end
 
         self_join(field, value, context)

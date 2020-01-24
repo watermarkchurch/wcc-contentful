@@ -585,23 +585,23 @@ RSpec.shared_examples 'contentful store' do
         expect(found).to_not be_nil
         expect(found.dig('sys', 'id')).to eq('1qLdW7i7g4Ycq6i4Cckg44')
       end
+
+      it 'handles explicitly specified sys attr' do
+        # act
+        found = subject.find_by(
+          content_type: 'redirect',
+          filter: {
+            page: {
+              'sys.contentType.sys.id' => 'page'
+            }
+          }
+        )
+
+        # assert
+        expect(found).to_not be_nil
+        expect(found.dig('sys', 'id')).to eq('1qLdW7i7g4Ycq6i4Cckg44')
+      end
     end
-
-    # it 'handles explicitly specified sys attr' do
-    #   # act
-    #   found = subject.find_by(
-    #     content_type: 'redirect',
-    #     filter: {
-    #       page: {
-    #         'sys.contentType.sys.id' => 'page'
-    #       }
-    #     }
-    #   )
-
-    #   # assert
-    #   expect(found).to_not be_nil
-    #   expect(found.dig('sys', 'id')).to eq('1qLdW7i7g4Ycq6i4Cckg44')
-    # end
 
     it 'does allows properties named `*sys*`' do
       %w[One Two].each do |field|
