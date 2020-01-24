@@ -196,6 +196,19 @@ module WCC::Contentful::Store
         included
       end
 
+      def nested_conditions(field, value, context)
+        if value.keys.length == 1
+          k, v = value.first
+          return apply({ [field, k].join('.') => v }, context) if sys?(k) || id?(k)
+        end
+
+        self_join(field, value, context)
+      end
+
+      def self_join(join_on, conditions, context)
+        apply(conditions.transform_keys { |k| [join_on, k].join('.') }, context)
+      end
+
       private
 
       def op?(key)

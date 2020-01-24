@@ -55,7 +55,12 @@ module WCC::Contentful::Store
     end
 
     def find_all(content_type:, options: nil)
-      statement = "WHERE t.data->'sys'->'contentType'->'sys'->>'id' = $1"
+      statement =
+        if content_type == 'Asset'
+          "WHERE t.data->'sys'->>'type' = $1"
+        else
+          "WHERE t.data->'sys'->'contentType'->'sys'->>'id' = $1"
+        end
       Query.new(
         self,
         @connection_pool,
@@ -91,8 +96,14 @@ module WCC::Contentful::Store
 
         params = @params.dup
 
-        statement = @statement + " AND t.data->#{parameter(field, locale, false)}" \
-          " ? $#{push_param(expected, params)}::text"
+        statement =
+          @statement +
+          if field.to_s == 'id'
+            " AND t.id = $#{push_param(expected, params)}"
+          else
+            " AND t.data->#{parameter(field, locale, false)}" \
+              " ? $#{push_param(expected, params)}::text"
+          end
 
         Query.new(
           @store,
@@ -104,7 +115,7 @@ module WCC::Contentful::Store
         )
       end
 
-      def nested_conditions(field, conditions, context)
+      def self_join(field, conditions, context)
         locale = context[:locale] if context.present?
         locale ||= 'en-US'
 
@@ -139,7 +150,7 @@ module WCC::Contentful::Store
         return @count if @count
 
         statement = finalize_statement('SELECT count(*)')
-        result = @connection_pool.with { |conn| conn.exec(statement, @params) }
+        result = run_statement(statement)
         @count = result.getvalue(0, 0).to_i
       end
 
@@ -147,7 +158,7 @@ module WCC::Contentful::Store
         return @first if @first
 
         statement = finalize_statement('SELECT *', ' LIMIT 1')
-        result = @connection_pool.with { |conn| conn.exec(statement, @params) }
+        result = run_statement(statement)
         return if result.num_tuples == 0
 
         resolve_includes(
@@ -176,7 +187,7 @@ module WCC::Contentful::Store
         return @resolved if @resolved
 
         statement = finalize_statement('SELECT *')
-        @resolved = @connection_pool.with { |conn| conn.exec(statement, @params) }
+        @resolved = run_statement(statement)
       rescue PG::ConnectionBad
         []
       end
@@ -188,10 +199,13 @@ module WCC::Contentful::Store
 
       def parameter(field, locale, as_text = false)
         path = field.to_s.split('.')
+        path = path.unshift('sys') if path[0] == 'id'
         path = path.unshift('fields') unless %w[sys fields].include?(path[0])
         # add locale after each "fields.*.'en-US'", i.e. every 2nd path part
         path =
           path.each_with_index.flat_map do |p, i|
+            next ['sys', p] if p == 'id' && path[i - 1] != 'sys'
+
             next p unless path[i - 1] == 'fields'
 
             [p, locale]
@@ -215,6 +229,10 @@ module WCC::Contentful::Store
           @joins.join("\n") + "\n" +
           @statement +
           (limit_statement || '')
+      end
+
+      def run_statement(statement)
+        @connection_pool.with { |conn| conn.exec(statement, @params) }
       end
     end
 

@@ -536,43 +536,57 @@ RSpec.shared_examples 'contentful store' do
       expect(found['sys']['id']).to eq('k4')
     end
 
-    it 'allows filtering by a reference field' do
-      # add a dummy redirect that we ought to pass over
-      redirect2 = entry.deep_dup
-      redirect2['sys']['id'] = 'wrong_one'
-      redirect2['fields'].delete('page')
-      subject.set('wrong_one', redirect2)
-
+    it 'can find by ID directly' do
       [entry, page, asset].each { |d| subject.set(d.dig('sys', 'id'), d) }
 
       # act
-      found = subject.find_by(
-        content_type: 'redirect',
-        filter: {
-          page: {
-            slug: { eq: 'some-page' },
-            'sys.contentType.sys.id': 'page'
-          }
-        }
-      )
+      found = subject.find_by(content_type: 'Asset', filter: { id: '3pWma8spR62aegAWAWacyA' })
 
       # assert
-      expect(found).to_not be_nil
-      expect(found.dig('sys', 'id')).to eq('1qLdW7i7g4Ycq6i4Cckg44')
-      expect(found.dig('sys', 'contentType', 'sys', 'id')).to eq('redirect')
+      expect(found).to eq(asset)
     end
 
-    # it 'allows filtering by reference id' do
-    #   # act
-    #   found = subject.find_by(
-    #     content_type: 'menuButton',
-    #     filter: { 'link' => { id: '1UojJt7YoMiemCq2mGGUmQ' } }
-    #   )
+    context 'nested queries' do
+      before do
+        # add a dummy redirect that we ought to pass over
+        redirect2 = entry.deep_dup
+        redirect2['sys']['id'] = 'wrong_one'
+        redirect2['fields'].delete('page')
+        subject.set('wrong_one', redirect2)
 
-    #   # assert
-    #   expect(found).to_not be_nil
-    #   expect(found.dig('sys', 'id')).to eq('4j79PYivYIWuqwA4scaAOW')
-    # end
+        [entry, page, asset].each { |d| subject.set(d.dig('sys', 'id'), d) }
+      end
+
+      it 'allows filtering by a reference field' do
+        # act
+        found = subject.find_by(
+          content_type: 'redirect',
+          filter: {
+            page: {
+              slug: { eq: 'some-page' },
+              'sys.contentType.sys.id': 'page'
+            }
+          }
+        )
+
+        # assert
+        expect(found).to_not be_nil
+        expect(found.dig('sys', 'id')).to eq('1qLdW7i7g4Ycq6i4Cckg44')
+        expect(found.dig('sys', 'contentType', 'sys', 'id')).to eq('redirect')
+      end
+
+      it 'allows filtering by reference id' do
+        # act
+        found = subject.find_by(
+          content_type: 'redirect',
+          filter: { 'page' => { id: '2zKTmej544IakmIqoEu0y8' } }
+        )
+
+        # assert
+        expect(found).to_not be_nil
+        expect(found.dig('sys', 'id')).to eq('1qLdW7i7g4Ycq6i4Cckg44')
+      end
+    end
 
     # it 'requires sys attributes to be explicitly specified' do
     #   expect {
