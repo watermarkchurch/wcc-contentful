@@ -160,20 +160,25 @@ module WCC::Contentful::Store
 
       # Called with a filter object by {Base#find_by} in order to apply the filter.
       def apply(filter, context = nil)
+        filter = normalize_dot_notation_to_hash(filter)
         filter.reduce(self) do |query, (field, value)|
-          if value.is_a?(Hash)
-            if op?(k = value.keys.first)
-              query.apply_operator(k.to_sym, field.to_s, value[k], context)
-            else
-              query.nested_conditions(field, value, context)
-            end
-          else
-            query.apply_operator(:eq, field.to_s, value)
-          end
+          query._apply(field, value, context)
         end
       end
 
       protected
+
+      def _apply(field, value, context)
+        if value.is_a?(Hash)
+          if op?(k = value.keys.first)
+            apply_operator(k.to_sym, field.to_s, value[k], context)
+          else
+            nested_conditions(field, value, context)
+          end
+        else
+          apply_operator(:eq, field.to_s, value)
+        end
+      end
 
       # naive implementation recursively descends the graph to turns links into
       # the actual entry data.  This calls {Base#find} for each link and so it is
@@ -199,7 +204,7 @@ module WCC::Contentful::Store
       def nested_conditions(field, value, context)
         if value.keys.length == 1
           k, v = value.first
-          return apply({ [field, k].join('.') => v }, context) if sys?(k) || id?(k)
+          return _apply([field, k].join('.'), v, context) if %w[sys id].include?(k)
         end
 
         self_join(field, value, context)
@@ -210,6 +215,20 @@ module WCC::Contentful::Store
       end
 
       private
+
+      def normalize_dot_notation_to_hash(hash, depth = 0)
+        raise ArgumentError, 'Query is too complex (depth > 7)' if depth > 7
+
+        hash.each_with_object({}) do |(k, v), h|
+          k = k.to_s
+          if k.include?('.')
+            k, *rest = k.split('.')
+            v = { rest.join('.') => v }
+          end
+          v = normalize_dot_notation_to_hash(v, depth + 1) if v.is_a? Hash
+          h[k] = v
+        end
+      end
 
       def op?(key)
         OPERATORS.include?(key.to_sym)

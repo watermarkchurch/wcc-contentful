@@ -563,8 +563,7 @@ RSpec.shared_examples 'contentful store' do
           content_type: 'redirect',
           filter: {
             page: {
-              slug: { eq: 'some-page' },
-              'sys.contentType.sys.id': 'page'
+              slug: { eq: 'some-page' }
             }
           }
         )
@@ -588,44 +587,49 @@ RSpec.shared_examples 'contentful store' do
       end
     end
 
-    # it 'requires sys attributes to be explicitly specified' do
-    #   expect {
-    #     subject.find_by(
-    #       content_type: 'menuButton',
-    #       filter: { 'link' => { contentType: 'page' } }
-    #     )
-    #   }.to raise_exception(WCC::Contentful::SimpleClient::ApiError)
-
-    #   expect {
-    #     subject.find_by(
-    #       content_type: 'menuButton',
-    #       filter: { 'link' => { 'sys.contentType.sys.id': 'page' } }
-    #     )
-    #   }.to_not raise_exception
-    # end
-
-    # it 'assumes all non-sys arguments to be fields' do
+    # it 'handles explicitly specified sys attr' do
     #   # act
     #   found = subject.find_by(
-    #     content_type: 'page',
-    #     filter: { slug: '/conferences' }
+    #     content_type: 'redirect',
+    #     filter: {
+    #       page: {
+    #         'sys.contentType.sys.id' => 'page'
+    #       }
+    #     }
     #   )
 
     #   # assert
     #   expect(found).to_not be_nil
-    #   expect(found.dig('sys', 'id')).to eq('1UojJt7YoMiemCq2mGGUmQ')
-    #   expect(found.dig('fields', 'slug', 'en-US')).to eq('/conferences')
+    #   expect(found.dig('sys', 'id')).to eq('1qLdW7i7g4Ycq6i4Cckg44')
     # end
 
-    # it 'does allows properties named `*sys*`' do
-    #   # act
-    #   found = subject.find_by(content_type: 'system', filter: { system: 'One' })
+    it 'does allows properties named `*sys*`' do
+      %w[One Two].each do |field|
+        subject.set("id#{field}", {
+          'sys' => {
+            'id' => "id#{field}",
+            'contentType' => {
+              'sys' => {
+                'id' => 'system'
+              }
+            }
+          },
+          'fields' => {
+            'system' => {
+              'en-US' => field
+            }
+          }
+        })
+      end
 
-    #   # assert
-    #   expect(found).to_not be_nil
-    #   expect(found.dig('sys', 'id')).to eq('2eXv0N3vUkIOWAauGg4q8a')
-    #   expect(found.dig('fields', 'system', 'en-US')).to eq('One')
-    # end
+      # act
+      found = subject.find_by(content_type: 'system', filter: { system: 'Two' })
+
+      # assert
+      expect(found).to_not be_nil
+      expect(found.dig('sys', 'id')).to eq('idTwo')
+      expect(found.dig('fields', 'system', 'en-US')).to eq('Two')
+    end
 
     it 'filter object can find value in array' do
       content_types = %w[test1 test2 test3 test4]

@@ -101,7 +101,7 @@ module WCC::Contentful::Store
           if field.to_s == 'id'
             " AND t.id = $#{push_param(expected, params)}"
           else
-            " AND t.data->#{parameter(field, locale, false)}" \
+            " AND t.data->#{parameter(field, locale)}" \
               " ? $#{push_param(expected, params)}::text"
           end
 
@@ -125,15 +125,9 @@ module WCC::Contentful::Store
         join_table_alias = push_join(field, locale, params, joins)
 
         statement =
-          conditions.reduce(@statement) do |memo, (f, expected)|
-            if expected.is_a?(Hash)
-              raise ArgumentError, "unable to apply #{expected}" if expected.keys != [:eq]
-
-              expected = expected[:eq]
-            end
-
-            memo + " AND #{join_table_alias}.data->#{parameter(f, locale)}" \
-              " ? $#{push_param(expected, params)}::text"
+          reduce_conditions(conditions, locale, params)
+            .reduce(@statement) do |memo, condition|
+            memo + " AND #{join_table_alias}.data->#{condition}"
           end
 
         Query.new(
@@ -197,8 +191,8 @@ module WCC::Contentful::Store
         params.length
       end
 
-      def parameter(field, locale, as_text = false)
-        path = field.to_s.split('.')
+      def parameter_path(field, locale, path = [])
+        path = [*path, *field.to_s.split('.')]
         path = path.unshift('sys') if path[0] == 'id'
         path = path.unshift('fields') unless %w[sys fields].include?(path[0])
         # add locale after each "fields.*.'en-US'", i.e. every 2nd path part
@@ -211,17 +205,41 @@ module WCC::Contentful::Store
             [p, locale]
           end
 
-        path = path.map { |f| "'#{f}'" }
-        last = path.pop
-        path.join('->') + (as_text ? '->>' : '->') + last
+        path
+      end
+
+      def quote_parameter_path(path)
+        path.map { |p| "'#{p}'" }.join('->')
+      end
+
+      def parameter(field, locale)
+        quote_parameter_path(parameter_path(field, locale))
       end
 
       def push_join(field, locale, _params, joins)
         table_alias = "s#{joins.length}"
         joins << "JOIN contentful_raw AS #{table_alias} ON " \
-          "t.data->#{parameter(field, locale, false)}" \
+          "t.data->#{parameter(field, locale)}" \
             "->'sys'->>'id'=#{table_alias}.id"
         table_alias
+      end
+
+      def reduce_conditions(conditions, locale, params, path = [])
+        conditions.flat_map do |f, expected|
+          if expected.is_a? Hash
+            path = parameter_path(f, locale)
+            next reduce_conditions(expected, locale, params, path)
+          end
+
+          if op?(f)
+            raise ArgumentError, "Cannot apply operator '#{f}'" unless f == 'eq'
+
+            next "#{quote_parameter_path(path)} ? $#{push_param(expected, params)}::text"
+          end
+
+          path = parameter_path(f, locale, path)
+          next "#{quote_parameter_path(path)} ? $#{push_param(expected, params)}::text"
+        end
       end
 
       def finalize_statement(select_statement, limit_statement = nil)
