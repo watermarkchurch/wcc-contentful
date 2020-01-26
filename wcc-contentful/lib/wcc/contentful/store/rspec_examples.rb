@@ -2,7 +2,7 @@
 
 # rubocop:disable Style/BlockDelimiters
 
-RSpec.shared_examples 'contentful store' do
+RSpec.shared_examples 'basic store' do
   let(:entry) do
     JSON.parse(<<~JSON)
       {
@@ -548,64 +548,29 @@ RSpec.shared_examples 'contentful store' do
       expect(found).to eq(asset)
     end
 
-    context 'nested queries' do
-      before do
-        # add a dummy redirect that we ought to pass over
-        redirect2 = entry.deep_dup
-        redirect2['sys']['id'] = 'wrong_one'
-        redirect2['fields'].delete('page')
-        subject.set('wrong_one', redirect2)
-
-        [entry, page, asset].each { |d| subject.set(d.dig('sys', 'id'), d) }
-      end
-
-      it 'allows filtering by a reference field' do
-        # act
-        found = subject.find_by(
-          content_type: 'redirect',
-          filter: {
-            page: {
-              slug: { eq: 'some-page' }
-            }
+    it 'filter object can find value in array' do
+      content_types = %w[test1 test2 test3 test4]
+      data =
+        1.upto(10).map do |i|
+          {
+            'sys' => {
+              'id' => "k#{i}",
+              'contentType' => { 'sys' => { 'id' => content_types[i % content_types.length] } }
+            },
+            'fields' => { 'name' => { 'en-US' => ["test#{i}", "test_2_#{i}"] } }
           }
-        )
+        end
+      data.each { |d| subject.set(d.dig('sys', 'id'), d) }
 
-        # assert
-        expect(found).to_not be_nil
-        expect(found.dig('sys', 'id')).to eq('1qLdW7i7g4Ycq6i4Cckg44')
-        expect(found.dig('sys', 'contentType', 'sys', 'id')).to eq('redirect')
-      end
+      # act
+      found = subject.find_by(content_type: 'test2', filter: { 'name' => { eq: 'test_2_5' } })
 
-      it 'allows filtering by reference id' do
-        # act
-        found = subject.find_by(
-          content_type: 'redirect',
-          filter: { 'page' => { id: '2zKTmej544IakmIqoEu0y8' } }
-        )
-
-        # assert
-        expect(found).to_not be_nil
-        expect(found.dig('sys', 'id')).to eq('1qLdW7i7g4Ycq6i4Cckg44')
-      end
-
-      it 'handles explicitly specified sys attr' do
-        # act
-        found = subject.find_by(
-          content_type: 'redirect',
-          filter: {
-            page: {
-              'sys.contentType.sys.id' => 'page'
-            }
-          }
-        )
-
-        # assert
-        expect(found).to_not be_nil
-        expect(found.dig('sys', 'id')).to eq('1qLdW7i7g4Ycq6i4Cckg44')
-      end
+      # assert
+      expect(found).to_not be_nil
+      expect(found.dig('sys', 'id')).to eq('k5')
     end
 
-    it 'does allows properties named `*sys*`' do
+    it 'allows properties named `*sys*`' do
       %w[One Two].each do |field|
         subject.set("id#{field}", {
           'sys' => {
@@ -631,149 +596,6 @@ RSpec.shared_examples 'contentful store' do
       expect(found).to_not be_nil
       expect(found.dig('sys', 'id')).to eq('idTwo')
       expect(found.dig('fields', 'system', 'en-US')).to eq('Two')
-    end
-
-    it 'filter object can find value in array' do
-      content_types = %w[test1 test2 test3 test4]
-      data =
-        1.upto(10).map do |i|
-          {
-            'sys' => {
-              'id' => "k#{i}",
-              'contentType' => { 'sys' => { 'id' => content_types[i % content_types.length] } }
-            },
-            'fields' => { 'name' => { 'en-US' => ["test#{i}", "test_2_#{i}"] } }
-          }
-        end
-      data.each { |d| subject.set(d.dig('sys', 'id'), d) }
-
-      # act
-      found = subject.find_by(content_type: 'test2', filter: { 'name' => { eq: 'test_2_5' } })
-
-      # assert
-      expect(found).to_not be_nil
-      expect(found.dig('sys', 'id')).to eq('k5')
-    end
-
-    it 'recursively resolves links if include > 0' do
-      root = {
-        'sys' => {
-          'id' => 'root',
-          'type' => 'Entry',
-          'contentType' => { 'sys' => { 'id' => 'root' } }
-        },
-        'fields' => {
-          'name' => { 'en-US' => 'root' },
-          'link' => { 'en-US' => make_link_to('deep1') },
-          'links' => { 'en-US' => [
-            make_link_to('shallow3'),
-            make_link_to('deep2')
-          ] }
-        }
-      }
-      shallow =
-        1.upto(3).map do |i|
-          {
-            'sys' => {
-              'id' => "shallow#{i}",
-              'type' => 'Entry',
-              'contentType' => make_link_to('shallow', 'ContentType')
-            },
-            'fields' => { 'name' => { 'en-US' => "shallow#{i}" } }
-          }
-        end
-      deep =
-        1.upto(2).map do |i|
-          {
-            'sys' => {
-              'id' => "deep#{i}",
-              'type' => 'Entry',
-              'contentType' => make_link_to('deep', 'ContentType')
-            },
-            'fields' => {
-              'name' => { 'en-US' => "deep#{i}" },
-              'subLink' => { 'en-US' => make_link_to("shallow#{i}") }
-            }
-          }
-        end
-
-      [root, *shallow, *deep].each { |d| subject.set(d.dig('sys', 'id'), d) }
-
-      # act
-      found = subject.find_by(content_type: 'root', filter: { name: 'root' }, options: {
-        include: 2
-      })
-
-      # assert
-      expect(found.dig('sys', 'id')).to eq('root')
-
-      # depth 1
-      link = found.dig('fields', 'link', 'en-US')
-      expect(link.dig('fields', 'name', 'en-US')).to eq('deep1')
-      links = found.dig('fields', 'links', 'en-US')
-      expect(links[0].dig('fields', 'name', 'en-US')).to eq('shallow3')
-
-      # depth 2
-      expect(link.dig('fields', 'subLink', 'en-US', 'fields', 'name', 'en-US'))
-        .to eq('shallow1')
-      expect(links[1].dig('fields', 'subLink', 'en-US', 'fields', 'name', 'en-US'))
-        .to eq('shallow2')
-    end
-
-    it 'stops resolving links at include depth' do
-      root = {
-        'sys' => {
-          'id' => 'root',
-          'contentType' => { 'sys' => { 'id' => 'root' } }
-        },
-        'fields' => {
-          'name' => { 'en-US' => 'root' },
-          'link' => { 'en-US' => make_link_to('deep1') },
-          'links' => { 'en-US' => [
-            make_link_to('shallow3'),
-            make_link_to('deep2')
-          ] }
-        }
-      }
-      shallow =
-        1.upto(3).map do |i|
-          {
-            'sys' => { 'id' => "shallow#{i}", 'contentType' => make_link_to('shallow', 'ContentType') },
-            'fields' => { 'name' => { 'en-US' => "shallow#{i}" } }
-          }
-        end
-      deep =
-        1.upto(2).map do |i|
-          {
-            'sys' => { 'id' => "deep#{i}", 'contentType' => make_link_to('deep', 'ContentType') },
-            'fields' => {
-              'name' => { 'en-US' => "deep#{i}" },
-              'subLink' => { 'en-US' => make_link_to("shallow#{i}") }
-            }
-          }
-        end
-
-      [root, *shallow, *deep].each { |d| subject.set(d.dig('sys', 'id'), d) }
-
-      # act
-      found = subject.find_by(content_type: 'root', filter: { name: 'root' }, options: {
-        include: 1
-      })
-
-      # assert
-      expect(found.dig('sys', 'id')).to eq('root')
-
-      # depth 1
-      link = found.dig('fields', 'link', 'en-US')
-      expect(link.dig('fields', 'name', 'en-US')).to eq('deep1')
-      links = found.dig('fields', 'links', 'en-US')
-      expect(links[0].dig('fields', 'name', 'en-US')).to eq('shallow3')
-
-      # depth 2
-      expect(link.dig('fields', 'subLink', 'en-US', 'sys', 'type'))
-        .to eq('Link')
-      expect(links[1].dig('fields', 'subLink', 'en-US', 'sys', 'type'))
-        .to eq('Link')
     end
 
     it 'instruments find_by' do
@@ -867,6 +689,206 @@ RSpec.shared_examples 'contentful store' do
       }
     }
   end
+end
+
+RSpec.shared_examples 'supports nested queries' do
+  describe 'nested (join) queries' do
+    describe '#find_by' do
+      before do
+        # add a dummy redirect that we ought to pass over
+        redirect2 = entry.deep_dup
+        redirect2['sys']['id'] = 'wrong_one'
+        redirect2['fields'].delete('page')
+        subject.set('wrong_one', redirect2)
+
+        [entry, page, asset].each { |d| subject.set(d.dig('sys', 'id'), d) }
+      end
+
+      it 'allows filtering by a reference field' do
+        # act
+        found = subject.find_by(
+          content_type: 'redirect',
+          filter: {
+            page: {
+              slug: { eq: 'some-page' }
+            }
+          }
+        )
+
+        # assert
+        expect(found).to_not be_nil
+        expect(found.dig('sys', 'id')).to eq('1qLdW7i7g4Ycq6i4Cckg44')
+        expect(found.dig('sys', 'contentType', 'sys', 'id')).to eq('redirect')
+      end
+
+      it 'allows filtering by reference id' do
+        # act
+        found = subject.find_by(
+          content_type: 'redirect',
+          filter: { 'page' => { id: '2zKTmej544IakmIqoEu0y8' } }
+        )
+
+        # assert
+        expect(found).to_not be_nil
+        expect(found.dig('sys', 'id')).to eq('1qLdW7i7g4Ycq6i4Cckg44')
+      end
+
+      it 'handles explicitly specified sys attr' do
+        # act
+        found = subject.find_by(
+          content_type: 'redirect',
+          filter: {
+            page: {
+              'sys.contentType.sys.id' => 'page'
+            }
+          }
+        )
+
+        # assert
+        expect(found).to_not be_nil
+        expect(found.dig('sys', 'id')).to eq('1qLdW7i7g4Ycq6i4Cckg44')
+      end
+    end
+  end
+end
+
+RSpec.shared_examples 'supports include param' do
+  describe 'supports options: { include: >0 }' do
+    describe '#find_by' do
+      it 'recursively resolves links if include > 0' do
+        root = {
+          'sys' => {
+            'id' => 'root',
+            'type' => 'Entry',
+            'contentType' => { 'sys' => { 'id' => 'root' } }
+          },
+          'fields' => {
+            'name' => { 'en-US' => 'root' },
+            'link' => { 'en-US' => make_link_to('deep1') },
+            'links' => { 'en-US' => [
+              make_link_to('shallow3'),
+              make_link_to('deep2')
+            ] }
+          }
+        }
+        shallow =
+          1.upto(3).map do |i|
+            {
+              'sys' => {
+                'id' => "shallow#{i}",
+                'type' => 'Entry',
+                'contentType' => make_link_to('shallow', 'ContentType')
+              },
+              'fields' => { 'name' => { 'en-US' => "shallow#{i}" } }
+            }
+          end
+        deep =
+          1.upto(2).map do |i|
+            {
+              'sys' => {
+                'id' => "deep#{i}",
+                'type' => 'Entry',
+                'contentType' => make_link_to('deep', 'ContentType')
+              },
+              'fields' => {
+                'name' => { 'en-US' => "deep#{i}" },
+                'subLink' => { 'en-US' => make_link_to("shallow#{i}") }
+              }
+            }
+          end
+
+        [root, *shallow, *deep].each { |d| subject.set(d.dig('sys', 'id'), d) }
+
+        # act
+        found = subject.find_by(content_type: 'root', filter: { name: 'root' }, options: {
+          include: 2
+        })
+
+        # assert
+        expect(found.dig('sys', 'id')).to eq('root')
+
+        # depth 1
+        link = found.dig('fields', 'link', 'en-US')
+        expect(link.dig('fields', 'name', 'en-US')).to eq('deep1')
+        links = found.dig('fields', 'links', 'en-US')
+        expect(links[0].dig('fields', 'name', 'en-US')).to eq('shallow3')
+
+        # depth 2
+        expect(link.dig('fields', 'subLink', 'en-US', 'fields', 'name', 'en-US'))
+          .to eq('shallow1')
+        expect(links[1].dig('fields', 'subLink', 'en-US', 'fields', 'name', 'en-US'))
+          .to eq('shallow2')
+      end
+
+      it 'stops resolving links at include depth' do
+        root = {
+          'sys' => {
+            'id' => 'root',
+            'contentType' => { 'sys' => { 'id' => 'root' } }
+          },
+          'fields' => {
+            'name' => { 'en-US' => 'root' },
+            'link' => { 'en-US' => make_link_to('deep1') },
+            'links' => { 'en-US' => [
+              make_link_to('shallow3'),
+              make_link_to('deep2')
+            ] }
+          }
+        }
+        shallow =
+          1.upto(3).map do |i|
+            {
+              'sys' => {
+                'id' => "shallow#{i}",
+                'contentType' => make_link_to('shallow', 'ContentType')
+              },
+              'fields' => { 'name' => { 'en-US' => "shallow#{i}" } }
+            }
+          end
+        deep =
+          1.upto(2).map do |i|
+            {
+              'sys' => {
+                'id' => "deep#{i}",
+                'contentType' => make_link_to('deep', 'ContentType')
+              },
+              'fields' => {
+                'name' => { 'en-US' => "deep#{i}" },
+                'subLink' => { 'en-US' => make_link_to("shallow#{i}") }
+              }
+            }
+          end
+
+        [root, *shallow, *deep].each { |d| subject.set(d.dig('sys', 'id'), d) }
+
+        # act
+        found = subject.find_by(content_type: 'root', filter: { name: 'root' }, options: {
+          include: 1
+        })
+
+        # assert
+        expect(found.dig('sys', 'id')).to eq('root')
+
+        # depth 1
+        link = found.dig('fields', 'link', 'en-US')
+        expect(link.dig('fields', 'name', 'en-US')).to eq('deep1')
+        links = found.dig('fields', 'links', 'en-US')
+        expect(links[0].dig('fields', 'name', 'en-US')).to eq('shallow3')
+
+        # depth 2
+        expect(link.dig('fields', 'subLink', 'en-US', 'sys', 'type'))
+          .to eq('Link')
+        expect(links[1].dig('fields', 'subLink', 'en-US', 'sys', 'type'))
+          .to eq('Link')
+      end
+    end
+  end
+end
+
+RSpec.shared_examples 'contentful store' do
+  include_examples 'basic store'
+  include_examples 'supports nested queries'
+  include_examples 'supports include param'
 end
 
 # rubocop:enable Style/BlockDelimiters
