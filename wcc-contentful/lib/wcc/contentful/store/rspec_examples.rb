@@ -2,6 +2,17 @@
 
 # rubocop:disable Style/BlockDelimiters
 
+RSpec.shared_examples 'contentful store' do |feature_set|
+  feature_set = {
+    nested_queries: 'pending',
+    include_param: 'pending'
+  }.merge(feature_set&.symbolize_keys || {})
+
+  include_examples 'basic store'
+  include_examples 'supports nested queries', feature_set[:nested_queries]
+  include_examples 'supports include param', feature_set[:include_param]
+end
+
 RSpec.shared_examples 'basic store' do
   let(:entry) do
     JSON.parse(<<~JSON)
@@ -691,8 +702,11 @@ RSpec.shared_examples 'basic store' do
   end
 end
 
-RSpec.shared_examples 'supports nested queries' do
+RSpec.shared_examples 'supports nested queries' do |feature_set|
   describe 'nested (join) queries' do
+    before { skip('nested_queries feature not supported') } if feature_set == false
+    before { pending('nested_queries feature to be implemented') } if feature_set&.to_s == 'pending'
+
     describe '#find_by' do
       before do
         # add a dummy redirect that we ought to pass over
@@ -752,8 +766,11 @@ RSpec.shared_examples 'supports nested queries' do
   end
 end
 
-RSpec.shared_examples 'supports include param' do
+RSpec.shared_examples 'supports include param' do |feature_set|
   describe 'supports options: { include: >0 }' do
+    before { skip('include_param feature not supported') } if feature_set == false
+    before { pending('include_param feature not yet implemented') } if feature_set&.to_s == 'pending'
+
     describe '#find_by' do
       it 'recursively resolves links if include > 0' do
         root = {
@@ -883,12 +900,6 @@ RSpec.shared_examples 'supports include param' do
       end
     end
   end
-end
-
-RSpec.shared_examples 'contentful store' do
-  include_examples 'basic store'
-  include_examples 'supports nested queries'
-  include_examples 'supports include param'
 end
 
 # rubocop:enable Style/BlockDelimiters

@@ -5,7 +5,10 @@ require 'wcc/contentful/store/rspec_examples'
 RSpec.describe WCC::Contentful::Store::MemoryStore do
   subject { WCC::Contentful::Store::MemoryStore.new }
 
-  it_behaves_like 'contentful store'
+  it_behaves_like 'contentful store', {
+    # nested_queries: false,
+    include_param: true
+  }
 
   it 'returns all keys' do
     data = { 'key' => 'val', '1' => { 'deep' => 9 } }

@@ -43,7 +43,11 @@ module WCC::Contentful::Store
       relation =
         relation.reject do |v|
           value_content_type = v.try(:dig, 'sys', 'contentType', 'sys', 'id')
-          value_content_type.nil? || value_content_type != content_type
+          if content_type == 'Asset'
+            !value_content_type.nil?
+          else
+            value_content_type != content_type
+          end
         end
       Query.new(self, relation, options)
     end
@@ -65,7 +69,13 @@ module WCC::Contentful::Store
         locale = context[:locale] if context.present?
         locale ||= 'en-US'
         Query.new(@store, @relation.select do |v|
-          val = v.dig('fields', field, locale)
+          val =
+            if field == 'id'
+              v.dig('sys', 'id')
+            else
+              v.dig('fields', field, locale)
+            end
+
           if val.is_a? Array
             val.include?(expected)
           else

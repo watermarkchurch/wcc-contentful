@@ -210,8 +210,8 @@ module WCC::Contentful::Store
         self_join(field, value, context)
       end
 
-      def self_join(join_on, conditions, context)
-        apply(conditions.transform_keys { |k| [join_on, k].join('.') }, context)
+      def self_join(_join_on, _conditions, _context)
+        raise NotImplementedError, 'This store does not support the :nested_queries feature'
       end
 
       private
