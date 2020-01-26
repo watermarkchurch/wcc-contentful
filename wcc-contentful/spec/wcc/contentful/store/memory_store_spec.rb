@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'wcc/contentful/store/rspec_examples'
+
 RSpec.describe WCC::Contentful::Store::MemoryStore do
   subject { WCC::Contentful::Store::MemoryStore.new }
 

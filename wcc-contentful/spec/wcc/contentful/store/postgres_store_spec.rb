@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'wcc/contentful/store/postgres_store'
+require 'wcc/contentful/store/rspec_examples'
 require 'concurrency_helper'
 
 RSpec.describe WCC::Contentful::Store::PostgresStore do

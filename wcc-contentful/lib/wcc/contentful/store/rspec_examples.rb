@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
+# rubocop:disable Style/BlockDelimiters
+
 RSpec.shared_examples 'contentful store' do
-  let(:entry) {
+  let(:entry) do
     JSON.parse(<<~JSON)
       {
         "sys": {
@@ -44,9 +46,9 @@ RSpec.shared_examples 'contentful store' do
         }
       }
     JSON
-  }
+  end
 
-  let(:page) {
+  let(:page) do
     JSON.parse(<<~JSON)
       {
         "sys": {
@@ -86,9 +88,9 @@ RSpec.shared_examples 'contentful store' do
         }
       }
     JSON
-  }
+  end
 
-  let(:asset) {
+  let(:asset) do
     JSON.parse(<<~JSON)
       {
         "sys": {
@@ -126,7 +128,7 @@ RSpec.shared_examples 'contentful store' do
         }
       }
     JSON
-  }
+  end
 
   before do
     allow(WCC::Contentful).to receive(:types)
@@ -264,7 +266,7 @@ RSpec.shared_examples 'contentful store' do
   end
 
   describe '#index' do
-    let(:deleted_entry) {
+    let(:deleted_entry) do
       JSON.parse(<<~JSON)
         {
           "sys": {
@@ -291,9 +293,9 @@ RSpec.shared_examples 'contentful store' do
           }
         }
       JSON
-    }
+    end
 
-    let(:deleted_asset) {
+    let(:deleted_asset) do
       JSON.parse(<<~JSON)
         {
           "sys": {
@@ -320,7 +322,7 @@ RSpec.shared_examples 'contentful store' do
           }
         }
       JSON
-    }
+    end
 
     it 'stores an "Entry"' do
       # act
@@ -866,3 +868,5 @@ RSpec.shared_examples 'contentful store' do
     }
   end
 end
+
+# rubocop:enable Style/BlockDelimiters
