@@ -85,7 +85,7 @@ module WCC::Contentful::Middleware::Store
     entry
   end
 
-  class Query < WCC::Contentful::Store::Base::Query
+  class Query < WCC::Contentful::Store::Query
     attr_reader :wrapped_query, :middleware, :options
 
     delegate :apply, :apply_operator, to: :wrapped_query

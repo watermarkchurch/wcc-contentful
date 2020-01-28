@@ -70,7 +70,7 @@ module WCC::Contentful::Store
       )
     end
 
-    class Query < Base::Query
+    class Query < WCC::Contentful::Store::Query
       # rubocop:disable Metrics/ParameterLists
       def initialize(
         store,

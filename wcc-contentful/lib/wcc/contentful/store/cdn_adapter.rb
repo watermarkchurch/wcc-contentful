@@ -51,7 +51,7 @@ module WCC::Contentful::Store
       )
     end
 
-    class Query < Base::Query
+    class Query < WCC::Contentful::Store::Query
       delegate :count, to: :response
 
       def to_enum
@@ -92,7 +92,7 @@ module WCC::Contentful::Store
         end
       end
 
-      Base::Query::OPERATORS.each do |op|
+      WCC::Contentful::Store::Query::OPERATORS.each do |op|
         define_method(op) do |field, expected, context = nil|
           apply_operator(op, field, expected, context)
         end

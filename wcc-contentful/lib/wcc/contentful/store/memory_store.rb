@@ -52,7 +52,7 @@ module WCC::Contentful::Store
       Query.new(self, relation, options)
     end
 
-    class Query < Base::Query
+    class Query < WCC::Contentful::Store::Query
       def to_enum
         return @relation.dup unless @options[:include]
 
