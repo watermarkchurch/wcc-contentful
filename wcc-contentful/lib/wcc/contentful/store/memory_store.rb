@@ -37,51 +37,36 @@ module WCC::Contentful::Store
       end
     end
 
-    def find_all(content_type:, options: nil)
+    def execute(query)
       relation = mutex.with_read_lock { @hash.values }
 
       relation =
         relation.reject do |v|
           value_content_type = v.try(:dig, 'sys', 'contentType', 'sys', 'id')
-          if content_type == 'Asset'
+          if query.content_type == 'Asset'
             !value_content_type.nil?
           else
-            value_content_type != content_type
+            value_content_type != query.content_type
           end
         end
-      Query.new(self, relation, options)
+
+      query.conditions.reduce(relation) do |memo, condition|
+        memo.select do |entry|
+          val = entry.dig(*condition.path)
+
+          if val.is_a? Array
+            val.include?(condition.expected)
+          else
+            val == condition.expected
+          end
+        end
+      end
     end
 
     class Query < WCC::Contentful::Store::Query
-      def to_enum
-        return @relation.dup unless @options[:include]
-
-        @relation.map { |e| resolve_includes(e, @options[:include]) }
-      end
-
-      def initialize(store, relation, options = nil)
-        super(store)
-        @relation = relation
-        @options = options || {}
-      end
-
-      def eq(field, expected, context = nil)
-        locale = context[:locale] if context.present?
-        locale ||= 'en-US'
-        Query.new(@store, @relation.select do |v|
-          val =
-            if field == 'id'
-              v.dig('sys', 'id')
-            else
-              v.dig('fields', field, locale)
-            end
-
-          if val.is_a? Array
-            val.include?(expected)
-          else
-            val == expected
-          end
-        end, @options)
+      # we don't support these
+      WCC::Contentful::Store::Query::OPERATORS.each do |op|
+        undef_method op unless op == :eq
       end
     end
   end

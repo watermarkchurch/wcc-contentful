@@ -6,7 +6,7 @@ RSpec.describe WCC::Contentful::Store::MemoryStore do
   subject { WCC::Contentful::Store::MemoryStore.new }
 
   it_behaves_like 'contentful store', {
-    # nested_queries: false,
+    nested_queries: false,
     include_param: true
   }
 
