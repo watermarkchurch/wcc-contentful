@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../../contentful'
+
 module WCC::Contentful::Store
   # The base class for query objects returned by find_all.  Subclasses should
   # override the #result method to return an array-like containing the query
@@ -40,40 +42,51 @@ module WCC::Contentful::Store
       raise NotImplementedError
     end
 
-    def initialize(store)
+    attr_reader :store, :conditions
+
+    def initialize(store, conditions: nil, **extra)
       @store = store
+      @conditions = conditions || []
+      @extra = extra
     end
 
     # @abstract Subclasses can either override this method to properly respond
     #   to find_by query objects, or they can define a method for each supported
     #   operator.  Ex. `#eq`, `#ne`, `#gt`.
     def apply_operator(operator, field, expected, context = nil)
-      respond_to?(operator) ||
-        raise(ArgumentError, "Operator not implemented: #{operator}")
+      raise ArgumentError, "Operator #{operator} not supported" unless respond_to?(operator)
 
-      public_send(operator, field, expected, context)
+      field = field.to_s if field.is_a? Symbol
+      path = field.is_a?(Array) ? field : field.split('.')
+
+      path = self.class.normalize_condition_path(path, context)
+
+      _append_condition(
+        Condition.new(path, operator, expected)
+      )
+    end
+
+    WCC::Contentful::Store::Query::OPERATORS.each do |op|
+      define_method(op) do |field, expected, context = nil|
+        apply_operator(op, field, expected, context)
+      end
     end
 
     # Called with a filter object by {Base#find_by} in order to apply the filter.
     def apply(filter, context = nil)
-      filter = normalize_dot_notation_to_hash(filter)
-      filter.reduce(self) do |query, (field, value)|
-        query._apply(field, value, context)
+      self.class.flatten_filter_hash(filter).reduce(self) do |query, cond|
+        query.apply_operator(cond[:op], cond[:path], cond[:expected], context)
       end
     end
 
     protected
 
-    def _apply(field, value, context)
-      if value.is_a?(Hash)
-        if op?(k = value.keys.first)
-          apply_operator(k.to_sym, field.to_s, value[k], context)
-        else
-          nested_conditions(field, value, context)
-        end
-      else
-        apply_operator(:eq, field.to_s, value)
-      end
+    def _append_condition(condition)
+      self.class.new(
+        store,
+        conditions: conditions + [condition],
+        **@extra
+      )
     end
 
     # naive implementation recursively descends the graph to turns links into
@@ -97,45 +110,92 @@ module WCC::Contentful::Store
       included
     end
 
-    def nested_conditions(field, value, context)
-      if value.keys.length == 1
-        k, v = value.first
-        return _apply([field, k].join('.'), v, context) if k == 'id' || (k == 'sys' && v == 'id')
+    class << self
+      def op?(key)
+        OPERATORS.include?(key.to_sym)
       end
 
-      self_join(field, value, context)
-    end
+      # Turns a hash into a flat array of individual conditions, where each
+      # element can be passed as params to apply_operator
+      def flatten_filter_hash(hash, path = [])
+        hash.flat_map do |(k, v)|
+          k = k.to_s
+          if k.include?('.')
+            k, *rest = k.split('.')
+            v = { rest.join('.') => v }
+          end
 
-    def self_join(_join_on, _conditions, _context)
-      raise NotImplementedError, 'This store does not support the :nested_queries feature'
-    end
-
-    private
-
-    def normalize_dot_notation_to_hash(hash, depth = 0)
-      raise ArgumentError, 'Query is too complex (depth > 7)' if depth > 7
-
-      hash.each_with_object({}) do |(k, v), h|
-        k = k.to_s
-        if k.include?('.')
-          k, *rest = k.split('.')
-          v = { rest.join('.') => v }
+          if v.is_a? Hash
+            flatten_filter_hash(v, path + [k])
+          elsif op?(k)
+            { path: path, op: k.to_sym, expected: v }
+          else
+            { path: path + [k], op: :eq, expected: v }
+          end
         end
-        v = normalize_dot_notation_to_hash(v, depth + 1) if v.is_a? Hash
-        h[k] = v
       end
+
+      def known_locales
+        @known_locales = WCC::Contentful.locales.keys
+      end
+      RESERVED_NAMES = %w[fields sys].freeze
+
+      # Takes a path array in non-normal form and inserts 'sys', 'fields',
+      # and the current locale as appropriate to normalize it.
+      # rubocop:disable Metrics/BlockNesting
+      def normalize_condition_path(path, context = nil)
+        context_locale = context[:locale] if context.present?
+        context_locale ||= 'en-US'
+
+        rev_path = path.reverse
+        new_path = []
+
+        current_tuple = []
+        current_locale_was_inferred = false
+        until rev_path.empty? && current_tuple.empty?
+          raise ArgumentError, "Query too complex: #{path.join('.')}" if new_path.length > 7
+
+          case current_tuple.length
+          when 0
+            # expect a locale
+            current_tuple <<
+              if known_locales.include?(rev_path[0])
+                current_locale_was_inferred = false
+                rev_path.shift
+              else
+                # infer locale
+                current_locale_was_inferred = true
+                context_locale
+              end
+          when 1
+            # expect a path
+            current_tuple << rev_path.shift
+          when 2
+            # expect 'sys' or 'fields'
+            current_tuple <<
+              if RESERVED_NAMES.include?(rev_path[0])
+                rev_path.shift
+              else
+                # infer 'sys' or 'fields'
+                current_tuple.last == 'id' ? 'sys' : 'fields'
+              end
+
+            if current_tuple.last == 'sys' && current_locale_was_inferred
+              # remove the inferred current locale
+              current_tuple.shift
+            end
+            new_path << current_tuple
+            current_tuple = []
+          end
+        end
+
+        new_path.flat_map { |x| x }.reverse.freeze
+      end
+      # rubocop:enable Metrics/BlockNesting
     end
 
-    def op?(key)
-      OPERATORS.include?(key.to_sym)
-    end
-
-    def sys?(field)
-      field.to_s =~ /sys\./
-    end
-
-    def id?(field)
-      field.to_sym == :id
-    end
+    Condition =
+      Struct.new(:path, :op, :expected) do
+      end
   end
 end
