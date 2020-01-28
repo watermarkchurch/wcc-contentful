@@ -81,15 +81,19 @@ module WCC::Contentful::Store
 
     # Finds all entries of the given content type.  A content type is required.
     #
-    # @abstract Subclasses should implement this at a minimum to provide data
-    #   to the {WCC::Contentful::Model} API.
+    # Subclasses may override this to provide their own query implementation,
+    #  or else override #execute to run the query after it has been parsed.
     # @param [String] content_type The ID of the content type to search for.
     # @param [Hash] options An optional set of additional parameters to the query
     #  defining for example include depth.  Not all store implementations respect all options.
     # @return [Query] A query object that exposes methods to apply filters
     # rubocop:disable Lint/UnusedMethodArgument
     def find_all(content_type:, options: nil)
-      raise NotImplementedError, "#{self.class} does not implement find_all"
+      Query.new(
+        self,
+        content_type: content_type,
+        options: options
+      )
     end
     # rubocop:enable Lint/UnusedMethodArgument
 

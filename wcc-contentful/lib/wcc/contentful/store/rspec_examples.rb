@@ -651,7 +651,7 @@ RSpec.shared_examples 'basic store' do
       data.each { |d| subject.set(d.dig('sys', 'id'), d) }
 
       # act
-      found = subject.find_all(content_type: 'test2')
+      found = subject.find_all(content_type: 'test2').to_a
 
       # assert
       expect(found.count).to eq(3)

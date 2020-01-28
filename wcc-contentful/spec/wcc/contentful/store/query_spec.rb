@@ -8,7 +8,7 @@ RSpec.describe WCC::Contentful::Store::Query do
   }
 
   subject {
-    described_class.new(store)
+    described_class.new(store, content_type: 'test')
   }
 
   describe '.normalize_condition_path' do
@@ -58,6 +58,12 @@ RSpec.describe WCC::Contentful::Store::Query do
       path = described_class.normalize_condition_path(['page', 'en-US', 'id'])
 
       expect(path).to eq(%w[fields page en-US sys id])
+    end
+
+    it 'allows explicit sys' do
+      path = described_class.normalize_condition_path('sys.contentType.sys.id'.split('.'))
+
+      expect(path).to eq(%w[sys contentType sys id])
     end
   end
 

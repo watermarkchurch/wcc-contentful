@@ -36,17 +36,29 @@ module WCC::Contentful::Store
       match
     ].freeze
 
-    # @abstract Subclasses should provide this in order to fetch the results
+    # Subclasses can override this in order to fetch the results
     #   of the query.
     def to_enum
-      raise NotImplementedError
+      @to_enum ||=
+        begin
+          result_set = store.execute(self).lazy
+          if @options[:include] && @options[:include] > 0
+            result_set =
+              result_set.map do |entry|
+                resolve_includes(entry, @options[:include])
+              end
+          end
+          result_set
+        end
     end
 
-    attr_reader :store, :conditions
+    attr_reader :store, :content_type, :conditions
 
-    def initialize(store, conditions: nil, **extra)
+    def initialize(store, content_type:, conditions: nil, options: nil, **extra)
       @store = store
+      @content_type = content_type
       @conditions = conditions || []
+      @options = options || {}
       @extra = extra
     end
 
@@ -84,7 +96,9 @@ module WCC::Contentful::Store
     def _append_condition(condition)
       self.class.new(
         store,
+        content_type: content_type,
         conditions: conditions + [condition],
+        options: @options,
         **@extra
       )
     end
@@ -196,6 +210,30 @@ module WCC::Contentful::Store
 
     Condition =
       Struct.new(:path, :op, :expected) do
+        LINK_KEYS = %w[id type linkType].freeze
+
+        def path_tuples
+          @path_tuples ||=
+            [].tap do |arr|
+              remaining = path.dup
+              until remaining.empty?
+                locale = nil
+                link_sys = nil
+                link_field = nil
+
+                sys_or_fields = remaining.shift
+                field = remaining.shift
+                locale = remaining.shift if sys_or_fields == 'fields'
+
+                if remaining[0] == 'sys' && LINK_KEYS.include?(remaining[1])
+                  link_sys = remaining.shift
+                  link_field = remaining.shift
+                end
+
+                arr << [sys_or_fields, field, locale, link_sys, link_field].compact
+              end
+            end
+        end
       end
   end
 end

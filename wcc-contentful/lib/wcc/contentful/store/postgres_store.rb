@@ -54,91 +54,86 @@ module WCC::Contentful::Store
       nil
     end
 
-    def find_all(content_type:, options: nil)
+    def execute(query)
       statement =
-        if content_type == 'Asset'
+        if query.content_type == 'Asset'
           "WHERE t.data->'sys'->>'type' = $1"
         else
           "WHERE t.data->'sys'->'contentType'->'sys'->>'id' = $1"
         end
-      Query.new(
-        self,
-        @connection_pool,
+      params = [query.content_type]
+      joins = []
+
+      statement =
+        query.conditions.reduce(statement) do |memo, condition|
+          raise ArgumentError, "Operator #{condition.op} not supported" unless condition.op == :eq
+
+          if condition.path_tuples.length == 1
+            memo + _eq(condition.path, condition.expected, params)
+          else
+            join_path, expectation_path = condition.path_tuples
+            memo + _join(join_path, expectation_path, condition.expected, params, joins)
+          end
+        end
+
+      QueryResults.new(
+        connection_pool: @connection_pool,
         statement: statement,
-        params: [content_type],
-        options: options
+        params: params,
+        joins: joins
       )
     end
 
-    class Query < WCC::Contentful::Store::Query
+    private
+
+    def _eq(path, expected, params)
+      if path == %w[sys id]
+        " AND t.id = $#{push_param(expected, params)}"
+      else
+        " AND t.data->#{quote_parameter_path(path)}" \
+          " ? $#{push_param(expected, params)}::text"
+      end
+    end
+
+    def push_param(param, params)
+      params << param
+      params.length
+    end
+
+    def quote_parameter_path(path)
+      path.map { |p| "'#{p}'" }.join('->')
+    end
+
+    def _join(join_path, expectation_path, expected, params, joins)
+      join_table_alias = push_join(join_path, joins)
+      " AND #{join_table_alias}.data->#{quote_parameter_path(expectation_path)}" \
+        " ? $#{push_param(expected, params)}::text"
+    end
+
+    def push_join(path, joins)
+      table_alias = "s#{joins.length}"
+      joins << "JOIN contentful_raw AS #{table_alias} ON " \
+        "t.data->#{quote_parameter_path(path)}" \
+          "->'sys'->>'id'=#{table_alias}.id"
+      table_alias
+    end
+
+    class QueryResults
+      include Enumerable
+
       # rubocop:disable Metrics/ParameterLists
       def initialize(
-        store,
-        connection_pool,
-        statement: nil,
-        joins: nil,
-        params: nil,
-        options: nil
-      )
-        super(store)
+        connection_pool:,
+        statement:,
+        params:,
+        joins:
+        )
         @connection_pool = connection_pool
-        @statement = statement ||
-          "WHERE t.data->'sys'->>'id' IS NOT NULL"
-        @params = params || []
-        @options = options || {}
-        @joins = joins || []
+        @statement = statement
+        @params = params
+        @joins = joins
       end
       # rubocop:enable Metrics/ParameterLists
-
-      def eq(field, expected, context = nil)
-        locale = context[:locale] if context.present?
-        locale ||= 'en-US'
-
-        params = @params.dup
-
-        statement =
-          @statement +
-          if field.to_s == 'id'
-            " AND t.id = $#{push_param(expected, params)}"
-          else
-            " AND t.data->#{parameter(field, locale)}" \
-              " ? $#{push_param(expected, params)}::text"
-          end
-
-        Query.new(
-          @store,
-          @connection_pool,
-          statement: statement,
-          joins: @joins,
-          params: params,
-          options: @options
-        )
-      end
-
-      def self_join(field, conditions, context)
-        locale = context[:locale] if context.present?
-        locale ||= 'en-US'
-
-        params = @params.dup
-        joins = @joins.dup
-
-        join_table_alias = push_join(field, locale, params, joins)
-
-        statement =
-          reduce_conditions(conditions, locale, params)
-            .reduce(@statement) do |memo, condition|
-            memo + " AND #{join_table_alias}.data->#{condition}"
-          end
-
-        Query.new(
-          @store,
-          @connection_pool,
-          statement: statement,
-          joins: joins,
-          params: params,
-          options: @options
-        )
-      end
 
       def count
         return @count if @count
@@ -151,95 +146,28 @@ module WCC::Contentful::Store
       def first
         return @first if @first
 
-        statement = finalize_statement('SELECT *', ' LIMIT 1')
+        statement = finalize_statement('SELECT t.*', ' LIMIT 1')
         result = run_statement(statement)
         return if result.num_tuples == 0
 
-        resolve_includes(
-          JSON.parse(result.getvalue(0, 1)),
-          @options[:include]
-        )
+        JSON.parse(result.getvalue(0, 1))
       end
 
-      def to_enum
-        arr = []
+      def each
         resolve.each do |row|
-          arr <<
-            resolve_includes(
-              JSON.parse(row['data']),
-              @options[:include]
-            )
+          yield JSON.parse(row['data'])
         end
-        arr
       end
-
-      # TODO: override resolve_includes to make it more efficient
 
       private
 
       def resolve
         return @resolved if @resolved
 
-        statement = finalize_statement('SELECT *')
+        statement = finalize_statement('SELECT t.*')
         @resolved = run_statement(statement)
       rescue PG::ConnectionBad
         []
-      end
-
-      def push_param(param, params)
-        params << param
-        params.length
-      end
-
-      def parameter_path(field, locale, path = [])
-        path = [*path, *field.to_s.split('.')]
-        path = path.unshift('sys') if path[0] == 'id'
-        path = path.unshift('fields') unless %w[sys fields].include?(path[0])
-        # add locale after each "fields.*.'en-US'", i.e. every 2nd path part
-        path =
-          path.each_with_index.flat_map do |p, i|
-            next ['sys', p] if p == 'id' && path[i - 1] != 'sys'
-
-            next p unless path[i - 1] == 'fields'
-
-            [p, locale]
-          end
-
-        path
-      end
-
-      def quote_parameter_path(path)
-        path.map { |p| "'#{p}'" }.join('->')
-      end
-
-      def parameter(field, locale)
-        quote_parameter_path(parameter_path(field, locale))
-      end
-
-      def push_join(field, locale, _params, joins)
-        table_alias = "s#{joins.length}"
-        joins << "JOIN contentful_raw AS #{table_alias} ON " \
-          "t.data->#{parameter(field, locale)}" \
-            "->'sys'->>'id'=#{table_alias}.id"
-        table_alias
-      end
-
-      def reduce_conditions(conditions, locale, params, path = [])
-        conditions.flat_map do |f, expected|
-          if expected.is_a? Hash
-            path = parameter_path(f, locale, path)
-            next reduce_conditions(expected, locale, params, path)
-          end
-
-          if op?(f)
-            raise ArgumentError, "Cannot apply operator '#{f}'" unless f == 'eq'
-
-            next "#{quote_parameter_path(path)} ? $#{push_param(expected, params)}::text"
-          end
-
-          path = parameter_path(f, locale, path)
-          next "#{quote_parameter_path(path)} ? $#{push_param(expected, params)}::text"
-        end
       end
 
       def finalize_statement(select_statement, limit_statement = nil)
@@ -254,39 +182,39 @@ module WCC::Contentful::Store
       end
     end
 
-    def self.ensure_schema(conn)
-      conn.exec(<<~HEREDOC
-        CREATE TABLE IF NOT EXISTS contentful_raw (
-          id varchar PRIMARY KEY,
-          data jsonb
-        );
-        CREATE INDEX IF NOT EXISTS contentful_raw_value_type ON contentful_raw ((data->'sys'->>'type'));
-        CREATE INDEX IF NOT EXISTS contentful_raw_value_content_type ON contentful_raw ((data->'sys'->'contentType'->'sys'->>'id'));
+    class << self
+      def ensure_schema(conn)
+        conn.exec(<<~HEREDOC
+          CREATE TABLE IF NOT EXISTS contentful_raw (
+            id varchar PRIMARY KEY,
+            data jsonb
+          );
+          CREATE INDEX IF NOT EXISTS contentful_raw_value_type ON contentful_raw ((data->'sys'->>'type'));
+          CREATE INDEX IF NOT EXISTS contentful_raw_value_content_type ON contentful_raw ((data->'sys'->'contentType'->'sys'->>'id'));
 
-        CREATE or replace FUNCTION "upsert_entry"(_id varchar, _data jsonb) RETURNS jsonb AS $$
-        DECLARE
-          prev jsonb;
-        BEGIN
-          SELECT data FROM contentful_raw WHERE id = _id INTO prev;
-          INSERT INTO contentful_raw (id, data) values (_id, _data)
-            ON CONFLICT (id) DO
-              UPDATE
-              SET data = _data;
-           RETURN prev;
-        END;
-        $$ LANGUAGE 'plpgsql';
-      HEREDOC
-      )
+          CREATE or replace FUNCTION "upsert_entry"(_id varchar, _data jsonb) RETURNS jsonb AS $$
+          DECLARE
+            prev jsonb;
+          BEGIN
+            SELECT data FROM contentful_raw WHERE id = _id INTO prev;
+            INSERT INTO contentful_raw (id, data) values (_id, _data)
+              ON CONFLICT (id) DO
+                UPDATE
+                SET data = _data;
+            RETURN prev;
+          END;
+          $$ LANGUAGE 'plpgsql';
+        HEREDOC
+        )
+      end
+
+      def prepare_statements(conn)
+        conn.prepare('upsert_entry', 'SELECT * FROM upsert_entry($1,$2)')
+        conn.prepare('select_entry', 'SELECT * FROM contentful_raw WHERE id = $1')
+        conn.prepare('select_ids', 'SELECT id FROM contentful_raw')
+        conn.prepare('delete_by_id', 'DELETE FROM contentful_raw WHERE id = $1 RETURNING *')
+      end
     end
-
-    def self.prepare_statements(conn)
-      conn.prepare('upsert_entry', 'SELECT * FROM upsert_entry($1,$2)')
-      conn.prepare('select_entry', 'SELECT * FROM contentful_raw WHERE id = $1')
-      conn.prepare('select_ids', 'SELECT id FROM contentful_raw')
-      conn.prepare('delete_by_id', 'DELETE FROM contentful_raw WHERE id = $1 RETURNING *')
-    end
-
-    private
 
     def build_connection_pool(connection_options, pool_options)
       ConnectionPool.new(pool_options) do
