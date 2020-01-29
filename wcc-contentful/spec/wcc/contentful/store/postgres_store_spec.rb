@@ -16,6 +16,7 @@ RSpec.describe WCC::Contentful::Store::PostgresStore do
     begin
       conn = PG.connect(ENV['POSTGRES_CONNECTION'] || { dbname: 'postgres' })
 
+      conn.exec('DROP VIEW IF EXISTS contentful_raw_includes')
       conn.exec('DROP TABLE IF EXISTS contentful_raw')
     ensure
       conn.close
@@ -24,7 +25,7 @@ RSpec.describe WCC::Contentful::Store::PostgresStore do
 
   it_behaves_like 'contentful store', {
     nested_queries: true,
-    include_param: 1
+    include_param: true
   }
 
   let(:entry) do
@@ -135,12 +136,14 @@ RSpec.describe WCC::Contentful::Store::PostgresStore do
 
     decoder = PG::TextDecoder::Array.new
     links = decoder.decode(row[0]['links'])
-    expect(links.sort).to eq(%w[
-                               BrandAssetID
-                               Button1ID
-                               Button2ID
-                               HomepageEntryID
-                             ])
+    expect(links.sort).to eq(
+      %w[
+        BrandAssetID
+        Button1ID
+        Button2ID
+        HomepageEntryID
+      ]
+    )
   end
 
   it 'updates links in separate column' do
@@ -150,7 +153,7 @@ RSpec.describe WCC::Contentful::Store::PostgresStore do
       'Some Text'
     ]
 
-    subject.set(old_entry)
+    subject.set(entry.dig('sys', 'id'), old_entry)
     # act
     subject.set(entry.dig('sys', 'id'), entry)
 

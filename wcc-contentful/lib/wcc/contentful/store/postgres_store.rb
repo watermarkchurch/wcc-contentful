@@ -63,33 +63,11 @@ module WCC::Contentful::Store
       nil
     end
 
-    def execute(query)
-      statement =
-        if query.content_type == 'Asset'
-          "WHERE t.data->'sys'->>'type' = $1"
-        else
-          "WHERE t.data->'sys'->'contentType'->'sys'->>'id' = $1"
-        end
-      params = [query.content_type]
-      joins = []
-
-      statement =
-        query.conditions.reduce(statement) do |memo, condition|
-          raise ArgumentError, "Operator #{condition.op} not supported" unless condition.op == :eq
-
-          if condition.path_tuples.length == 1
-            memo + _eq(condition.path, condition.expected, params)
-          else
-            join_path, expectation_path = condition.path_tuples
-            memo + _join(join_path, expectation_path, condition.expected, params, joins)
-          end
-        end
-
-      QueryResults.new(
-        connection_pool: @connection_pool,
-        statement: statement,
-        params: params,
-        joins: joins
+    def find_all(content_type:, options: nil)
+      Query.new(
+        self,
+        content_type: content_type,
+        options: options
       )
     end
 
@@ -123,99 +101,153 @@ module WCC::Contentful::Store
       encoder.encode(arr)
     end
 
-    def _eq(path, expected, params)
-      if path == %w[sys id]
-        " AND t.id = $#{push_param(expected, params)}"
-      else
-        " AND t.data->#{quote_parameter_path(path)}" \
-          " ? $#{push_param(expected, params)}::text"
-      end
-    end
-
-    def push_param(param, params)
-      params << param
-      params.length
-    end
-
-    def quote_parameter_path(path)
-      path.map { |p| "'#{p}'" }.join('->')
-    end
-
-    def _join(join_path, expectation_path, expected, params, joins)
-      join_table_alias = push_join(join_path, joins)
-      " AND #{join_table_alias}.data->#{quote_parameter_path(expectation_path)}" \
-        " ? $#{push_param(expected, params)}::text"
-    end
-
-    def push_join(path, joins)
-      table_alias = "s#{joins.length}"
-      joins << "JOIN contentful_raw AS #{table_alias} ON " \
-        "t.data->#{quote_parameter_path(path)}" \
-          "->'sys'->>'id'=#{table_alias}.id"
-      table_alias
-    end
-
-    class QueryResults
-      include Enumerable
-
-      # rubocop:disable Metrics/ParameterLists
-      def initialize(
-        connection_pool:,
-        statement:,
-        params:,
-        joins:
-        )
-        @connection_pool = connection_pool
-        @statement = statement
-        @params = params
-        @joins = joins
-      end
-      # rubocop:enable Metrics/ParameterLists
-
+    class Query < WCC::Contentful::Store::Query
       def count
         return @count if @count
 
-        statement = finalize_statement('SELECT count(*)')
-        result = run_statement(statement)
+        statement, params = finalize_statement('SELECT count(*)')
+        result = run_statement(statement, params)
         @count = result.getvalue(0, 0).to_i
       end
 
       def first
         return @first if @first
 
-        statement = finalize_statement('SELECT t.*', ' LIMIT 1')
-        result = run_statement(statement)
+        statement, params = finalize_statement('SELECT t.*', ' LIMIT 1', depth: @options[:include])
+        result = run_statement(statement, params)
         return if result.num_tuples == 0
 
-        JSON.parse(result.getvalue(0, 1))
+        row = result.first
+        entry = JSON.parse(row['data'])
+
+        if @options[:include] && @options[:include] > 0
+          includes = decode_includes(row['includes'])
+          entry = resolve_includes(entry, @options[:include], includes)
+        end
+        entry
       end
 
-      def each
-        resolve.each do |row|
-          yield JSON.parse(row['data'])
+      def to_enum
+        result_set.lazy.map do |row|
+          entry = JSON.parse(row['data'])
+          if @options[:include] && @options[:include] > 0
+            includes = decode_includes(row['includes'])
+            entry = resolve_includes(entry, @options[:include], includes)
+          end
+
+          entry
         end
       end
 
       private
 
-      def resolve
-        return @resolved if @resolved
+      def result_set
+        return @result_set if @result_set
 
-        statement = finalize_statement('SELECT t.*')
-        @resolved = run_statement(statement)
+        statement, params = finalize_statement('SELECT t.*', depth: @options[:include])
+        @result_set = run_statement(statement, params)
       rescue PG::ConnectionBad
         []
       end
 
-      def finalize_statement(select_statement, limit_statement = nil)
-        select_statement + " FROM contentful_raw AS t \n" +
-          @joins.join("\n") + "\n" +
-          @statement +
-          (limit_statement || '')
+      def resolve_includes(entry, depth, includes)
+        return entry unless entry && depth && depth > 0
+
+        WCC::Contentful::LinkVisitor.new(entry, :Link, :Asset, depth: depth - 1).map! do |val|
+          resolve_link(val, includes)
+        end
       end
 
-      def run_statement(statement)
-        @connection_pool.with { |conn| conn.exec(statement, @params) }
+      def resolve_link(val, includes)
+        return val unless val.is_a?(Hash) && val.dig('sys', 'type') == 'Link'
+        return val unless included = includes[val.dig('sys', 'id')]
+
+        included
+      end
+
+      def decode_includes(includes)
+        return {} unless includes
+
+        decoder = PG::TextDecoder::Array.new
+        decoder.decode(includes)
+          .map { |e| JSON.parse(e) }
+          .each_with_object({}) do |entry, h|
+            h[entry.dig('sys', 'id')] = entry
+          end
+      end
+
+      def finalize_statement(select_statement, limit_statement = nil, depth: nil)
+        statement =
+          if content_type == 'Asset'
+            "WHERE t.data->'sys'->>'type' = $1"
+          else
+            "WHERE t.data->'sys'->'contentType'->'sys'->>'id' = $1"
+          end
+        params = [content_type]
+        joins = []
+
+        statement =
+          conditions.reduce(statement) do |memo, condition|
+            raise ArgumentError, "Operator #{condition.op} not supported" unless condition.op == :eq
+
+            if condition.path_tuples.length == 1
+              memo + _eq(condition.path, condition.expected, params)
+            else
+              join_path, expectation_path = condition.path_tuples
+              memo + _join(join_path, expectation_path, condition.expected, params, joins)
+            end
+          end
+
+        table =
+          if depth && depth > 0
+            "fn_contentful_raw_with_includes(#{depth})"
+          else
+            'contentful_raw'
+          end
+
+        statement =
+          select_statement + " FROM #{table} AS t \n" +
+          joins.join("\n") + "\n" +
+          statement +
+          (limit_statement || '')
+
+        [statement, params]
+      end
+
+      def run_statement(statement, params)
+        @store.connection_pool.with { |conn| conn.exec(statement, params) }
+      end
+
+      def _eq(path, expected, params)
+        if path == %w[sys id]
+          " AND t.id = $#{push_param(expected, params)}"
+        else
+          " AND t.data->#{quote_parameter_path(path)}" \
+            " ? $#{push_param(expected, params)}::text"
+        end
+      end
+
+      def push_param(param, params)
+        params << param
+        params.length
+      end
+
+      def quote_parameter_path(path)
+        path.map { |p| "'#{p}'" }.join('->')
+      end
+
+      def _join(join_path, expectation_path, expected, params, joins)
+        join_table_alias = push_join(join_path, joins)
+        " AND #{join_table_alias}.data->#{quote_parameter_path(expectation_path)}" \
+          " ? $#{push_param(expected, params)}::text"
+      end
+
+      def push_join(path, joins)
+        table_alias = "s#{joins.length}"
+        joins << "JOIN contentful_raw AS #{table_alias} ON " \
+          "t.data->#{quote_parameter_path(path)}" \
+            "->'sys'->>'id'=#{table_alias}.id"
+        table_alias
       end
     end
 
@@ -231,7 +263,7 @@ module WCC::Contentful::Store
           CREATE INDEX IF NOT EXISTS contentful_raw_value_type ON contentful_raw ((data->'sys'->>'type'));
           CREATE INDEX IF NOT EXISTS contentful_raw_value_content_type ON contentful_raw ((data->'sys'->'contentType'->'sys'->>'id'));
 
-          CREATE or replace FUNCTION "upsert_entry"(_id varchar, _data jsonb, _links text[]) RETURNS jsonb AS $$
+          CREATE or replace FUNCTION "fn_contentful_upsert_entry"(_id varchar, _data jsonb, _links text[]) RETURNS jsonb AS $$
           DECLARE
             prev jsonb;
           BEGIN
@@ -244,12 +276,42 @@ module WCC::Contentful::Store
             RETURN prev;
           END;
           $$ LANGUAGE 'plpgsql';
+
+          DROP FUNCTION fn_contentful_raw_includes;
+          CREATE or replace FUNCTION fn_contentful_raw_includes(root_id varchar, until integer)
+            RETURNS table (depth integer, id varchar, data jsonb, links text[])
+          AS $body$
+          BEGIN
+            RETURN QUERY
+              WITH RECURSIVE includes (depth) AS (
+                SELECT 0, t.id, t.data, t.links FROM contentful_raw t WHERE t.id = root_id
+                UNION ALL
+                  SELECT l.depth + 1, r.id, r.data, r.links
+                  FROM includes l, contentful_raw r
+                  WHERE r.id = ANY(l.links)
+              )
+              SELECT * FROM includes i WHERE i.depth <= until;
+          END;
+          $body$ LANGUAGE 'plpgsql';
+
+          CREATE or replace FUNCTION fn_contentful_raw_with_includes(until integer)
+            RETURNS table (id varchar, data jsonb, includes jsonb[])
+          AS $body$
+          BEGIN
+            RETURN QUERY
+              SELECT t.id, t.data, array_agg(DISTINCT i.data) AS includes
+                FROM contentful_raw t
+                LEFT JOIN LATERAL fn_contentful_raw_includes(t.id, until) i ON true
+                WHERE t.id = 'root'
+                GROUP BY t.id, t.data;
+          END;
+          $body$ LANGUAGE 'plpgsql';
         HEREDOC
         )
       end
 
       def prepare_statements(conn)
-        conn.prepare('upsert_entry', 'SELECT * FROM upsert_entry($1,$2,$3)')
+        conn.prepare('upsert_entry', 'SELECT * FROM fn_contentful_upsert_entry($1,$2,$3)')
         conn.prepare('select_entry', 'SELECT * FROM contentful_raw WHERE id = $1')
         conn.prepare('select_ids', 'SELECT id FROM contentful_raw')
         conn.prepare('delete_by_id', 'DELETE FROM contentful_raw WHERE id = $1 RETURNING *')
