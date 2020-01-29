@@ -211,6 +211,35 @@ RSpec.describe WCC::Contentful::Middleware::Store do
                                  ])
       end
 
+      it 'counts only entries that matches select?' do
+        entries = [
+          {
+            'sys' => sys,
+            'fields' => {
+              'exclude' => nil
+            }
+          }, {
+            'sys' => sys,
+            'fields' => {
+              'exclude' => { 'en-US' => true }
+            }
+          }, {
+            'sys' => sys,
+            'fields' => {
+              'exclude' => { 'en-US' => false }
+            }
+          }
+        ]
+        expect(next_store).to receive(:find_all)
+          .with(content_type: 'test', filter: { 'test' => 'ok' }, options: nil)
+          .and_return(entries)
+
+        # act
+        found = instance.find_all(content_type: 'test', filter: { 'test' => 'ok' })
+
+        expect(found.count).to eq(2)
+      end
+
       it 'resolves as broken link for linked entry that doesnt match select?' do
         entries = [{
           'sys' => sys,
@@ -279,7 +308,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
           .and_return(query_double)
 
         expect(query_double).to receive(:apply)
-          .with({ 'test' => 'ok' })
+          .with({ 'test' => 'ok' }, any_args)
           .and_return(query_double)
         allow(query_double).to receive(:to_enum)
           .and_return(entries)
@@ -293,6 +322,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
                               entries[0],
                               entries[2]
                             ])
+        expect(found.count).to eq(2)
       end
     end
   end

@@ -44,8 +44,8 @@ module WCC::Contentful::Middleware::Store
   def find_all(options: nil, **args)
     Query.new(
       store.find_all(**args.merge(options: options)),
-      self,
-      options
+      middleware: self,
+      options: options
     )
   end
 
@@ -85,10 +85,22 @@ module WCC::Contentful::Middleware::Store
     entry
   end
 
-  class Query < WCC::Contentful::Store::Query
-    attr_reader :wrapped_query, :middleware, :options
+  class Query
+    delegate :first,
+      :map,
+      :flat_map,
+      :count,
+      :select,
+      :reject,
+      :take,
+      :take_while,
+      :drop,
+      :drop_while,
+      :zip,
+      :to_a,
+      to: :to_enum
 
-    delegate :apply, :apply_operator, to: :wrapped_query
+    attr_reader :wrapped_query, :middleware, :options
 
     def to_enum
       result =
@@ -102,10 +114,41 @@ module WCC::Contentful::Middleware::Store
       result.map { |x| middleware.transform(x) }
     end
 
-    def initialize(wrapped_query, middleware, options)
+    def apply(filter, context = nil)
+      self.class.new(
+        wrapped_query.apply(filter, context),
+        middleware: middleware,
+        options: options,
+        **@extra
+      )
+    end
+
+    def apply_operator(operator, field, expected, context = nil)
+      self.class.new(
+        wrapped_query.apply_operator(operator, field, expected, context),
+        middleware: middleware,
+        options: options,
+        **@extra
+      )
+    end
+
+    WCC::Contentful::Store::Query::OPERATORS.each do |op|
+      # @see #apply_operator
+      define_method(op) do |field, expected, context = nil|
+        self.class.new(
+          wrapped_query.public_send(op, field, expected, context),
+          middleware: middleware,
+          options: options,
+          **@extra
+        )
+      end
+    end
+
+    def initialize(wrapped_query, middleware:, options: nil, **extra)
       @wrapped_query = wrapped_query
       @middleware = middleware
       @options = options
+      @extra = extra
     end
   end
 end
