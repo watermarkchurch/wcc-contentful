@@ -899,26 +899,14 @@ RSpec.shared_examples 'supports include param' do |feature_set|
           .to eq('Link')
       end
 
-      2.upto(5).each do |depth|
+      1.upto(5).each do |depth|
         it "does not call into #find in order to resolve include: #{depth}" do
           skip("supported up to #{feature_set}") if feature_set.is_a?(Integer) && feature_set < depth
 
-          items = [
-            # 0
-            root,
-            # N
-            shallow
-          ]
+          items = [root]
           # 1..N
           1.upto(depth).map do |n|
-            items << deep(n,
-              if n < depth
-                # branch
-                make_link_to("deep#{n + 1}")
-              else
-                # leaf
-                make_link_to('shallow')
-              end)
+            items << deep(n, make_link_to("deep#{n + 1}"))
           end
           items.each { |d| subject.set(d.dig('sys', 'id'), d) }
 

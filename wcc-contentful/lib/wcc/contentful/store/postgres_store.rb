@@ -24,7 +24,14 @@ module WCC::Contentful::Store
 
     def set(key, value)
       ensure_hash value
-      result = @connection_pool.with { |conn| conn.exec_prepared('upsert_entry', [key, value.to_json]) }
+      result =
+        @connection_pool.with do |conn|
+          conn.exec_prepared('upsert_entry', [
+                               key,
+                               value.to_json,
+                               quote_array(extract_links(value))
+                             ])
+        end
       return if result.num_tuples == 0
 
       val = result.getvalue(0, 0)
@@ -87,6 +94,34 @@ module WCC::Contentful::Store
     end
 
     private
+
+    def extract_links(entry)
+      return [] unless fields = entry['fields']
+
+      links =
+        fields.flat_map do |_f, locale_hash|
+          locale_hash.flat_map do |_locale, value|
+            if value.is_a? Array
+              value.map { |val| val.dig('sys', 'id') if link?(val) }
+            elsif link?(value)
+              value.dig('sys', 'id')
+            end
+          end
+        end
+
+      links.compact
+    end
+
+    def link?(value)
+      value.is_a?(Hash) && value.dig('sys', 'type') == 'Link'
+    end
+
+    def quote_array(arr)
+      return unless arr
+
+      encoder = PG::TextEncoder::Array.new
+      encoder.encode(arr)
+    end
 
     def _eq(path, expected, params)
       if path == %w[sys id]
@@ -189,20 +224,23 @@ module WCC::Contentful::Store
         conn.exec(<<~HEREDOC
           CREATE TABLE IF NOT EXISTS contentful_raw (
             id varchar PRIMARY KEY,
-            data jsonb
+            data jsonb,
+            links text[]
           );
+          ALTER TABLE contentful_raw ADD COLUMN IF NOT EXISTS links text[];
           CREATE INDEX IF NOT EXISTS contentful_raw_value_type ON contentful_raw ((data->'sys'->>'type'));
           CREATE INDEX IF NOT EXISTS contentful_raw_value_content_type ON contentful_raw ((data->'sys'->'contentType'->'sys'->>'id'));
 
-          CREATE or replace FUNCTION "upsert_entry"(_id varchar, _data jsonb) RETURNS jsonb AS $$
+          CREATE or replace FUNCTION "upsert_entry"(_id varchar, _data jsonb, _links text[]) RETURNS jsonb AS $$
           DECLARE
             prev jsonb;
           BEGIN
-            SELECT data FROM contentful_raw WHERE id = _id INTO prev;
-            INSERT INTO contentful_raw (id, data) values (_id, _data)
+            SELECT data, links FROM contentful_raw WHERE id = _id INTO prev;
+            INSERT INTO contentful_raw (id, data, links) values (_id, _data, _links)
               ON CONFLICT (id) DO
                 UPDATE
-                SET data = _data;
+                SET data = _data,
+                  links = _links;
             RETURN prev;
           END;
           $$ LANGUAGE 'plpgsql';
@@ -211,7 +249,7 @@ module WCC::Contentful::Store
       end
 
       def prepare_statements(conn)
-        conn.prepare('upsert_entry', 'SELECT * FROM upsert_entry($1,$2)')
+        conn.prepare('upsert_entry', 'SELECT * FROM upsert_entry($1,$2,$3)')
         conn.prepare('select_entry', 'SELECT * FROM contentful_raw WHERE id = $1')
         conn.prepare('select_ids', 'SELECT id FROM contentful_raw')
         conn.prepare('delete_by_id', 'DELETE FROM contentful_raw WHERE id = $1 RETURNING *')
