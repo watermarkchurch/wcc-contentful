@@ -24,7 +24,7 @@ RSpec.describe WCC::Contentful::Store::PostgresStore do
 
   it_behaves_like 'contentful store', {
     nested_queries: true,
-    include_param: true
+    include_param: 1
   }
 
   it 'returns all keys' do

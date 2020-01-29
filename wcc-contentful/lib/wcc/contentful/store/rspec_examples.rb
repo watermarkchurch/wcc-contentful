@@ -800,8 +800,8 @@ RSpec.shared_examples 'supports include param' do |feature_set|
     before { pending('include_param feature not yet implemented') } if feature_set&.to_s == 'pending'
 
     describe '#find_by' do
-      it 'recursively resolves links if include > 0' do
-        root = {
+      let(:root) {
+        {
           'sys' => {
             'id' => 'root',
             'type' => 'Entry',
@@ -816,33 +816,39 @@ RSpec.shared_examples 'supports include param' do |feature_set|
             ] }
           }
         }
-        shallow =
-          1.upto(3).map do |i|
-            {
-              'sys' => {
-                'id' => "shallow#{i}",
-                'type' => 'Entry',
-                'contentType' => make_link_to('shallow', 'ContentType')
-              },
-              'fields' => { 'name' => { 'en-US' => "shallow#{i}" } }
-            }
-          end
-        deep =
-          1.upto(2).map do |i|
-            {
-              'sys' => {
-                'id' => "deep#{i}",
-                'type' => 'Entry',
-                'contentType' => make_link_to('deep', 'ContentType')
-              },
-              'fields' => {
-                'name' => { 'en-US' => "deep#{i}" },
-                'subLink' => { 'en-US' => make_link_to("shallow#{i}") }
-              }
-            }
-          end
+      }
 
-        [root, *shallow, *deep].each { |d| subject.set(d.dig('sys', 'id'), d) }
+      def shallow(i) # rubocop:disable Naming/UncommunicativeMethodParamName
+        {
+          'sys' => {
+            'id' => "shallow#{i}",
+            'type' => 'Entry',
+            'contentType' => make_link_to('shallow', 'ContentType')
+          },
+          'fields' => { 'name' => { 'en-US' => "shallow#{i}" } }
+        }
+      end
+
+      def deep(i) # rubocop:disable Naming/UncommunicativeMethodParamName
+        {
+          'sys' => {
+            'id' => "deep#{i}",
+            'type' => 'Entry',
+            'contentType' => make_link_to('deep', 'ContentType')
+          },
+          'fields' => {
+            'name' => { 'en-US' => "deep#{i}" },
+            'subLink' => { 'en-US' => make_link_to("shallow#{i}") }
+          }
+        }
+      end
+
+      it 'recursively resolves links if include > 0' do
+        [
+          root,
+          *1.upto(3).map { |i| shallow(i) },
+          *1.upto(2).map { |i| deep(i) }
+        ].each { |d| subject.set(d.dig('sys', 'id'), d) }
 
         # act
         found = subject.find_by(content_type: 'root', filter: { name: 'root' }, options: {
@@ -866,25 +872,12 @@ RSpec.shared_examples 'supports include param' do |feature_set|
       end
 
       it 'stops resolving links at include depth' do
-        root = {
-          'sys' => {
-            'id' => 'root',
-            'contentType' => { 'sys' => { 'id' => 'root' } }
-          },
-          'fields' => {
-            'name' => { 'en-US' => 'root' },
-            'link' => { 'en-US' => make_link_to('deep1') },
-            'links' => { 'en-US' => [
-              make_link_to('shallow3'),
-              make_link_to('deep2')
-            ] }
-          }
-        }
         shallow =
           1.upto(3).map do |i|
             {
               'sys' => {
                 'id' => "shallow#{i}",
+                'type' => 'Entry',
                 'contentType' => make_link_to('shallow', 'ContentType')
               },
               'fields' => { 'name' => { 'en-US' => "shallow#{i}" } }
@@ -895,6 +888,7 @@ RSpec.shared_examples 'supports include param' do |feature_set|
             {
               'sys' => {
                 'id' => "deep#{i}",
+                'type' => 'Entry',
                 'contentType' => make_link_to('deep', 'ContentType')
               },
               'fields' => {
@@ -925,6 +919,14 @@ RSpec.shared_examples 'supports include param' do |feature_set|
           .to eq('Link')
         expect(links[1].dig('fields', 'subLink', 'en-US', 'sys', 'type'))
           .to eq('Link')
+      end
+
+      1.upto(5).each do |depth|
+        it "does not call into #find in order to resolve include: #{depth}" do
+          skip("supported up to #{feature_set}") if feature_set.is_a?(Integer) && feature_set < depth
+
+          raise 'Uh oh!'
+        end
       end
     end
   end
