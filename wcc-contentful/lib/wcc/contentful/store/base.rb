@@ -102,7 +102,6 @@ module WCC::Contentful::Store
     # @param [Hash] options An optional set of additional parameters to the query
     #  defining for example include depth.  Not all store implementations respect all options.
     # @return [Query] A query object that exposes methods to apply filters
-    # rubocop:disable Lint/UnusedMethodArgument
     def find_all(content_type:, options: nil)
       Query.new(
         self,
@@ -110,7 +109,6 @@ module WCC::Contentful::Store
         options: options
       )
     end
-    # rubocop:enable Lint/UnusedMethodArgument
 
     def initialize
       @mutex = Concurrent::ReentrantReadWriteLock.new
