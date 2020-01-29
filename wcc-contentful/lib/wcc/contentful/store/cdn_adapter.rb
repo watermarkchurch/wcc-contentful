@@ -44,15 +44,18 @@ module WCC::Contentful::Store
 
     def find_all(content_type:, options: nil)
       Query.new(
-        store: self,
+        self,
         client: @client,
         relation: { content_type: content_type },
         options: options
       )
     end
 
-    class Query < WCC::Contentful::Store::Query
+    class Query
+      include Enumerable
+
       delegate :count, to: :response
+      delegate :each, to: :to_enum
 
       def to_enum
         return response.items unless @options[:include]
@@ -60,15 +63,30 @@ module WCC::Contentful::Store
         response.items.map { |e| resolve_includes(e, @options[:include]) }
       end
 
-      def initialize(store:, client:, relation:, options: nil, **extra)
+      def initialize(store, client:, relation:, options: nil, **extra)
         raise ArgumentError, 'Client cannot be nil' unless client.present?
         raise ArgumentError, 'content_type must be provided' unless relation[:content_type].present?
 
-        super(store)
+        @store = store
         @client = client
         @relation = relation
         @options = options || {}
         @extra = extra || {}
+      end
+
+      # Called with a filter object by {Base#find_by} in order to apply the filter.
+      def apply(filter, context = nil)
+        filter.reduce(self) do |query, (field, value)|
+          if value.is_a?(Hash)
+            if op?(k = value.keys.first)
+              query.apply_operator(k.to_sym, field.to_s, value[k], context)
+            else
+              query.nested_conditions(field, value, context)
+            end
+          else
+            query.apply_operator(:eq, field.to_s, value)
+          end
+        end
       end
 
       def apply_operator(operator, field, expected, context = nil)
@@ -76,7 +94,7 @@ module WCC::Contentful::Store
         param = parameter(field, operator: op, context: context, locale: true)
 
         self.class.new(
-          store: @store,
+          @store,
           client: @client,
           relation: @relation.merge(param => expected),
           options: @options,
@@ -100,6 +118,18 @@ module WCC::Contentful::Store
 
       private
 
+      def op?(key)
+        WCC::Contentful::Store::Query::OPERATORS.include?(key.to_sym)
+      end
+
+      def sys?(field)
+        field.to_s =~ /sys\./
+      end
+
+      def id?(field)
+        field.to_sym == :id
+      end
+
       def response
         @response ||=
           if @relation[:content_type] == 'Asset'
@@ -109,6 +139,14 @@ module WCC::Contentful::Store
           else
             @client.entries({ locale: '*' }.merge!(@relation).merge!(@options))
           end
+      end
+
+      def resolve_includes(entry, depth)
+        return entry unless entry && depth && depth > 0
+
+        WCC::Contentful::LinkVisitor.new(entry, :Link, :Asset, depth: depth).map! do |val|
+          resolve_link(val)
+        end
       end
 
       def resolve_link(val)
