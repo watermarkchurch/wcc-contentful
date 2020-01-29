@@ -43,17 +43,10 @@ module WCC::Contentful::Store
         end
       end
 
-      q = build_query(
-        content_type: content_type,
-        options: { limit: 1 }.merge!(options || {})
-      )
-      q = q.apply(filter) if filter
-      q.first
+      @cdn.find_by(content_type: content_type, filter: filter, options: options)
     end
 
-    def find_all(content_type:, options: nil)
-      build_query(content_type: content_type, options: options&.dup)
-    end
+    delegate :find_all, to: :@cdn
 
     # #index is called whenever the sync API comes back with more data.
     def index(json)
@@ -98,25 +91,6 @@ module WCC::Contentful::Store
 
     private
 
-    def build_query(content_type:, options: nil)
-      if options&.delete(:cache_response)
-        Query.new(
-          store: self,
-          client: @client,
-          relation: { content_type: content_type },
-          cache: @cache,
-          options: options
-        )
-      else
-        CDNAdapter::Query.new(
-          store: self,
-          client: @client,
-          relation: { content_type: content_type },
-          options: options
-        )
-      end
-    end
-
     def nil_obj(id)
       {
         'sys' => {
@@ -129,64 +103,6 @@ module WCC::Contentful::Store
 
     def ensure_hash(val)
       raise ArgumentError, 'Value must be a Hash' unless val.is_a?(Hash)
-    end
-
-    class Query < CDNAdapter::Query
-      def initialize(cache:, **extra)
-        super(cache: cache, **extra)
-        @cache = cache
-      end
-
-      private
-
-      def response
-        # Disabling because the superclass already took `@response`
-        # rubocop:disable Naming/MemoizedInstanceVariableName
-        @wrapped_response ||= ResponseWrapper.new(super, @cache)
-        # rubocop:enable Naming/MemoizedInstanceVariableName
-      end
-
-      ResponseWrapper =
-        Struct.new(:response, :cache) do
-          delegate :count, to: :response
-
-          def items
-            @items ||=
-              response.items.map do |item|
-                id = item.dig('sys', 'id')
-                prev = cache.read(id)
-                unless (prev_rev = prev&.dig('sys', 'revision')) &&
-                    (next_rev = item.dig('sys', 'revision')) &&
-                    next_rev < prev_rev
-
-                  cache.write(id, item)
-                end
-
-                item
-              end
-          end
-
-          def includes
-            @includes ||= IncludesWrapper.new(response, cache)
-          end
-        end
-
-      IncludesWrapper =
-        Struct.new(:response, :cache) do
-          def [](id)
-            return unless item = response.includes[id]
-
-            prev = cache.read(id)
-            unless (prev_rev = prev&.dig('sys', 'revision')) &&
-                (next_rev = item.dig('sys', 'revision')) &&
-                next_rev < prev_rev
-
-              cache.write(id, item)
-            end
-
-            item
-          end
-        end
     end
   end
 end
