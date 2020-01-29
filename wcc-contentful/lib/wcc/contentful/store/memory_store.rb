@@ -3,6 +3,9 @@
 require_relative 'instrumentation'
 
 module WCC::Contentful::Store
+  # The MemoryStore is the most naiive store implementation and a good reference
+  # point for more useful implementations.  It only implements equality queries
+  # and does not support querying through an association.
   class MemoryStore < Base
     include WCC::Contentful::Store::Instrumentation
 
@@ -40,8 +43,10 @@ module WCC::Contentful::Store
     def execute(query)
       relation = mutex.with_read_lock { @hash.values }
 
+      # relation is an enumerable that we apply conditions to in the form of
+      #  Enumerable#select and Enumerable#reject.
       relation =
-        relation.reject do |v|
+        relation.lazy.reject do |v|
           value_content_type = v.try(:dig, 'sys', 'contentType', 'sys', 'id')
           if query.content_type == 'Asset'
             !value_content_type.nil?
@@ -50,23 +55,24 @@ module WCC::Contentful::Store
           end
         end
 
+      # For each condition, we apply a new Enumerable#select with a block that
+      # enforces the condition.
       query.conditions.reduce(relation) do |memo, condition|
         memo.select do |entry|
+          # Our naiive implementation only supports equality operator
+          raise ArgumentError, "Operator #{condition.op} not supported" unless condition.op == :eq
+
+          # The condition's path tells us where to find the value in the JSON object
           val = entry.dig(*condition.path)
 
+          # For arrays, equality is defined as does the array include the expected value.
+          # See https://www.contentful.com/developers/docs/references/content-delivery-api/#/reference/search-parameters/array-equality-inequality
           if val.is_a? Array
             val.include?(condition.expected)
           else
             val == condition.expected
           end
         end
-      end
-    end
-
-    class Query < WCC::Contentful::Store::Query
-      # we don't support these
-      WCC::Contentful::Store::Query::OPERATORS.each do |op|
-        undef_method op unless op == :eq
       end
     end
   end

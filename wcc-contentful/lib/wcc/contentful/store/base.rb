@@ -4,10 +4,14 @@
 module WCC::Contentful::Store
   # This is the base class for stores which implement #index, and therefore
   # must be kept up-to-date via the Sync API.
-  # @abstract At a minimum subclasses should override {#find}, {#find_all}, {#set},
+  # @abstract At a minimum subclasses should override {#find}, {#execute}, {#set},
   #   and #{delete}. As an alternative to overriding set and delete, the subclass
   #   can override {#index}.  Index is called when a webhook triggers a sync, to
   #   update the store.
+  #
+  # To implement a new store, you should include the rspec_examples in your rspec
+  # tests for the store.  See spec/wcc/contentful/store/memory_store_spec.rb for
+  # an example.
   class Base
     # Finds an entry by it's ID.  The returned entry is a JSON hash
     # @abstract Subclasses should implement this at a minimum to provide data
@@ -28,7 +32,18 @@ module WCC::Contentful::Store
       raise NotImplementedError, "#{self.class} does not implement #delete"
     end
 
-    # Returns true if this store can index values coming back from the sync API.
+    # Executes a WCC::Contentful::Store::Query object created by {#find_all} or
+    # {#find_by}.  Implementations should override this to translate the query's
+    # conditions into a query against the datastore.
+    #
+    # For a very naiive implementation see WCC::Contentful::Store::MemoryStore#execute
+    # @abstract
+    def execute(_query)
+      raise NotImplementedError, "#{self.class} does not implement #execute"
+    end
+
+    # Returns true if this store can persist entries and assets which are
+    # retrieved from the sync API.
     def index?
       true
     end

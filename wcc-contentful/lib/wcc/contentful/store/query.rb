@@ -3,9 +3,9 @@
 require_relative '../../contentful'
 
 module WCC::Contentful::Store
-  # The base class for query objects returned by find_all.  Subclasses should
-  # override the #result method to return an array-like containing the query
-  # results.
+  # The default query object returned by Stores that extend WCC::Contentful::Store::Base.
+  # It exposes several chainable query methods to apply query filters.
+  # Enumerating the query executes it, caching the result.
   class Query
     delegate :first,
       :map,
@@ -36,8 +36,8 @@ module WCC::Contentful::Store
       match
     ].freeze
 
-    # Subclasses can override this in order to fetch the results
-    #   of the query.
+    # Executes the query against the store and memoizes the resulting enumerable.
+    #  Subclasses can override this to provide a more efficient implementation.
     def to_enum
       @to_enum ||=
         begin
@@ -62,9 +62,21 @@ module WCC::Contentful::Store
       @extra = extra
     end
 
-    # @abstract Subclasses can either override this method to properly respond
-    #   to find_by query objects, or they can define a method for each supported
-    #   operator.  Ex. `#eq`, `#ne`, `#gt`.
+    # Returns a new chained Query that has a new condition.  The new condition
+    # represents the WHERE comparison being applied here.  The underlying store
+    # implementation translates this condition statement into an appropriate
+    # query against the datastore.
+    #
+    # @example
+    #  query = query.apply_operator(:gt, :timestamp, '2019-01-01', context)
+    #  # in a SQL based store, the query now contains a condition like:
+    #  #  WHERE table.'timestamp' > '2019-01-01'
+    #
+    # @operator one of WCC::Contentful::Store::Query::OPERATORS
+    # @field The path through the fields of the content type that we are querying against.
+    #          Can be an array, symbol, or dotted-notation path specification.
+    # @expected The expected value to compare the field's value against.
+    # @context A context object optionally containing `context[:locale]`
     def apply_operator(operator, field, expected, context = nil)
       raise ArgumentError, "Operator #{operator} not supported" unless respond_to?(operator)
 
@@ -79,12 +91,16 @@ module WCC::Contentful::Store
     end
 
     WCC::Contentful::Store::Query::OPERATORS.each do |op|
+      # @see #apply_operator
       define_method(op) do |field, expected, context = nil|
         apply_operator(op, field, expected, context)
       end
     end
 
     # Called with a filter object by {Base#find_by} in order to apply the filter.
+    # The filter in this case is a hash where the keys are paths and the values
+    # are expectations.
+    # @see #apply_operator
     def apply(filter, context = nil)
       self.class.flatten_filter_hash(filter).reduce(self) do |query, cond|
         query.apply_operator(cond[:op], cond[:path], cond[:expected], context)

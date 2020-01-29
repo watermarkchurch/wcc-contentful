@@ -7,6 +7,8 @@ require 'connection_pool'
 require_relative 'instrumentation'
 
 module WCC::Contentful::Store
+  # Implements the store interface where all Contentful entries are stored in a
+  # JSONB table.
   class PostgresStore < Base
     include WCC::Contentful::Store::Instrumentation
 
