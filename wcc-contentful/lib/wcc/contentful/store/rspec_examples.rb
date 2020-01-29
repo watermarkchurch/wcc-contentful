@@ -818,27 +818,27 @@ RSpec.shared_examples 'supports include param' do |feature_set|
         }
       }
 
-      def shallow(i) # rubocop:disable Naming/UncommunicativeMethodParamName
+      def shallow(id = nil) # rubocop:disable Naming/UncommunicativeMethodParamName
         {
           'sys' => {
-            'id' => "shallow#{i}",
+            'id' => "shallow#{id}",
             'type' => 'Entry',
             'contentType' => make_link_to('shallow', 'ContentType')
           },
-          'fields' => { 'name' => { 'en-US' => "shallow#{i}" } }
+          'fields' => { 'name' => { 'en-US' => "shallow#{id}" } }
         }
       end
 
-      def deep(i) # rubocop:disable Naming/UncommunicativeMethodParamName
+      def deep(id, link = nil) # rubocop:disable Naming/UncommunicativeMethodParamName
         {
           'sys' => {
-            'id' => "deep#{i}",
+            'id' => "deep#{id}",
             'type' => 'Entry',
             'contentType' => make_link_to('deep', 'ContentType')
           },
           'fields' => {
-            'name' => { 'en-US' => "deep#{i}" },
-            'subLink' => { 'en-US' => make_link_to("shallow#{i}") }
+            'name' => { 'en-US' => "deep#{id}" },
+            'subLink' => { 'en-US' => link || make_link_to("shallow#{id}") }
           }
         }
       end
@@ -872,33 +872,11 @@ RSpec.shared_examples 'supports include param' do |feature_set|
       end
 
       it 'stops resolving links at include depth' do
-        shallow =
-          1.upto(3).map do |i|
-            {
-              'sys' => {
-                'id' => "shallow#{i}",
-                'type' => 'Entry',
-                'contentType' => make_link_to('shallow', 'ContentType')
-              },
-              'fields' => { 'name' => { 'en-US' => "shallow#{i}" } }
-            }
-          end
-        deep =
-          1.upto(2).map do |i|
-            {
-              'sys' => {
-                'id' => "deep#{i}",
-                'type' => 'Entry',
-                'contentType' => make_link_to('deep', 'ContentType')
-              },
-              'fields' => {
-                'name' => { 'en-US' => "deep#{i}" },
-                'subLink' => { 'en-US' => make_link_to("shallow#{i}") }
-              }
-            }
-          end
-
-        [root, *shallow, *deep].each { |d| subject.set(d.dig('sys', 'id'), d) }
+        [
+          root,
+          *1.upto(3).map { |i| shallow(i) },
+          *1.upto(2).map { |i| deep(i) }
+        ].each { |d| subject.set(d.dig('sys', 'id'), d) }
 
         # act
         found = subject.find_by(content_type: 'root', filter: { name: 'root' }, options: {
@@ -921,11 +899,43 @@ RSpec.shared_examples 'supports include param' do |feature_set|
           .to eq('Link')
       end
 
-      1.upto(5).each do |depth|
+      2.upto(5).each do |depth|
         it "does not call into #find in order to resolve include: #{depth}" do
           skip("supported up to #{feature_set}") if feature_set.is_a?(Integer) && feature_set < depth
 
-          raise 'Uh oh!'
+          items = [
+            # 0
+            root,
+            # N
+            shallow
+          ]
+          # 1..N
+          1.upto(depth).map do |n|
+            items << deep(n,
+              if n < depth
+                # branch
+                make_link_to("deep#{n + 1}")
+              else
+                # leaf
+                make_link_to('shallow')
+              end)
+          end
+          items.each { |d| subject.set(d.dig('sys', 'id'), d) }
+
+          # Expect
+          expect(subject).to_not receive(:find)
+
+          # act
+          found = subject.find_by(content_type: 'root', filter: { name: 'root' }, options: {
+            include: depth
+          })
+
+          link = found.dig('fields', 'link', 'en-US')
+          1.upto(depth).each do |_n|
+            expect(link.dig('sys', 'type')).to eq('Entry')
+            link = link.dig('fields', 'subLink', 'en-US')
+          end
+          expect(link.dig('sys', 'type')).to eq('Link')
         end
       end
     end
