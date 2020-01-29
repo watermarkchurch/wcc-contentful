@@ -119,7 +119,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     menu_items = WCC::Contentful::Model::MenuButton.find_all
 
     # assert
-    expect(menu_items.length).to eq(11)
+    expect(menu_items.count).to eq(11)
     expect(menu_items.map(&:id).sort).to eq(
       %w[
         1EjBdAgOOgAQKAggQoY2as
@@ -151,7 +151,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     menu_items = WCC::Contentful::Model::MenuButton.find_all(button_style: 'custom')
 
     # assert
-    expect(menu_items.length).to eq(2)
+    expect(menu_items.count).to eq(2)
     expect(menu_items.map(&:id).sort).to eq(
       %w[3bZRv5ISCkui6kguIwM2U0 4tMhra8IAwcEoKS6QSQYcc]
     )
