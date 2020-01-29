@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'wcc/contentful/store/postgres_store'
+require 'wcc/contentful/store/rspec_examples'
 require 'concurrency_helper'
 
 RSpec.describe WCC::Contentful::Store::PostgresStore do
@@ -21,7 +22,10 @@ RSpec.describe WCC::Contentful::Store::PostgresStore do
     end
   end
 
-  it_behaves_like 'contentful store'
+  it_behaves_like 'contentful store', {
+    nested_queries: true,
+    include_param: true
+  }
 
   it 'returns all keys' do
     data = { 'key' => 'val', '1' => { 'deep' => 9 } }

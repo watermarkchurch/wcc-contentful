@@ -1,20 +1,21 @@
 # frozen_string_literal: true
 
+require_relative './interface'
+
 # @api Store
 module WCC::Contentful::Store
   # This is the base class for stores which implement #index, and therefore
   # must be kept up-to-date via the Sync API.
-  # @abstract At a minimum subclasses should override {#find}, {#find_all}, {#set},
+  # @abstract At a minimum subclasses should override {#find}, {#execute}, {#set},
   #   and #{delete}. As an alternative to overriding set and delete, the subclass
   #   can override {#index}.  Index is called when a webhook triggers a sync, to
   #   update the store.
+  #
+  # To implement a new store, you should include the rspec_examples in your rspec
+  # tests for the store.  See spec/wcc/contentful/store/memory_store_spec.rb for
+  # an example.
   class Base
-    # Finds an entry by it's ID.  The returned entry is a JSON hash
-    # @abstract Subclasses should implement this at a minimum to provide data
-    #   to the WCC::Contentful::Model API.
-    def find(_id)
-      raise NotImplementedError, "#{self.class} does not implement #find"
-    end
+    include WCC::Contentful::Store::Interface
 
     # Sets the value of the entry with the given ID in the store.
     # @abstract
@@ -28,7 +29,18 @@ module WCC::Contentful::Store
       raise NotImplementedError, "#{self.class} does not implement #delete"
     end
 
-    # Returns true if this store can index values coming back from the sync API.
+    # Executes a WCC::Contentful::Store::Query object created by {#find_all} or
+    # {#find_by}.  Implementations should override this to translate the query's
+    # conditions into a query against the datastore.
+    #
+    # For a very naiive implementation see WCC::Contentful::Store::MemoryStore#execute
+    # @abstract
+    def execute(_query)
+      raise NotImplementedError, "#{self.class} does not implement #execute"
+    end
+
+    # Returns true if this store can persist entries and assets which are
+    # retrieved from the sync API.
     def index?
       true
     end
@@ -81,17 +93,19 @@ module WCC::Contentful::Store
 
     # Finds all entries of the given content type.  A content type is required.
     #
-    # @abstract Subclasses should implement this at a minimum to provide data
-    #   to the {WCC::Contentful::Model} API.
+    # Subclasses may override this to provide their own query implementation,
+    #  or else override #execute to run the query after it has been parsed.
     # @param [String] content_type The ID of the content type to search for.
     # @param [Hash] options An optional set of additional parameters to the query
     #  defining for example include depth.  Not all store implementations respect all options.
     # @return [Query] A query object that exposes methods to apply filters
-    # rubocop:disable Lint/UnusedMethodArgument
     def find_all(content_type:, options: nil)
-      raise NotImplementedError, "#{self.class} does not implement find_all"
+      Query.new(
+        self,
+        content_type: content_type,
+        options: options
+      )
     end
-    # rubocop:enable Lint/UnusedMethodArgument
 
     def initialize
       @mutex = Concurrent::ReentrantReadWriteLock.new
@@ -104,111 +118,7 @@ module WCC::Contentful::Store
     protected
 
     attr_reader :mutex
-
-    # The base class for query objects returned by find_all.  Subclasses should
-    # override the #result method to return an array-like containing the query
-    # results.
-    class Query
-      delegate :first,
-        :map,
-        :flat_map,
-        :count,
-        :select,
-        :reject,
-        :take,
-        :take_while,
-        :drop,
-        :drop_while,
-        :zip,
-        :to_a,
-        to: :to_enum
-
-      OPERATORS = %i[
-        eq
-        ne
-        all
-        in
-        nin
-        exists
-        lt
-        lte
-        gt
-        gte
-        query
-        match
-      ].freeze
-
-      # @abstract Subclasses should provide this in order to fetch the results
-      #   of the query.
-      def to_enum
-        raise NotImplementedError
-      end
-
-      def initialize(store)
-        @store = store
-      end
-
-      # @abstract Subclasses can either override this method to properly respond
-      #   to find_by query objects, or they can define a method for each supported
-      #   operator.  Ex. `#eq`, `#ne`, `#gt`.
-      def apply_operator(operator, field, expected, context = nil)
-        respond_to?(operator) ||
-          raise(ArgumentError, "Operator not implemented: #{operator}")
-
-        public_send(operator, field, expected, context)
-      end
-
-      # Called with a filter object by {Base#find_by} in order to apply the filter.
-      def apply(filter, context = nil)
-        filter.reduce(self) do |query, (field, value)|
-          if value.is_a?(Hash)
-            if op?(k = value.keys.first)
-              query.apply_operator(k.to_sym, field.to_s, value[k], context)
-            else
-              query.nested_conditions(field, value, context)
-            end
-          else
-            query.apply_operator(:eq, field.to_s, value)
-          end
-        end
-      end
-
-      protected
-
-      # naive implementation recursively descends the graph to turns links into
-      # the actual entry data.  This calls {Base#find} for each link and so it is
-      # very inefficient.
-      #
-      # @abstract Override this to provide a more efficient implementation for
-      #   a given store.
-      def resolve_includes(entry, depth)
-        return entry unless entry && depth && depth > 0
-
-        WCC::Contentful::LinkVisitor.new(entry, :Link, :Asset, depth: depth).map! do |val|
-          resolve_link(val)
-        end
-      end
-
-      def resolve_link(val)
-        return val unless val.is_a?(Hash) && val.dig('sys', 'type') == 'Link'
-        return val unless included = @store.find(val.dig('sys', 'id'))
-
-        included
-      end
-
-      private
-
-      def op?(key)
-        OPERATORS.include?(key.to_sym)
-      end
-
-      def sys?(field)
-        field.to_s =~ /sys\./
-      end
-
-      def id?(field)
-        field.to_sym == :id
-      end
-    end
   end
 end
+
+require_relative './query'

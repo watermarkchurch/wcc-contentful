@@ -35,6 +35,12 @@ module WCC::Contentful
     attr_reader :configuration
 
     attr_reader :types
+
+    # Gets all queryable locales.
+    # Reserved for future use.
+    def locales
+      @locales ||= { 'en-US' => {} }.freeze
+    end
   end
 
   # Configures the WCC::Contentful gem to talk to a Contentful space.

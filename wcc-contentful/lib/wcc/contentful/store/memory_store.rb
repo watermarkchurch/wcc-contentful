@@ -3,6 +3,9 @@
 require_relative 'instrumentation'
 
 module WCC::Contentful::Store
+  # The MemoryStore is the most naiive store implementation and a good reference
+  # point for more useful implementations.  It only implements equality queries
+  # and does not support querying through an association.
   class MemoryStore < Base
     include WCC::Contentful::Store::Instrumentation
 
@@ -37,41 +40,39 @@ module WCC::Contentful::Store
       end
     end
 
-    def find_all(content_type:, options: nil)
+    def execute(query)
       relation = mutex.with_read_lock { @hash.values }
 
+      # relation is an enumerable that we apply conditions to in the form of
+      #  Enumerable#select and Enumerable#reject.
       relation =
-        relation.reject do |v|
+        relation.lazy.reject do |v|
           value_content_type = v.try(:dig, 'sys', 'contentType', 'sys', 'id')
-          value_content_type.nil? || value_content_type != content_type
-        end
-      Query.new(self, relation, options)
-    end
-
-    class Query < Base::Query
-      def to_enum
-        return @relation.dup unless @options[:include]
-
-        @relation.map { |e| resolve_includes(e, @options[:include]) }
-      end
-
-      def initialize(store, relation, options = nil)
-        super(store)
-        @relation = relation
-        @options = options || {}
-      end
-
-      def eq(field, expected, context = nil)
-        locale = context[:locale] if context.present?
-        locale ||= 'en-US'
-        Query.new(@store, @relation.select do |v|
-          val = v.dig('fields', field, locale)
-          if val.is_a? Array
-            val.include?(expected)
+          if query.content_type == 'Asset'
+            !value_content_type.nil?
           else
-            val == expected
+            value_content_type != query.content_type
           end
-        end, @options)
+        end
+
+      # For each condition, we apply a new Enumerable#select with a block that
+      # enforces the condition.
+      query.conditions.reduce(relation) do |memo, condition|
+        memo.select do |entry|
+          # Our naiive implementation only supports equality operator
+          raise ArgumentError, "Operator #{condition.op} not supported" unless condition.op == :eq
+
+          # The condition's path tells us where to find the value in the JSON object
+          val = entry.dig(*condition.path)
+
+          # For arrays, equality is defined as does the array include the expected value.
+          # See https://www.contentful.com/developers/docs/references/content-delivery-api/#/reference/search-parameters/array-equality-inequality
+          if val.is_a? Array
+            val.include?(condition.expected)
+          else
+            val == condition.expected
+          end
+        end
       end
     end
   end

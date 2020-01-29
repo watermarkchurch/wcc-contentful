@@ -7,6 +7,8 @@ require 'connection_pool'
 require_relative 'instrumentation'
 
 module WCC::Contentful::Store
+  # Implements the store interface where all Contentful entries are stored in a
+  # JSONB table.
   class PostgresStore < Base
     include WCC::Contentful::Store::Instrumentation
 
@@ -54,131 +56,167 @@ module WCC::Contentful::Store
       nil
     end
 
-    def find_all(content_type:, options: nil)
-      statement = "WHERE data->'sys'->'contentType'->'sys'->>'id' = $1"
-      Query.new(
-        self,
-        @connection_pool,
-        statement,
-        [content_type],
-        options
+    def execute(query)
+      statement =
+        if query.content_type == 'Asset'
+          "WHERE t.data->'sys'->>'type' = $1"
+        else
+          "WHERE t.data->'sys'->'contentType'->'sys'->>'id' = $1"
+        end
+      params = [query.content_type]
+      joins = []
+
+      statement =
+        query.conditions.reduce(statement) do |memo, condition|
+          raise ArgumentError, "Operator #{condition.op} not supported" unless condition.op == :eq
+
+          if condition.path_tuples.length == 1
+            memo + _eq(condition.path, condition.expected, params)
+          else
+            join_path, expectation_path = condition.path_tuples
+            memo + _join(join_path, expectation_path, condition.expected, params, joins)
+          end
+        end
+
+      QueryResults.new(
+        connection_pool: @connection_pool,
+        statement: statement,
+        params: params,
+        joins: joins
       )
     end
 
-    class Query < Base::Query
-      def initialize(store, connection_pool, statement = nil, params = nil, options = nil)
-        super(store)
-        @connection_pool = connection_pool
-        @statement = statement ||
-          "WHERE data->'sys'->>'id' IS NOT NULL"
-        @params = params || []
-        @options = options || {}
+    private
+
+    def _eq(path, expected, params)
+      if path == %w[sys id]
+        " AND t.id = $#{push_param(expected, params)}"
+      else
+        " AND t.data->#{quote_parameter_path(path)}" \
+          " ? $#{push_param(expected, params)}::text"
       end
+    end
 
-      def eq(field, expected, context = nil)
-        locale = context[:locale] if context.present?
-        locale ||= 'en-US'
+    def push_param(param, params)
+      params << param
+      params.length
+    end
 
-        params = @params.dup
+    def quote_parameter_path(path)
+      path.map { |p| "'#{p}'" }.join('->')
+    end
 
-        statement = @statement + " AND data->'fields'->$#{push_param(field, params)}" \
-          "->$#{push_param(locale, params)} ? $#{push_param(expected, params)}"
+    def _join(join_path, expectation_path, expected, params, joins)
+      join_table_alias = push_join(join_path, joins)
+      " AND #{join_table_alias}.data->#{quote_parameter_path(expectation_path)}" \
+        " ? $#{push_param(expected, params)}::text"
+    end
 
-        Query.new(
-          @store,
-          @connection_pool,
-          statement,
-          params,
-          @options
+    def push_join(path, joins)
+      table_alias = "s#{joins.length}"
+      joins << "JOIN contentful_raw AS #{table_alias} ON " \
+        "t.data->#{quote_parameter_path(path)}" \
+          "->'sys'->>'id'=#{table_alias}.id"
+      table_alias
+    end
+
+    class QueryResults
+      include Enumerable
+
+      # rubocop:disable Metrics/ParameterLists
+      def initialize(
+        connection_pool:,
+        statement:,
+        params:,
+        joins:
         )
+        @connection_pool = connection_pool
+        @statement = statement
+        @params = params
+        @joins = joins
       end
+      # rubocop:enable Metrics/ParameterLists
 
       def count
         return @count if @count
 
-        statement = 'SELECT count(*) FROM contentful_raw ' + @statement
-        result = @connection_pool.with { |conn| conn.exec(statement, @params) }
+        statement = finalize_statement('SELECT count(*)')
+        result = run_statement(statement)
         @count = result.getvalue(0, 0).to_i
       end
 
       def first
         return @first if @first
 
-        statement = 'SELECT * FROM contentful_raw ' + @statement + ' LIMIT 1'
-        result = @connection_pool.with { |conn| conn.exec(statement, @params) }
+        statement = finalize_statement('SELECT t.*', ' LIMIT 1')
+        result = run_statement(statement)
         return if result.num_tuples == 0
 
-        resolve_includes(
-          JSON.parse(result.getvalue(0, 1)),
-          @options[:include]
-        )
+        JSON.parse(result.getvalue(0, 1))
       end
 
-      def to_enum
-        arr = []
+      def each
         resolve.each do |row|
-          arr <<
-            resolve_includes(
-              JSON.parse(row['data']),
-              @options[:include]
-            )
+          yield JSON.parse(row['data'])
         end
-        arr
       end
-
-      # TODO: override resolve_includes to make it more efficient
 
       private
 
       def resolve
         return @resolved if @resolved
 
-        statement = 'SELECT * FROM contentful_raw ' + @statement
-        @resolved = @connection_pool.with { |conn| conn.exec(statement, @params) }
+        statement = finalize_statement('SELECT t.*')
+        @resolved = run_statement(statement)
       rescue PG::ConnectionBad
         []
       end
 
-      def push_param(param, params)
-        params << param
-        params.length
+      def finalize_statement(select_statement, limit_statement = nil)
+        select_statement + " FROM contentful_raw AS t \n" +
+          @joins.join("\n") + "\n" +
+          @statement +
+          (limit_statement || '')
+      end
+
+      def run_statement(statement)
+        @connection_pool.with { |conn| conn.exec(statement, @params) }
       end
     end
 
-    def self.ensure_schema(conn)
-      conn.exec(<<~HEREDOC
-        CREATE TABLE IF NOT EXISTS contentful_raw (
-          id varchar PRIMARY KEY,
-          data jsonb
-        );
-        CREATE INDEX IF NOT EXISTS contentful_raw_value_type ON contentful_raw ((data->'sys'->>'type'));
-        CREATE INDEX IF NOT EXISTS contentful_raw_value_content_type ON contentful_raw ((data->'sys'->'contentType'->'sys'->>'id'));
+    class << self
+      def ensure_schema(conn)
+        conn.exec(<<~HEREDOC
+          CREATE TABLE IF NOT EXISTS contentful_raw (
+            id varchar PRIMARY KEY,
+            data jsonb
+          );
+          CREATE INDEX IF NOT EXISTS contentful_raw_value_type ON contentful_raw ((data->'sys'->>'type'));
+          CREATE INDEX IF NOT EXISTS contentful_raw_value_content_type ON contentful_raw ((data->'sys'->'contentType'->'sys'->>'id'));
 
-        DROP FUNCTION IF EXISTS "upsert_entry"(_id varchar, _data jsonb);
-        CREATE FUNCTION "upsert_entry"(_id varchar, _data jsonb) RETURNS jsonb AS $$
-        DECLARE
-          prev jsonb;
-        BEGIN
-          SELECT data FROM contentful_raw WHERE id = _id INTO prev;
-          INSERT INTO contentful_raw (id, data) values (_id, _data)
-            ON CONFLICT (id) DO
-              UPDATE
-              SET data = _data;
-           RETURN prev;
-        END;
-        $$ LANGUAGE 'plpgsql';
-      HEREDOC
-      )
+          CREATE or replace FUNCTION "upsert_entry"(_id varchar, _data jsonb) RETURNS jsonb AS $$
+          DECLARE
+            prev jsonb;
+          BEGIN
+            SELECT data FROM contentful_raw WHERE id = _id INTO prev;
+            INSERT INTO contentful_raw (id, data) values (_id, _data)
+              ON CONFLICT (id) DO
+                UPDATE
+                SET data = _data;
+            RETURN prev;
+          END;
+          $$ LANGUAGE 'plpgsql';
+        HEREDOC
+        )
+      end
+
+      def prepare_statements(conn)
+        conn.prepare('upsert_entry', 'SELECT * FROM upsert_entry($1,$2)')
+        conn.prepare('select_entry', 'SELECT * FROM contentful_raw WHERE id = $1')
+        conn.prepare('select_ids', 'SELECT id FROM contentful_raw')
+        conn.prepare('delete_by_id', 'DELETE FROM contentful_raw WHERE id = $1 RETURNING *')
+      end
     end
-
-    def self.prepare_statements(conn)
-      conn.prepare('upsert_entry', 'SELECT * FROM upsert_entry($1,$2)')
-      conn.prepare('select_entry', 'SELECT * FROM contentful_raw WHERE id = $1')
-      conn.prepare('select_ids', 'SELECT id FROM contentful_raw')
-      conn.prepare('delete_by_id', 'DELETE FROM contentful_raw WHERE id = $1 RETURNING *')
-    end
-
-    private
 
     def build_connection_pool(connection_options, pool_options)
       ConnectionPool.new(pool_options) do

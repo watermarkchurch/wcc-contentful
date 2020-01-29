@@ -12,6 +12,11 @@ Layout/ClosingParenthesisIndentation:
   Exclude:
     - '*/lib/wcc/contentful/store/postgres_store.rb'
 
+# Cop blows up on this file
+Layout/IndentFirstParameter:
+  Exclude:
+    - '*/lib/wcc/contentful/store/postgres_store.rb'
+
 # Offense count: 239
 # Configuration parameters: AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.
 # URISchemes: http, https
