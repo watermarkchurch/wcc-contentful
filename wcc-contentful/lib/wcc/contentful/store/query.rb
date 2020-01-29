@@ -1,40 +1,16 @@
 # frozen_string_literal: true
 
 require_relative '../../contentful'
+require_relative './query/interface'
 
 module WCC::Contentful::Store
   # The default query object returned by Stores that extend WCC::Contentful::Store::Base.
   # It exposes several chainable query methods to apply query filters.
   # Enumerating the query executes it, caching the result.
   class Query
-    delegate :first,
-      :map,
-      :flat_map,
-      :count,
-      :select,
-      :reject,
-      :take,
-      :take_while,
-      :drop,
-      :drop_while,
-      :zip,
-      :to_a,
-      to: :to_enum
+    include WCC::Contentful::Store::Query::Interface
 
-    OPERATORS = %i[
-      eq
-      ne
-      all
-      in
-      nin
-      exists
-      lt
-      lte
-      gt
-      gte
-      query
-      match
-    ].freeze
+    delegate :each, to: :to_enum
 
     # Executes the query against the store and memoizes the resulting enumerable.
     #  Subclasses can override this to provide a more efficient implementation.
@@ -72,7 +48,7 @@ module WCC::Contentful::Store
     #  # in a SQL based store, the query now contains a condition like:
     #  #  WHERE table.'timestamp' > '2019-01-01'
     #
-    # @operator one of WCC::Contentful::Store::Query::OPERATORS
+    # @operator one of WCC::Contentful::Store::Query::Interface::OPERATORS
     # @field The path through the fields of the content type that we are querying against.
     #          Can be an array, symbol, or dotted-notation path specification.
     # @expected The expected value to compare the field's value against.
@@ -90,7 +66,7 @@ module WCC::Contentful::Store
       )
     end
 
-    WCC::Contentful::Store::Query::OPERATORS.each do |op|
+    WCC::Contentful::Store::Query::Interface::OPERATORS.each do |op|
       # @see #apply_operator
       define_method(op) do |field, expected, context = nil|
         apply_operator(op, field, expected, context)
@@ -142,7 +118,7 @@ module WCC::Contentful::Store
 
     class << self
       def op?(key)
-        OPERATORS.include?(key.to_sym)
+        Interface::OPERATORS.include?(key.to_sym)
       end
 
       # Turns a hash into a flat array of individual conditions, where each

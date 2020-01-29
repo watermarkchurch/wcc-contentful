@@ -67,7 +67,7 @@ RSpec.describe WCC::Contentful::Store::Query do
     end
   end
 
-  WCC::Contentful::Store::Query::OPERATORS.each do |op|
+  WCC::Contentful::Store::Query::Interface::OPERATORS.each do |op|
     describe "##{op}" do
       it 'adds a condition' do
         query = subject.public_send(op, 'f', 'test')
@@ -112,7 +112,7 @@ RSpec.describe WCC::Contentful::Store::Query do
       expect(query.conditions.length).to eq(2)
     end
 
-    WCC::Contentful::Store::Query::OPERATORS.each do |op|
+    WCC::Contentful::Store::Query::Interface::OPERATORS.each do |op|
       context "{ #{op}: value }" do
         it 'adds appropriate op condition' do
           query = subject.apply({

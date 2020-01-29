@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative './interface'
+
 # @api Store
 module WCC::Contentful::Store
   # This is the base class for stores which implement #index, and therefore
@@ -13,12 +15,7 @@ module WCC::Contentful::Store
   # tests for the store.  See spec/wcc/contentful/store/memory_store_spec.rb for
   # an example.
   class Base
-    # Finds an entry by it's ID.  The returned entry is a JSON hash
-    # @abstract Subclasses should implement this at a minimum to provide data
-    #   to the WCC::Contentful::Model API.
-    def find(_id)
-      raise NotImplementedError, "#{self.class} does not implement #find"
-    end
+    include WCC::Contentful::Store::Interface
 
     # Sets the value of the entry with the given ID in the store.
     # @abstract

@@ -2,6 +2,7 @@
 
 module WCC::Contentful::Store
   class CDNAdapter
+    include WCC::Contentful::Store::Interface
     # Note: CDNAdapter should not instrument store events cause it's not a store.
 
     attr_reader :client
@@ -10,6 +11,8 @@ module WCC::Contentful::Store
     def index?
       false
     end
+
+    undef index
 
     # Intentionally not implementing write methods
 
@@ -52,6 +55,7 @@ module WCC::Contentful::Store
     end
 
     class Query
+      include WCC::Contentful::Store::Query::Interface
       include Enumerable
 
       delegate :count, to: :response
@@ -110,7 +114,7 @@ module WCC::Contentful::Store
         end
       end
 
-      WCC::Contentful::Store::Query::OPERATORS.each do |op|
+      WCC::Contentful::Store::Query::Interface::OPERATORS.each do |op|
         define_method(op) do |field, expected, context = nil|
           apply_operator(op, field, expected, context)
         end
@@ -119,7 +123,7 @@ module WCC::Contentful::Store
       private
 
       def op?(key)
-        WCC::Contentful::Store::Query::OPERATORS.include?(key.to_sym)
+        WCC::Contentful::Store::Query::Interface::OPERATORS.include?(key.to_sym)
       end
 
       def sys?(field)

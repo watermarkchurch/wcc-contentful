@@ -15,6 +15,7 @@
 # apply a filter or transformation to each entry in the store.
 module WCC::Contentful::Middleware::Store
   extend ActiveSupport::Concern
+  include WCC::Contentful::Store::Interface
 
   attr_accessor :store
 
@@ -86,19 +87,10 @@ module WCC::Contentful::Middleware::Store
   end
 
   class Query
-    delegate :first,
-      :map,
-      :flat_map,
-      :count,
-      :select,
-      :reject,
-      :take,
-      :take_while,
-      :drop,
-      :drop_while,
-      :zip,
-      :to_a,
-      to: :to_enum
+    include WCC::Contentful::Store::Query::Interface
+    include Enumerable
+
+    delegate :each, to: :to_enum
 
     attr_reader :wrapped_query, :middleware, :options
 
@@ -132,7 +124,7 @@ module WCC::Contentful::Middleware::Store
       )
     end
 
-    WCC::Contentful::Store::Query::OPERATORS.each do |op|
+    WCC::Contentful::Store::Query::Interface::OPERATORS.each do |op|
       # @see #apply_operator
       define_method(op) do |field, expected, context = nil|
         self.class.new(
