@@ -12,6 +12,8 @@ module WCC::Contentful::Store
   class PostgresStore < Base
     include WCC::Contentful::Store::Instrumentation
 
+    delegate :each, to: :to_enum
+
     attr_reader :connection_pool
 
     def initialize(_config = nil, connection_options = nil, pool_options = nil)
@@ -198,15 +200,15 @@ module WCC::Contentful::Store
             end
           end
 
-        table =
-          if depth && depth > 0
-            "fn_contentful_raw_with_includes(#{depth})"
-          else
-            'contentful_raw'
-          end
+        table = 'contentful_raw'
+        if depth && depth > 0
+          table = 'contentful_raw_includes'
+          select_statement += ', t.includes'
+        end
 
         statement =
-          select_statement + " FROM #{table} AS t \n" +
+          select_statement +
+          " FROM #{table} AS t \n" +
           joins.join("\n") + "\n" +
           statement +
           (limit_statement || '')
@@ -273,39 +275,31 @@ module WCC::Contentful::Store
                 UPDATE
                 SET data = _data,
                   links = _links;
+            REFRESH MATERIALIZED VIEW contentful_raw_includes_ids_jointable;
             RETURN prev;
           END;
           $$ LANGUAGE 'plpgsql';
 
-          DROP FUNCTION fn_contentful_raw_includes;
-          CREATE or replace FUNCTION fn_contentful_raw_includes(root_id varchar, until integer)
-            RETURNS table (depth integer, id varchar, data jsonb, links text[])
-          AS $body$
-          BEGIN
-            RETURN QUERY
-              WITH RECURSIVE includes (depth) AS (
-                SELECT 0, t.id, t.data, t.links FROM contentful_raw t WHERE t.id = root_id
-                UNION ALL
-                  SELECT l.depth + 1, r.id, r.data, r.links
-                  FROM includes l, contentful_raw r
-                  WHERE r.id = ANY(l.links)
-              )
-              SELECT * FROM includes i WHERE i.depth <= until;
-          END;
-          $body$ LANGUAGE 'plpgsql';
+          CREATE MATERIALIZED VIEW contentful_raw_includes_ids_jointable AS
+            WITH RECURSIVE includes (root_id, depth) AS (
+              SELECT t.id as root_id, 0, t.id, t.links FROM contentful_raw t
+              UNION ALL
+                SELECT l.root_id, l.depth + 1, r.id, r.links
+                FROM includes l, contentful_raw r
+                WHERE r.id = ANY(l.links)
+            )
+            SELECT DISTINCT root_id as id, id as included_id
+              FROM includes
+              WHERE id != root_id;
 
-          CREATE or replace FUNCTION fn_contentful_raw_with_includes(until integer)
-            RETURNS table (id varchar, data jsonb, includes jsonb[])
-          AS $body$
-          BEGIN
-            RETURN QUERY
-              SELECT t.id, t.data, array_agg(DISTINCT i.data) AS includes
-                FROM contentful_raw t
-                LEFT JOIN LATERAL fn_contentful_raw_includes(t.id, until) i ON true
-                WHERE t.id = 'root'
-                GROUP BY t.id, t.data;
-          END;
-          $body$ LANGUAGE 'plpgsql';
+          CREATE VIEW contentful_raw_includes AS
+            SELECT t.id, t.data, array_remove(array_agg(r_incl.data), NULL) as includes
+              FROM contentful_raw t
+              LEFT JOIN contentful_raw_includes_ids_jointable incl ON t.id = incl.id
+              LEFT JOIN contentful_raw r_incl ON r_incl.id = incl.included_id
+              GROUP BY t.id, t.data;
+
+
         HEREDOC
         )
       end

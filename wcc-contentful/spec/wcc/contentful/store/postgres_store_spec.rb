@@ -16,8 +16,7 @@ RSpec.describe WCC::Contentful::Store::PostgresStore do
     begin
       conn = PG.connect(ENV['POSTGRES_CONNECTION'] || { dbname: 'postgres' })
 
-      conn.exec('DROP VIEW IF EXISTS contentful_raw_includes')
-      conn.exec('DROP TABLE IF EXISTS contentful_raw')
+      conn.exec('DROP TABLE IF EXISTS contentful_raw CASCADE')
     ensure
       conn.close
     end
