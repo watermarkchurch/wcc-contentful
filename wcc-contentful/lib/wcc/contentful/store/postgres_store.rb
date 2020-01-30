@@ -22,6 +22,7 @@ module WCC::Contentful::Store
       connection_options ||= { dbname: 'postgres' }
       pool_options ||= {}
       @connection_pool = build_connection_pool(connection_options, pool_options)
+      @dirty = false
     end
 
     def set(key, value)
@@ -34,6 +35,9 @@ module WCC::Contentful::Store
                                quote_array(extract_links(value))
                              ])
         end
+      # mark dirty - we need to refresh the materialized view
+      mutex.with_write_lock { @dirty = true }
+
       return if result.num_tuples == 0
 
       val = result.getvalue(0, 0)
@@ -73,6 +77,19 @@ module WCC::Contentful::Store
       )
     end
 
+    def exec_query(statement, params = [])
+      if mutex.with_read_lock { @dirty }
+        mutex.with_write_lock do
+          if @dirty
+            @connection_pool.with { |conn| conn.exec_prepared('refresh_views') }
+            @dirty = false
+          end
+        end
+      end
+
+      @connection_pool.with { |conn| conn.exec(statement, params) }
+    end
+
     private
 
     def extract_links(entry)
@@ -108,7 +125,7 @@ module WCC::Contentful::Store
         return @count if @count
 
         statement, params = finalize_statement('SELECT count(*)')
-        result = run_statement(statement, params)
+        result = store.exec_query(statement, params)
         @count = result.getvalue(0, 0).to_i
       end
 
@@ -116,7 +133,7 @@ module WCC::Contentful::Store
         return @first if @first
 
         statement, params = finalize_statement('SELECT t.*', ' LIMIT 1', depth: @options[:include])
-        result = run_statement(statement, params)
+        result = store.exec_query(statement, params)
         return if result.num_tuples == 0
 
         row = result.first
@@ -147,7 +164,7 @@ module WCC::Contentful::Store
         return @result_set if @result_set
 
         statement, params = finalize_statement('SELECT t.*', depth: @options[:include])
-        @result_set = run_statement(statement, params)
+        @result_set = store.exec_query(statement, params)
       rescue PG::ConnectionBad
         []
       end
@@ -216,10 +233,6 @@ module WCC::Contentful::Store
         [statement, params]
       end
 
-      def run_statement(statement, params)
-        @store.connection_pool.with { |conn| conn.exec(statement, params) }
-      end
-
       def _eq(path, expected, params)
         if path == %w[sys id]
           " AND t.id = $#{push_param(expected, params)}"
@@ -275,7 +288,6 @@ module WCC::Contentful::Store
                 UPDATE
                 SET data = _data,
                   links = _links;
-            REFRESH MATERIALIZED VIEW contentful_raw_includes_ids_jointable;
             RETURN prev;
           END;
           $$ LANGUAGE 'plpgsql';
@@ -290,6 +302,9 @@ module WCC::Contentful::Store
             )
             SELECT DISTINCT root_id as id, id as included_id
               FROM includes;
+
+          CREATE INDEX IF NOT EXISTS contentful_raw_includes_ids_jointable_id ON contentful_raw_includes_ids_jointable (id);
+          CREATE UNIQUE INDEX IF NOT EXISTS contentful_raw_includes_ids_jointable_id_included_id ON contentful_raw_includes_ids_jointable (id, included_id);
 
           CREATE OR REPLACE VIEW contentful_raw_includes AS
             SELECT t.id, t.data, array_remove(array_agg(r_incl.data), NULL) as includes
@@ -308,6 +323,8 @@ module WCC::Contentful::Store
         conn.prepare('select_entry', 'SELECT * FROM contentful_raw WHERE id = $1')
         conn.prepare('select_ids', 'SELECT id FROM contentful_raw')
         conn.prepare('delete_by_id', 'DELETE FROM contentful_raw WHERE id = $1 RETURNING *')
+        conn.prepare('refresh_views',
+          'REFRESH MATERIALIZED VIEW CONCURRENTLY contentful_raw_includes_ids_jointable')
       end
     end
 
