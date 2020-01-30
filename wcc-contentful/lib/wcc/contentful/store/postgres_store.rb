@@ -35,13 +35,24 @@ module WCC::Contentful::Store
                                quote_array(extract_links(value))
                              ])
         end
-      # mark dirty - we need to refresh the materialized view
-      mutex.with_write_lock { @dirty = true }
 
-      return if result.num_tuples == 0
+      previous_value =
+        if result.num_tuples == 0
+          nil
+        else
+          val = result.getvalue(0, 0)
+          JSON.parse(val) if val
+        end
 
-      val = result.getvalue(0, 0)
-      JSON.parse(val) if val
+      if views_need_update?(value, previous_value)
+        # mark dirty - we need to refresh the materialized view
+        unless mutex.with_read_lock { @dirty }
+          _instrument 'mark_dirty'
+          mutex.with_write_lock { @dirty = true }
+        end
+      end
+
+      previous_value
     end
 
     def keys
@@ -86,7 +97,11 @@ module WCC::Contentful::Store
             was_dirty
           end
 
-        @connection_pool.with { |conn| conn.exec_prepared('refresh_views_concurrently') } if was_dirty
+        if was_dirty
+          _instrument 'refresh_views' do
+            @connection_pool.with { |conn| conn.exec_prepared('refresh_views_concurrently') }
+          end
+        end
       end
 
       @connection_pool.with { |conn| conn.exec(statement, params) }
@@ -95,7 +110,7 @@ module WCC::Contentful::Store
     private
 
     def extract_links(entry)
-      return [] unless fields = entry['fields']
+      return [] unless fields = entry && entry['fields']
 
       links =
         fields.flat_map do |_f, locale_hash|
@@ -120,6 +135,11 @@ module WCC::Contentful::Store
 
       encoder = PG::TextEncoder::Array.new
       encoder.encode(arr)
+    end
+
+    def views_need_update?(value, previous_value)
+      # contentful_raw_includes_ids_jointable needs update if any links change
+      return true if extract_links(value) != extract_links(previous_value)
     end
 
     class Query < WCC::Contentful::Store::Query
