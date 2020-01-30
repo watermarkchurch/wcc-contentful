@@ -926,6 +926,32 @@ RSpec.shared_examples 'supports include param' do |feature_set|
           expect(link.dig('sys', 'type')).to eq('Link')
         end
       end
+
+      it 'handles recursion' do
+        items = [
+          deep(0, make_link_to('deep1')),
+          deep(1, make_link_to('deep0'))
+        ]
+        items.each { |d| subject.set(d.dig('sys', 'id'), d) }
+
+        # act
+        r0 = subject.find_by(content_type: 'deep', filter: { id: 'deep0' }, options: {
+          include: 4
+        })
+
+        link = r0.dig('fields', 'subLink', 'en-US')
+        expect(link.dig('sys', 'type')).to eq('Entry')
+        expect(link.dig('sys', 'id')).to eq('deep1')
+        link = link.dig('fields', 'subLink', 'en-US')
+        expect(link.dig('sys', 'type')).to eq('Entry')
+        expect(link.dig('sys', 'id')).to eq('deep0')
+        link = link.dig('fields', 'subLink', 'en-US')
+        expect(link.dig('sys', 'type')).to eq('Entry')
+        expect(link.dig('sys', 'id')).to eq('deep1')
+        link = link.dig('fields', 'subLink', 'en-US')
+        expect(link.dig('sys', 'type')).to eq('Entry')
+        expect(link.dig('sys', 'id')).to eq('deep0')
+      end
     end
 
     describe '#find_all' do
@@ -1016,6 +1042,35 @@ RSpec.shared_examples 'supports include param' do |feature_set|
           end
           expect(results.length).to eq(items.length)
         end
+      end
+
+      it 'handles recursion' do
+        items = [
+          deep(0, make_link_to('deep1')),
+          deep(1, make_link_to('deep0'))
+        ]
+        items.each { |d| subject.set(d.dig('sys', 'id'), d) }
+
+        # act
+        results = subject.find_all(content_type: 'deep', options: {
+          include: 4
+        }).to_a
+
+        results = results.sort_by { |entry| entry.dig('sys', 'id') }
+
+        r0 = results[0]
+        link = r0.dig('fields', 'subLink', 'en-US')
+        expect(link.dig('sys', 'type')).to eq('Entry')
+        expect(link.dig('sys', 'id')).to eq('deep1')
+        link = link.dig('fields', 'subLink', 'en-US')
+        expect(link.dig('sys', 'type')).to eq('Entry')
+        expect(link.dig('sys', 'id')).to eq('deep0')
+        link = link.dig('fields', 'subLink', 'en-US')
+        expect(link.dig('sys', 'type')).to eq('Entry')
+        expect(link.dig('sys', 'id')).to eq('deep1')
+        link = link.dig('fields', 'subLink', 'en-US')
+        expect(link.dig('sys', 'type')).to eq('Entry')
+        expect(link.dig('sys', 'id')).to eq('deep0')
       end
     end
   end

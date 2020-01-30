@@ -286,11 +286,10 @@ module WCC::Contentful::Store
               UNION ALL
                 SELECT l.root_id, l.depth + 1, r.id, r.links
                 FROM includes l, contentful_raw r
-                WHERE r.id = ANY(l.links)
+                WHERE r.id = ANY(l.links) AND l.depth < 5
             )
             SELECT DISTINCT root_id as id, id as included_id
-              FROM includes
-              WHERE id != root_id;
+              FROM includes;
 
           CREATE OR REPLACE VIEW contentful_raw_includes AS
             SELECT t.id, t.data, array_remove(array_agg(r_incl.data), NULL) as includes
