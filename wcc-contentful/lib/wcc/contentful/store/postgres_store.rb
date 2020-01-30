@@ -79,12 +79,14 @@ module WCC::Contentful::Store
 
     def exec_query(statement, params = [])
       if mutex.with_read_lock { @dirty }
-        mutex.with_write_lock do
-          if @dirty
-            @connection_pool.with { |conn| conn.exec_prepared('refresh_views') }
+        was_dirty =
+          mutex.with_write_lock do
+            was_dirty = @dirty
             @dirty = false
+            was_dirty
           end
-        end
+
+        @connection_pool.with { |conn| conn.exec_prepared('refresh_views_concurrently') } if was_dirty
       end
 
       @connection_pool.with { |conn| conn.exec(statement, params) }
@@ -323,7 +325,7 @@ module WCC::Contentful::Store
         conn.prepare('select_entry', 'SELECT * FROM contentful_raw WHERE id = $1')
         conn.prepare('select_ids', 'SELECT id FROM contentful_raw')
         conn.prepare('delete_by_id', 'DELETE FROM contentful_raw WHERE id = $1 RETURNING *')
-        conn.prepare('refresh_views',
+        conn.prepare('refresh_views_concurrently',
           'REFRESH MATERIALIZED VIEW CONCURRENTLY contentful_raw_includes_ids_jointable')
       end
     end
