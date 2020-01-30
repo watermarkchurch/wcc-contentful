@@ -280,7 +280,7 @@ module WCC::Contentful::Store
           END;
           $$ LANGUAGE 'plpgsql';
 
-          CREATE MATERIALIZED VIEW contentful_raw_includes_ids_jointable AS
+          CREATE MATERIALIZED VIEW IF NOT EXISTS contentful_raw_includes_ids_jointable AS
             WITH RECURSIVE includes (root_id, depth) AS (
               SELECT t.id as root_id, 0, t.id, t.links FROM contentful_raw t
               UNION ALL
@@ -292,7 +292,7 @@ module WCC::Contentful::Store
               FROM includes
               WHERE id != root_id;
 
-          CREATE VIEW contentful_raw_includes AS
+          CREATE OR REPLACE VIEW contentful_raw_includes AS
             SELECT t.id, t.data, array_remove(array_agg(r_incl.data), NULL) as includes
               FROM contentful_raw t
               LEFT JOIN contentful_raw_includes_ids_jointable incl ON t.id = incl.id
