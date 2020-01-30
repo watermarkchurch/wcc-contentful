@@ -799,50 +799,50 @@ RSpec.shared_examples 'supports include param' do |feature_set|
     before { skip('include_param feature not supported') } if feature_set == false
     before { pending('include_param feature not yet implemented') } if feature_set&.to_s == 'pending'
 
-    describe '#find_by' do
-      let(:root) {
-        {
-          'sys' => {
-            'id' => 'root',
-            'type' => 'Entry',
-            'contentType' => { 'sys' => { 'id' => 'root' } }
-          },
-          'fields' => {
-            'name' => { 'en-US' => 'root' },
-            'link' => { 'en-US' => make_link_to('deep1') },
-            'links' => { 'en-US' => [
-              make_link_to('shallow3'),
-              make_link_to('deep2')
-            ] }
-          }
+    let(:root) {
+      {
+        'sys' => {
+          'id' => 'root',
+          'type' => 'Entry',
+          'contentType' => { 'sys' => { 'id' => 'root' } }
+        },
+        'fields' => {
+          'name' => { 'en-US' => 'root' },
+          'link' => { 'en-US' => make_link_to('deep1') },
+          'links' => { 'en-US' => [
+            make_link_to('shallow3'),
+            make_link_to('deep2')
+          ] }
         }
       }
+    }
 
-      def shallow(id = nil) # rubocop:disable Naming/UncommunicativeMethodParamName
-        {
-          'sys' => {
-            'id' => "shallow#{id}",
-            'type' => 'Entry',
-            'contentType' => make_link_to('shallow', 'ContentType')
-          },
-          'fields' => { 'name' => { 'en-US' => "shallow#{id}" } }
+    def shallow(id = nil) # rubocop:disable Naming/UncommunicativeMethodParamName
+      {
+        'sys' => {
+          'id' => "shallow#{id}",
+          'type' => 'Entry',
+          'contentType' => { 'sys' => { 'id' => 'shallow' } }
+        },
+        'fields' => { 'name' => { 'en-US' => "shallow#{id}" } }
+      }
+    end
+
+    def deep(id, link = nil) # rubocop:disable Naming/UncommunicativeMethodParamName
+      {
+        'sys' => {
+          'id' => "deep#{id}",
+          'type' => 'Entry',
+          'contentType' => { 'sys' => { 'id' => 'deep' } }
+        },
+        'fields' => {
+          'name' => { 'en-US' => "deep#{id}" },
+          'subLink' => { 'en-US' => link || make_link_to("shallow#{id}") }
         }
-      end
+      }
+    end
 
-      def deep(id, link = nil) # rubocop:disable Naming/UncommunicativeMethodParamName
-        {
-          'sys' => {
-            'id' => "deep#{id}",
-            'type' => 'Entry',
-            'contentType' => make_link_to('deep', 'ContentType')
-          },
-          'fields' => {
-            'name' => { 'en-US' => "deep#{id}" },
-            'subLink' => { 'en-US' => link || make_link_to("shallow#{id}") }
-          }
-        }
-      end
-
+    describe '#find_by' do
       it 'recursively resolves links if include > 0' do
         [
           root,
@@ -924,6 +924,97 @@ RSpec.shared_examples 'supports include param' do |feature_set|
             link = link.dig('fields', 'subLink', 'en-US')
           end
           expect(link.dig('sys', 'type')).to eq('Link')
+        end
+      end
+    end
+
+    describe '#find_all' do
+      it 'recursively resolves links if include > 0' do
+        [
+          root,
+          *1.upto(3).map { |i| shallow(i) },
+          *1.upto(2).map { |i| deep(i) }
+        ].each { |d| subject.set(d.dig('sys', 'id'), d) }
+
+        # act
+        result = subject.find_all(content_type: 'root', options: {
+          include: 2
+        }).to_a
+
+        # assert
+        found = result.first
+        expect(found.dig('sys', 'id')).to eq('root')
+
+        # depth 1
+        link = found.dig('fields', 'link', 'en-US')
+        expect(link.dig('fields', 'name', 'en-US')).to eq('deep1')
+        links = found.dig('fields', 'links', 'en-US')
+        expect(links[0].dig('fields', 'name', 'en-US')).to eq('shallow3')
+
+        # depth 2
+        expect(link.dig('fields', 'subLink', 'en-US', 'fields', 'name', 'en-US'))
+          .to eq('shallow1')
+        expect(links[1].dig('fields', 'subLink', 'en-US', 'fields', 'name', 'en-US'))
+          .to eq('shallow2')
+      end
+
+      it 'stops resolving links at include depth' do
+        [
+          root,
+          *1.upto(3).map { |i| shallow(i) },
+          *1.upto(2).map { |i| deep(i) }
+        ].each { |d| subject.set(d.dig('sys', 'id'), d) }
+
+        # act
+        result = subject.find_all(content_type: 'root', options: {
+          include: 1
+        }).to_a
+
+        # assert
+        found = result.first
+        expect(found.dig('sys', 'id')).to eq('root')
+
+        # depth 1
+        link = found.dig('fields', 'link', 'en-US')
+        expect(link.dig('fields', 'name', 'en-US')).to eq('deep1')
+        links = found.dig('fields', 'links', 'en-US')
+        expect(links[0].dig('fields', 'name', 'en-US')).to eq('shallow3')
+
+        # depth 2
+        expect(link.dig('fields', 'subLink', 'en-US', 'sys', 'type'))
+          .to eq('Link')
+        expect(links[1].dig('fields', 'subLink', 'en-US', 'sys', 'type'))
+          .to eq('Link')
+      end
+
+      1.upto(5).each do |depth|
+        it "does not call into #find in order to resolve include: #{depth}" do
+          skip("supported up to #{feature_set}") if feature_set.is_a?(Integer) && feature_set < depth
+
+          # 1..N
+          items =
+            0.upto(depth).map do |n|
+              deep(n, make_link_to("deep#{n + 1}"))
+            end
+          items.each { |d| subject.set(d.dig('sys', 'id'), d) }
+
+          # Expect
+          expect(subject).to_not receive(:find)
+
+          # act
+          results = subject.find_all(content_type: 'deep', options: {
+            include: depth
+          }).to_a
+
+          results.sort_by { |entry| entry.dig('sys', 'id') }.each_with_index do |found, n|
+            link = found.dig('fields', 'subLink', 'en-US')
+            1.upto(depth - n).each do |_n|
+              expect(link.dig('sys', 'type')).to eq('Entry')
+              link = link.dig('fields', 'subLink', 'en-US')
+            end
+            expect(link.dig('sys', 'type')).to eq('Link')
+          end
+          expect(results.length).to eq(items.length)
         end
       end
     end
