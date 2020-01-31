@@ -21,7 +21,7 @@ module WCC::Contentful::Store
       @schema_ensured = false
       connection_options ||= { dbname: 'postgres' }
       pool_options ||= {}
-      @connection_pool = build_connection_pool(connection_options, pool_options)
+      @connection_pool = PostgresStore.build_connection_pool(connection_options, pool_options)
       @dirty = false
     end
 
@@ -289,10 +289,6 @@ module WCC::Contentful::Store
     end
 
     class << self
-      def ensure_schema(conn)
-        conn.exec(File.read(File.join(__dir__, 'postgres_store/schema.sql')))
-      end
-
       def prepare_statements(conn)
         conn.prepare('upsert_entry', 'SELECT * FROM fn_contentful_upsert_entry($1,$2,$3)')
         conn.prepare('select_entry', 'SELECT * FROM contentful_raw WHERE id = $1')
@@ -301,17 +297,38 @@ module WCC::Contentful::Store
         conn.prepare('refresh_views_concurrently',
           'REFRESH MATERIALIZED VIEW CONCURRENTLY contentful_raw_includes_ids_jointable')
       end
-    end
 
-    def build_connection_pool(connection_options, pool_options)
-      ConnectionPool.new(pool_options) do
-        PG.connect(connection_options).tap do |conn|
-          unless @schema_ensured
-            PostgresStore.ensure_schema(conn)
-            @schema_ensured = true
+      # This is intentionally a class var so that all subclasses share the same mutex
+      @@schema_mutex = Mutex.new # rubocop:disable Style/ClassVars
+
+      def build_connection_pool(connection_options, pool_options)
+        ConnectionPool.new(pool_options) do
+          PG.connect(connection_options).tap do |conn|
+            unless schema_ensured?(conn)
+              @@schema_mutex.synchronize do
+                ensure_schema(conn) unless schema_ensured?(conn)
+              end
+            end
+            prepare_statements(conn)
           end
-          PostgresStore.prepare_statements(conn)
         end
+      end
+
+      EXPECTED_VERSION = 1
+
+      def schema_ensured?(conn)
+        result = conn.exec('SELECT version FROM wcc_contentful_schema_version' \
+          ' ORDER BY version DESC LIMIT 1')
+        return false if result.num_tuples == 0
+
+        result[0]['version'].to_i >= EXPECTED_VERSION
+      rescue PG::UndefinedTable
+        # need to run v1 schema migration
+        false
+      end
+
+      def ensure_schema(conn)
+        conn.exec(File.read(File.join(__dir__, 'postgres_store/schema.sql')))
       end
     end
   end

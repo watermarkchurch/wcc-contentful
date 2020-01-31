@@ -1,9 +1,15 @@
+CREATE TABLE IF NOT EXISTS wcc_contentful_schema_version (
+  version integer PRIMARY KEY,
+  updated_at timestamp DEFAULT now()
+);
+
+START TRANSACTION;
+
 CREATE TABLE IF NOT EXISTS contentful_raw (
   id varchar PRIMARY KEY,
   data jsonb,
   links text[]
 );
-ALTER TABLE contentful_raw ADD COLUMN IF NOT EXISTS links text[];
 CREATE INDEX IF NOT EXISTS contentful_raw_value_type ON contentful_raw ((data->'sys'->>'type'));
 CREATE INDEX IF NOT EXISTS contentful_raw_value_content_type ON contentful_raw ((data->'sys'->'contentType'->'sys'->>'id'));
 
@@ -41,3 +47,8 @@ CREATE OR REPLACE VIEW contentful_raw_includes AS
     LEFT JOIN contentful_raw_includes_ids_jointable incl ON t.id = incl.id
     LEFT JOIN contentful_raw r_incl ON r_incl.id = incl.included_id
     GROUP BY t.id, t.data;
+
+INSERT INTO wcc_contentful_schema_version
+  VALUES (1);
+
+COMMIT;
