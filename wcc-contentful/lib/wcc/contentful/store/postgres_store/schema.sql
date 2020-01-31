@@ -48,8 +48,9 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS contentful_raw_includes_ids_jointable AS
       FROM includes l, contentful_raw r
       WHERE r.id = ANY(l.links) AND l.depth < 5
   )
-  SELECT DISTINCT root_id as id, id as included_id, depth
-    FROM includes;
+  SELECT root_id as id, id as included_id, min(depth)
+    FROM includes
+    GROUP BY root_id, id;
 
 CREATE INDEX IF NOT EXISTS contentful_raw_includes_ids_jointable_id ON contentful_raw_includes_ids_jointable (id);
 CREATE UNIQUE INDEX IF NOT EXISTS contentful_raw_includes_ids_jointable_id_included_id ON contentful_raw_includes_ids_jointable (id, included_id);
