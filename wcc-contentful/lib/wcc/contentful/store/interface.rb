@@ -36,7 +36,7 @@ module WCC::Contentful::Store
     # Finds an entry by it's ID.  The returned entry is a JSON hash
     # @abstract Subclasses should implement this at a minimum to provide data
     #   to the WCC::Contentful::Model API.
-    # sig {abstract.params(id: T::String).returns(T.any(Entry, Asset))}
+    # sig {abstract.params(id: String).returns(T.any(Entry, Asset))}
     def find(_id)
       raise NotImplementedError, "#{self.class} does not implement #find"
     end
@@ -48,6 +48,11 @@ module WCC::Contentful::Store
     #  See WCC::Contentful::Store::Base::Query
     # @param [Hash] options An optional set of additional parameters to the query
     #  defining for example include depth.  Not all store implementations respect all options.
+    # sig {abstract.params(
+    #   content_type: String,
+    #   filter: T.nilable(T::Hash[T.any(Symbol, String), T.untyped]),
+    #   options: T.nilable(T::Hash[T.any(Symbol), T.untyped]),
+    # ).returns(T.any(Entry, Asset))}
     def find_by(content_type:, filter: nil, options: nil)
       raise NotImplementedError, "#{self.class} does not implement #find_by"
     end
@@ -56,10 +61,17 @@ module WCC::Contentful::Store
     #
     # Subclasses may override this to provide their own query implementation,
     #  or else override #execute to run the query after it has been parsed.
+    #
     # @param [String] content_type The ID of the content type to search for.
     # @param [Hash] options An optional set of additional parameters to the query
     #  defining for example include depth.  Not all store implementations respect all options.
-    # @return [Query] A query object that exposes methods to apply filters
+    # @return [Query] A query object that exposes methods to apply filters.
+    #  @see WCC::Contentful::Store::Query::Interface
+    # sig {abstract.params(
+    #   content_type: String,
+    #   filter: T.nilable(T::Hash[T.any(Symbol, String), T.untyped]),
+    #   options: T.nilable(T::Hash[T.any(Symbol), T.untyped]),
+    # ).returns(WCC::Contentful::Store::Query::Interface)}
     def find_all(content_type:, options: nil)
       raise NotImplementedError, "#{self.class} does not implement #find_all"
     end

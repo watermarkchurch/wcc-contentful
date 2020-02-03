@@ -163,48 +163,29 @@ module WCC::Contentful::Store
 
         if @options[:include] && @options[:include] > 0
           includes = decode_includes(row['includes'])
-          entry = resolve_includes(entry, @options[:include], includes)
+          entry = resolve_includes([entry, includes], @options[:include])
         end
         entry
       end
-
-      def to_enum
-        result_set.lazy.map do |row|
-          entry = JSON.parse(row['data'])
-          if @options[:include] && @options[:include] > 0
-            includes = decode_includes(row['includes'])
-            entry = resolve_includes(entry, @options[:include], includes)
-          end
-
-          entry
-        end
-      end
-
-      private
 
       def result_set
         return @result_set if @result_set
 
         statement, params = finalize_statement('SELECT t.*', depth: @options[:include])
-        @result_set = store.exec_query(statement, params)
+        @result_set =
+          store.exec_query(statement, params)
+            .lazy.map do |row|
+            entry = JSON.parse(row['data'])
+            includes =
+              (decode_includes(row['includes']) if @options[:include] && @options[:include] > 0)
+
+            [entry, includes]
+          end
       rescue PG::ConnectionBad
         []
       end
 
-      def resolve_includes(entry, depth, includes)
-        return entry unless entry && depth && depth > 0
-
-        WCC::Contentful::LinkVisitor.new(entry, :Link, :Asset, depth: depth - 1).map! do |val|
-          resolve_link(val, includes)
-        end
-      end
-
-      def resolve_link(val, includes)
-        return val unless val.is_a?(Hash) && val.dig('sys', 'type') == 'Link'
-        return val unless included = includes[val.dig('sys', 'id')]
-
-        included
-      end
+      private
 
       def decode_includes(includes)
         return {} unless includes
