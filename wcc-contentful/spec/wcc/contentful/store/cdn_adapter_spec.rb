@@ -421,6 +421,28 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       thumbnail = domain_object.dig('fields', 'thumbnail', 'en-US')
       expect(thumbnail.dig('sys', 'type')).to eq('Link')
     end
+
+    it 'ensures enumerator remains lazy when map applied at higher layer' do
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
+        '?content_type=page&include=2&limit=5&locale=*')
+        .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_1.json'))
+        .then.to_raise(StandardError)
+
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
+        '?content_type=page&include=2&limit=5&locale=*&skip=5')
+        .to_raise(StandardError.new('Should not call second page'))
+
+      # act
+      found = adapter.find_all(content_type: 'page', options: {
+        limit: 5,
+        include: 2
+      })
+
+      # assert
+      only_two = found.map { |entry| OpenStruct.new(entry) }.take(2).to_a
+
+      expect(only_two.length).to eq 2
+    end
   end
 
   it 'CDN Adapter does not implement #set' do

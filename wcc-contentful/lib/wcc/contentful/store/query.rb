@@ -9,16 +9,16 @@ module WCC::Contentful::Store
   # Enumerating the query executes it, caching the result.
   class Query
     include WCC::Contentful::Store::Query::Interface
+    include Enumerable
 
-    delegate :each, to: :to_enum
+    # by default all enumerable methods delegated to the to_enum method
+    delegate(*(Enumerable.instance_methods - Module.instance_methods), to: :to_enum)
 
     # Executes the query against the store and memoizes the resulting enumerable.
     #  Subclasses can override this to provide a more efficient implementation.
     def to_enum
       @to_enum ||=
-        result_set.map do |row|
-          resolve_includes(row, @options[:include])
-        end
+        result_set.map { |row| resolve_includes(row, @options[:include]) }.lazy
     end
 
     attr_reader :store, :content_type, :conditions
