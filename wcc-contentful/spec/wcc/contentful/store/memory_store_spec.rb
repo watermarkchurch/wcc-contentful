@@ -7,7 +7,7 @@ RSpec.describe WCC::Contentful::Store::MemoryStore do
 
   it_behaves_like 'contentful store', {
     nested_queries: false,
-    include_param: true
+    include_param: 0
   }
 
   it 'returns all keys' do

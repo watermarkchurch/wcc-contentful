@@ -9,23 +9,16 @@ module WCC::Contentful::Store
   # Enumerating the query executes it, caching the result.
   class Query
     include WCC::Contentful::Store::Query::Interface
+    include Enumerable
 
-    delegate :each, to: :to_enum
+    # by default all enumerable methods delegated to the to_enum method
+    delegate(*(Enumerable.instance_methods - Module.instance_methods), to: :to_enum)
 
     # Executes the query against the store and memoizes the resulting enumerable.
     #  Subclasses can override this to provide a more efficient implementation.
     def to_enum
       @to_enum ||=
-        begin
-          result_set = store.execute(self).lazy
-          if @options[:include] && @options[:include] > 0
-            result_set =
-              result_set.map do |entry|
-                resolve_includes(entry, @options[:include])
-              end
-          end
-          result_set
-        end
+        result_set.map { |row| resolve_includes(row, @options[:include]) }.lazy
     end
 
     attr_reader :store, :content_type, :conditions
@@ -83,7 +76,13 @@ module WCC::Contentful::Store
       end
     end
 
-    protected
+    # Override this to provide a result set from the Query object itself
+    # rather than from calling #execute in the store.
+    def result_set
+      @result_set ||= store.execute(self)
+    end
+
+    private
 
     def _append_condition(condition)
       self.class.new(
@@ -96,24 +95,37 @@ module WCC::Contentful::Store
     end
 
     # naive implementation recursively descends the graph to turns links into
-    # the actual entry data.  This calls {Base#find} for each link and so it is
-    # very inefficient.
-    #
-    # @abstract Override this to provide a more efficient implementation for
-    #   a given store.
-    def resolve_includes(entry, depth)
+    # the actual entry data.  If the result set from #execute returns a tuple,
+    # it tries to pull links from the second column in the tuple.  This allows
+    # a store implementation to return ex. `SELECT entry, includes FROM...`
+    # Otherwise, if the store does not return a tuple or does not have an includes
+    # column, it calls {Base#find} for each link and so it is very inefficient.
+    def resolve_includes(row, depth)
+      entry = row.try(:entry) || row.try(:[], 0) || row
+      includes = row.try(:includes) || row.try(:[], 1)
       return entry unless entry && depth && depth > 0
 
-      WCC::Contentful::LinkVisitor.new(entry, :Link, :Asset, depth: depth).map! do |val|
-        resolve_link(val)
+      WCC::Contentful::LinkVisitor.new(entry, :Link, :Asset,
+        # Walk all the links except for the leaf nodes
+        depth: depth - 1).map! do |val|
+        resolve_link(val, includes)
       end
     end
 
-    def resolve_link(val)
+    # Returns the resolved link if it exists in the includes hash, or returns
+    # the link hash.
+    def resolve_link(val, includes)
       return val unless val.is_a?(Hash) && val.dig('sys', 'type') == 'Link'
-      return val unless included = @store.find(val.dig('sys', 'id'))
 
-      included
+      id = val.dig('sys', 'id')
+      included =
+        if includes
+          includes[id]
+        else
+          @store.find(id)
+        end
+
+      included || val
     end
 
     class << self

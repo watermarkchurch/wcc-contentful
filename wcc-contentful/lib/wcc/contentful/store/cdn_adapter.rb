@@ -58,8 +58,11 @@ module WCC::Contentful::Store
       include WCC::Contentful::Store::Query::Interface
       include Enumerable
 
+      # by default all enumerable methods delegated to the lazy enumerable
+      delegate(*(Enumerable.instance_methods - Module.instance_methods), to: :to_enum)
+
+      # response.count gets the number of items
       delegate :count, to: :response
-      delegate :each, to: :to_enum
 
       def to_enum
         return response.items unless @options[:include]
@@ -148,7 +151,7 @@ module WCC::Contentful::Store
       def resolve_includes(entry, depth)
         return entry unless entry && depth && depth > 0
 
-        WCC::Contentful::LinkVisitor.new(entry, :Link, :Asset, depth: depth).map! do |val|
+        WCC::Contentful::LinkVisitor.new(entry, :Link, :Asset, depth: depth - 1).map! do |val|
           resolve_link(val)
         end
       end
