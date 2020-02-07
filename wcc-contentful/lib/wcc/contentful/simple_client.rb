@@ -77,7 +77,6 @@ module WCC::Contentful
 
     ADAPTERS = {
       faraday: ['faraday', '~> 0.9'],
-      http: ['http', '> 1.0', '< 3.0'],
       typhoeus: ['typhoeus', '~> 1.0']
     }.freeze
 
@@ -100,9 +99,6 @@ module WCC::Contentful
           faraday.response :logger, (Rails.logger if defined?(Rails)), { headers: false, bodies: false }
           faraday.adapter :net_http
         end
-      when :http
-        require_relative 'simple_client/http_adapter'
-        HttpAdapter.new
       when :typhoeus
         require_relative 'simple_client/typhoeus_adapter'
         TyphoeusAdapter.new

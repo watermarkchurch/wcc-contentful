@@ -108,7 +108,7 @@ RSpec.describe WCC::Contentful::WebhookEnableJob, type: :job do
         space: 'testspace',
         environment: 'testenv',
         default_locale: 'testlocale',
-        connection: :http,
+        connection: :typhoeus,
         webhook_username: 'testwebhookusername',
         webhook_password: 'testwebhookpassword'
       }
@@ -124,7 +124,7 @@ RSpec.describe WCC::Contentful::WebhookEnableJob, type: :job do
           .to eq(defaults.except(:space, :management_token, :connection))
         expect(client.space).to eq('testspace')
         expect(client.instance_variable_get('@access_token')).to eq('testtoken')
-        expect(options[:connection]).to eq(:http)
+        expect(options[:connection]).to eq(:typhoeus)
       end
 
       # act
