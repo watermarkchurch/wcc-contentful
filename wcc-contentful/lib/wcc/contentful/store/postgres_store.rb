@@ -15,6 +15,7 @@ module WCC::Contentful::Store
     delegate :each, to: :to_enum
 
     attr_reader :connection_pool
+    attr_accessor :logger
 
     def initialize(_config = nil, connection_options = nil, pool_options = nil)
       super()
@@ -23,6 +24,7 @@ module WCC::Contentful::Store
       pool_options ||= {}
       @connection_pool = PostgresStore.build_connection_pool(connection_options, pool_options)
       @dirty = false
+      @logger = Rails.logger if defined?(Rails)
     end
 
     def set(key, value)
@@ -104,6 +106,7 @@ module WCC::Contentful::Store
         end
       end
 
+      logger&.debug('[PostgresStore] ' + statement)
       @connection_pool.with { |conn| conn.exec(statement, params) }
     end
 
@@ -114,7 +117,7 @@ module WCC::Contentful::Store
 
       links =
         fields.flat_map do |_f, locale_hash|
-          locale_hash.flat_map do |_locale, value|
+          locale_hash&.flat_map do |_locale, value|
             if value.is_a? Array
               value.map { |val| val.dig('sys', 'id') if link?(val) }
             elsif link?(value)

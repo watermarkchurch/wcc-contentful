@@ -9,7 +9,9 @@ RSpec.describe WCC::Contentful::Store::PostgresStore do
 
   subject {
     WCC::Contentful::Store::PostgresStore.new(double('Configuration'),
-      ENV['POSTGRES_CONNECTION'], size: 5)
+      ENV['POSTGRES_CONNECTION'], size: 5).tap do |store|
+        store.logger = Logger.new(STDOUT)
+      end
   }
 
   before :each do
