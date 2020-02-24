@@ -13,14 +13,11 @@ class WCC::Contentful::Configuration
     webhook_username
     webhook_password
     webhook_jobs
-    content_delivery
-    content_delivery_params
-    middleware
-    store
     connection
     connection_options
     update_schema_file
     schema_file
+    store_factory
     instrumentation_adapter
   ].freeze
 
@@ -60,11 +57,7 @@ class WCC::Contentful::Configuration
   # to implement a webhook job.
   attr_accessor :webhook_jobs
 
-  # An array of middlewares to be wrapped around the configured store.  The middlewares
-  # must implement a `store=` attribute writer in order to receive the next store in
-  # the middleware chain, and then must implement the store interface.
-  # See WCC::Contentful::Middleware::Store for more info.
-  attr_accessor :middleware
+  attr_reader :store_factory
 
   # Returns true if the currently configured environment is pointing at `master`.
   def master?
@@ -73,12 +66,12 @@ class WCC::Contentful::Configuration
 
   # Defines the method by which content is downloaded from the Contentful CDN.
   #
-  # [:direct] `config.content_delivery = :direct`
+  # [:direct] `config.content_delivery :direct`
   #           with the `:direct` method, all queries result in web requests to
   #           'https://cdn.contentful.com' via the
   #           {WCC::Contentful::SimpleClient::Cdn SimpleClient}
   #
-  # [:eager_sync] `config.content_delivery = :eager_sync, [sync_store], [options]`
+  # [:eager_sync] `config.content_delivery :eager_sync, [sync_store], [options]`
   #               with the `:eager_sync` method, the entire content of the Contentful
   #               space is downloaded locally and stored in the
   #               {WCC::Contentful::Services#store configured store}.  The application is
@@ -89,7 +82,7 @@ class WCC::Contentful::Configuration
   #               on publish events:
   #                 mount WCC::Contentful::Engine, at: '/'
   #
-  # [:lazy_sync] `config.content_delivery = :lazy_sync, [cache]`
+  # [:lazy_sync] `config.content_delivery :lazy_sync, [cache]`
   #              The `:lazy_sync` method is a hybrid between the other two methods.
   #              Frequently accessed data is stored in an ActiveSupport::Cache implementation
   #              and is kept up-to-date via the Sync API.  Any data that is not present
@@ -97,39 +90,22 @@ class WCC::Contentful::Configuration
   #              The application is still responsible to periodically call `sync!`
   #              or to mount the provided Engine.
   #
-  def content_delivery=(params)
+  # `config.content_delivery do ... end`
+  #           The block is executed in the context of a WCC::Contentful::Store::Factory.
+  #           this can be used to apply middleware, etc.
+  def content_delivery(*params, &block)
     cd, *cd_params = params
-    unless cd.is_a? Symbol
-      raise ArgumentError, 'content_delivery must be a symbol, use store= to '\
-        'directly set contentful CDN access adapter'
-    end
+    puts "content_delivery: #{cd}, #{cd_params.inspect}"
 
-    WCC::Contentful::Store::Factory.new(
+    @store_factory = WCC::Contentful::Store::Factory.new(
       self,
-      nil,
       cd,
       cd_params
-    ).validate!
+    )
 
-    @content_delivery = cd
-    @content_delivery_params = cd_params
+    @store_factory.configure(&block) if block_given?
+    @store_factory.validate!
   end
-
-  # Gets the configured content_delivery symbol
-  attr_reader :content_delivery
-  # Gets the parameters passed in the content_delivery configuration
-  attr_reader :content_delivery_params
-
-  # Directly sets the adapter layer for communicating with Contentful.
-  # This overrides the content_delivery setting to `:custom`.
-  def store=(value)
-    @content_delivery = :custom
-    store, *cd_params = value
-    @store = store
-    @content_delivery_params = cd_params
-  end
-
-  attr_reader :store
 
   # Sets the connection which is used to make HTTP requests.
   # If left unset, the gem attempts to load 'faraday', 'http' or 'typhoeus'.
@@ -199,6 +175,10 @@ class WCC::Contentful::Configuration
     @update_schema_file = :if_possible
     @schema_file = 'db/contentful-schema.json'
     @webhook_jobs = []
+    @store_factory = WCC::Contentful::Store::Factory.new(
+      self,
+      :direct
+    )
   end
 
   # Validates the configuration, raising ArgumentError if anything is wrong.  This
@@ -215,13 +195,6 @@ class WCC::Contentful::Configuration
       next if job.respond_to?(:call) || job.respond_to?(:perform_later)
 
       raise ArgumentError, "The job '#{job}' must be an instance of ActiveJob::Base or respond to :call"
-    end
-
-    middleware.each do |m|
-      next if m.respond_to?(:call)
-
-      raise ArgumentError, "The middleware '#{m&.try(:name) || m}' cannot be applied!  " \
-        'It must respond to :call'
     end
   end
 

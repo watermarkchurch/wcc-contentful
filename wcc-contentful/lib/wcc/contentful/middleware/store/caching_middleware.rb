@@ -1,13 +1,10 @@
 # frozen_string_literal: true
 
-require_relative 'instrumentation'
-
 module WCC::Contentful::Store
-  class LazyCacheStore
-    include WCC::Contentful::Store::Instrumentation
+  class CachingMiddleware
+    include WCC::Contentful::Middleware::Store
 
-    def initialize(client, cache: nil)
-      @cdn = CDNAdapter.new(client)
+    def initialize(cache = nil)
       @cache = cache || ActiveSupport::Cache::MemoryStore.new
       @client = client
     end
@@ -19,7 +16,7 @@ module WCC::Contentful::Store
           event = 'miss'
           # if it's not a contentful ID don't hit the API.
           # Store a nil object if we can't find the object on the CDN.
-          (@cdn.find(key, options) || nil_obj(key)) if key =~ /^\w+$/
+          (store.find(key, options) || nil_obj(key)) if key =~ /^\w+$/
         end
       _instrument(event + '.lazycachestore', key: key, options: options)
 
@@ -43,10 +40,10 @@ module WCC::Contentful::Store
         end
       end
 
-      @cdn.find_by(content_type: content_type, filter: filter, options: options)
+      store.find_by(content_type: content_type, filter: filter, options: options)
     end
 
-    delegate :find_all, to: :@cdn
+    delegate :find_all, to: :store
 
     # #index is called whenever the sync API comes back with more data.
     def index(json)

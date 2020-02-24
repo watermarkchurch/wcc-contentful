@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../middleware'
+
 # A Store middleware wraps the Store interface to perform any desired transformations
 # on the Contentful entries coming back from the store.  A Store middleware must
 # implement the Store interface as well as a `store=` attribute writer, which is
@@ -22,8 +24,8 @@ module WCC::Contentful::Middleware::Store
   delegate :index, :index?, :set, :delete, to: :store
 
   class_methods do
-    def call(store, _content_delivery_params, _config)
-      instance = new
+    def call(store, content_delivery_params, _config)
+      instance = new(*content_delivery_params)
       instance.store = store
       instance
     end
@@ -43,7 +45,7 @@ module WCC::Contentful::Middleware::Store
   end
 
   def find_all(options: nil, **args)
-    Query.new(
+    DelegatingQuery.new(
       store.find_all(**args.merge(options: options)),
       middleware: self,
       options: options
@@ -86,11 +88,12 @@ module WCC::Contentful::Middleware::Store
     entry
   end
 
-  class Query
+  class DelegatingQuery
     include WCC::Contentful::Store::Query::Interface
     include Enumerable
 
-    delegate :each, to: :to_enum
+    # by default all enumerable methods delegated to the to_enum method
+    delegate(*(Enumerable.instance_methods - Module.instance_methods), to: :to_enum)
 
     attr_reader :wrapped_query, :middleware, :options
 

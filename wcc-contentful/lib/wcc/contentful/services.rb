@@ -35,12 +35,7 @@ module WCC::Contentful
     def store
       @store ||=
         ensure_configured do |config|
-          WCC::Contentful::Store::Factory.new(
-            config,
-            self,
-            config.content_delivery,
-            config.content_delivery_params
-          ).build_sync_store
+          config.store_factory.build_sync_store(self)
         end
     end
 
@@ -53,10 +48,9 @@ module WCC::Contentful
         ensure_configured do |config|
           WCC::Contentful::Store::Factory.new(
             config,
-            self,
             :direct,
             [{ preview: true }]
-          ).build_sync_store
+          ).build_sync_store(self)
         end
     end
 
@@ -155,6 +149,9 @@ module WCC::Contentful
     end
   end
 
+  SERVICES = (WCC::Contentful::Services.instance_methods -
+      Object.instance_methods)
+
   # Include this module to define accessors for every method defined on the
   # {Services} singleton.
   #
@@ -174,9 +171,6 @@ module WCC::Contentful
   #   end
   # @see Services
   module ServiceAccessors
-    SERVICES = (WCC::Contentful::Services.instance_methods -
-      Object.instance_methods)
-
     SERVICES.each do |m|
       define_method m do
         Services.instance.public_send(m)
