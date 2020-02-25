@@ -24,7 +24,6 @@ module WCC::Contentful::Store
       pool_options ||= {}
       @connection_pool = PostgresStore.build_connection_pool(connection_options, pool_options)
       @dirty = false
-      @logger = Rails.logger if defined?(Rails)
     end
 
     def set(key, value)
@@ -106,7 +105,7 @@ module WCC::Contentful::Store
         end
       end
 
-      logger&.debug('[PostgresStore] ' + statement)
+      logger&.debug('[PostgresStore] ' + statement + "\n" + params.inspect)
       @connection_pool.with { |conn| conn.exec(statement, params) }
     end
 
@@ -240,12 +239,19 @@ module WCC::Contentful::Store
       end
 
       def _eq(path, expected, params)
-        if path == %w[sys id]
-          " AND t.id = $#{push_param(expected, params)}"
-        else
-          " AND t.data->#{quote_parameter_path(path)}" \
-            " ? $#{push_param(expected, params)}::text"
+        return " AND t.id = $#{push_param(expected, params)}" if path == %w[sys id]
+
+        if path[3] == 'sys'
+          # the path can be either an array or a singular json obj, and we have to dig
+          # into it to detect whether it contains `{ "sys": { "id" => expected } }`
+          expected = { 'sys' => { path[4] => expected } }.to_json
+          return ' AND fn_contentful_jsonb_any_to_jsonb_array(t.data->' \
+            "#{quote_parameter_path(path.take(3))}) @> " \
+            "jsonb_build_array($#{push_param(expected, params)}::jsonb)"
         end
+
+        " AND t.data->#{quote_parameter_path(path)}" \
+          " ? $#{push_param(expected, params)}::text"
       end
 
       def push_param(param, params)
@@ -263,11 +269,10 @@ module WCC::Contentful::Store
           " ? $#{push_param(expected, params)}::text"
       end
 
-      def push_join(path, joins)
+      def push_join(_path, joins)
         table_alias = "s#{joins.length}"
         joins << "JOIN contentful_raw AS #{table_alias} ON " \
-          "t.data->#{quote_parameter_path(path)}" \
-            "->'sys'->>'id'=#{table_alias}.id"
+          "#{table_alias}.id=ANY(t.links)"
         table_alias
       end
     end
@@ -298,7 +303,7 @@ module WCC::Contentful::Store
         end
       end
 
-      EXPECTED_VERSION = 1
+      EXPECTED_VERSION = 2
 
       def schema_ensured?(conn)
         result = conn.exec('SELECT version FROM wcc_contentful_schema_version' \
@@ -312,7 +317,18 @@ module WCC::Contentful::Store
       end
 
       def ensure_schema(conn)
-        conn.exec(File.read(File.join(__dir__, 'postgres_store/schema.sql')))
+        result =
+          begin
+            conn.exec('SELECT version FROM wcc_contentful_schema_version' \
+          ' ORDER BY version DESC')
+          rescue PG::UndefinedTable
+            []
+          end
+        1.upto(EXPECTED_VERSION).each do |version_num|
+          next if result.find { |row| row['version'] == version_num }
+
+          conn.exec(File.read(File.join(__dir__, "postgres_store/schema_#{version_num}.sql")))
+        end
       end
     end
   end

@@ -220,7 +220,7 @@ RSpec.shared_examples 'supports nested queries' do |feature_set|
           found = subject.find_by(
             content_type: 'team',
             filter: {
-              member: {
+              members: {
                 firstName: { eq: 'Dak' }
               }
             }
@@ -228,7 +228,37 @@ RSpec.shared_examples 'supports nested queries' do |feature_set|
 
           # assert
           expect(found).to_not be_nil
-          expect(found.dig('sys', 'id')).to eq('Member-2')
+          expect(found.dig('sys', 'id')).to eq('Team-1234')
+        end
+
+        it 'filters by array reference ID' do
+          # act
+          found = subject.find_by(
+            content_type: 'team',
+            filter: {
+              members: { id: 'Member-1' }
+            }
+          )
+
+          # assert
+          expect(found).to_not be_nil
+          expect(found.dig('sys', 'id')).to eq('Team-1234')
+        end
+
+        it 'handles explicitly specified sys attr' do
+          # act
+          found = subject.find_by(
+            content_type: 'team',
+            filter: {
+              members: {
+                'sys.contentType.sys.id' => 'person'
+              }
+            }
+          )
+
+          # assert
+          expect(found).to_not be_nil
+          expect(found.dig('sys', 'id')).to eq('Team-1234')
         end
       end
     end
