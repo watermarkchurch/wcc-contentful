@@ -52,6 +52,15 @@ RSpec.shared_examples 'supports nested queries' do |feature_set|
                   }
                 }
               ]
+            },
+            "owner": {
+              "en-US": {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "Owner-1"
+                }
+              }
             }
           }
         }
@@ -146,6 +155,45 @@ RSpec.shared_examples 'supports nested queries' do |feature_set|
       JSON
     }
 
+    let(:owner) {
+      JSON.parse(<<~JSON)
+        {
+          "sys": {
+            "space": {
+              "sys": {
+                "type": "Link",
+                "linkType": "Space",
+                "id": "hw5pse7y1ojx"
+              }
+            },
+            "id": "Owner-1",
+            "type": "Entry",
+            "createdAt": "2019-09-16T19:49:57.879Z",
+            "updatedAt": "2019-09-16T19:49:57.879Z",
+            "revision": 1,
+            "contentType": {
+              "sys": {
+                "type": "Link",
+                "linkType": "ContentType",
+                "id": "person"
+              }
+            }
+          },
+          "fields": {
+            "firstName": {
+              "en-US": "Jerry"
+            },
+            "lastName": {
+              "en-US": "Jones"
+            },
+            "position": {
+              "en-US": "owner"
+            }
+          }
+        }
+      JSON
+    }
+
     describe '#find_by' do
       context 'singular reference' do
         before do
@@ -212,7 +260,7 @@ RSpec.shared_examples 'supports nested queries' do |feature_set|
           team2['fields'].delete('members')
           subject.set('wrong_one', team2)
 
-          [team, member1, member2].each { |d| subject.set(d.dig('sys', 'id'), d) }
+          [team, member1, member2, owner].each { |d| subject.set(d.dig('sys', 'id'), d) }
         end
 
         it 'filters by array reference field' do
@@ -229,6 +277,32 @@ RSpec.shared_examples 'supports nested queries' do |feature_set|
           # assert
           expect(found).to_not be_nil
           expect(found.dig('sys', 'id')).to eq('Team-1234')
+        end
+
+        # The PostgresStore uses a 'links' column to do a join expression,
+        # this checks errors related to that case.
+        it 'does not include a link in another field' do
+          # act
+          found = subject.find_by(
+            content_type: 'team',
+            filter: {
+              members: {
+                lastName: { eq: 'Jones' }
+              }
+            }
+          )
+
+          expect(found).to be_nil
+
+          found2 = subject.find_by(
+            content_type: 'team',
+            filter: {
+              owner: {
+                lastName: { eq: 'Jones' }
+              }
+            }
+          )
+          expect(found2).to_not be_nil
         end
 
         it 'filters by array reference ID' do
