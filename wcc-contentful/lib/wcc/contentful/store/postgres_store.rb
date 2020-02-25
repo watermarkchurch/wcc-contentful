@@ -272,7 +272,7 @@ module WCC::Contentful::Store
         #  1. that the joined entry has the data at the appropriate path
         #  2. that the entry joining to the other entry actually links at this path and not another
         <<~WHERE_CLAUSE
-          AND #{join_table_alias}.data->#{quote_parameter_path(expectation_path)} ? $#{push_param(expected, params)}::text
+           AND #{join_table_alias}.data->#{quote_parameter_path(expectation_path)} ? $#{push_param(expected, params)}::text
           AND exists (select 1 from jsonb_array_elements(fn_contentful_jsonb_any_to_jsonb_array(t.data->#{quote_parameter_path(join_path)})) as link where link->'sys'->'id' ? #{join_table_alias}.id)
         WHERE_CLAUSE
       end
