@@ -285,6 +285,8 @@ module WCC::Contentful::Store
       end
     end
 
+    EXPECTED_VERSION = 2
+
     class << self
       def prepare_statements(conn)
         conn.prepare('upsert_entry', 'SELECT * FROM fn_contentful_upsert_entry($1,$2,$3)')
@@ -311,8 +313,6 @@ module WCC::Contentful::Store
         end
       end
 
-      EXPECTED_VERSION = 2
-
       def schema_ensured?(conn)
         result = conn.exec('SELECT version FROM wcc_contentful_schema_version' \
           ' ORDER BY version DESC LIMIT 1')
@@ -333,7 +333,7 @@ module WCC::Contentful::Store
             []
           end
         1.upto(EXPECTED_VERSION).each do |version_num|
-          next if result.find { |row| row['version'] == version_num }
+          next if result.find { |row| row['version'].to_s == version_num.to_s }
 
           conn.exec(File.read(File.join(__dir__, "postgres_store/schema_#{version_num}.sql")))
         end
