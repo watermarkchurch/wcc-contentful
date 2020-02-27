@@ -287,6 +287,26 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     expect(main_menu.hamburger.items[0].link.title).to eq('About')
   end
 
+  it 'ignores linked types when they can\'t be resolved' do
+    @schema = subject.build_models
+
+    allow(WCC::Contentful::Model).to receive(:find)
+      .and_call_original
+
+    allow(WCC::Contentful::Model).to receive(:find)
+      .with('5NBhDw3i2kUqSwqYok4YQO', any_args)
+      .and_return(nil)
+
+    # act
+    main_menu = WCC::Contentful::Model::Menu.find('FNlqULSV0sOy4IoGmyWOW')
+
+    # assert
+    expect(main_menu.hamburger).to be_instance_of(WCC::Contentful::Model::Menu)
+    expect(main_menu.hamburger.items[1]).to be_instance_of(WCC::Contentful::Model::MenuButton)
+    expect(main_menu.hamburger.items[1].externalLink).to eq('https://www.watermark.org')
+    expect(main_menu.hamburger.items.length).to eq(2)
+  end
+
   it 'makes ID of linked types accessible' do
     @schema = subject.build_models
 
@@ -370,6 +390,26 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     expect(homepage.favicons.length).to eq(4)
     expect(homepage.favicons[0]).to be_instance_of(WCC::Contentful::Model::Asset)
     expect(homepage.favicons[0].file.fileName).to eq('favicon.ico')
+  end
+
+  it 'ignores linked assets when they can\'t be resolved' do
+    @schema = subject.build_models
+
+    allow(WCC::Contentful::Model).to receive(:find)
+      .and_call_original
+
+    allow(WCC::Contentful::Model).to receive(:find)
+      .with('1MsOLBrDwEUAUIuMY8Ys6o', any_args)
+      .and_return(nil)
+
+    # act
+    homepage = WCC::Contentful::Model::Homepage.find_all.first
+
+    # assert
+    expect(homepage.favicons).to be_a(Array)
+    expect(homepage.favicons[1]).to be_instance_of(WCC::Contentful::Model::Asset)
+    expect(homepage.favicons[1].file.fileName).to eq('favicon-32x32.png')
+    expect(homepage.favicons.length).to eq(3)
   end
 
   context 'with options' do
