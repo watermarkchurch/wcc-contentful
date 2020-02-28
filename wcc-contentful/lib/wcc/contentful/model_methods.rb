@@ -182,6 +182,7 @@ module WCC::Contentful::ModelMethods
 
     begin
       val = _try_map(val) { |v| load.call(v) }
+      val = val.compact if val.is_a? Array
 
       instance_variable_set(var_name + '_resolved', val)
     rescue WCC::Contentful::CircularReferenceError
