@@ -9,7 +9,9 @@ RSpec.describe WCC::Contentful::Store::PostgresStore do
 
   subject {
     WCC::Contentful::Store::PostgresStore.new(double('Configuration'),
-      ENV['POSTGRES_CONNECTION'], size: 5)
+      ENV['POSTGRES_CONNECTION'], size: 5).tap do |store|
+        store.logger = Logger.new(STDOUT)
+      end
   }
 
   before :each do
@@ -206,6 +208,66 @@ RSpec.describe WCC::Contentful::Store::PostgresStore do
     it '#keys returns empty' do
       result = subject.keys.to_a
       expect(result).to eq([])
+    end
+  end
+
+  context 'db upgrades' do
+    let(:connection) {
+      double('connection', prepare: nil, exec_prepared: double(num_tuples: 0))
+    }
+
+    before do
+      allow(PG).to receive(:connect)
+        .and_return(connection)
+    end
+
+    it 'runs v0 -> vN upgrade' do
+      allow(connection).to receive(:exec)
+        .with('SELECT version FROM wcc_contentful_schema_version ORDER BY version DESC LIMIT 1')
+        .and_raise(PG::UndefinedTable)
+
+      allow(connection).to receive(:exec)
+        .with('SELECT version FROM wcc_contentful_schema_version ORDER BY version DESC')
+        .and_raise(PG::UndefinedTable)
+
+      1.upto(described_class::EXPECTED_VERSION).each do |i|
+        expect(connection).to receive(:exec)
+          .with(load_schema_version_file(i))
+      end
+
+      subject.find('1234')
+    end
+
+    it 'runs v1 -> vN upgrade' do
+      result = [
+        { 'version' => '1' }
+      ]
+      def result.num_tuples
+        1
+      end
+
+      allow(connection).to receive(:exec)
+        .with('SELECT version FROM wcc_contentful_schema_version ORDER BY version DESC LIMIT 1')
+        .and_return(result)
+
+      allow(connection).to receive(:exec)
+        .with('SELECT version FROM wcc_contentful_schema_version ORDER BY version DESC')
+        .and_return(result)
+
+      expect(connection).to_not receive(:exec)
+        .with(load_schema_version_file(1))
+
+      2.upto(described_class::EXPECTED_VERSION).each do |i|
+        expect(connection).to receive(:exec)
+          .with(load_schema_version_file(i))
+      end
+
+      subject.find('1234')
+    end
+
+    def load_schema_version_file(version_num)
+      File.read(File.join(__dir__, '../../../../lib/wcc/contentful/store/postgres_store/' \
+        "schema_#{version_num}.sql"))
     end
   end
 end
