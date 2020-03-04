@@ -11,11 +11,19 @@ module WCC::Contentful::Store
     attr_reader :wcc_contentful_config, :cdn_method, :content_delivery_params, :config
 
     def initialize(wcc_contentful_config, cdn_method = nil, content_delivery_params = nil)
-      puts "init: #{cdn_method.inspect}"
       @wcc_contentful_config = wcc_contentful_config
       @cdn_method = cdn_method
       @content_delivery_params = content_delivery_params || []
       @config = DSL.new
+
+      return unless @cdn_method
+
+      # Infer whether they passed in a store implementation object or class
+      return unless class_implements_store_interface?(@cdn_method) ||
+        object_implements_store_interface?(@cdn_method)
+
+      @content_delivery_params.unshift(@cdn_method)
+      @cdn_method = :custom
     end
 
     def configure(&block)
@@ -28,9 +36,13 @@ module WCC::Contentful::Store
       end
 
       built = public_send("build_#{cdn_method}", services)
+      options = {
+        config: config,
+        services: services
+      }
       config.middleware.reverse
         .reduce(built) do |memo, (middleware, params, configure_proc)|
-          middleware = middleware.call(memo, params, config, services)
+          middleware = middleware.call(memo, *params, **options)
           middleware.instance_exec(&configure_proc) if configure_proc
           middleware || memo
         end
@@ -42,9 +54,9 @@ module WCC::Contentful::Store
       end
 
       config.middleware.each do |m|
-        next if m.respond_to?(:call)
+        next if m[0].respond_to?(:call)
 
-        raise ArgumentError, "The middleware '#{m&.try(:name) || m}' cannot be applied!  " \
+        raise ArgumentError, "The middleware '#{m[0]&.try(:name) || m[0]}' cannot be applied!  " \
           'It must respond to :call'
       end
 
@@ -54,6 +66,7 @@ module WCC::Contentful::Store
     end
 
     def build_eager_sync(_services)
+      store = content_delivery_params[0] || :memory
       store = SYNC_STORES[store].call(config, *content_delivery_params) if store.is_a?(Symbol)
       store || MemoryStore.new
     end
@@ -61,12 +74,12 @@ module WCC::Contentful::Store
     def build_lazy_sync(services)
       WCC::Contentful::Store::CachingMiddleware.call(
         build_direct(services),
-        cache: ActiveSupport::Cache.lookup_store(*content_delivery_params)
+        ActiveSupport::Cache.lookup_store(*content_delivery_params)
       )
     end
 
     def build_direct(services)
-      if content_delivery_params.find { |array| array[:preview] }
+      if content_delivery_params.include?(:preview)
         CDNAdapter.new(services.preview_client)
       else
         CDNAdapter.new(services.client)
@@ -74,11 +87,11 @@ module WCC::Contentful::Store
     end
 
     def build_custom(services)
-      store = config.store || cdn_method
-      return store unless store&.respond_to?(:new)
+      store = config.store || content_delivery_params[0]
+      return store if object_implements_store_interface?(store)
 
-      instance = store.new(config, *content_delivery_params)
-      WCC::Contentful::SERVICES.each do |s|
+      instance = store.new(config, *content_delivery_params - [store])
+      (WCC::Contentful::SERVICES - %i[store preview_store]).each do |s|
         next unless instance.respond_to?("#{s}=")
 
         instance.public_send("#{s}=",
@@ -96,14 +109,28 @@ module WCC::Contentful::Store
     end
 
     def validate_custom
-      store = config.store || cdn_method
-      methods = store.respond_to?(:new) ? store.instance_methods : store.methods
+      store = config.store || content_delivery_params[0]
+      raise ArgumentError, 'No custom store provided for :custom content delivery' unless store
 
-      %i[find find_by find_all index?].each do |method|
+      return true if class_implements_store_interface?(store) ||
+        object_implements_store_interface?(store)
+
+      methods = [*store.try(:instance_methods), *store.try(:methods)]
+      INTERFACE_METHODS.each do |method|
         next if methods.include?(method)
 
         raise ArgumentError, "Custom store '#{store}' must respond to the #{method} method"
       end
+    end
+
+    INTERFACE_METHODS = WCC::Contentful::Store::Interface.instance_methods - Module.instance_methods
+
+    def class_implements_store_interface?(klass)
+      (INTERFACE_METHODS - (klass.try(:instance_methods) || [])).empty?
+    end
+
+    def object_implements_store_interface?(object)
+      (INTERFACE_METHODS - (object.try(:methods) || [])).empty?
     end
 
     class DSL

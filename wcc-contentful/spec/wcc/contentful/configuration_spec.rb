@@ -19,33 +19,33 @@ RSpec.describe WCC::Contentful::Configuration do
       }.to raise_error(ArgumentError)
     end
 
-    it 'raises error when setting a store to content_delivery' do
-      # act
-      expect {
-        config.content_delivery WCC::Contentful::Store::MemoryStore.new
-      }.to raise_error(ArgumentError)
-    end
-
     it 'allows setting a custom store to content_delivery=' do
-      store = double(methods: %i[find find_by find_all index?])
+      store_class =
+        Class.new do
+          include WCC::Contentful::Store::Interface
+        end
+
+      store = store_class.new
 
       # act
       config.content_delivery store
 
       # assert
-      expect(config.content_delivery).to eq(:custom)
       expect(services.store).to be(store)
     end
 
     it 'allows setting a store class with parameters to store=' do
       store_class =
         Class.new do
-          attr_accessor :config
-          attr_accessor :params
+          include WCC::Contentful::Store::Interface
+          attr_reader :config
+          attr_reader :params
 
-          def initialize(config, params)
+          attr_accessor :client
+
+          def initialize(config, param1, param2)
             @config = config
-            @params = params
+            @params = [param1, param2]
           end
         end
 
@@ -53,9 +53,9 @@ RSpec.describe WCC::Contentful::Configuration do
       config.content_delivery store_class, :param_1, 'param_2'
 
       # assert
-      expect(config.content_delivery).to eq(:custom)
       expect(services.store).to be_a(store_class)
       expect(services.store.params).to eq([:param_1, 'param_2'])
+      expect(services.store.client).to eq(WCC::Contentful::Services.instance.client)
     end
 
     context 'eager sync' do
@@ -64,7 +64,6 @@ RSpec.describe WCC::Contentful::Configuration do
         config.content_delivery :eager_sync, :postgres, ENV['POSTGRES_CONNECTION']
 
         # assert
-        expect(config.content_delivery).to eq(:eager_sync)
         expect(services.store).to be_a(WCC::Contentful::Store::PostgresStore)
       end
 
@@ -75,14 +74,15 @@ RSpec.describe WCC::Contentful::Configuration do
         config.content_delivery :eager_sync, store
 
         # assert
-        expect(config.content_delivery).to eq(:eager_sync)
         expect(services.store).to be(store)
       end
 
       it 'errors when using a bad store' do
+        config.content_delivery :eager_sync, :asdf
+
         # act
         expect {
-          config.content_delivery :eager_sync, :asdf
+          config.validate!
         }.to raise_error(ArgumentError)
       end
     end
@@ -98,9 +98,8 @@ RSpec.describe WCC::Contentful::Configuration do
         config.content_delivery :lazy_sync, :file_store, '/tmp/cache'
 
         # assert
-        expect(config.content_delivery).to eq(:lazy_sync)
         store = services.store
-        expect(store).to be_a(WCC::Contentful::Store::LazyCacheStore)
+        expect(store).to be_a(WCC::Contentful::Store::CachingMiddleware)
         expect(store.find('test')).to eq('test data')
       end
 
@@ -111,9 +110,8 @@ RSpec.describe WCC::Contentful::Configuration do
         config.content_delivery :lazy_sync, cache
 
         # assert
-        expect(config.content_delivery).to eq(:lazy_sync)
         store = services.store
-        expect(store).to be_a(WCC::Contentful::Store::LazyCacheStore)
+        expect(store).to be_a(WCC::Contentful::Store::CachingMiddleware)
         expect(store.find('test')).to eq('test data')
       end
     end
@@ -124,7 +122,6 @@ RSpec.describe WCC::Contentful::Configuration do
         config.content_delivery :direct
 
         # assert
-        expect(config.content_delivery).to eq(:direct)
         store = services.store
         expect(store).to be_a(WCC::Contentful::Store::CDNAdapter)
       end
@@ -276,7 +273,7 @@ RSpec.describe WCC::Contentful::Configuration do
     it 'does not allow modifying hashes or arrays' do
       frozen = config.freeze
 
-      %i[webhook_jobs content_delivery_params].each do |att|
+      %i[webhook_jobs].each do |att|
         expect {
           frozen.send(att) << 'test'
         }.to(

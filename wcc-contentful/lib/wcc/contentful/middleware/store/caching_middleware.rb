@@ -3,10 +3,11 @@
 module WCC::Contentful::Store
   class CachingMiddleware
     include WCC::Contentful::Middleware::Store
+    # include instrumentation, but not specifically store stack instrumentation
+    include WCC::Contentful::Instrumentation
 
     def initialize(cache = nil)
       @cache = cache || ActiveSupport::Cache::MemoryStore.new
-      @client = client
     end
 
     def find(key, **options)
@@ -18,7 +19,7 @@ module WCC::Contentful::Store
           # Store a nil object if we can't find the object on the CDN.
           (store.find(key, options) || nil_obj(key)) if key =~ /^\w+$/
         end
-      _instrument(event + '.lazycachestore', key: key, options: options)
+      _instrument(event, key: key, options: options)
 
       case found.try(:dig, 'sys', 'type')
       when 'Nil', 'DeletedEntry', 'DeletedAsset'
@@ -47,6 +48,18 @@ module WCC::Contentful::Store
 
     # #index is called whenever the sync API comes back with more data.
     def index(json)
+      result = store.index(json) if store.index?
+      _index(json)
+      result
+    end
+
+    def index?
+      true
+    end
+
+    private
+
+    def _index(json)
       id = json.dig('sys', 'id')
       return unless prev = @cache.read(id)
 
@@ -54,7 +67,7 @@ module WCC::Contentful::Store
         return prev if next_rev < prev_rev
       end
 
-      # we also set deletes in the cache - no need to go hit the API when we know
+      # we also set DeletedEntry objects in the cache - no need to go hit the API when we know
       # this is a nil object
       ensure_hash json
       @cache.write(id, json)
@@ -68,25 +81,6 @@ module WCC::Contentful::Store
         json
       end
     end
-
-    def index?
-      true
-    end
-
-    def set(key, value)
-      ensure_hash value
-      old = @cache.read(key)
-      @cache.write(key, value)
-      old
-    end
-
-    def delete(key)
-      old = @cache.read(key)
-      @cache.delete(key)
-      old
-    end
-
-    private
 
     def nil_obj(id)
       {

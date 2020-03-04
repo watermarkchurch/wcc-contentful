@@ -24,7 +24,7 @@ module WCC::Contentful::Middleware::Store
   delegate :index, :index?, :set, :delete, to: :store
 
   class_methods do
-    def call(store, content_delivery_params, _config)
+    def call(store, *content_delivery_params, **_)
       instance = new(*content_delivery_params)
       instance.store = store
       instance

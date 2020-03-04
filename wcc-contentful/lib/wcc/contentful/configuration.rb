@@ -95,7 +95,6 @@ class WCC::Contentful::Configuration
   #           this can be used to apply middleware, etc.
   def content_delivery(*params, &block)
     cd, *cd_params = params
-    puts "content_delivery: #{cd}, #{cd_params.inspect}"
 
     @store_factory = WCC::Contentful::Store::Factory.new(
       self,

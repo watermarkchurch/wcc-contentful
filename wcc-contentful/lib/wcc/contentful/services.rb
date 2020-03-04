@@ -49,7 +49,7 @@ module WCC::Contentful
           WCC::Contentful::Store::Factory.new(
             config,
             :direct,
-            [{ preview: true }]
+            :preview
           ).build_sync_store(self)
         end
     end
