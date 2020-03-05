@@ -24,9 +24,13 @@ class WCC::Contentful::App::ContactFormController < ApplicationController
   def form_model
     raise ArgumentError, 'missing form ID' unless params[:id]
 
-    @form_model ||= WCC::Contentful::Model::SectionContactForm.find(
+    @form_model ||= form_class.find(
       params[:id], options: { preview: preview? }
     )
+  end
+
+  def form_class
+    WCC::Contentful::Model.resolve_constant('section-contact-form')
   end
 
   def form_params
