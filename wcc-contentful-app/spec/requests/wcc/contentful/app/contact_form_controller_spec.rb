@@ -2,6 +2,9 @@
 
 require 'rails_helper'
 
+class MyContactForm < WCC::Contentful::Model::SectionContactForm
+end
+
 RSpec.describe WCC::Contentful::App::ContactFormController, type: :request do
   let(:mailer) {
     double(deliver: nil)
@@ -42,6 +45,27 @@ RSpec.describe WCC::Contentful::App::ContactFormController, type: :request do
       id: form.id,
       email_object_id: 'TestPerson'
     }
+  end
+
+  context 'section model is extended' do
+    before do
+      MyContactForm.register_for_content_type('section-contact-form')
+    end
+
+    after do
+      WCC::Contentful::Model.class_variable_get('@@registry').clear
+    end
+
+    it 'resolves to the descendant contact form override' do
+      form = contentful_stub('section-contact-form')
+
+      expect(::MyContactForm).to receive(:find)
+        .with(form.id, { options: { preview: false } })
+        .and_return(form)
+      expect(form).to receive(:send_email)
+
+      post '/contact_form', params: { id: form.id }
+    end
   end
 
   context 'preview: true' do
