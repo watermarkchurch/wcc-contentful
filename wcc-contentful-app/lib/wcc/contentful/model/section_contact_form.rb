@@ -4,11 +4,17 @@ class WCC::Contentful::Model::SectionContactForm < WCC::Contentful::Model
   def send_email(data)
     save_contact_form(data)
 
-    ::WCC::Contentful::App::ContactMailer.contact_form_email(data[:notification_email], data).deliver
+    ::WCC::Contentful::App::ContactMailer.contact_form_email(
+      from_address(data), data[:notification_email], data
+    ).deliver
   end
 
   def page
     ::WCC::Contentful::Model::Page.find_by(sections: { id: id })
+  end
+
+  def from_address(data)
+    data[email_form_field&.title]
   end
 
   def to_address(email_object_id: nil)
@@ -18,6 +24,10 @@ class WCC::Contentful::Model::SectionContactForm < WCC::Contentful::Model
   end
 
   private
+
+  def email_form_field
+    fields.find { |f| f.input_type == 'email' }
+  end
 
   def email_address(entry)
     return entry.email if defined?(entry.email)
