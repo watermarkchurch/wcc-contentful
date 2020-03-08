@@ -12,14 +12,15 @@ RSpec.describe WCC::Contentful::Configuration do
       .and_return(config)
   end
 
-  describe '#content_delivery' do
+  describe '#store' do
     it 'raises error when setting invalid content delivery method' do
+      config.store :asdf
       expect {
-        config.content_delivery :asdf
+        config.store.validate!
       }.to raise_error(ArgumentError)
     end
 
-    it 'allows setting a custom store to content_delivery=' do
+    it 'allows setting a custom store to store=' do
       store_class =
         Class.new do
           include WCC::Contentful::Store::Interface
@@ -28,9 +29,10 @@ RSpec.describe WCC::Contentful::Configuration do
       store = store_class.new
 
       # act
-      config.content_delivery store
+      config.store = store
 
       # assert
+      config.store.validate!
       expect(services.store).to be(store)
     end
 
@@ -50,9 +52,10 @@ RSpec.describe WCC::Contentful::Configuration do
         end
 
       # act
-      config.content_delivery store_class, :param_1, 'param_2'
+      config.store = store_class, :param_1, 'param_2'
 
       # assert
+      config.store.validate!
       expect(services.store).to be_a(store_class)
       expect(services.store.params).to eq([:param_1, 'param_2'])
       expect(services.store.client).to eq(WCC::Contentful::Services.instance.client)
@@ -61,7 +64,7 @@ RSpec.describe WCC::Contentful::Configuration do
     context 'eager sync' do
       it 'selects store from symbol' do
         # act
-        config.content_delivery :eager_sync, :postgres, ENV['POSTGRES_CONNECTION']
+        config.store :eager_sync, :postgres, ENV['POSTGRES_CONNECTION']
 
         # assert
         expect(services.store).to be_a(WCC::Contentful::Store::PostgresStore)
@@ -71,14 +74,14 @@ RSpec.describe WCC::Contentful::Configuration do
         store = double
 
         # act
-        config.content_delivery :eager_sync, store
+        config.store :eager_sync, store
 
         # assert
         expect(services.store).to be(store)
       end
 
       it 'errors when using a bad store' do
-        config.content_delivery :eager_sync, :asdf
+        config.store :eager_sync, :asdf
 
         # act
         expect {
@@ -95,7 +98,7 @@ RSpec.describe WCC::Contentful::Configuration do
           .and_return(cache)
 
         # act
-        config.content_delivery :lazy_sync, :file_store, '/tmp/cache'
+        config.store :lazy_sync, :file_store, '/tmp/cache'
 
         # assert
         store = services.store
@@ -107,7 +110,7 @@ RSpec.describe WCC::Contentful::Configuration do
         cache = double(fetch: 'test data')
 
         # act
-        config.content_delivery :lazy_sync, cache
+        config.store :lazy_sync, cache
 
         # assert
         store = services.store
@@ -119,7 +122,7 @@ RSpec.describe WCC::Contentful::Configuration do
     context 'direct' do
       it 'uses CDN adapter' do
         # act
-        config.content_delivery :direct
+        config.store :direct
 
         # assert
         store = services.store
@@ -135,12 +138,12 @@ RSpec.describe WCC::Contentful::Configuration do
           include WCC::Contentful::Middleware::Store
         end
 
-      config.content_delivery :direct do
+      config.store :direct do
         use Test_Middleware
       end
 
       # act
-      store = config.store_factory.build_sync_store
+      store = config.store.build(config)
 
       expect(store).to be_a Test_Middleware
       expect(store.store).to be_a WCC::Contentful::Store::CDNAdapter
@@ -171,21 +174,21 @@ RSpec.describe WCC::Contentful::Configuration do
 
       # good
       config.environment = ''
-      config.content_delivery :lazy_sync
+      config.store = :lazy_sync
       config.validate!
 
-      config.content_delivery :eager_sync
-      config.validate!
-
-      config.environment = 'staging'
-      config.content_delivery :direct
+      config.store = :eager_sync
       config.validate!
 
       config.environment = 'staging'
-      config.content_delivery :lazy_sync
+      config.store = :direct
       config.validate!
 
-      config.content_delivery :eager_sync
+      config.environment = 'staging'
+      config.store = :lazy_sync
+      config.validate!
+
+      config.store = :eager_sync
       config.validate!
     end
 
@@ -244,7 +247,7 @@ RSpec.describe WCC::Contentful::Configuration do
       config.webhook_username = 'test-wh'
       config.webhook_password = 'test-wh-pword'
       config.webhook_jobs = [-> { 'one' }, WCC::Contentful::SyncEngine::Job]
-      config.content_delivery :lazy_sync, ActiveSupport::Cache::MemoryStore.new
+      config.store = :lazy_sync, ActiveSupport::Cache::MemoryStore.new
       config.connection = -> { 'test' }
       config
     }

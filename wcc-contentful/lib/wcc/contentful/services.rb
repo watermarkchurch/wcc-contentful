@@ -35,7 +35,7 @@ module WCC::Contentful
     def store
       @store ||=
         ensure_configured do |config|
-          config.store_factory.build_sync_store(self)
+          config.store.build(config, self)
         end
     end
 
@@ -47,10 +47,9 @@ module WCC::Contentful
       @preview_store ||=
         ensure_configured do |config|
           WCC::Contentful::Store::Factory.new(
-            config,
             :direct,
             :preview
-          ).build_sync_store(self)
+          ).build(config, self)
         end
     end
 
