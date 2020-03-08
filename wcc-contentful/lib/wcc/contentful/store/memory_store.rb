@@ -7,8 +7,6 @@ module WCC::Contentful::Store
   # point for more useful implementations.  It only implements equality queries
   # and does not support querying through an association.
   class MemoryStore < Base
-    include WCC::Contentful::Store::Instrumentation
-
     def initialize
       super
       @hash = {}

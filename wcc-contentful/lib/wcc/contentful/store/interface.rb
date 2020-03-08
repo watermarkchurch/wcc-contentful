@@ -75,6 +75,8 @@ module WCC::Contentful::Store
     def find_all(content_type:, options: nil)
       raise NotImplementedError, "#{self.class} does not implement #find_all"
     end
+
+    INTERFACE_METHODS = WCC::Contentful::Store::Interface.instance_methods - Module.instance_methods
   end
   # rubocop:enable Lint/UnusedMethodArgument
 end

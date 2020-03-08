@@ -12,7 +12,7 @@ module WCC::Contentful::Store
 
     # An array of tuples that set up and configure a Store middleware.
     def middleware
-      @middleware ||= []
+      @middleware ||= self.class.default_middleware
     end
 
     def initialize(cdn_method = :direct, content_delivery_params = nil)
@@ -136,14 +136,23 @@ module WCC::Contentful::Store
       end
     end
 
-    INTERFACE_METHODS = WCC::Contentful::Store::Interface.instance_methods - Module.instance_methods
-
     def class_implements_store_interface?(klass)
-      (INTERFACE_METHODS - (klass.try(:instance_methods) || [])).empty?
+      (WCC::Contentful::Store::Interface::INTERFACE_METHODS -
+          (klass.try(:instance_methods) || [])).empty?
     end
 
     def object_implements_store_interface?(object)
-      (INTERFACE_METHODS - (object.try(:methods) || [])).empty?
+      (WCC::Contentful::Store::Interface::INTERFACE_METHODS -
+          (object.try(:methods) || [])).empty?
+    end
+
+    class << self
+      # The middleware that by default lives at the top of the middleware stack.
+      def default_middleware
+        [
+          [WCC::Contentful::Store::InstrumentationMiddleware]
+        ]
+      end
     end
   end
 end

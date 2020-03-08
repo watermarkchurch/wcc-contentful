@@ -33,7 +33,8 @@ RSpec.describe WCC::Contentful::Configuration do
 
       # assert
       config.store.validate!
-      expect(services.store).to be(store)
+      stack = middleware_stack(services.store)
+      expect(stack.last).to be(store)
     end
 
     it 'allows setting a store class with parameters to store=' do
@@ -56,9 +57,11 @@ RSpec.describe WCC::Contentful::Configuration do
 
       # assert
       config.store.validate!
-      expect(services.store).to be_a(store_class)
-      expect(services.store.params).to eq([:param_1, 'param_2'])
-      expect(services.store.client).to eq(WCC::Contentful::Services.instance.client)
+      stack = middleware_stack(services.store)
+      store = stack.last
+      expect(store).to be_a(store_class)
+      expect(store.params).to eq([:param_1, 'param_2'])
+      expect(store.client).to eq(WCC::Contentful::Services.instance.client)
     end
 
     context 'eager sync' do
@@ -67,7 +70,8 @@ RSpec.describe WCC::Contentful::Configuration do
         config.store :eager_sync, :postgres, ENV['POSTGRES_CONNECTION']
 
         # assert
-        expect(services.store).to be_a(WCC::Contentful::Store::PostgresStore)
+        stack = middleware_stack(services.store)
+        expect(stack.last).to be_a(WCC::Contentful::Store::PostgresStore)
       end
 
       it 'uses provided store' do
@@ -77,7 +81,8 @@ RSpec.describe WCC::Contentful::Configuration do
         config.store :eager_sync, store
 
         # assert
-        expect(services.store).to be(store)
+        stack = middleware_stack(services.store)
+        expect(stack.last).to be(store)
       end
 
       it 'errors when using a bad store' do
@@ -101,9 +106,9 @@ RSpec.describe WCC::Contentful::Configuration do
         config.store :lazy_sync, :file_store, '/tmp/cache'
 
         # assert
-        store = services.store
-        expect(store).to be_a(WCC::Contentful::Middleware::Store::CachingMiddleware)
-        expect(store.find('test')).to eq('test data')
+        stack = middleware_stack(services.store)
+        expect(stack[stack.length - 2]).to be_a(WCC::Contentful::Middleware::Store::CachingMiddleware)
+        expect(services.store.find('test')).to eq('test data')
       end
 
       it 'uses provided cache' do
@@ -113,9 +118,9 @@ RSpec.describe WCC::Contentful::Configuration do
         config.store :lazy_sync, cache
 
         # assert
-        store = services.store
-        expect(store).to be_a(WCC::Contentful::Middleware::Store::CachingMiddleware)
-        expect(store.find('test')).to eq('test data')
+        stack = middleware_stack(services.store)
+        expect(stack[stack.length - 2]).to be_a(WCC::Contentful::Middleware::Store::CachingMiddleware)
+        expect(services.store.find('test')).to eq('test data')
       end
     end
 
@@ -125,19 +130,20 @@ RSpec.describe WCC::Contentful::Configuration do
         config.store :direct
 
         # assert
-        store = services.store
+        stack = middleware_stack(services.store)
+        store = stack.last
         expect(store).to be_a(WCC::Contentful::Store::CDNAdapter)
       end
     end
   end
 
   describe '#middleware' do
-    it 'applies a middleware to the configured store' do
-      Test_Middleware =
-        Class.new do
-          include WCC::Contentful::Middleware::Store
-        end
+    Test_Middleware =
+      Class.new do
+        include WCC::Contentful::Middleware::Store
+      end
 
+    it 'applies a middleware to the configured store' do
       config.store :direct do
         use Test_Middleware
       end
@@ -145,8 +151,41 @@ RSpec.describe WCC::Contentful::Configuration do
       # act
       store = config.store.build(config)
 
-      expect(store).to be_a Test_Middleware
-      expect(store.store).to be_a WCC::Contentful::Store::CDNAdapter
+      stack = middleware_stack(store)
+      expect(stack[stack.length - 2]).to be_a Test_Middleware
+      expect(stack[stack.length - 1]).to be_a WCC::Contentful::Store::CDNAdapter
+    end
+
+    it 'wraps instrumentation around the top of the stack' do
+      custom_store = double(
+        index: nil,
+        index?: true,
+        find: nil,
+        find_by: nil,
+        find_all: []
+      )
+
+      config.store custom_store do
+        use Test_Middleware
+        use WCC::Contentful::Middleware::Store::CachingMiddleware
+      end
+
+      # act
+      store = config.store.build(config)
+
+      expect(store).to be_a WCC::Contentful::Store::InstrumentationMiddleware
+      expect {
+        store.find('abcd')
+      }.to instrument('find.store.contentful.wcc').once
+      expect {
+        store.find_by(content_type: 'abcd')
+      }.to instrument('find_by.store.contentful.wcc').once
+      expect {
+        store.find_all(content_type: 'abcd').first
+      }.to instrument('find_all.store.contentful.wcc').once
+      expect {
+        store.index({ 'sys' => { 'type' => 'test', 'id' => 1 } })
+      }.to instrument('index.store.contentful.wcc').once
     end
   end
 
@@ -296,5 +335,13 @@ RSpec.describe WCC::Contentful::Configuration do
 
       expect(frozen.connection).to be conn
     end
+  end
+
+  def middleware_stack(store)
+    stack = [store]
+    while store = store.try(:store)
+      stack << store
+    end
+    stack
   end
 end
