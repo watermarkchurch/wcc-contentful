@@ -7,7 +7,7 @@ WCC::Contentful.configure do |config|
   # Optional
   config.management_token = # Contentful API management token
   config.default_locale = # Set default locale, if left blank this is 'en-US'
-  config.content_delivery = # :direct, :eager_sync, or :lazy_sync
+  config.store = # :direct, :eager_sync, or :lazy_sync
 end
 
 # Download content types, build models, and sync content

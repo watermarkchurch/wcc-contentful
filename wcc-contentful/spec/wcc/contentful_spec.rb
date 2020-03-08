@@ -353,7 +353,12 @@ RSpec.describe WCC::Contentful, :vcr do
         WCC::Contentful.init!
 
         # assert
-        expect(WCC::Contentful::Model.store).to be_a(WCC::Contentful::Store::CDNAdapter)
+        store = WCC::Contentful::Model.store
+        stack = [store]
+        while store = store.try(:store)
+          stack << store
+        end
+        expect(stack.last).to be_a(WCC::Contentful::Store::CDNAdapter)
 
         page = WCC::Contentful::Model::Page.find('JhYhSfZPAOMqsaK8cYOUK')
         expect(page.title).to eq('Ministries')

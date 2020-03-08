@@ -26,7 +26,7 @@ require_relative 'store/factory'
 # The currently configured store is available on WCC::Contentful::Services.instance.store
 module WCC::Contentful::Store
   SYNC_STORES = {
-    memory: ->(_config) { WCC::Contentful::Store::MemoryStore.new },
+    memory: ->(_config, *_options) { WCC::Contentful::Store::MemoryStore.new },
     postgres: ->(config, *options) {
       require_relative 'store/postgres_store'
       WCC::Contentful::Store::PostgresStore.new(config, *options)

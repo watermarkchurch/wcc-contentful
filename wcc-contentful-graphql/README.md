@@ -11,11 +11,11 @@ resolve all the requested data.
 
 ### Important note!
 The GraphQL schema currently does not utilize the "include" parameter, so it is
-a very good idea to configure your content_delivery strategy to either `:direct`
+a very good idea to configure your store to either `:direct`
 or `:lazy_sync`.  If you don't do this, you will see a lot of requests to
 Contentful for specific entries by ID as the GraphQL resolver walks all your links!
 
-[More info on configuration can be found here](https://www.rubydoc.info/gems/wcc-contentful/WCC%2FContentful%2FConfiguration:content_delivery=)
+[More info on configuration can be found here](https://www.rubydoc.info/gems/wcc-contentful/WCC%2FContentful%2FConfiguration:store=)
 
 ## Usage
 

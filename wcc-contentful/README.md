@@ -308,8 +308,7 @@ WCC::Contentful.configure do |config|
   config.webhook_password = Rails.application.secrets.webhook_password
   config.webhook_jobs << MyOnWebhookJob
 
-  config.content_delivery = :lazy_sync, Rails.cache if Rails.env.production?
-  # incompatible with config.content_delivery
+  config.store = :lazy_sync, Rails.cache if Rails.env.production?
   # config.store = MyCustomStore.new
 
   # Use a custom Faraday connection

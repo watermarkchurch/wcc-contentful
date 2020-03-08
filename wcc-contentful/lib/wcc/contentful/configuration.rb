@@ -175,7 +175,6 @@ class WCC::Contentful::Configuration
     @preview_token = ''
     @space = ''
     @default_locale = nil
-    @content_delivery = :direct
     @middleware = []
     @update_schema_file = :if_possible
     @schema_file = 'db/contentful-schema.json'

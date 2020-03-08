@@ -18,7 +18,7 @@ module WCC::Contentful
 
     # Gets the data-store which executes the queries run against the dynamic
     # models in the WCC::Contentful::Model namespace.
-    # This is one of the following based on the configured content_delivery method:
+    # This is one of the following based on the configured store method:
     #
     # [:direct] an instance of {WCC::Contentful::Store::CDNAdapter} with a
     #           {WCC::Contentful::SimpleClient::Cdn CDN Client} to access the CDN.

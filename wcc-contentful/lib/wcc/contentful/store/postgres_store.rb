@@ -10,6 +10,8 @@ module WCC::Contentful::Store
   # Implements the store interface where all Contentful entries are stored in a
   # JSONB table.
   class PostgresStore < Base
+    include WCC::Contentful::Instrumentation
+
     delegate :each, to: :to_enum
 
     attr_reader :connection_pool
@@ -102,7 +104,9 @@ module WCC::Contentful::Store
         end
       end
 
-      @connection_pool.with { |conn| conn.exec(statement, params) }
+      _instrument 'exec' do
+        @connection_pool.with { |conn| conn.exec(statement, params) }
+      end
     end
 
     private
