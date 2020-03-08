@@ -99,7 +99,7 @@ RSpec.describe WCC::Contentful::Configuration do
 
         # assert
         store = services.store
-        expect(store).to be_a(WCC::Contentful::Store::CachingMiddleware)
+        expect(store).to be_a(WCC::Contentful::Middleware::Store::CachingMiddleware)
         expect(store.find('test')).to eq('test data')
       end
 
@@ -111,7 +111,7 @@ RSpec.describe WCC::Contentful::Configuration do
 
         # assert
         store = services.store
-        expect(store).to be_a(WCC::Contentful::Store::CachingMiddleware)
+        expect(store).to be_a(WCC::Contentful::Middleware::Store::CachingMiddleware)
         expect(store.find('test')).to eq('test data')
       end
     end

@@ -42,9 +42,9 @@ RSpec.describe WCC::Contentful::SyncEngine::Job, type: :job do
                         next_sync_token: 'test'
                       ))
 
-        expect(store).to receive(:set)
-          .with('sync:token', { 'token' => 'test' })
-        expect(store).to_not receive(:index)
+        expect(store).to receive(:index)
+          .once
+          .with({ 'sys' => { 'id' => 'sync:token', 'type' => 'token' }, 'token' => 'test' })
 
         # act
         synced = job.sync!
@@ -66,8 +66,8 @@ RSpec.describe WCC::Contentful::SyncEngine::Job, type: :job do
                       ))
 
         items = next_sync['items']
-        expect(store).to receive(:set)
-          .with('sync:token', { 'token' => 'test2' })
+        expect(store).to receive(:index)
+          .with({ 'sys' => { 'type' => 'token', 'id' => 'sync:token' }, 'token' => 'test2' })
         expect(store).to receive(:index)
           .exactly(items.count).times
 
@@ -155,10 +155,18 @@ RSpec.describe WCC::Contentful::SyncEngine::Job, type: :job do
       job.sync!(up_to_id: nil)
     end
 
-    context 'with LazyCacheStore' do
-      let(:store) { WCC::Contentful::Store::LazyCacheStore.new(client) }
+    context 'with :lazy_cache' do
+      let(:cache) {
+        ActiveSupport::Cache::MemoryStore.new
+      }
 
-      it 'continues from prior sync token with LazyCacheStore' do
+      let(:store) {
+        WCC::Contentful::Middleware::Store::CachingMiddleware.new(cache).tap do |middleware|
+          middleware.store = WCC::Contentful::Store::CDNAdapter.new(client)
+        end
+      }
+
+      it 'continues from prior sync token with CachingMiddleware' do
         allow(client).to receive(:sync)
           .with({ sync_token: nil })
           .and_return(double(
@@ -182,7 +190,7 @@ RSpec.describe WCC::Contentful::SyncEngine::Job, type: :job do
       end
 
       it 'ignores a poison sync token in the store' do
-        store.set('sync:token', poison: 'poison')
+        cache.write('sync:token', poison: 'poison')
 
         expect(client).to receive(:sync)
           .with({ sync_token: nil })

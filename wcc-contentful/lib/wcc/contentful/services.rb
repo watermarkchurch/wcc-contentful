@@ -23,9 +23,9 @@ module WCC::Contentful
     # [:direct] an instance of {WCC::Contentful::Store::CDNAdapter} with a
     #           {WCC::Contentful::SimpleClient::Cdn CDN Client} to access the CDN.
     #
-    # [:lazy_sync] an instance of {WCC::Contentful::Store::LazyCacheStore}
-    #              with the configured ActiveSupport::Cache implementation and a
-    #              {WCC::Contentful::SimpleClient::Cdn CDN Client} for when data
+    # [:lazy_sync] an instance of {WCC::Contentful::Middleware::Store::CachingMiddleware}
+    #              with the configured ActiveSupport::Cache implementation around a
+    #              {WCC::Contentful::Store::CDNAdapter} for when data
     #              cannot be found in the cache.
     #
     # [:eager_sync] an instance of the configured Store type, defined by

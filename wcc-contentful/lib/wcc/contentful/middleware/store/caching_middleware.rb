@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module WCC::Contentful::Store
+module WCC::Contentful::Middleware::Store
   class CachingMiddleware
     include WCC::Contentful::Middleware::Store
     # include instrumentation, but not specifically store stack instrumentation
@@ -48,9 +48,12 @@ module WCC::Contentful::Store
 
     # #index is called whenever the sync API comes back with more data.
     def index(json)
-      result = store.index(json) if store.index?
-      _index(json)
-      result
+      delegated_result = store.index(json) if store.index?
+      caching_result = _index(json)
+      # _index returns nil if we don't already have it cached - so use the store result.
+      # store result is nil if it doesn't index, so use the caching result if we have it.
+      # They ought to be the same thing if it's cached and the store also indexes.
+      caching_result || delegated_result
     end
 
     def index?
@@ -60,6 +63,7 @@ module WCC::Contentful::Store
     private
 
     def _index(json)
+      ensure_hash(json)
       id = json.dig('sys', 'id')
       return unless prev = @cache.read(id)
 
@@ -69,7 +73,6 @@ module WCC::Contentful::Store
 
       # we also set DeletedEntry objects in the cache - no need to go hit the API when we know
       # this is a nil object
-      ensure_hash json
       @cache.write(id, json)
 
       case json.dig('sys', 'type')

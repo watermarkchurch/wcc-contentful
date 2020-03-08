@@ -72,7 +72,7 @@ module WCC::Contentful::Store
     end
 
     def build_lazy_sync(services)
-      WCC::Contentful::Store::CachingMiddleware.call(
+      WCC::Contentful::Middleware::Store::CachingMiddleware.call(
         build_direct(services),
         ActiveSupport::Cache.lookup_store(*content_delivery_params)
       )

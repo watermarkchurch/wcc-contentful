@@ -22,7 +22,7 @@ module WCC::Contentful
     include ::Wisper::Publisher
 
     def state
-      (@state&.dup || {}).freeze
+      (@state&.dup || { 'sys' => { 'id' => @state_key, 'type' => 'token' } }).freeze
     end
 
     attr_reader :store
@@ -38,20 +38,19 @@ module WCC::Contentful
       @mutex = Mutex.new
 
       if store
-        @read_method = READ_METHODS.find { |m| store.respond_to?(m) }
-        @write_method = WRITE_METHODS.find { |m| store.respond_to?(m) }
-        unless @read_method && @write_method
-          raise ArgumentError, ":store param must implement one of #{READ_METHODS}" \
-            " AND one of #{WRITE_METHODS}"
+        unless %i[index index? find].all? { |m| store.respond_to?(m) }
+          raise ArgumentError, ':store param must implement the Store interface'
         end
 
         @store = store
         @state = read_state if should_sync?
       end
       if state
-        @state = { 'token' => state } if state.is_a? String
-        @state = state if state.is_a? Hash
-        raise ArgumentError, ':state param must be a String or Hash' unless @state
+        @state = _ensure_state_hash(state)
+        raise ArgumentError, ':state param must be a String or Hash' unless @state.is_a? Hash
+        unless @state.dig('sys', 'type') == 'token'
+          raise ArgumentError, ':state param must be of sys.type = "token"'
+        end
       end
       raise ArgumentError, 'either :state or :store must be provided' unless @state || @store
     end
@@ -70,7 +69,7 @@ module WCC::Contentful
       count = 0
 
       @mutex.synchronize do
-        @state ||= read_state || {}
+        @state ||= read_state || { 'sys' => { 'id' => @state_key, 'type' => 'token' } }
         next_sync_token = @state['token']
 
         sync_resp = client.sync(sync_token: next_sync_token)
@@ -93,9 +92,6 @@ module WCC::Contentful
       [id_found, count]
     end
 
-    READ_METHODS = %i[fetch find].freeze
-    WRITE_METHODS = %i[write set].freeze
-
     def emit_event(event)
       type = event.dig('sys', 'type')
       raise ArgumentError, "Unknown event type #{event}" unless type.present?
@@ -106,11 +102,22 @@ module WCC::Contentful
     private
 
     def read_state
-      store&.public_send(@read_method, @state_key)
+      return unless found = store&.find(@state_key)
+
+      # backwards compat - migrate existing state
+      _ensure_state_hash(found)
     end
 
     def write_state
-      store&.public_send(@write_method, @state_key, @state)
+      store&.index(@state)
+    end
+
+    def _ensure_state_hash(state)
+      state = { 'token' => state } if state.is_a? String
+      return unless state.is_a? Hash
+
+      state.merge!('sys' => { 'id' => @state_key, 'type' => 'token' }) unless state['sys']
+      state
     end
 
     # Define the job only if rails is loaded

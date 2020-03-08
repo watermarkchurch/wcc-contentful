@@ -21,7 +21,7 @@ module WCC::Contentful::Middleware::Store
 
   attr_accessor :store
 
-  delegate :index, :index?, :set, :delete, to: :store
+  delegate :index, :index?, to: :store
 
   class_methods do
     def call(store, *content_delivery_params, **_)
