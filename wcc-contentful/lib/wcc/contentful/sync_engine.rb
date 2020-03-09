@@ -109,7 +109,7 @@ module WCC::Contentful
     end
 
     def write_state
-      store&.index(@state)
+      store.index(@state) if store&.index?
     end
 
     def _ensure_state_hash(state)
