@@ -224,6 +224,10 @@ class MyJob < ApplicationJob
 end
 ```
 
+## Architecture
+
+![wcc-contentful diagram](./doc/wcc-contentful.png)
+
 ## Test Helpers
 
 To use the test helpers, include the following in your rails_helper.rb:
