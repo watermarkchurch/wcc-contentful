@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'active_job'
 require 'wcc/contentful/event'
 require 'wisper'
 
@@ -114,7 +113,7 @@ module WCC::Contentful
     end
 
     # Define the job only if rails is loaded
-    if defined?(ActiveJob::Base)
+    if defined?(ActiveJob)
       # This job uses the Contentful Sync API to update the configured store with
       # the latest data from Contentful.
       class Job < ActiveJob::Base
