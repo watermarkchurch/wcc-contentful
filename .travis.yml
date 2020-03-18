@@ -25,11 +25,15 @@ install:
 script:
   - export COVERALLS_PARALLEL=true
   - bin/bundle exec rspec --format documentation --order rand
-  # only run coverage on the wcc-contentful gem
-  - bundle exec rake coverage
-  - bundle exec rake coverage:coveralls
 jobs:
   include:
+    - stage: coverage
+      script:
+        - bundle exec rake coverage
+        - bundle exec rake coverage:coveralls
+      # Keep in mind to overwrite these here
+      rvm: 2.5
+      gemfile: gemfiles/rails_5.2.gemfile
     - stage: lint
       before_script:
         - npm install
