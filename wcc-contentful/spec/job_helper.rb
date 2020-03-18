@@ -15,7 +15,12 @@ if defined?(ActiveJob)
 else
   RSpec.configure do |c|
     # skip job specs
-    c.filter_run_excluding type: :job
-    c.filter_run_excluding active_job: true
+    c.before(:each, type: :job) do
+      skip 'active_job gem is not loaded'
+    end
+
+    c.before(:each, active_job: true) do
+      skip 'active_job gem is not loaded'
+    end
   end
 end

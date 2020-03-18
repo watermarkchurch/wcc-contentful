@@ -14,7 +14,9 @@ if defined?(ActiveJob)
   ActiveJob::Base.queue_adapter = :test
 else
   RSpec.configure do |c|
-    # skip job specs
-    c.filter_run_excluding active_record: true
+    # skip active record based specs
+    c.before(:each, active_record: true) do
+      skip 'rails is not loaded'
+    end
   end
 end

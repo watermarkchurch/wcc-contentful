@@ -12,7 +12,9 @@ end
 unless defined?(Rails)
   RSpec.configure do |c|
     # skip rspec-rails spec types
-    c.filter_run_excluding rails: true
+    c.before(:each, rails: true) do
+      skip 'rails is not loaded'
+    end
   end
 
   # rails is not loaded in this test run
