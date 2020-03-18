@@ -1745,6 +1745,281 @@
           "sys": {
             "type": "Link",
             "linkType": "Space",
+            "id": "hw5pse7y1ojx"
+          }
+        },
+        "id": "redirect",
+        "type": "ContentType",
+        "createdAt": "2018-11-02T19:09:05.568Z",
+        "updatedAt": "2020-03-12T21:28:41.445Z",
+        "environment": {
+          "sys": {
+            "id": "staging",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "publishedVersion": 15,
+        "publishedAt": "2020-03-12T21:28:41.445Z",
+        "firstPublishedAt": "2018-11-02T19:09:16.608Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2SGEbzNLW9vNhYefhYrx1w"
+          }
+        },
+        "publishedCounter": 8,
+        "version": 16,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2SGEbzNLW9vNhYefhYrx1w"
+          }
+        }
+      },
+      "displayField": "internalTitle",
+      "name": "Redirect",
+      "description": "",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title (Contentful Only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": true
+        },
+        {
+          "id": "slug",
+          "name": "Slug",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [
+            {
+              "unique": true
+            },
+            {
+              "regexp": {
+                "pattern": "^(\\/|(?:\\/[a-z\\d](?:[a-z\\d_\\-]|(?:\\%[\\dA-Z]{2}))*)+)$",
+                "flags": null
+              },
+              "message": "The slug must look like the path part of a URL and begin with a forward slash, example: '/my-page-slug'."
+            },
+            {
+              "prohibitRegexp": {
+                "pattern": "^\\/(api|assets)(\\/.+)?$",
+                "flags": null
+              },
+              "message": "'/api' and '/assets' paths are reserved."
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "externalLink",
+          "name": "External Link",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "regexp": {
+                "pattern": "^([^\\s\\:]+):(\\/\\/)?(\\w+:{0,1}\\w*@)?(([^\\s\\/#]+\\.)+[^\\s\\/#]+)(:[0-9]+)?(\\/|(\\/|\\#)([\\w#!:.?+=&%@!\\-\\/]+))?$|^(\\/|(\\/|\\#)([\\w#!:.?+=&%@!\\-\\/]+))$",
+                "flags": null
+              },
+              "message": "The external link must be a URL like 'https://www.watermark.org/', a mailto url like 'mailto:info@watermark.org', or a relative URL like '#location-on-page'"
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "pageLink",
+          "name": "Page Link",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "linkContentType": [
+                "page"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        },
+        {
+          "id": "sectionLink",
+          "name": "Section Link",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "linkContentType": [
+                "section-block-text",
+                "section-campus-selector-header",
+                "section-card-deck",
+                "section-carousel",
+                "sectionCodeWidget",
+                "section-contact-form",
+                "section-faq",
+                "sectionFeaturedInitiative",
+                "section-hero",
+                "section-http-error",
+                "section-marquee-text",
+                "section-resources",
+                "section-tab-container",
+                "section-team-preview",
+                "section-testimonials",
+                "section-video",
+                "section-video-highlight"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        },
+        {
+          "id": "httpStatusCode",
+          "name": "HTTP status code",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "in": [
+                "301",
+                "302",
+                "307",
+                "308"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "343qxys30lid"
+          }
+        },
+        "id": "redirect2",
+        "type": "ContentType",
+        "createdAt": "2018-02-23T14:44:31.550Z",
+        "updatedAt": "2018-02-23T14:44:32.240Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "publishedCounter": 1,
+        "version": 2,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "publishedVersion": 1,
+        "firstPublishedAt": "2018-02-23T14:44:32.240Z",
+        "publishedAt": "2018-02-23T14:44:32.240Z"
+      },
+      "displayField": "slug",
+      "name": "Redirect2",
+      "description": "",
+      "fields": [
+        {
+          "id": "slug",
+          "name": "Slug",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [
+            {
+              "regexp": {
+                "pattern": "^[a-z][a-z0-9_-]*$",
+                "flags": ""
+              },
+              "message": "The slug can only contain lower case letters, numbers, underscores and dashes."
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "url",
+          "name": "Url",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "regexp": {
+                "pattern": "^(ftp|http|https):\\/\\/(\\w+:{0,1}\\w*@)?(\\S+)(:[0-9]+)?(\\/|\\/([\\w#!:.?+=&%@!\\-\\/]))?$"
+              }
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "pageReference",
+          "name": "Page Reference",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "linkContentType": [
+                "page"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
             "id": "343qxys30lid"
           }
         },

@@ -33,7 +33,7 @@ RSpec.describe WCC::Contentful::Events do
       sync_engine.next
     end
 
-    it 'rebroadcasts webhook events' do
+    it 'rebroadcasts webhook events', rails: true do
       controller = WCC::Contentful::WebhookController.new
       subscriber = double('subsc 2')
       expect(subscriber).to receive(:Entry)

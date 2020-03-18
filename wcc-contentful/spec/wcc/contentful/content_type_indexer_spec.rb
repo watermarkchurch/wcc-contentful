@@ -32,6 +32,7 @@ RSpec.describe WCC::Contentful::ContentTypeIndexer do
           ministryCard
           page
           partnerChurch
+          redirect
           redirect2
           section-CardSearch
           section-Faq

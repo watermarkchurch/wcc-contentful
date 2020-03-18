@@ -41,6 +41,12 @@ module WCC::Contentful
     def locales
       @locales ||= { 'en-US' => {} }.freeze
     end
+
+    def logger
+      return Rails.logger if defined?(Rails)
+
+      @logger ||= Logger.new(STDERR)
+    end
   end
 
   # Configures the WCC::Contentful gem to talk to a Contentful space.
@@ -80,7 +86,7 @@ module WCC::Contentful
       rescue WCC::Contentful::SimpleClient::ApiError => e
         raise InitializationError, e if configuration.update_schema_file == :always
 
-        Rails.logger.warn("Unable to download schema from management API - #{e.message}")
+        WCC::Contentful.logger.warn("Unable to download schema from management API - #{e.message}")
       end
     end
 
@@ -90,7 +96,7 @@ module WCC::Contentful
           JSON.parse(File.read(configuration.schema_file))['contentTypes']
         end
       rescue JSON::ParserError
-        Rails.logger.warn("Schema file invalid, ignoring it: #{configuration.schema_file}")
+        WCC::Contentful.logger.warn("Schema file invalid, ignoring it: #{configuration.schema_file}")
         nil
       end
 
@@ -104,7 +110,7 @@ module WCC::Contentful
         @content_types = client.content_types(limit: 1000).items if client
       rescue WCC::Contentful::SimpleClient::ApiError => e
         # indicates bad credentials
-        Rails.logger.warn("Unable to load content types from API - #{e.message}")
+        WCC::Contentful.logger.warn("Unable to load content types from API - #{e.message}")
       end
     end
 

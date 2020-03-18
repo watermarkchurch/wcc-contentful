@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require 'job_helper'
 
-RSpec.describe WCC::Contentful::SyncEngine::Job, type: :job do
-  ActiveJob::Base.queue_adapter = :test
-  described_class.queue_adapter = :test
+require 'wcc/contentful/sync_engine'
+
+RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
+  let(:described_class) { WCC::Contentful::SyncEngine::Job }
 
   let(:next_sync) { JSON.parse(load_fixture('contentful/sync_continue.json')) }
 

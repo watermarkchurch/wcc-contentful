@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe WCC::Contentful::Engine do
+RSpec.describe 'WCC::Contentful::Engine', rails: true do
   describe 'initializers' do
     let(:body) {
       JSON.parse(load_fixture('contentful/contentful_published_blog.json'))

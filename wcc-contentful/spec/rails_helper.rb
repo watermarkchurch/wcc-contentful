@@ -3,6 +3,22 @@
 require 'spec_helper'
 require 'wcc/contentful/link_visitor'
 
+begin
+  gem 'rails'
+rescue Gem::LoadError
+  warn 'WARNING: Cannot load rails - some tests will be skipped'
+end
+
+unless defined?(Rails)
+  RSpec.configure do |c|
+    # skip rspec-rails spec types
+    c.filter_run_excluding rails: true
+  end
+
+  # rails is not loaded in this test run
+  return
+end
+
 ENV['RAILS_ENV'] ||= 'test'
 
 # require rails libraries:

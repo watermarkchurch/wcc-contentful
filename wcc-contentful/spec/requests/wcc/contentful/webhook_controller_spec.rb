@@ -2,7 +2,9 @@
 
 require 'rails_helper'
 
-RSpec.describe WCC::Contentful::WebhookController, type: :request do
+RSpec.describe 'WCC::Contentful::WebhookController', type: :request, rails: true do
+  let(:described_class) { WCC::Contentful::WebhookController }
+
   describe 'receive' do
     let!(:good_headers) {
       {
