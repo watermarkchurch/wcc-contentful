@@ -6,6 +6,7 @@ source 'https://rubygems.org'
 group :development do
   gem 'appraisal'
   gem 'bump', '~> 0.8.0'
+  gem 'coveralls', '~> 0.7.1'
   gem 'danger-wcc', '~> 0.0.5'
   gem 'erb_lint', require: false
   gem 'guard'
@@ -14,4 +15,5 @@ group :development do
   gem 'guard-shell', '~> 0.7.1'
   gem 'rake', '~> 13.0'
   gem 'rubocop', '0.68', require: false
+  gem 'simplecov', '~> 0.18.5'
 end
