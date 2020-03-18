@@ -3,7 +3,7 @@
 source 'https://rubygems.org'
 
 # Development tools intended to be run in the root
-group :development, :test do
+group :development do
   gem 'appraisal'
   gem 'bump', '~> 0.8.0'
   gem 'danger-wcc', '~> 0.0.5'
@@ -15,6 +15,3 @@ group :development, :test do
   gem 'rake', '~> 13.0'
   gem 'rubocop', '0.68', require: false
 end
-
-gemspec path: './wcc-contentful'
-gemspec path: './wcc-contentful-app'

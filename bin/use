@@ -1,0 +1,29 @@
+#! /bin/bash
+
+set -x
+
+gemfile="$1"
+[[ -z "$gemfile" ]] && gemfile="$BUNDLE_GEMFILE"
+[[ -z "$gemfile" ]] && echo "No Gemfile specified" && exit -1;
+
+gemfile=$(cd "$(dirname "$gemfile")"; pwd -P)/$(basename "$gemfile")
+
+gems=(wcc-*)
+
+for gem in "${gems[@]}"
+do
+  # in a subshell, CD into the directory and update the gemfile
+  (
+    cd $gem;
+    cp $gemfile Gemfile
+    echo "gemspec" >> Gemfile
+
+    # does this gem depend on any others?
+    for dep in "${gems[@]}"
+    do
+      if grep "spec.add_dependency '$dep'" "$gem.gemspec"; then
+        echo "gem '$dep', path: File.expand_path('../$dep', __dir__)" >> Gemfile
+      fi
+    done
+  )
+done

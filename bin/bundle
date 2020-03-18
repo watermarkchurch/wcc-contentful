@@ -2,10 +2,6 @@
 
 set -e
 
-if [[ -z "$BUNDLE_GEMFILE" ]]; then
-  export BUNDLE_GEMFILE=`pwd`/Gemfile
-fi
-
 gems=(wcc-*)
 
 for gem in "${gems[@]}"
@@ -14,7 +10,7 @@ do
   (
     cd $gem;
     echo "$(basename `pwd`) $ bundle $*";
-    bundle "$@";
+    BUNDLE_GEMFILE=`pwd`/Gemfile bundle "$@";
   )
 done
 
