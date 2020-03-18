@@ -5,8 +5,9 @@ require 'wcc/contentful/link_visitor'
 
 begin
   gem 'rails'
-rescue Gem::LoadError
-  warn 'WARNING: Cannot load rails - some tests will be skipped'
+  require 'rails'
+rescue Gem::LoadError => e
+  warn "WARNING: Cannot load rails - some tests will be skipped\n#{e}"
 end
 
 unless defined?(Rails)

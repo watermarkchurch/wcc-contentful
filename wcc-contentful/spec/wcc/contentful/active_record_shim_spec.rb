@@ -68,10 +68,11 @@ RSpec.describe 'WCC::Contentful::ActiveRecordShim', active_record: true do
       end
     }
 
-    let(:const_get_test_class) {
-      Class.new(const_get_test_base_class) do
-        include WCC::Contentful::ActiveRecordShim
-      end
+    let!(:const_get_test_class) {
+      ConstGetTest =
+        Class.new(const_get_test_base_class) do
+          include WCC::Contentful::ActiveRecordShim
+        end
     }
 
     it 'loads the top-level constant instead of the superclass' do
@@ -103,14 +104,14 @@ RSpec.describe 'WCC::Contentful::ActiveRecordShim', active_record: true do
           .and_return(true)
       end
 
-      it { expect(subject.cache_key).to eq('shim_test_class/ax1234') }
+      it { expect(subject.cache_key).to eq('ShimTest/ax1234') }
 
       it '#cache_version' do
         expect(subject.cache_version).to eq('1')
       end
 
       it '#cache_key_with_version' do
-        expect(subject.cache_key_with_version).to eq('shim_test_class/ax1234-1')
+        expect(subject.cache_key_with_version).to eq('ShimTest/ax1234-1')
       end
     end
 
@@ -121,44 +122,45 @@ RSpec.describe 'WCC::Contentful::ActiveRecordShim', active_record: true do
           .and_return(nil)
       end
 
-      it { expect(subject.cache_key).to eq('shim_test_class/ax1234-1') }
+      it { expect(subject.cache_key).to eq('ShimTest/ax1234-1') }
     end
   end
 
   let(:shim_test_class) {
-    Class.new do
-      include WCC::Contentful::ActiveRecordShim
+    ShimTest =
+      Class.new do
+        include WCC::Contentful::ActiveRecordShim
 
-      def initialize(raw)
-        @raw = raw.freeze
+        def initialize(raw)
+          @raw = raw.freeze
 
-        created_at = raw.dig('sys', 'createdAt')
-        created_at = Time.parse(created_at) if created_at.present?
-        updated_at = raw.dig('sys', 'updatedAt')
-        updated_at = Time.parse(updated_at) if updated_at.present?
-        @sys = WCC::Contentful::Sys.new(
-          raw.dig('sys', 'id'),
-          raw.dig('sys', 'type'),
-          raw.dig('sys', 'locale') || 'en-US',
-          raw.dig('sys', 'space', 'sys', 'id'),
-          created_at,
-          updated_at,
-          raw.dig('sys', 'revision'),
-          OpenStruct.new.freeze
-        )
+          created_at = raw.dig('sys', 'createdAt')
+          created_at = Time.parse(created_at) if created_at.present?
+          updated_at = raw.dig('sys', 'updatedAt')
+          updated_at = Time.parse(updated_at) if updated_at.present?
+          @sys = WCC::Contentful::Sys.new(
+            raw.dig('sys', 'id'),
+            raw.dig('sys', 'type'),
+            raw.dig('sys', 'locale') || 'en-US',
+            raw.dig('sys', 'space', 'sys', 'id'),
+            created_at,
+            updated_at,
+            raw.dig('sys', 'revision'),
+            OpenStruct.new.freeze
+          )
+        end
+
+        attr_reader :sys
+        attr_reader :raw
+        delegate :id, to: :sys
+        delegate :created_at, to: :sys
+        delegate :updated_at, to: :sys
+        delegate :revision, to: :sys
+        delegate :space, to: :sys
+
+        def self.content_type
+          'shim-test'
+        end
       end
-
-      attr_reader :sys
-      attr_reader :raw
-      delegate :id, to: :sys
-      delegate :created_at, to: :sys
-      delegate :updated_at, to: :sys
-      delegate :revision, to: :sys
-      delegate :space, to: :sys
-
-      def self.content_type
-        'shim-test'
-      end
-    end
   }
 end

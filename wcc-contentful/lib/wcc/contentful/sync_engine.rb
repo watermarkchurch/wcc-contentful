@@ -3,6 +3,13 @@
 require 'wcc/contentful/event'
 require 'wisper'
 
+begin
+  gem 'activejob'
+  require 'active_job'
+rescue Gem::LoadError # rubocop:disable Lint/HandleExceptions
+  # suppress
+end
+
 module WCC::Contentful
   # The SyncEngine is used to keep the currently configured store up to date
   # using the Sync API.  It is available on the WCC::Contentful::Services instance,

@@ -3,11 +3,11 @@
 require 'spec_helper'
 
 begin
-  gem 'active_job'
+  gem 'activejob'
   require 'active_job'
-rescue Gem::LoadError
+rescue Gem::LoadError => e
   # active_job is not loaded in this test run
-  warn 'WARNING: Cannot load active_job - some tests will be skipped'
+  warn "WARNING: Cannot load active_job - some tests will be skipped\n#{e}"
 end
 
 if defined?(ActiveJob)
