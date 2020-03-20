@@ -20,7 +20,10 @@ GEMS.each do |name|
     end
 
     task :coverage do
-      system('bundle exec rspec', chdir: name)
+      Bundler.with_clean_env do
+        warn "#{name} $ bundle exec rspec"
+        system('bundle exec rspec', chdir: name)
+      end
     end
   end
 end
