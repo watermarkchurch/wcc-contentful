@@ -45,6 +45,7 @@ RSpec.describe WCC::Contentful, :vcr do
           'WCC_Contentful/_init/with_preview_token/init_with_preview_token',
           record: :none
         ) do
+          contentful_reset!
           WCC::Contentful.init!
 
           VCR.use_cassette(
@@ -68,6 +69,7 @@ RSpec.describe WCC::Contentful, :vcr do
           'WCC_Contentful/_init/with_preview_token/init_with_preview_token',
           record: :none
         ) do
+          contentful_reset!
           WCC::Contentful.init!
 
           VCR.use_cassette(
@@ -91,6 +93,7 @@ RSpec.describe WCC::Contentful, :vcr do
           'WCC_Contentful/_init/with_preview_token/init_with_preview_token',
           record: :none
         ) do
+          contentful_reset!
           WCC::Contentful.init!
 
           VCR.use_cassette(
@@ -113,6 +116,7 @@ RSpec.describe WCC::Contentful, :vcr do
           'WCC_Contentful/_init/with_preview_token/init_with_preview_token',
           record: :none
         ) do
+          contentful_reset!
           WCC::Contentful.init!
 
           VCR.use_cassette(
@@ -191,11 +195,13 @@ RSpec.describe WCC::Contentful, :vcr do
 
       # act
       expect {
+        contentful_reset!
         WCC::Contentful.init!
       }.to raise_error(WCC::Contentful::InitializationError)
     end
 
     it 'raises error if attempting to initialize twice' do
+      contentful_reset!
       WCC::Contentful.init!
 
       expect {
@@ -204,6 +210,7 @@ RSpec.describe WCC::Contentful, :vcr do
     end
 
     it 'freezes the configuration' do
+      contentful_reset!
       WCC::Contentful.init!
 
       expect(WCC::Contentful.configuration)
@@ -211,6 +218,7 @@ RSpec.describe WCC::Contentful, :vcr do
     end
 
     it 'errors when attempting to configure after initialize' do
+      contentful_reset!
       WCC::Contentful.init!
 
       expect {
@@ -238,6 +246,7 @@ RSpec.describe WCC::Contentful, :vcr do
 
       it 'should populate models via CDN client' do
         # act
+        contentful_reset!
         WCC::Contentful.init!
 
         # assert
@@ -256,6 +265,7 @@ RSpec.describe WCC::Contentful, :vcr do
         end
 
         expect {
+          contentful_reset!
           WCC::Contentful.init!
         }.to raise_error(WCC::Contentful::InitializationError)
       end
@@ -271,6 +281,7 @@ RSpec.describe WCC::Contentful, :vcr do
         end
 
         expect {
+          contentful_reset!
           WCC::Contentful.init!
         }.to raise_error(WCC::Contentful::InitializationError)
       end
@@ -285,6 +296,7 @@ RSpec.describe WCC::Contentful, :vcr do
           config.schema_file = File.join(fixture_root, 'contentful/contentful-schema.json')
         end
 
+        contentful_reset!
         WCC::Contentful.init!
       end
 
@@ -300,6 +312,7 @@ RSpec.describe WCC::Contentful, :vcr do
         end
 
         expect {
+          contentful_reset!
           WCC::Contentful.init!
         }.to raise_error(WCC::Contentful::InitializationError)
       end
@@ -318,6 +331,7 @@ RSpec.describe WCC::Contentful, :vcr do
           config.schema_file = File.join(fixture_root, 'contentful/contentful-schema.json')
         end
 
+        contentful_reset!
         WCC::Contentful.init!
       end
     end
@@ -336,6 +350,7 @@ RSpec.describe WCC::Contentful, :vcr do
 
       it 'should populate models via Management API cache' do
         # act
+        contentful_reset!
         WCC::Contentful.init!
 
         # assert
@@ -355,6 +370,7 @@ RSpec.describe WCC::Contentful, :vcr do
 
       it 'builds out store using CDNAdapter' do
         # act
+        contentful_reset!
         WCC::Contentful.init!
 
         # assert
@@ -474,10 +490,8 @@ RSpec.describe WCC::Contentful, :vcr do
           .times(1)
           .then.to_raise('Should not hit the API a second time!')
 
-          # for some reason this spec is not getting fully reset on travis...
-        contentful_reset!
-
         # act
+        contentful_reset!
         WCC::Contentful.init!
         menu = WCC::Contentful::Model::Menu.find('6y9DftpiYoA4YiKg2CgoUU')
         button = menu.items.first
@@ -508,6 +522,7 @@ RSpec.describe WCC::Contentful, :vcr do
         allow(WCC::Contentful::SyncEngine::Job).to receive(:perform_later)
 
         # act
+        contentful_reset!
         WCC::Contentful.init!
       end
 
@@ -515,6 +530,7 @@ RSpec.describe WCC::Contentful, :vcr do
         expect(WCC::Contentful::SyncEngine::Job).to receive(:perform_later)
 
         # act
+        contentful_reset!
         WCC::Contentful.init!
       end
     end
