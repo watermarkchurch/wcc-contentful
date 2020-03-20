@@ -474,6 +474,9 @@ RSpec.describe WCC::Contentful, :vcr do
           .times(1)
           .then.to_raise('Should not hit the API a second time!')
 
+          # for some reason this spec is not getting fully reset on travis...
+        contentful_reset!
+
         # act
         WCC::Contentful.init!
         menu = WCC::Contentful::Model::Menu.find('6y9DftpiYoA4YiKg2CgoUU')
