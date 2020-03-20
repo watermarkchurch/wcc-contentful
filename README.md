@@ -11,35 +11,88 @@ Contentful.
 ## Supported Rails versions
 
 Please see the [most recent Travis-CI build](https://travis-ci.org/watermarkchurch/wcc-contentful) for the most
-up-to-date list of supported Rails versions.  At the time of this writing, the gem officially supports
-the following:
+up-to-date list of supported framework environments.  At the time of this writing, 
+the gem officially supports the following:
 
 * Ruby versions:
   * 2.5
   * 2.3
-* Rails versions:
-  * 5.2
-  * 5.0
+* Framework versions:
+  * Rails 5.2
+  * Rails 5.0
+  * Middleman 4.2
 
-Pull requests are welcome to enable supporting other ruby and rails versions!
+Pull requests are welcome to enable supporting other frameworks!
 
 To get started in testing a new Ruby version, use `rvm` or `rbenv` to choose your
-rails version and then run all specs using the `bin/bundle` helper:
+ruby version.  Then, check out the appropriate Gemfile using the `bin/use` helper:
 
 ```bash
 $ rbenv local 2.2.6
 $ gem install bundler
 $ bundle install
-$ bin/bundle exec rspec
+$ bin/use gemfiles/rails_5.2.gemfile
 ```
 
-To get started testing a new rails version, add the appropriate combination of gems to the `Appraisals` file
-and run `bundle exec appraisal install` to generate the appropriate gemfile in the `gemfiles` directory.
-Then you can use the `bin/bundle` helper to run tests, while setting the BUNDLE_GEMFILE:
+Now each of the `wcc-` gems has a Gemfile based on that Appraisal gemfile.  `cd`
+into the gem's directory and run `bundle install` to install the gems. 
+
+### Adding a new Rails version
+
+To get started testing a new framework, add the appropriate combination of gems to the `Appraisals` file
+and run `bundle exec appraisal install` to generate the appropriate gemfile in the `gemfiles` directory:
+
+```diff
+diff --git a/Appraisals b/Appraisals
+index 041abea..917142f 100644
+--- a/Appraisals
++++ b/Appraisals
+@@ -1,5 +1,9 @@
+ # frozen_string_literal: true
+ 
++appraise 'sinatra-2.0' do
++  gem 'sinatra', '~> 2.0.0'
++end
++
+ appraise 'rails-5.2' do
+   gem 'rails', '~> 5.2.0'
+   gem 'railties', '~> 5.2.0'
+```
+
+Then you can use the `bin/use` helper to check out that set of gems:
 
 ```bash
 $ bundle exec appraisal install
-$ BUNDLE_GEMFILE=`pwd`/gemfiles/rails_4.2.gemfile bin/bundle exec rspec
+$ bin/use gemfiles/rails_6.0.gemfile
+```
+
+And build a helper that conditionally includes your framework specs based on whether
+that gem is installed.  Example:
+
+```rb
+# spec/active_record_helper.rb
+
+require 'spec_helper'
+
+begin
+  gem 'activerecord'
+  require 'active_record'
+rescue Gem::LoadError => e
+  # active_record is not loaded in this test run
+  warn "WARNING: Cannot load active_record - some tests will be skipped\n#{e}"
+end
+
+if defined?(ActiveJob)
+  ActiveJob::Base.queue_adapter = :test
+else
+  RSpec.configure do |c|
+    # skip active record based specs
+    c.before(:each, active_record: true) do
+      skip 'activerecord is not loaded'
+    end
+  end
+end
+
 ```
 
 ## Contributing

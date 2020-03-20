@@ -1,7 +1,5 @@
 #! /bin/bash
 
-set -x
-
 gemfile="$1"
 [[ -z "$gemfile" ]] && gemfile="$BUNDLE_GEMFILE"
 [[ -z "$gemfile" ]] && echo "No Gemfile specified" && exit -1;
