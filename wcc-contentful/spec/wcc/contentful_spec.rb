@@ -460,27 +460,6 @@ RSpec.describe WCC::Contentful, :vcr do
         JSON
       }
 
-      it 'should error when trying to use preview api' do
-        VCR.use_cassette(
-          'WCC_Contentful/_init/content_delivery_lazy_sync/should_call_out_to_CDN_for_first_calls_only',
-          record: :none
-        ) do
-          WCC::Contentful.init!
-
-          VCR.use_cassette(
-            'WCC_Contentful/_init/with_management_token/published_redirect_preview_true',
-            record: :new_episodes
-          ) do
-            expect {
-              WCC::Contentful::Model::Menu.find_by(
-                id: 'menuId',
-                options: { preview: true }
-              )
-            }.to raise_error(ArgumentError)
-          end
-        end
-      end
-
       it 'should call out to CDN for first calls only' do
         stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
           '/entries/6y9DftpiYoA4YiKg2CgoUU')
