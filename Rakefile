@@ -20,7 +20,7 @@ GEMS.each do |name|
     end
 
     task :coverage do
-      system('rspec', chdir: name)
+      system('bundle exec rspec', chdir: name)
     end
   end
 end

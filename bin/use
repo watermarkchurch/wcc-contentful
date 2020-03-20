@@ -8,6 +8,8 @@ gemfile=$(cd "$(dirname "$gemfile")"; pwd -P)/$(basename "$gemfile")
 
 gems=(wcc-*)
 
+echo "Using ${gemfile} in ${gems[*]}"
+
 for gem in "${gems[@]}"
 do
   # in a subshell, CD into the directory and update the gemfile
