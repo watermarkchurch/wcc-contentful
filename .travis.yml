@@ -26,6 +26,9 @@ script:
   - export COVERALLS_PARALLEL=true
   - bin/bundle exec rspec --format documentation --order rand
 jobs:
+  exclude:
+    rvm: 2.3.8
+    gemfile: gemfiles/middleman_4.2.gemfile
   include:
     - stage: coverage
       script:
