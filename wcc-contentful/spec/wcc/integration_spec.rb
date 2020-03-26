@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require 'spec_helper'
 
 RSpec.describe 'Full Stack Integration' do
   context 'Sync Strategy: lazy_sync' do
@@ -14,6 +14,9 @@ RSpec.describe 'Full Stack Integration' do
         config.environment = nil
         config.update_schema_file = :never
       end
+
+      stub_request(:get, /https:\/\/api.contentful.com\/spaces\/.+\/content_types/)
+        .to_return(body: load_fixture('contentful/content_types_mgmt_api.json'))
     end
 
     it 'fetches an entry with broken includes' do

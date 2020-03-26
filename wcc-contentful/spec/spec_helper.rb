@@ -27,6 +27,23 @@ RSpec.shared_context 'Contentful config' do
   let(:contentful_management_token) { ENV['CONTENTFUL_MANAGEMENT_TOKEN'] || 'CFPAT-test1234' }
   let(:contentful_preview_token) { ENV['CONTENTFUL_PREVIEW_TOKEN'] || 'test123456' }
   let(:contentful_space_id) { ENV['CONTENTFUL_SPACE_ID'] || 'test1xab' }
+
+  def contentful_reset!
+    WCC::Contentful.instance_variable_set('@initialized', nil)
+    WCC::Contentful::Services.instance_variable_set(:@singleton__instance__, nil)
+
+    # clean out everything in the WCC::Contentful::Model generated namespace
+    consts = WCC::Contentful::Model.constants(false).map(&:to_s).uniq
+    consts.each do |c|
+      begin
+        WCC::Contentful::Model.send(:remove_const, c.split(':').last)
+      rescue StandardError => e
+        warn e
+      end
+    end
+    WCC::Contentful::Model.class_variable_get('@@registry').clear
+    Wisper.clear
+  end
 end
 
 RSpec.configure do |config|
@@ -50,20 +67,8 @@ RSpec.configure do |config|
 
   config.before(:each) do
     WCC::Contentful.instance_variable_set('@configuration', nil)
-    WCC::Contentful.instance_variable_set('@initialized', nil)
-    WCC::Contentful::Services.instance_variable_set(:@singleton__instance__, nil)
 
-    # clean out everything in the WCC::Contentful::Model generated namespace
-    consts = WCC::Contentful::Model.constants(false).map(&:to_s).uniq
-    consts.each do |c|
-      begin
-        WCC::Contentful::Model.send(:remove_const, c.split(':').last)
-      rescue StandardError => e
-        warn e
-      end
-    end
-    WCC::Contentful::Model.class_variable_get('@@registry').clear
-    Wisper.clear
+    contentful_reset!
   end
 end
 

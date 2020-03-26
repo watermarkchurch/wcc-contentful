@@ -42,18 +42,10 @@ Gem::Specification.new do |spec|
 
   # for generators
   spec.add_development_dependency 'generator_spec', '~> 0.9.4'
-  spec.add_development_dependency 'rails', '~> 5.1'
-  spec.add_development_dependency 'rspec-rails', '~> 3.7'
+  # spec.add_development_dependency 'rails', '~> 5.1'
+  # spec.add_development_dependency 'rspec-rails', '~> 3.7'
   spec.add_development_dependency 'sqlite3', '~> 1.3.6'
   spec.add_development_dependency 'timecop', '~> 0.9.1'
-
-  # optional dependencies
-  spec.add_development_dependency 'contentful', '2.6.0'
-  spec.add_development_dependency 'contentful-management', '2.0.2'
-  spec.add_development_dependency 'graphql', '~> 1.7'
-  spec.add_development_dependency 'http', '> 1.0', '< 3.0'
-  spec.add_development_dependency 'pg', '~> 1.0'
-  spec.add_development_dependency 'typhoeus', '~> 1.3'
 
   spec.add_dependency 'graphql', '~> 1.7'
   spec.add_dependency 'wcc-contentful', "~> #{WCC::Contentful::Graphql::VERSION}"

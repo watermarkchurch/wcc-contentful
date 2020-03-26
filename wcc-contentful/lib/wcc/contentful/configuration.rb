@@ -174,7 +174,11 @@ class WCC::Contentful::Configuration
   attr_writer :schema_file
 
   def schema_file
-    Rails.root.join(@schema_file)
+    if defined?(Rails)
+      Rails.root.join(@schema_file)
+    else
+      @schema_file
+    end
   end
 
   # Overrides the use of ActiveSupport::Notifications throughout this library to

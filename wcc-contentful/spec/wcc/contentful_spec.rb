@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require 'spec_helper'
+require 'job_helper'
 
 RSpec.describe WCC::Contentful, :vcr do
   it 'has a version number' do
@@ -14,13 +15,16 @@ RSpec.describe WCC::Contentful, :vcr do
 
   before do
     WCC::Contentful.configure do |config|
-      config.management_token = nil
+      config.management_token = 'CFPAT-test'
       config.access_token = valid_contentful_access_token
       config.space = valid_contentful_space_id
       config.content_delivery = :eager_sync
       config.environment = nil
       config.update_schema_file = :never
     end
+
+    stub_request(:get, /https:\/\/api.contentful.com\/spaces\/.+\/content_types/)
+      .to_return(body: load_fixture('contentful/content_types_mgmt_api.json'))
   end
 
   describe '.init with preview token' do
@@ -41,13 +45,14 @@ RSpec.describe WCC::Contentful, :vcr do
           'WCC_Contentful/_init/with_preview_token/init_with_preview_token',
           record: :none
         ) do
+          contentful_reset!
           WCC::Contentful.init!
 
           VCR.use_cassette(
             'WCC_Contentful/_init/with_preview_token/published_redirect_preview_true',
             record: :none
           ) do
-            redirect = WCC::Contentful::Model::Redirect.find_by(
+            redirect = WCC::Contentful::Model::Redirect2.find_by(
               slug: 'published-redirect',
               options: { preview: true }
             )
@@ -64,13 +69,14 @@ RSpec.describe WCC::Contentful, :vcr do
           'WCC_Contentful/_init/with_preview_token/init_with_preview_token',
           record: :none
         ) do
+          contentful_reset!
           WCC::Contentful.init!
 
           VCR.use_cassette(
             'WCC_Contentful/_init/with_preview_token/published_redirect_preview_false',
             record: :none
           ) do
-            redirect = WCC::Contentful::Model::Redirect.find_by(
+            redirect = WCC::Contentful::Model::Redirect2.find_by(
               slug: 'published-redirect',
               options: { preview: false }
             )
@@ -87,13 +93,14 @@ RSpec.describe WCC::Contentful, :vcr do
           'WCC_Contentful/_init/with_preview_token/init_with_preview_token',
           record: :none
         ) do
+          contentful_reset!
           WCC::Contentful.init!
 
           VCR.use_cassette(
             'WCC_Contentful/_init/with_preview_token/draft_redirect_preview_false',
             record: :none
           ) do
-            redirect = WCC::Contentful::Model::Redirect.find_by(
+            redirect = WCC::Contentful::Model::Redirect2.find_by(
               slug: 'draft-redirect',
               options: { preview: false }
             )
@@ -109,13 +116,14 @@ RSpec.describe WCC::Contentful, :vcr do
           'WCC_Contentful/_init/with_preview_token/init_with_preview_token',
           record: :none
         ) do
+          contentful_reset!
           WCC::Contentful.init!
 
           VCR.use_cassette(
             'WCC_Contentful/_init/with_preview_token/draft_redirect_preview_true',
             record: :none
           ) do
-            redirect = WCC::Contentful::Model::Redirect.find_by(
+            redirect = WCC::Contentful::Model::Redirect2.find_by(
               slug: 'draft-redirect',
               options: { preview: true }
             )
@@ -187,11 +195,13 @@ RSpec.describe WCC::Contentful, :vcr do
 
       # act
       expect {
+        contentful_reset!
         WCC::Contentful.init!
       }.to raise_error(WCC::Contentful::InitializationError)
     end
 
     it 'raises error if attempting to initialize twice' do
+      contentful_reset!
       WCC::Contentful.init!
 
       expect {
@@ -200,6 +210,7 @@ RSpec.describe WCC::Contentful, :vcr do
     end
 
     it 'freezes the configuration' do
+      contentful_reset!
       WCC::Contentful.init!
 
       expect(WCC::Contentful.configuration)
@@ -207,6 +218,7 @@ RSpec.describe WCC::Contentful, :vcr do
     end
 
     it 'errors when attempting to configure after initialize' do
+      contentful_reset!
       WCC::Contentful.init!
 
       expect {
@@ -227,10 +239,14 @@ RSpec.describe WCC::Contentful, :vcr do
           config.store = nil
           config.content_delivery = :eager_sync, :memory
         end
+
+        stub_request(:get, /https:\/\/cdn.contentful.com\/spaces\/.+\/content_types/)
+          .to_return(body: load_fixture('contentful/content_types_cdn.json'))
       end
 
       it 'should populate models via CDN client' do
         # act
+        contentful_reset!
         WCC::Contentful.init!
 
         # assert
@@ -249,6 +265,7 @@ RSpec.describe WCC::Contentful, :vcr do
         end
 
         expect {
+          contentful_reset!
           WCC::Contentful.init!
         }.to raise_error(WCC::Contentful::InitializationError)
       end
@@ -264,6 +281,7 @@ RSpec.describe WCC::Contentful, :vcr do
         end
 
         expect {
+          contentful_reset!
           WCC::Contentful.init!
         }.to raise_error(WCC::Contentful::InitializationError)
       end
@@ -275,10 +293,10 @@ RSpec.describe WCC::Contentful, :vcr do
 
         WCC::Contentful.configure do |config|
           config.update_schema_file = :if_possible
-          # file located inside spec/dummy/
-          config.schema_file = 'db/contentful-schema.json'
+          config.schema_file = File.join(fixture_root, 'contentful/contentful-schema.json')
         end
 
+        contentful_reset!
         WCC::Contentful.init!
       end
 
@@ -290,11 +308,11 @@ RSpec.describe WCC::Contentful, :vcr do
         WCC::Contentful.configure do |config|
           config.update_schema_file = :always
           config.management_token = 'bad token'
-          # file located inside spec/dummy/
-          config.schema_file = 'db/contentful-schema.json'
+          config.schema_file = File.join(fixture_root, 'contentful/contentful-schema.json')
         end
 
         expect {
+          contentful_reset!
           WCC::Contentful.init!
         }.to raise_error(WCC::Contentful::InitializationError)
       end
@@ -310,10 +328,10 @@ RSpec.describe WCC::Contentful, :vcr do
         WCC::Contentful.configure do |config|
           config.update_schema_file = :if_possible
           config.management_token = 'bad token'
-          # file located inside spec/dummy/
-          config.schema_file = 'db/contentful-schema.json'
+          config.schema_file = File.join(fixture_root, 'contentful/contentful-schema.json')
         end
 
+        contentful_reset!
         WCC::Contentful.init!
       end
     end
@@ -332,6 +350,7 @@ RSpec.describe WCC::Contentful, :vcr do
 
       it 'should populate models via Management API cache' do
         # act
+        contentful_reset!
         WCC::Contentful.init!
 
         # assert
@@ -351,6 +370,7 @@ RSpec.describe WCC::Contentful, :vcr do
 
       it 'builds out store using CDNAdapter' do
         # act
+        contentful_reset!
         WCC::Contentful.init!
 
         # assert
@@ -456,27 +476,6 @@ RSpec.describe WCC::Contentful, :vcr do
         JSON
       }
 
-      it 'should error when trying to use preview api' do
-        VCR.use_cassette(
-          'WCC_Contentful/_init/content_delivery_lazy_sync/should_call_out_to_CDN_for_first_calls_only',
-          record: :none
-        ) do
-          WCC::Contentful.init!
-
-          VCR.use_cassette(
-            'WCC_Contentful/_init/with_management_token/published_redirect_preview_true',
-            record: :new_episodes
-          ) do
-            expect {
-              WCC::Contentful::Model::Menu.find_by(
-                id: 'menuId',
-                options: { preview: true }
-              )
-            }.to raise_error(ArgumentError)
-          end
-        end
-      end
-
       it 'should call out to CDN for first calls only' do
         stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
           '/entries/6y9DftpiYoA4YiKg2CgoUU')
@@ -492,6 +491,7 @@ RSpec.describe WCC::Contentful, :vcr do
           .then.to_raise('Should not hit the API a second time!')
 
         # act
+        contentful_reset!
         WCC::Contentful.init!
         menu = WCC::Contentful::Model::Menu.find('6y9DftpiYoA4YiKg2CgoUU')
         button = menu.items.first
@@ -517,18 +517,20 @@ RSpec.describe WCC::Contentful, :vcr do
       # Checking and advancing the sync engine needs to happen post initialization
       # in an asynchronous background job.  It should never be advanced during
       # the rails init process or it will interfere with rake tasks.
-      it 'should not access the sync engine during initialization' do
+      it 'should not access the sync engine during initialization', active_job: true do
         expect(WCC::Contentful::Services.instance).to_not receive(:sync_engine)
         allow(WCC::Contentful::SyncEngine::Job).to receive(:perform_later)
 
         # act
+        contentful_reset!
         WCC::Contentful.init!
       end
 
-      it 'should perform a sync job' do
+      it 'should perform a sync job', active_job: true do
         expect(WCC::Contentful::SyncEngine::Job).to receive(:perform_later)
 
         # act
+        contentful_reset!
         WCC::Contentful.init!
       end
     end

@@ -1,8 +1,14 @@
 # frozen_string_literal: true
 
-require 'active_job'
 require 'wcc/contentful/event'
 require 'wisper'
+
+begin
+  gem 'activejob'
+  require 'active_job'
+rescue Gem::LoadError # rubocop:disable Lint/HandleExceptions
+  # suppress
+end
 
 module WCC::Contentful
   # The SyncEngine is used to keep the currently configured store up to date
@@ -114,7 +120,7 @@ module WCC::Contentful
     end
 
     # Define the job only if rails is loaded
-    if defined?(ActiveJob::Base)
+    if defined?(ActiveJob)
       # This job uses the Contentful Sync API to update the configured store with
       # the latest data from Contentful.
       class Job < ActiveJob::Base

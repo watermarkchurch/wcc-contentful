@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require 'job_helper'
 
-RSpec.describe WCC::Contentful::WebhookEnableJob, type: :job do
-  ActiveJob::Base.queue_adapter = :test
-
-  subject(:job) { described_class.new }
+RSpec.describe 'WCC::Contentful::WebhookEnableJob', type: :job do
+  subject(:job) { WCC::Contentful::WebhookEnableJob.new }
 
   describe '#enable_webhook' do
     it 'bails if webhook already exists' do
