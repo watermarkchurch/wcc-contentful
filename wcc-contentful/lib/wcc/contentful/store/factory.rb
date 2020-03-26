@@ -51,7 +51,7 @@ module WCC::Contentful::Store
 
           middleware, params, configure_proc = middleware_config
           middleware = middleware.call(memo, *params, **options)
-          middleware.instance_exec(&configure_proc) if configure_proc
+          middleware&.instance_exec(&configure_proc) if configure_proc
           middleware || memo
         end
     end
