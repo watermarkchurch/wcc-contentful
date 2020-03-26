@@ -46,7 +46,7 @@ Gem::Specification.new do |spec|
 
   # for generators
   spec.add_development_dependency 'generator_spec', '~> 0.9.4'
-  
+
   # wcc-contentful-app needs rails to function, so require it for specs.
   spec.add_development_dependency 'rails', '~> 5'
   spec.add_development_dependency 'rspec-rails', '~> 3.7'

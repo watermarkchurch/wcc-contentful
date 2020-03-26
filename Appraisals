@@ -1,15 +1,16 @@
 # frozen_string_literal: true
 
-rubies = [
-  '2.3.8',
-  '2.5.7'
-].map { |r| Gem::Version.new(r) }
+rubies =
+  [
+    '2.3.8',
+    '2.5.7'
+  ].map { |r| Gem::Version.new(r) }
 
 rubies.each do |ruby_version|
-
-  common = Proc.new do
-    ruby ruby_version.to_s
-  end
+  common =
+    proc do
+      ruby ruby_version.to_s
+    end
 
   appraise "rails-5.2_ruby-#{ruby_version}" do
     gem 'rails', '~> 5.2.0'
@@ -25,7 +26,7 @@ rubies.each do |ruby_version|
   appraise "rails-5.0_ruby-#{ruby_version}" do
     gem 'rails', '~> 5.0.0'
     gem 'railties', '~> 5.0.0'
-    
+
     group :test do
       gem 'rspec-rails', '~> 3.7'
     end
