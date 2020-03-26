@@ -231,7 +231,6 @@ RSpec.describe WCC::Contentful::Configuration do
       config.validate!
     end
 
-    require 'active_job'
     it 'errors when non-callable object given to webhook_jobs' do
       config.space = 'test_space'
       config.access_token = 'test_token'
@@ -241,17 +240,11 @@ RSpec.describe WCC::Contentful::Configuration do
           def call(evt)
           end
         }
-      some_job_class =
-        Class.new(ActiveJob::Base) {
-          def perform(args)
-          end
-        }
 
       # good
       config.webhook_jobs << ->(e) {}
       config.webhook_jobs << proc {}
       config.webhook_jobs << callable_class.new
-      config.webhook_jobs << some_job_class
 
       config.validate!
 
@@ -263,11 +256,6 @@ RSpec.describe WCC::Contentful::Configuration do
 
       expect {
         config.webhook_jobs = [callable_class]
-        config.validate!
-      }.to raise_error(ArgumentError)
-
-      expect {
-        config.webhook_jobs = [some_job_class.new]
         config.validate!
       }.to raise_error(ArgumentError)
     end
@@ -285,7 +273,10 @@ RSpec.describe WCC::Contentful::Configuration do
       config.preview_token = 'test-pt'
       config.webhook_username = 'test-wh'
       config.webhook_password = 'test-wh-pword'
-      config.webhook_jobs = [-> { 'one' }, WCC::Contentful::SyncEngine::Job]
+      config.webhook_jobs = [
+        -> { 'one' },
+        (WCC::Contentful::SyncEngine::Job if defined?(WCC::Contentful::SyncEngine::Job))
+      ]
       config.store = :lazy_sync, ActiveSupport::Cache::MemoryStore.new
       config.connection = -> { 'test' }
       config

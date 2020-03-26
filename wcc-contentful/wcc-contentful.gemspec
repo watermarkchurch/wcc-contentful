@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
 
   spec.require_paths = ['lib']
 
-  spec.add_development_dependency 'byebug'
+  spec.add_development_dependency 'byebug', '~> 11.0.1'
   spec.add_development_dependency 'coveralls'
   spec.add_development_dependency 'dotenv', '~> 2.2'
   spec.add_development_dependency 'erb_lint', '~> 0.0.26'
@@ -47,15 +47,14 @@ Gem::Specification.new do |spec|
 
   # for generators
   spec.add_development_dependency 'generator_spec', '~> 0.9.4'
-  spec.add_development_dependency 'rails', '~> 5.0'
-  spec.add_development_dependency 'rspec-rails', '~> 3.7'
+  # spec.add_development_dependency 'rails', '~> 5.0'
+  # spec.add_development_dependency 'rspec-rails', '~> 3.7'
   spec.add_development_dependency 'sqlite3', '~> 1.3.6'
   spec.add_development_dependency 'timecop', '~> 0.9.1'
 
   # optional dependencies
   spec.add_development_dependency 'connection_pool', '~> 2.2'
   spec.add_development_dependency 'faraday', '~> 0.9'
-  spec.add_development_dependency 'graphql', '~> 1.7'
   spec.add_development_dependency 'http', '> 1.0', '< 3.0'
   spec.add_development_dependency 'pg', '~> 1.0'
   spec.add_development_dependency 'typhoeus', '~> 1.3'

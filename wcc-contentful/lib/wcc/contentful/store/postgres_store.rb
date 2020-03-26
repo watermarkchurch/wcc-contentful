@@ -15,6 +15,7 @@ module WCC::Contentful::Store
     delegate :each, to: :to_enum
 
     attr_reader :connection_pool
+    attr_accessor :logger
 
     def initialize(_config = nil, connection_options = nil, pool_options = nil)
       super()
@@ -104,6 +105,7 @@ module WCC::Contentful::Store
         end
       end
 
+      logger&.debug('[PostgresStore] ' + statement + "\n" + params.inspect)
       _instrument 'exec' do
         @connection_pool.with { |conn| conn.exec(statement, params) }
       end
@@ -116,7 +118,7 @@ module WCC::Contentful::Store
 
       links =
         fields.flat_map do |_f, locale_hash|
-          locale_hash.flat_map do |_locale, value|
+          locale_hash&.flat_map do |_locale, value|
             if value.is_a? Array
               value.map { |val| val.dig('sys', 'id') if link?(val) }
             elsif link?(value)
@@ -239,12 +241,19 @@ module WCC::Contentful::Store
       end
 
       def _eq(path, expected, params)
-        if path == %w[sys id]
-          " AND t.id = $#{push_param(expected, params)}"
-        else
-          " AND t.data->#{quote_parameter_path(path)}" \
-            " ? $#{push_param(expected, params)}::text"
+        return " AND t.id = $#{push_param(expected, params)}" if path == %w[sys id]
+
+        if path[3] == 'sys'
+          # the path can be either an array or a singular json obj, and we have to dig
+          # into it to detect whether it contains `{ "sys": { "id" => expected } }`
+          expected = { 'sys' => { path[4] => expected } }.to_json
+          return ' AND fn_contentful_jsonb_any_to_jsonb_array(t.data->' \
+            "#{quote_parameter_path(path.take(3))}) @> " \
+            "jsonb_build_array($#{push_param(expected, params)}::jsonb)"
         end
+
+        " AND t.data->#{quote_parameter_path(path)}" \
+          " ? $#{push_param(expected, params)}::text"
       end
 
       def push_param(param, params)
@@ -257,19 +266,28 @@ module WCC::Contentful::Store
       end
 
       def _join(join_path, expectation_path, expected, params, joins)
+        # join back to the table using the links column (join_table_alias becomes s0, s1, s2)
+        # this is faster because of the index
         join_table_alias = push_join(join_path, joins)
-        " AND #{join_table_alias}.data->#{quote_parameter_path(expectation_path)}" \
-          " ? $#{push_param(expected, params)}::text"
+
+        # then apply the where clauses:
+        #  1. that the joined entry has the data at the appropriate path
+        #  2. that the entry joining to the other entry actually links at this path and not another
+        <<~WHERE_CLAUSE
+           AND #{join_table_alias}.data->#{quote_parameter_path(expectation_path)} ? $#{push_param(expected, params)}::text
+          AND exists (select 1 from jsonb_array_elements(fn_contentful_jsonb_any_to_jsonb_array(t.data->#{quote_parameter_path(join_path)})) as link where link->'sys'->'id' ? #{join_table_alias}.id)
+        WHERE_CLAUSE
       end
 
-      def push_join(path, joins)
+      def push_join(_path, joins)
         table_alias = "s#{joins.length}"
         joins << "JOIN contentful_raw AS #{table_alias} ON " \
-          "t.data->#{quote_parameter_path(path)}" \
-            "->'sys'->>'id'=#{table_alias}.id"
+          "#{table_alias}.id=ANY(t.links)"
         table_alias
       end
     end
+
+    EXPECTED_VERSION = 2
 
     class << self
       def prepare_statements(conn)
@@ -297,8 +315,6 @@ module WCC::Contentful::Store
         end
       end
 
-      EXPECTED_VERSION = 1
-
       def schema_ensured?(conn)
         result = conn.exec('SELECT version FROM wcc_contentful_schema_version' \
           ' ORDER BY version DESC LIMIT 1')
@@ -311,7 +327,18 @@ module WCC::Contentful::Store
       end
 
       def ensure_schema(conn)
-        conn.exec(File.read(File.join(__dir__, 'postgres_store/schema.sql')))
+        result =
+          begin
+            conn.exec('SELECT version FROM wcc_contentful_schema_version' \
+          ' ORDER BY version DESC')
+          rescue PG::UndefinedTable
+            []
+          end
+        1.upto(EXPECTED_VERSION).each do |version_num|
+          next if result.find { |row| row['version'].to_s == version_num.to_s }
+
+          conn.exec(File.read(File.join(__dir__, "postgres_store/schema_#{version_num}.sql")))
+        end
       end
     end
   end

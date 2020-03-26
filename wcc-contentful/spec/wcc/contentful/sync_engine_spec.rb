@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require 'job_helper'
 
-RSpec.describe WCC::Contentful::SyncEngine::Job, type: :job do
-  ActiveJob::Base.queue_adapter = :test
-  described_class.queue_adapter = :test
+require 'wcc/contentful/sync_engine'
+
+RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
+  let(:described_class) { WCC::Contentful::SyncEngine::Job }
 
   let(:next_sync) { JSON.parse(load_fixture('contentful/sync_continue.json')) }
 
@@ -257,30 +258,30 @@ RSpec.describe WCC::Contentful::SyncEngine::Job, type: :job do
 
   describe 'Perform' do
     it 'calls into job.sync!' do
-      expect_any_instance_of(described_class)
+      expect(job)
         .to receive(:sync!)
         .with(up_to_id: nil)
 
       # act
-      described_class.perform_now
+      job.perform
     end
 
     it 'calls into job.sync! with explicit params' do
-      expect_any_instance_of(described_class)
+      expect(job)
         .to receive(:sync!)
         .with(up_to_id: 'asdf')
 
       # act
-      described_class.perform_now(up_to_id: 'asdf')
+      job.perform(up_to_id: 'asdf')
     end
 
     it 'calls into job.sync! with webhook event' do
-      expect_any_instance_of(described_class)
+      expect(job)
         .to receive(:sync!)
         .with(up_to_id: 'testId1')
 
       # act
-      described_class.perform_now({
+      job.perform({
         'sys' => {
           'id' => 'testId1'
         }
