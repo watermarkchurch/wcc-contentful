@@ -13,6 +13,9 @@ class WCC::Contentful::Middleman::Extension < ::Middleman::Extension
   option :preview_token,
     ENV['CONTENTFUL_PREVIEW_TOKEN'],
     "Set the Contentful Preview access token (defaults to ENV['CONTENTFUL_PREVIEW_TOKEN'])"
+  option :environment,
+    ENV['CONTENTFUL_ENVIRONMENT'],
+    "Set the Contentful environment (defaults to ENV['CONTENTFUL_ENVIRONMENT'])"
 
   def initialize(app, options_hash = {}, &block)
     # don't pass block to super b/c we use it to configure WCC::Contentful
@@ -22,6 +25,8 @@ class WCC::Contentful::Middleman::Extension < ::Middleman::Extension
     require 'wcc/contentful'
 
     # set up your extension
+    return if WCC::Contentful.initialized
+
     WCC::Contentful.configure do |config|
       config.store :eager_sync, :memory
 
@@ -34,7 +39,7 @@ class WCC::Contentful::Middleman::Extension < ::Middleman::Extension
   end
 
   def after_configuration
-    WCC::Contentful.init!
+    WCC::Contentful.init! unless WCC::Contentful.initialized
 
     # Sync the latest data from Contentful
     WCC::Contentful::Services.instance.sync_engine&.next

@@ -76,7 +76,7 @@ module WCC::Contentful
     end
 
     ADAPTERS = {
-      faraday: ['faraday', '~> 0.9'],
+      faraday: ['faraday', '>= 0.9'],
       typhoeus: ['typhoeus', '~> 1.0']
     }.freeze
 
