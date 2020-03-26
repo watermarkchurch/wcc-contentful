@@ -47,11 +47,29 @@ RSpec.describe WCC::Contentful::Middleman::Extension do
       connection_double = double('connection')
 
       described_class.new(app) do |config|
-        puts "config: #{config}"
         config.connection = connection_double
       end
 
       expect(WCC::Contentful.configuration.connection).to eq(connection_double)
+    end
+  end
+
+  describe '#after_configuration' do
+    it 'initializes WCC::Contentful' do
+      expect(WCC::Contentful).to receive(:init!)
+
+      subject.after_configuration
+    end
+
+    it 'syncs over new content' do
+      stub_request(:get, /https:\/\/cdn.contentful.com\/spaces\/.+\/sync/)
+        .to_return(body: load_fixture('contentful/sync.json'))
+
+      subject.after_configuration
+
+      store = WCC::Contentful::Services.instance.store
+      homepage = store.find('4ssPJYNGPYQMMwo2gKmISo')
+      expect(homepage).to be_present
     end
   end
 end

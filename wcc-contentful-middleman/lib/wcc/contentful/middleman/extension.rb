@@ -1,10 +1,18 @@
 # frozen_string_literal: true
 
 class WCC::Contentful::Middleman::Extension < ::Middleman::Extension
-  option :space, ENV['CONTENTFUL_SPACE_ID'], "Set the Contentful space ID (defaults to ENV['CONTENTFUL_SPACE_ID'])"
-  option :access_token, ENV['CONTENTFUL_ACCESS_TOKEN'], "Set the Contentful CDN access key (defaults to ENV['CONTENTFUL_ACCESS_TOKEN'])"
-  option :management_token, ENV['CONTENTFUL_MANAGEMENT_TOKEN'], "Set the Contentful API access token (defaults to ENV['CONTENTFUL_MANAGEMENT_TOKEN'])"
-  option :preview_token, ENV['CONTENTFUL_PREVIEW_TOKEN'], "Set the Contentful Preview access token (defaults to ENV['CONTENTFUL_PREVIEW_TOKEN'])"
+  option :space,
+    ENV['CONTENTFUL_SPACE_ID'],
+    "Set the Contentful space ID (defaults to ENV['CONTENTFUL_SPACE_ID'])"
+  option :access_token,
+    ENV['CONTENTFUL_ACCESS_TOKEN'],
+    "Set the Contentful CDN access key (defaults to ENV['CONTENTFUL_ACCESS_TOKEN'])"
+  option :management_token,
+    ENV['CONTENTFUL_MANAGEMENT_TOKEN'],
+    "Set the Contentful API access token (defaults to ENV['CONTENTFUL_MANAGEMENT_TOKEN'])"
+  option :preview_token,
+    ENV['CONTENTFUL_PREVIEW_TOKEN'],
+    "Set the Contentful Preview access token (defaults to ENV['CONTENTFUL_PREVIEW_TOKEN'])"
 
   def initialize(app, options_hash = {}, &block)
     # don't pass block to super b/c we use it to configure WCC::Contentful
@@ -26,8 +34,10 @@ class WCC::Contentful::Middleman::Extension < ::Middleman::Extension
   end
 
   def after_configuration
-    # Do something
     WCC::Contentful.init!
+
+    # Sync the latest data from Contentful
+    WCC::Contentful::Services.instance.sync_engine&.next
   end
 
   # A Sitemap Manipulator

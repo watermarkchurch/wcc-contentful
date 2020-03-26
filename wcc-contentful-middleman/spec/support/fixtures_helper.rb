@@ -2,8 +2,16 @@
 
 module FixturesHelper
   def load_fixture(file_name)
-    file = "#{File.dirname(__FILE__)}/../fixtures/#{file_name}"
-    return File.read(file).gsub(/343qxys30lid/i, contentful_space_id) if File.exist?(file)
+    file = File.join(fixture_root, file_name)
+    return unless File.exist?(file)
+
+    File.read(file)
+      .gsub(/343qxys30lid/i, contentful_space_id)
+      .gsub('<CONTENTFUL_SPACE_ID>', contentful_space_id)
+  end
+
+  def fixture_root
+    "#{File.dirname(__FILE__)}/../fixtures"
   end
 
   def load_indexed_types(file_name = 'contentful/indexed_types_from_content_type_indexer.json')

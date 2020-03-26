@@ -168,16 +168,16 @@ class WCC::Contentful::Configuration
   attr_accessor :instrumentation_adapter
 
   def initialize
-    @access_token = ''
+    @access_token = ENV['CONTENTFUL_ACCESS_TOKEN']
     @app_url = ENV['APP_URL']
     @connection_options = {
       api_url: 'https://cdn.contentful.com/',
       preview_api_url: 'https://preview.contentful.com/',
       management_api_url: 'https://api.contentful.com'
     }
-    @management_token = ''
-    @preview_token = ''
-    @space = ''
+    @management_token = ENV['CONTENTFUL_MANAGEMENT_TOKEN']
+    @preview_token = ENV['CONTENTFUL_PREVIEW_TOKEN']
+    @space = ENV['CONTENTFUL_SPACE_ID']
     @default_locale = nil
     @middleware = []
     @update_schema_file = :if_possible

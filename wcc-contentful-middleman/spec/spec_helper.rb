@@ -13,6 +13,8 @@ require 'dotenv/load'
 require 'webmock/rspec'
 require 'httplog'
 
+WebMock.disable_net_connect!(allow_localhost: true)
+
 # override env vars for testing
 ENV['CONTENTFUL_SPACE_ID'] = 'test1xab'
 ENV['CONTENTFUL_ACCESS_TOKEN'] = 'test1234'
@@ -79,6 +81,15 @@ RSpec.configure do |config|
       end
     end
     WCC::Contentful::Model.class_variable_get('@@registry').clear
+
+    # set up initialization mocks
+    stub_request(:get, /https:\/\/cdn.contentful.com\/spaces\/.+\/sync/)
+      .to_return(body: load_fixture('contentful/sync_empty.json'))
+
+    WCC::Contentful.configure do |c|
+      c.schema_file = File.join(fixture_root, 'contentful/contentful-schema.json')
+      c.update_schema_file = :never
+    end
   end
 end
 
