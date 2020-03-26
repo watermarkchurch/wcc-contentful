@@ -1,17 +1,28 @@
-
+# frozen_string_literal: true
 
 class WCC::Contentful::Middleman::Extension < ::Middleman::Extension
-  option :my_option, 'default', 'An example option'
+  option :space, ENV['CONTENTFUL_SPACE_ID'], "Set the Contentful space ID (defaults to ENV['CONTENTFUL_SPACE_ID'])"
+  option :access_token, ENV['CONTENTFUL_ACCESS_TOKEN'], "Set the Contentful CDN access key (defaults to ENV['CONTENTFUL_ACCESS_TOKEN'])"
+  option :management_token, ENV['CONTENTFUL_MANAGEMENT_TOKEN'], "Set the Contentful API access token (defaults to ENV['CONTENTFUL_MANAGEMENT_TOKEN'])"
+  option :preview_token, ENV['CONTENTFUL_PREVIEW_TOKEN'], "Set the Contentful Preview access token (defaults to ENV['CONTENTFUL_PREVIEW_TOKEN'])"
 
-  def initialize(app, options_hash={}, &block)
-    # Call super to build options from the options_hash
-    super
+  def initialize(app, options_hash = {}, &block)
+    # don't pass block to super b/c we use it to configure WCC::Contentful
+    super(app, options_hash) {}
 
     # Require libraries only when activated
     require 'wcc/contentful'
 
     # set up your extension
-    # puts options.my_option
+    WCC::Contentful.configure do |config|
+      config.store :eager_sync, :memory
+
+      options.to_h.each do |(k, v)|
+        config.public_send("#{k}=", v) if config.respond_to?("#{k}=")
+      end
+
+      instance_exec(config, &block) if block_given?
+    end
   end
 
   def after_configuration
