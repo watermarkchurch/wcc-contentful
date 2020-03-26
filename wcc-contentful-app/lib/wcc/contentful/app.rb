@@ -5,7 +5,6 @@ require 'wcc/contentful/rails'
 require_relative './app/rails'
 require_relative './app/exceptions'
 require_relative './app/configuration'
-require_relative './app/middleware/publish_at'
 
 module WCC::Contentful::App
   class << self
@@ -28,13 +27,6 @@ module WCC::Contentful::App
     end
 
     configuration.validate!
-
-    # Inject additional configuration into WCC::Contentful
-    WCC::Contentful.configure do |config|
-      unless config.middleware.any? { |x| x.is_a? WCC::Contentful::App::Middleware::PublishAt }
-        config.middleware << WCC::Contentful::App::Middleware::PublishAt
-      end
-    end
 
     configuration
   end
