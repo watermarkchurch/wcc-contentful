@@ -1,10 +1,11 @@
-# -*- encoding: utf-8 -*-
-lib = File.expand_path("lib", __dir__)
+# frozen_string_literal: true
+
+lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'wcc/contentful/middleman/version'
 
 Gem::Specification.new do |spec|
-  spec.name        = "wcc-contentful-middleman"
+  spec.name        = 'wcc-contentful-middleman'
   spec.version     = WCC::Contentful::Middleman::VERSION
   spec.platform    = Gem::Platform::RUBY
   spec.authors       = ['Watermark Dev']
@@ -22,13 +23,13 @@ Gem::Specification.new do |spec|
     end
 
   spec.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
-  spec.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
-  spec.require_paths = ["lib"]
-  
+  spec.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
+  spec.require_paths = ['lib']
+
   # The version of middleman-core your extension depends on
-  spec.add_dependency "middleman-core", ">= 4.3.6"
+  spec.add_dependency 'middleman-core', '>= 4.3.6'
   spec.add_dependency 'wcc-contentful', ">= #{WCC::Contentful::Middleman::VERSION}"
-  
+
   # Additional dependencies
   spec.add_development_dependency 'dotenv', '~> 2.2'
   spec.add_development_dependency 'erb_lint', '~> 0.0.26'

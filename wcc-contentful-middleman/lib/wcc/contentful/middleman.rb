@@ -2,8 +2,8 @@
 
 require 'wcc/contentful/middleman/version'
 
-require "middleman-core"
+require 'middleman-core'
 Middleman::Extensions.register :wcc_contentful do
-  require "wcc/contentful/middleman/extension"
+  require 'wcc/contentful/middleman/extension'
   MyExtension
 end
