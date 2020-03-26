@@ -9,10 +9,6 @@ rubies.each do |ruby_version|
 
   common = Proc.new do
     ruby ruby_version.to_s
-
-    group :development do
-      gem 'simplecov', '0.17' if ruby_version < Gem::Version.new('2.4')
-    end
   end
 
   appraise "rails-5.2_ruby-#{ruby_version}" do
