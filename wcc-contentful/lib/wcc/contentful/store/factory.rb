@@ -7,11 +7,16 @@ require_relative '../middleware/store'
 require_relative '../middleware/store/caching_middleware'
 
 module WCC::Contentful::Store
+  # This factory presents a DSL for configuring the store stack.  The store stack
+  # sits in between the Model layer and the datastore, which can be Contentful
+  # or something else like Postgres.
+  #
+  # A set of "presets" are available to get pre-configured stacks based on what
+  # we've found most useful.
   class Factory
     attr_reader :preset, :options, :config
 
-    # Set the base store instance, OR a proc that creates the store accepting
-    # the services.
+    # Set the base store instance.
     attr_accessor :store
 
     # An array of tuples that set up and configure a Store middleware.
@@ -74,26 +79,23 @@ module WCC::Contentful::Store
       validate_store!(store)
     end
 
-    def configure_preset(preset)
-      unless respond_to?("preset_#{preset}")
-        raise ArgumentError, "Don't know how to build content delivery method '#{preset}'"
-      end
-
-      public_send("preset_#{preset}")
-    end
-
+    # Sets the "eager sync" preset using one of the preregistered stores like :postgres
     def preset_eager_sync
       store = options[0] || :memory
       store = SYNC_STORES[store]&.call(config, *options) if store.is_a?(Symbol)
       self.store = store
     end
 
+    # Configures a "lazy sync" preset which caches direct lookups but hits Contentful
+    # for any missing information.  The cache is kept up to date by the sync engine.
     def preset_lazy_sync
       preset_direct
       use(WCC::Contentful::Middleware::Store::CachingMiddleware,
         ActiveSupport::Cache.lookup_store(*options))
     end
 
+    # Configures the default "direct" preset which passes everything through to
+    # Contentful CDN
     def preset_direct
       self.store = CDNAdapter.new(preview: options.include?(:preview))
     end
@@ -101,6 +103,8 @@ module WCC::Contentful::Store
     def preset_custom
       self.store = options.shift
     end
+
+    private
 
     def validate_store!(store)
       raise ArgumentError, 'No store provided' unless store
@@ -114,6 +118,14 @@ module WCC::Contentful::Store
 
         raise ArgumentError, "Custom store '#{store}' must respond to the #{method} method"
       end
+    end
+
+    def configure_preset(preset)
+      unless respond_to?("preset_#{preset}")
+        raise ArgumentError, "Don't know how to build content delivery method '#{preset}'"
+      end
+
+      public_send("preset_#{preset}")
     end
 
     def build_store(services)
