@@ -28,7 +28,7 @@ module WCC::Contentful
     include ::Wisper::Publisher
 
     def state
-      (@state&.dup || { 'sys' => { 'id' => @state_key, 'type' => 'token' } }).freeze
+      (@state&.dup || token_wrapper_factory(nil)).freeze
     end
 
     attr_reader :store
@@ -52,7 +52,7 @@ module WCC::Contentful
         @state = read_state if should_sync?
       end
       if state
-        @state = _ensure_state_hash(state)
+        @state = token_wrapper_factory(state)
         raise ArgumentError, ':state param must be a String or Hash' unless @state.is_a? Hash
         unless @state.dig('sys', 'type') == 'token'
           raise ArgumentError, ':state param must be of sys.type = "token"'
@@ -75,7 +75,7 @@ module WCC::Contentful
       count = 0
 
       @mutex.synchronize do
-        @state ||= read_state || { 'sys' => { 'id' => @state_key, 'type' => 'token' } }
+        @state ||= read_state || token_wrapper_factory(nil)
         next_sync_token = @state['token']
 
         sync_resp = client.sync(sync_token: next_sync_token)
@@ -111,16 +111,15 @@ module WCC::Contentful
       return unless found = store&.find(@state_key)
 
       # backwards compat - migrate existing state
-      _ensure_state_hash(found)
+      token_wrapper_factory(found)
     end
 
     def write_state
       store.index(@state) if store&.index?
     end
 
-    def _ensure_state_hash(state)
-      state = { 'token' => state } if state.is_a? String
-      return unless state.is_a? Hash
+    def token_wrapper_factory(state)
+      state = { 'token' => state } unless state.is_a? Hash
 
       state.merge!('sys' => { 'id' => @state_key, 'type' => 'token' }) unless state['sys']
       state
