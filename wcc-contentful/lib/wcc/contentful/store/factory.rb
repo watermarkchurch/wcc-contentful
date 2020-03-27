@@ -21,7 +21,7 @@ module WCC::Contentful::Store
 
     # An array of tuples that set up and configure a Store middleware.
     def middleware
-      @middleware ||= self.class.default_middleware
+      @middleware ||= self.class.default_middleware.dup
     end
 
     def initialize(config = WCC::Contentful.configuration, preset = :direct, options = nil)
@@ -163,7 +163,7 @@ module WCC::Contentful::Store
       def default_middleware
         [
           [WCC::Contentful::Store::InstrumentationMiddleware]
-        ]
+        ].freeze
       end
     end
   end
