@@ -36,10 +36,10 @@ class WCC::Contentful::Middleman::Extension < ::Middleman::Extension
 
       instance_exec(config, &block) if block_given?
     end
-  end
 
-  def after_configuration
-    WCC::Contentful.init! unless WCC::Contentful.initialized
+    WCC::Contentful.init!
+    model_glob = File.join(Middleman::Application.root, 'lib/models/**/*.rb')
+    Dir[model_glob].sort.each { |f| require f }
 
     # Sync the latest data from Contentful
     WCC::Contentful::Services.instance.sync_engine&.next
