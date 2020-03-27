@@ -95,6 +95,7 @@ class WCC::Contentful::Configuration
     type, *params = params
     if type
       @store_factory = WCC::Contentful::Store::Factory.new(
+        self,
         type,
         params
       )
@@ -183,7 +184,7 @@ class WCC::Contentful::Configuration
     @update_schema_file = :if_possible
     @schema_file = 'db/contentful-schema.json'
     @webhook_jobs = []
-    @store_factory = WCC::Contentful::Store::Factory.new
+    @store_factory = WCC::Contentful::Store::Factory.new(self, :direct)
   end
 
   # Validates the configuration, raising ArgumentError if anything is wrong.  This

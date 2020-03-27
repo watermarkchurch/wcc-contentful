@@ -8,23 +8,30 @@ require_relative '../middleware/store/caching_middleware'
 
 module WCC::Contentful::Store
   class Factory
-    attr_reader :cdn_method, :content_delivery_params
+    attr_reader :preset, :options, :config
+
+    # Set the base store instance, OR a proc that creates the store accepting
+    # the services.
+    attr_accessor :store
 
     # An array of tuples that set up and configure a Store middleware.
     def middleware
       @middleware ||= self.class.default_middleware
     end
 
-    def initialize(cdn_method = :direct, content_delivery_params = nil)
-      @cdn_method = cdn_method || :custom
-      @content_delivery_params = [*content_delivery_params] || []
+    def initialize(config = WCC::Contentful.configuration, preset = :direct, options = nil)
+      @config = config
+      @preset = preset || :custom
+      @options = [*options] || []
 
       # Infer whether they passed in a store implementation object or class
-      return unless class_implements_store_interface?(@cdn_method) ||
-        object_implements_store_interface?(@cdn_method)
+      if class_implements_store_interface?(@preset) ||
+          object_implements_store_interface?(@preset)
+        @options.unshift(@preset)
+        @preset = :custom
+      end
 
-      @content_delivery_params.unshift(@cdn_method)
-      @cdn_method = :custom
+      configure_preset(@preset)
     end
 
     # Adds a middleware to the chain.  Use a block here to configure the middleware
@@ -34,18 +41,14 @@ module WCC::Contentful::Store
       self.middleware << [middleware, middleware_params, configure_proc]
     end
 
-    def build(config = WCC::Contentful.configuration, services = WCC::Contentful::Services.instance)
-      unless respond_to?("build_#{cdn_method}")
-        raise ArgumentError, "Don't know how to build content delivery method '#{cdn_method}'"
-      end
-
-      built = public_send("build_#{cdn_method}", config, services)
+    def build(services = WCC::Contentful::Services.instance)
+      store_instance = build_store(services)
       options = {
         config: config,
         services: services
       }
       middleware.reverse
-        .reduce(built) do |memo, middleware_config|
+        .reduce(store_instance) do |memo, middleware_config|
           # May have added a middleware with `middleware << MyMiddleware.new`
           middleware_config = [middleware_config] unless middleware_config.is_a? Array
 
@@ -57,8 +60,8 @@ module WCC::Contentful::Store
     end
 
     def validate!
-      unless cdn_method.nil? || CDN_METHODS.include?(cdn_method)
-        raise ArgumentError, "Please use one of #{CDN_METHODS} instead of #{cdn_method}"
+      unless preset.nil? || PRESETS.include?(preset)
+        raise ArgumentError, "Please use one of #{PRESETS} instead of #{preset}"
       end
 
       middleware.each do |m|
@@ -68,72 +71,69 @@ module WCC::Contentful::Store
           'It must respond to :call'
       end
 
-      return unless respond_to?("validate_#{cdn_method}")
-
-      public_send("validate_#{cdn_method}")
+      validate_store!(store)
     end
 
-    def build_eager_sync(config, _services)
-      store = content_delivery_params[0] || :memory
-      store = SYNC_STORES[store].call(config, *content_delivery_params) if store.is_a?(Symbol)
-      store || MemoryStore.new
-    end
-
-    def build_lazy_sync(config, services)
-      WCC::Contentful::Middleware::Store::CachingMiddleware.call(
-        build_direct(config, services),
-        ActiveSupport::Cache.lookup_store(*content_delivery_params)
-      )
-    end
-
-    def build_direct(_config, services)
-      if content_delivery_params.include?(:preview)
-        CDNAdapter.new(services.preview_client)
-      else
-        CDNAdapter.new(services.client)
+    def configure_preset(preset)
+      unless respond_to?("preset_#{preset}")
+        raise ArgumentError, "Don't know how to build content delivery method '#{preset}'"
       end
+
+      public_send("preset_#{preset}")
     end
 
-    def build_custom(config, services)
-      store = content_delivery_params[0]
-      instance =
-        if object_implements_store_interface?(store)
-          store
-        else
-          store.new(config, *content_delivery_params - [store])
-        end
-
-      (WCC::Contentful::SERVICES - %i[store preview_store]).each do |s|
-        next unless instance.respond_to?("#{s}=")
-
-        instance.public_send("#{s}=",
-          services.public_send(s))
-      end
-      instance
+    def preset_eager_sync
+      store = options[0] || :memory
+      store = SYNC_STORES[store]&.call(config, *options) if store.is_a?(Symbol)
+      self.store = store
     end
 
-    def validate_eager_sync
-      store = content_delivery_params[0]
-      return unless store.is_a?(Symbol)
-
-      return if SYNC_STORES.key?(store)
-
-      raise ArgumentError, "Please use one of #{SYNC_STORES.keys}"
+    def preset_lazy_sync
+      preset_direct
+      use(WCC::Contentful::Middleware::Store::CachingMiddleware,
+        ActiveSupport::Cache.lookup_store(*options))
     end
 
-    def validate_custom
-      store = content_delivery_params[0]
-      raise ArgumentError, 'No custom store provided for :custom content delivery' unless store
+    def preset_direct
+      self.store = CDNAdapter.new(preview: options.include?(:preview))
+    end
+
+    def preset_custom
+      self.store = options.shift
+    end
+
+    def validate_store!(store)
+      raise ArgumentError, 'No store provided' unless store
 
       return true if class_implements_store_interface?(store) ||
         object_implements_store_interface?(store)
 
       methods = [*store.try(:instance_methods), *store.try(:methods)]
-      INTERFACE_METHODS.each do |method|
+      WCC::Contentful::Store::Interface::INTERFACE_METHODS.each do |method|
         next if methods.include?(method)
 
         raise ArgumentError, "Custom store '#{store}' must respond to the #{method} method"
       end
+    end
+
+    def build_store(services)
+      store_class = store
+      store =
+        if object_implements_store_interface?(store_class)
+          store_class
+        else
+          store_class.new(config, *options - [store_class])
+        end
+
+      # Inject services into the custom store class
+      (WCC::Contentful::SERVICES - %i[store preview_store]).each do |s|
+        next unless store.respond_to?("#{s}=")
+
+        store.public_send("#{s}=",
+          services.public_send(s))
+      end
+
+      store
     end
 
     def class_implements_store_interface?(klass)

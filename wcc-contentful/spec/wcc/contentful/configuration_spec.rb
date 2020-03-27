@@ -14,9 +14,8 @@ RSpec.describe WCC::Contentful::Configuration do
 
   describe '#store' do
     it 'raises error when setting invalid content delivery method' do
-      config.store :asdf
       expect {
-        config.store.validate!
+        config.store :asdf
       }.to raise_error(ArgumentError)
     end
 
@@ -75,7 +74,12 @@ RSpec.describe WCC::Contentful::Configuration do
       end
 
       it 'uses provided store' do
-        store = double
+        store = double(
+          # make sure it responds to all the interface methods
+          **WCC::Contentful::Store::Interface::INTERFACE_METHODS.each_with_object({}) do |m, h|
+            h[m] = nil
+          end
+        )
 
         # act
         config.store :eager_sync, store
@@ -149,7 +153,7 @@ RSpec.describe WCC::Contentful::Configuration do
       end
 
       # act
-      store = config.store.build(config)
+      store = config.store.build
 
       stack = middleware_stack(store)
       expect(stack[stack.length - 2]).to be_a Test_Middleware
@@ -171,7 +175,7 @@ RSpec.describe WCC::Contentful::Configuration do
       end
 
       # act
-      store = config.store.build(config)
+      store = config.store.build
 
       expect(store).to be_a WCC::Contentful::Store::InstrumentationMiddleware
       expect {

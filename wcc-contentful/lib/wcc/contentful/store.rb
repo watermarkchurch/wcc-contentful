@@ -33,7 +33,7 @@ module WCC::Contentful::Store
     }
   }.freeze
 
-  CDN_METHODS = %i[
+  PRESETS = %i[
     eager_sync
     lazy_sync
     direct
