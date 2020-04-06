@@ -88,7 +88,7 @@ class WCC::Contentful::Configuration
   #              The application is still responsible to periodically call `sync!`
   #              or to mount the provided Engine.
   #
-  # [:lazy_sync] `config.store :custom, do ... end`
+  # [:custom] `config.store :custom, do ... end`
   #           The block is executed in the context of a WCC::Contentful::Store::Factory.
   #           this can be used to apply middleware, etc.
   def store(*params, &block)
