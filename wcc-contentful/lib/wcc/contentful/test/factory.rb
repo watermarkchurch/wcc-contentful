@@ -38,10 +38,6 @@ module WCC::Contentful::Test::Factory
       end
     end
 
-    def instance.to_s
-      "#<#{self.class.name} id=\"#{id}\">"
-    end
-
     instance
   end
 
