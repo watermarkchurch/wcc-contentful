@@ -45,12 +45,40 @@ class WCC::Contentful::Middleman::Extension < ::Middleman::Extension
     WCC::Contentful::Services.instance.sync_engine&.next
   end
 
-  # A Sitemap Manipulator
-  # def manipulate_resource_list(resources)
-  # end
-
   # helpers do
   #   def a_helper
   #   end
   # end
+
+  def ready
+    # resync every page load in development mode only
+    app.use ContentfulSyncUpdate if app.server?
+  end
+
+  # Rack app that advances the sync engine whenever we load a page
+  class ContentfulSyncUpdate
+    def initialize(app)
+      @app = app
+    end
+  
+    def call(env)
+      if (Time.now - ContentfulSyncUpdate.last_sync) > 10.seconds
+        ::WCC::Contentful::Services.instance.sync_engine&.next
+        ContentfulSyncUpdate.last_sync = Time.now
+      end
+  
+      @app.call(env)
+    end
+
+    class << self
+      def last_sync
+        @@last_sync ||= Time.at(0)
+      end
+
+      def last_sync=(time)
+        @@last_sync = time
+      end
+    end
+  end
+  
 end
