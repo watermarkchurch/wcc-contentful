@@ -51,7 +51,7 @@ class WCC::Contentful::Middleman::Extension < ::Middleman::Extension
   # end
 
   def ready
-    # resync every page load in development mode only
+    # resync every page load in development & test mode only
     app.use ContentfulSyncUpdate if app.server?
   end
 
