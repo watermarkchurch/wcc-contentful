@@ -1,15 +1,13 @@
 # frozen_string_literal: true
 
-require_relative 'instrumentation'
+module WCC::Contentful::Middleware::Store
+  class CachingMiddleware
+    include WCC::Contentful::Middleware::Store
+    # include instrumentation, but not specifically store stack instrumentation
+    include WCC::Contentful::Instrumentation
 
-module WCC::Contentful::Store
-  class LazyCacheStore
-    include WCC::Contentful::Store::Instrumentation
-
-    def initialize(client, cache: nil)
-      @cdn = CDNAdapter.new(client)
+    def initialize(cache = nil)
       @cache = cache || ActiveSupport::Cache::MemoryStore.new
-      @client = client
     end
 
     def find(key, **options)
@@ -19,9 +17,9 @@ module WCC::Contentful::Store
           event = 'miss'
           # if it's not a contentful ID don't hit the API.
           # Store a nil object if we can't find the object on the CDN.
-          (@cdn.find(key, options) || nil_obj(key)) if key =~ /^\w+$/
+          (store.find(key, options) || nil_obj(key)) if key =~ /^\w+$/
         end
-      _instrument(event + '.lazycachestore', key: key, options: options)
+      _instrument(event, key: key, options: options)
 
       case found.try(:dig, 'sys', 'type')
       when 'Nil', 'DeletedEntry', 'DeletedAsset'
@@ -35,7 +33,7 @@ module WCC::Contentful::Store
     #  figure out how to cache the results of a find_by query, ex:
     #  `find_by('slug' => '/about')`
     def find_by(content_type:, filter: nil, options: nil)
-      if filter.keys == ['sys.id']
+      if filter&.keys == ['sys.id']
         # Direct ID lookup, like what we do in `WCC::Contentful::ModelMethods.resolve`
         # We can return just this item.  Stores are not required to implement :include option.
         if found = @cache.read(filter['sys.id'])
@@ -43,13 +41,29 @@ module WCC::Contentful::Store
         end
       end
 
-      @cdn.find_by(content_type: content_type, filter: filter, options: options)
+      store.find_by(content_type: content_type, filter: filter, options: options)
     end
 
-    delegate :find_all, to: :@cdn
+    delegate :find_all, to: :store
 
     # #index is called whenever the sync API comes back with more data.
     def index(json)
+      delegated_result = store.index(json) if store.index?
+      caching_result = _index(json)
+      # _index returns nil if we don't already have it cached - so use the store result.
+      # store result is nil if it doesn't index, so use the caching result if we have it.
+      # They ought to be the same thing if it's cached and the store also indexes.
+      caching_result || delegated_result
+    end
+
+    def index?
+      true
+    end
+
+    private
+
+    def _index(json)
+      ensure_hash(json)
       id = json.dig('sys', 'id')
       return unless prev = @cache.read(id)
 
@@ -57,9 +71,8 @@ module WCC::Contentful::Store
         return prev if next_rev < prev_rev
       end
 
-      # we also set deletes in the cache - no need to go hit the API when we know
+      # we also set DeletedEntry objects in the cache - no need to go hit the API when we know
       # this is a nil object
-      ensure_hash json
       @cache.write(id, json)
 
       case json.dig('sys', 'type')
@@ -71,25 +84,6 @@ module WCC::Contentful::Store
         json
       end
     end
-
-    def index?
-      true
-    end
-
-    def set(key, value)
-      ensure_hash value
-      old = @cache.read(key)
-      @cache.write(key, value)
-      old
-    end
-
-    def delete(key)
-      old = @cache.read(key)
-      @cache.delete(key)
-      old
-    end
-
-    private
 
     def nil_obj(id)
       {

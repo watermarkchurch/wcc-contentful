@@ -23,7 +23,7 @@ RSpec.describe 'WCC::Contentful::Engine', rails: true do
         config.access_token = contentful_access_token
 
         # required in order to trigger SyncEngine::Job
-        config.content_delivery = :eager_sync, :memory
+        config.store = :eager_sync, :memory
       end
     end
 

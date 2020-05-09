@@ -43,9 +43,9 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
                         next_sync_token: 'test'
                       ))
 
-        expect(store).to receive(:set)
-          .with('sync:token', { 'token' => 'test' })
-        expect(store).to_not receive(:index)
+        expect(store).to receive(:index)
+          .once
+          .with({ 'sys' => { 'id' => 'sync:token', 'type' => 'token' }, 'token' => 'test' })
 
         # act
         synced = job.sync!
@@ -67,8 +67,8 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
                       ))
 
         items = next_sync['items']
-        expect(store).to receive(:set)
-          .with('sync:token', { 'token' => 'test2' })
+        expect(store).to receive(:index)
+          .with({ 'sys' => { 'type' => 'token', 'id' => 'sync:token' }, 'token' => 'test2' })
         expect(store).to receive(:index)
           .exactly(items.count).times
 
@@ -156,10 +156,18 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
       job.sync!(up_to_id: nil)
     end
 
-    context 'with LazyCacheStore' do
-      let(:store) { WCC::Contentful::Store::LazyCacheStore.new(client) }
+    context 'with :lazy_cache' do
+      let(:cache) {
+        ActiveSupport::Cache::MemoryStore.new
+      }
 
-      it 'continues from prior sync token with LazyCacheStore' do
+      let(:store) {
+        WCC::Contentful::Middleware::Store::CachingMiddleware.new(cache).tap do |middleware|
+          middleware.store = WCC::Contentful::Store::CDNAdapter.new(client)
+        end
+      }
+
+      it 'continues from prior sync token with CachingMiddleware' do
         allow(client).to receive(:sync)
           .with({ sync_token: nil })
           .and_return(double(
@@ -183,7 +191,7 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
       end
 
       it 'ignores a poison sync token in the store' do
-        store.set('sync:token', poison: 'poison')
+        cache.write('sync:token', poison: 'poison')
 
         expect(client).to receive(:sync)
           .with({ sync_token: nil })
@@ -197,6 +205,53 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
 
         # assert
         expect(synced).to eq('test')
+      end
+    end
+
+    context 'with a non-indexable store (i.e. CDNAdapter)' do
+      let(:store) {
+        double(index: nil, index?: false, find: nil)
+      }
+
+      it 'does not update the store' do
+        expect(store).to_not receive(:index)
+
+        allow(store).to receive(:find)
+          .with('sync:token')
+          .and_return({ 'token' => 'test1' })
+        allow(client).to receive(:sync)
+          .with(sync_token: 'test1')
+          .and_return(double(
+                        items: next_sync['items'],
+                        next_sync_token: 'test2'
+                      ))
+
+        # act
+        job.sync!
+      end
+
+      it 'emits each item returned by the sync' do
+        allow(client).to receive(:sync)
+          .and_return(double(
+                        items: next_sync['items'],
+                        next_sync_token: 'test2'
+                      ))
+
+        emitted_entries = []
+        sync_engine.on('Entry') { |item| emitted_entries << item }
+        emitted_assets = []
+        sync_engine.on('Asset') { |item| emitted_assets << item }
+        emitted_deletions = []
+        sync_engine.on('DeletedEntry') { |item| emitted_deletions << item }
+        emitted_deletions = []
+        sync_engine.on('DeletedAsset') { |item| emitted_deletions << item }
+
+        # act
+        job.sync!
+
+        expect(emitted_entries.count).to eq(2)
+        expect(emitted_assets.count).to eq(0)
+        expect(emitted_deletions.count).to eq(12)
       end
     end
   end

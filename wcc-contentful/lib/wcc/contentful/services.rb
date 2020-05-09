@@ -18,14 +18,14 @@ module WCC::Contentful
 
     # Gets the data-store which executes the queries run against the dynamic
     # models in the WCC::Contentful::Model namespace.
-    # This is one of the following based on the configured content_delivery method:
+    # This is one of the following based on the configured store method:
     #
     # [:direct] an instance of {WCC::Contentful::Store::CDNAdapter} with a
     #           {WCC::Contentful::SimpleClient::Cdn CDN Client} to access the CDN.
     #
-    # [:lazy_sync] an instance of {WCC::Contentful::Store::LazyCacheStore}
-    #              with the configured ActiveSupport::Cache implementation and a
-    #              {WCC::Contentful::SimpleClient::Cdn CDN Client} for when data
+    # [:lazy_sync] an instance of {WCC::Contentful::Middleware::Store::CachingMiddleware}
+    #              with the configured ActiveSupport::Cache implementation around a
+    #              {WCC::Contentful::Store::CDNAdapter} for when data
     #              cannot be found in the cache.
     #
     # [:eager_sync] an instance of the configured Store type, defined by
@@ -35,12 +35,7 @@ module WCC::Contentful
     def store
       @store ||=
         ensure_configured do |config|
-          WCC::Contentful::Store::Factory.new(
-            config,
-            self,
-            config.content_delivery,
-            config.content_delivery_params
-          ).build_sync_store
+          config.store.build(self)
         end
     end
 
@@ -53,10 +48,9 @@ module WCC::Contentful
         ensure_configured do |config|
           WCC::Contentful::Store::Factory.new(
             config,
-            self,
             :direct,
-            [{ preview: true }]
-          ).build_sync_store
+            :preview
+          ).build(self)
         end
     end
 
@@ -155,6 +149,9 @@ module WCC::Contentful
     end
   end
 
+  SERVICES = (WCC::Contentful::Services.instance_methods -
+      Object.instance_methods)
+
   # Include this module to define accessors for every method defined on the
   # {Services} singleton.
   #
@@ -174,9 +171,6 @@ module WCC::Contentful
   #   end
   # @see Services
   module ServiceAccessors
-    SERVICES = (WCC::Contentful::Services.instance_methods -
-      Object.instance_methods)
-
     SERVICES.each do |m|
       define_method m do
         Services.instance.public_send(m)

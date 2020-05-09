@@ -18,7 +18,7 @@ RSpec.describe WCC::Contentful, :vcr do
       config.management_token = 'CFPAT-test'
       config.access_token = valid_contentful_access_token
       config.space = valid_contentful_space_id
-      config.content_delivery = :eager_sync
+      config.store = :eager_sync
       config.environment = nil
       config.update_schema_file = :never
     end
@@ -35,7 +35,7 @@ RSpec.describe WCC::Contentful, :vcr do
           config.space = valid_contentful_space_id
           config.store = nil
           config.preview_token = valid_contentful_preview_token
-          config.content_delivery = :direct
+          config.store = :direct
         end
       end
 
@@ -161,7 +161,7 @@ RSpec.describe WCC::Contentful, :vcr do
             config.access_token = valid_contentful_access_token
             config.space = valid_contentful_space_id
 
-            config.content_delivery = :eager_sync
+            config.store = :eager_sync
             config.environment = 'specs'
           end
         }.to_not raise_error
@@ -237,7 +237,7 @@ RSpec.describe WCC::Contentful, :vcr do
 
           # rebuild store
           config.store = nil
-          config.content_delivery = :eager_sync, :memory
+          config.store = :eager_sync, :memory
         end
 
         stub_request(:get, /https:\/\/cdn.contentful.com\/spaces\/.+\/content_types/)
@@ -344,7 +344,7 @@ RSpec.describe WCC::Contentful, :vcr do
 
           # rebuild store
           config.store = nil
-          config.content_delivery = :eager_sync, :memory
+          config.store = :eager_sync, :memory
         end
       end
 
@@ -359,12 +359,11 @@ RSpec.describe WCC::Contentful, :vcr do
       end
     end
 
-    context 'content_delivery = direct' do
+    context 'store = direct' do
       before(:each) do
         WCC::Contentful.configure do |config|
           config.management_token = contentful_management_token
-          config.store = nil
-          config.content_delivery = :direct
+          config.store = :direct
         end
       end
 
@@ -374,19 +373,24 @@ RSpec.describe WCC::Contentful, :vcr do
         WCC::Contentful.init!
 
         # assert
-        expect(WCC::Contentful::Model.store).to be_a(WCC::Contentful::Store::CDNAdapter)
+        store = WCC::Contentful::Model.store
+        stack = [store]
+        while store = store.try(:store)
+          stack << store
+        end
+        expect(stack.last).to be_a(WCC::Contentful::Store::CDNAdapter)
 
         page = WCC::Contentful::Model::Page.find('JhYhSfZPAOMqsaK8cYOUK')
         expect(page.title).to eq('Ministries')
       end
     end
 
-    context 'content_delivery = lazy_sync' do
+    context 'store = lazy_sync' do
       before(:each) do
         WCC::Contentful.configure do |config|
           config.management_token = contentful_management_token
           config.store = nil
-          config.content_delivery = :lazy_sync
+          config.store = :lazy_sync
         end
       end
 
@@ -505,12 +509,12 @@ RSpec.describe WCC::Contentful, :vcr do
       end
     end
 
-    context 'content_delivery = eager_sync' do
+    context 'store = eager_sync' do
       before(:each) do
         WCC::Contentful.configure do |config|
           config.management_token = contentful_management_token
           config.store = nil
-          config.content_delivery = :eager_sync
+          config.store = :eager_sync
         end
       end
 

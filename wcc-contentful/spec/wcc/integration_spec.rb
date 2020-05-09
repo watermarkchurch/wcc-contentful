@@ -10,7 +10,7 @@ RSpec.describe 'Full Stack Integration' do
         config.access_token = contentful_access_token
         config.space = contentful_space_id
         config.preview_token = contentful_preview_token
-        config.content_delivery = :lazy_sync
+        config.store = :lazy_sync
         config.environment = nil
         config.update_schema_file = :never
       end

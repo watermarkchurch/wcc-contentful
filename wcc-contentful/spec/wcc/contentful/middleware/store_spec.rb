@@ -28,8 +28,6 @@ RSpec.describe WCC::Contentful::Middleware::Store do
   %i[
     index
     index?
-    set
-    delete
   ].each do |method|
     it "delegates #{method} to backing store" do
       expect(next_store).to receive(method)

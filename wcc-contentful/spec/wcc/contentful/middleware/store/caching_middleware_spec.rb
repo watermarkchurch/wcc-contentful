@@ -1,18 +1,20 @@
 # frozen_string_literal: true
 
-RSpec.describe WCC::Contentful::Store::LazyCacheStore do
+RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
   let(:cache) {
     ActiveSupport::Cache::MemoryStore.new
   }
 
   subject(:store) {
-    WCC::Contentful::Store::LazyCacheStore.new(
-      WCC::Contentful::SimpleClient::Cdn.new(
-        access_token: contentful_access_token,
-        space: contentful_space_id
-      ),
-      cache: cache
-    )
+    described_class.new(cache).tap do |middleware|
+      middleware.store =
+        WCC::Contentful::Store::CDNAdapter.new(
+          WCC::Contentful::SimpleClient::Cdn.new(
+            access_token: contentful_access_token,
+            space: contentful_space_id
+          )
+        )
+    end
   }
 
   before do
@@ -45,24 +47,13 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
       expect(page2).to eq(page)
     end
 
-    it 'instruments a find' do
-      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
-          '/entries/47PsST8EicKgWIWwK2AsW6')
-        .with(query: hash_including({ locale: '*' }))
-        .to_return(body: load_fixture('contentful/lazy_cache_store/page_about.json'))
-
-      expect {
-        store.find('47PsST8EicKgWIWwK2AsW6')
-      }.to instrument('find.store.contentful.wcc')
-    end
-
     it 'instruments a cache hit' do
       cache.write('47PsST8EicKgWIWwK2AsW6',
         JSON.parse(load_fixture('contentful/lazy_cache_store/page_about.json')))
 
       expect {
         store.find('47PsST8EicKgWIWwK2AsW6')
-      }.to instrument('fresh.lazycachestore.store.contentful.wcc')
+      }.to instrument('fresh.cachingmiddleware.store.middleware.contentful.wcc')
     end
 
     it 'instruments a cache miss' do
@@ -73,7 +64,7 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
 
       expect {
         store.find('47PsST8EicKgWIWwK2AsW6')
-      }.to instrument('miss.lazycachestore.store.contentful.wcc')
+      }.to instrument('miss.cachingmiddleware.store.middleware.contentful.wcc')
     end
 
     let(:not_found) {
@@ -129,28 +120,34 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
 
     describe 'ensures that the stored value is of type Hash' do
       it 'should not raise an error if value is a Hash' do
-        data = { token: 'jenny_8675309' }
+        data = {
+          'sys' => { 'id' => 'sync:token', 'type' => 'token' },
+          'data' => { token: 'jenny_8675309' }
+        }
 
         # assert
-        expect { subject.set('sync:token', data) }.to_not raise_error
+        expect { subject.index(data) }.to_not raise_error
       end
 
       it 'should raise an error if the value is not a Hash' do
         data = 'jenny_8675309'
-        expect { subject.set('sync:token', data) }.to raise_error(ArgumentError)
+        expect { subject.index(data) }.to raise_error(ArgumentError)
       end
     end
 
     it 'returns stored token if it exists in the cache' do
-      data = { token: 'jenny_8675309' }
+      data = {
+        'sys' => { 'id' => 'sync:343qxys30lid:token', 'type' => 'token' },
+        'data' => { 'token' => 'jenny_8675309' }
+      }
 
-      store.set('sync:343qxys30lid:token', data)
+      cache.write('sync:343qxys30lid:token', data)
 
       # act
       token = store.find('sync:343qxys30lid:token')
 
       # assert
-      expect(token).to eq(data)
+      expect(token.dig('data', 'token')).to eq('jenny_8675309')
     end
 
     it 'passes options to backing CDN adapter' do
@@ -192,23 +189,6 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
       expect(main_menu2).to eq(main_menu)
     end
 
-    it 'instruments find_all' do
-      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
-        .with(query: hash_including({
-          include: '2',
-          content_type: 'menu'
-        }))
-        .to_return(body: load_fixture('contentful/lazy_cache_store/query_main_menu.json'))
-
-      expect {
-        store.find_all(content_type: 'menu', options: { include: 2 })
-      }.to instrument('find_all.store.contentful.wcc')
-        .with(hash_including(
-                content_type: 'menu',
-                options: { include: 2 }
-              ))
-    end
-
     context 'nil options' do
       it 'does not blow up...' do
         stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
@@ -234,7 +214,7 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
     let(:page) { body_hash.dig('items', 0) }
 
     it 'returns a cached entry if looking up by sys.id' do
-      store.set(page.dig('sys', 'id'), page)
+      cache.write(page.dig('sys', 'id'), page)
 
       # act
       cached_page = store.find_by(content_type: 'page', filter: { 'sys.id' => page.dig('sys', 'id') })
@@ -291,7 +271,7 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
         }))
         .to_return(body: body)
 
-      store.set(page.dig('sys', 'id'), { 'sys' => { 'type' => 'not a page' } })
+      cache.write(page.dig('sys', 'id'), { 'sys' => { 'type' => 'not a page' } })
 
       # act - should not read from the cache
       queried_page = store.find_by(content_type: 'page', filter: { 'fields.slug' => '/' })
@@ -346,18 +326,6 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
       expect(section0.dig('sys', 'type')).to eq('Link')
       section1 = queried_page.dig('fields', 'sections', 'en-US', 1)
       expect(section1.dig('sys', 'type')).to eq('Entry')
-    end
-
-    it 'instruments find_by' do
-      store.set(page.dig('sys', 'id'), page)
-
-      expect {
-        store.find_by(content_type: 'page', filter: { 'sys.id' => page.dig('sys', 'id') })
-      }.to instrument('find_by.store.contentful.wcc')
-        .with(hash_including(
-                content_type: 'page',
-                filter: { 'sys.id' => page.dig('sys', 'id') }
-              ))
     end
   end
 
@@ -477,7 +445,7 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
 
     it 'updates the cache if the item was recently accessed' do
       original_about_page = JSON.parse(load_fixture('contentful/lazy_cache_store/page_about.json'))
-      store.set('47PsST8EicKgWIWwK2AsW6', original_about_page)
+      cache.write('47PsST8EicKgWIWwK2AsW6', original_about_page)
 
       updated_about_page = JSON.parse(load_fixture('contentful/lazy_cache_store/page_about.json'))
       updated_about_page['fields']['heroText']['en-US'] = 'updated hero text'
@@ -491,15 +459,18 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
     end
 
     it 'updates an "Entry" when exists' do
-      existing = { 'test' => { 'data' => 'asdf' } }
-      subject.set('1qLdW7i7g4Ycq6i4Cckg44', existing)
+      existing = {
+        'sys' => { 'type' => 'Entry', 'id' => entry.dig('sys', 'id') },
+        'test' => { 'data' => 'asdf' }
+      }
+      cache.write(existing.dig('sys', 'id'), existing)
 
       # act
       latest = subject.index(entry)
 
       # assert
       expect(latest).to eq(entry)
-      expect(subject.find('1qLdW7i7g4Ycq6i4Cckg44')).to eq(entry)
+      expect(subject.find(entry.dig('sys', 'id'))).to eq(entry)
     end
 
     it 'does not overwrite an entry if revision is lower' do
@@ -508,25 +479,30 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
       updated['sys']['revision'] = 2
       updated['fields']['slug']['en-US'] = 'test slug'
 
-      subject.set(updated.dig('sys', 'id'), updated)
+      cache.write(updated.dig('sys', 'id'), updated)
 
-      # act
+      # act - write old data to the index method
       latest = subject.index(initial)
 
       # assert
       expect(latest).to eq(updated)
-      expect(subject.find('1qLdW7i7g4Ycq6i4Cckg44')).to eq(updated)
+      expect(subject.find(initial.dig('sys', 'id'))).to eq(updated)
     end
 
-    it 'removes a "DeletedEntry"' do
-      existing = { 'test' => { 'data' => 'asdf' } }
-      subject.set('6HQsABhZDiWmi0ekCouUuy', existing)
+    it 'removes a "DeletedEntry" and tracks that it was deleted' do
+      existing = {
+        'sys' => { 'type' => 'Entry', 'id' => deleted_entry.dig('sys', 'id') },
+        'test' => { 'data' => 'asdf' }
+      }
+      cache.write(existing.dig('sys', 'id'), existing)
 
       # act
       latest = subject.index(deleted_entry)
 
       # assert
       expect(latest).to be_nil
+      # This call should not hit the CDN.  If VCR complains, then the CachingMiddleware
+      # did not properly store the deletion.
       expect(subject.find('6HQsABhZDiWmi0ekCouUuy')).to be_nil
     end
 
@@ -534,7 +510,7 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
       existing = entry
       existing['sys']['id'] = deleted_entry.dig('sys', 'id')
       existing['sys']['revision'] = deleted_entry.dig('sys', 'revision') + 1
-      subject.set(existing.dig('sys', 'id'), existing)
+      cache.write(existing.dig('sys', 'id'), existing)
 
       # act
       latest = subject.index(deleted_entry)
@@ -546,42 +522,36 @@ RSpec.describe WCC::Contentful::Store::LazyCacheStore do
 
     it 'instruments index - no set when entry not cached' do
       expect {
-        expect {
-          # act
-          subject.index(entry)
-        }.to instrument('index.store.contentful.wcc')
-          .with(hash_including(id: '1qLdW7i7g4Ycq6i4Cckg44'))
-      }.to_not instrument('set.store.contentful.wcc')
+        # act
+        subject.index(entry)
+      }.to_not instrument('set.cachingmiddleware.store.middleware.contentful.wcc')
     end
 
     it 'instruments index - set when entry cached' do
       new_entry = entry.merge({
         'sys' => entry['sys'].merge({ 'revision': 2 })
       })
-      subject.set('1qLdW7i7g4Ycq6i4Cckg44', entry)
+      cache.write(entry.dig('sys', 'id'), entry)
 
       expect {
-        expect {
-          # act
-          subject.index(new_entry)
-        }.to instrument('index.store.contentful.wcc')
-          .with(hash_including(id: '1qLdW7i7g4Ycq6i4Cckg44'))
-      }.to instrument('set.store.contentful.wcc')
+        # act
+        subject.index(new_entry)
+      }.to instrument('set.cachingmiddleware.store.middleware.contentful.wcc')
         .with(hash_including(id: '1qLdW7i7g4Ycq6i4Cckg44'))
     end
 
     it 'instruments index delete' do
-      existing = { 'test' => { 'data' => 'asdf' } }
-      subject.set('6HQsABhZDiWmi0ekCouUuy', existing)
+      existing = {
+        'sys' => { 'type' => 'Entry', 'id' => deleted_entry.dig('sys', 'id') },
+        'test' => { 'data' => 'asdf' }
+      }
+      cache.write(existing.dig('sys', 'id'), existing)
 
       expect {
-        expect {
-          # act
-          subject.index(deleted_entry)
-        }.to instrument('index.store.contentful.wcc')
-          .with(hash_including(id: '6HQsABhZDiWmi0ekCouUuy'))
-      }.to instrument('delete.store.contentful.wcc')
-        .with(hash_including(id: '6HQsABhZDiWmi0ekCouUuy'))
+        # act
+        subject.index(deleted_entry)
+      }.to instrument('delete.cachingmiddleware.store.middleware.contentful.wcc')
+        .with(hash_including(id: deleted_entry.dig('sys', 'id')))
     end
   end
 end

@@ -1,4 +1,3 @@
-
 # frozen_string_literal: true
 
 WCC::Contentful.configure do |config|
@@ -13,8 +12,7 @@ WCC::Contentful.configure do |config|
 
   # Optional
   # config.management_token = # Contentful API management token
-  # config.content_delivery = # :direct, :eager_sync, or :lazy_sync
-  # config.sync_store = # :memory, :postgres, or a custom implementation
+  # config.store = # :direct, :eager_sync, or :lazy_sync
 
   config.update_schema_file = :never
 end
