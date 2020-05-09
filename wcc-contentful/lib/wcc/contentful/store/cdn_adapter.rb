@@ -5,20 +5,27 @@ module WCC::Contentful::Store
     include WCC::Contentful::Store::Interface
     # Note: CDNAdapter should not instrument store events cause it's not a store.
 
-    attr_reader :client
+    attr_writer :client, :preview_client
+
+    def client
+      @preview ? @preview_client : @client
+    end
 
     # The CDNAdapter cannot index data coming back from the Sync API.
     def index?
       false
     end
 
-    undef index
+    def index
+      raise NotImplementedError, 'Cannot put data to the CDN!'
+    end
 
     # Intentionally not implementing write methods
 
-    def initialize(client)
+    def initialize(client = nil, preview: false)
       super()
       @client = client
+      @preview = preview
     end
 
     def find(key, hint: nil, **options)
@@ -48,7 +55,7 @@ module WCC::Contentful::Store
     def find_all(content_type:, options: nil)
       Query.new(
         self,
-        client: @client,
+        client: client,
         relation: { content_type: content_type },
         options: options
       )

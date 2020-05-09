@@ -30,6 +30,8 @@ if defined?(Rails)
   # require rspec-rails to simulate framework behavior in specs
   require 'rspec/rails'
 
+  WCC::Contentful::WebhookEnableJob.queue_adapter = :test
+
   ENGINE_RAILS_ROOT = File.join(File.dirname(__FILE__), '../')
 
   # Hack to debug autoloading issues
