@@ -81,7 +81,7 @@ module WCC::Contentful::Store
 
     # Sets the "eager sync" preset using one of the preregistered stores like :postgres
     def preset_eager_sync
-      store = options[0] || :memory
+      store = options.shift || :memory
       store = SYNC_STORES[store]&.call(config, *options) if store.is_a?(Symbol)
       self.store = store
     end
