@@ -90,6 +90,10 @@ class WCC::Contentful::LinkVisitor
   def each_locale(field)
     raw_value = entry.dig('fields', field.name)
     if locale = entry.dig('sys', 'locale')
+      if raw_value.is_a?(Hash) && raw_value[locale]
+        # it's a locale=* entry, but they've added sys.locale to those now
+        raw_value = raw_value[locale]
+      end
       yield(raw_value, locale)
     else
       raw_value&.each_with_object({}) do |(l, val), h|

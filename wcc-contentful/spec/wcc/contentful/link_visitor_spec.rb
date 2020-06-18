@@ -205,4 +205,96 @@ RSpec.describe WCC::Contentful::LinkVisitor do
       end
     end
   end
+
+  context 'resolved entry with sys.locale' do
+    let(:entry) {
+      JSON.parse(load_fixture('contentful/resolved_homepage_include_2.json')).tap do |e|
+        e['sys']['locale'] = 'en-US'
+      end
+    }
+
+    describe '#each' do
+      it 'visits all links recursively' do
+        visited = []
+        subject = described_class.new(entry.dup, :Link, :Asset, depth: 2)
+
+        result =
+          subject.each do |link, _field|
+            # entry or link
+            expect(%w[Entry Asset Link]).to include(link.dig('sys', 'type'))
+            visited << link.dig('sys', 'id')
+          end
+
+        expect(result).to be nil
+        expect(subject.entry).to eq(entry)
+        expect(visited.count).to eq(97)
+        # does not yield the base entry
+        expect(visited).to_not include(entry.dig('sys', 'id'))
+      end
+
+      it 'visits all slugs' do
+        visited = []
+        subject = described_class.new(entry.dup, 'slug', depth: 4)
+
+        subject.each do |value, field, locale|
+          expect(field.name).to eq('slug')
+          expect(field.type).to eq(:String)
+          expect(locale).to eq('en-US')
+          visited << value
+        end
+
+        expect(visited).to eq([
+                                '/',
+                                '/ministries/reengage',
+                                '/ministries/regen',
+                                '/ministries/merge',
+                                '/ministries/foundation-groups',
+                                '/conferences/mmtc',
+                                '/ctc',
+                                '/conferences/yatc',
+                                '/conferences/regeneration'
+                              ])
+      end
+
+      it 'visits all fields' do
+        visited = {}
+        subject = described_class.new(entry.dup, depth: 2)
+
+        subject.each do |value, field|
+          visited[field.name] ||= []
+          visited[field.name] <<
+            if field.type == :Link
+              value.dig('sys', 'id')
+            else
+              value
+            end
+        end
+
+        expect(visited.keys).to eq(
+          %w[
+            title slug sections backgroundImage text primaryButton externalLink
+            secondaryButton style tag subtext embedCode link items header subpages
+            domainObject name actionButton faqs question answer
+          ]
+        )
+      end
+
+      it 'handles nil entries' do
+        visited = []
+        subject = described_class.new(entry.dup, :Link, :Asset, depth: 2)
+
+        # insert a nil section & broken (nil) link
+        entry.dig('fields', 'sections', 'en-US') << nil
+        entry.dig('fields', 'sections', 'en-US', 2,
+          'fields')['link'] = nil
+
+        subject.each do |link|
+          visited << link.dig('sys', 'id')
+        end
+
+        # Skip the 2nd section's link plus the two entries it linked to
+        expect(visited.count).to eq(95)
+      end
+    end
+  end
 end
