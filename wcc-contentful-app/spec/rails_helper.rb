@@ -34,5 +34,7 @@ RSpec.configure do |config|
   config.before(:each) do
     WCC::Contentful::Model.class_variable_get('@@registry').clear
     Wisper.clear
+    WCC::Contentful.instance_variable_set('@configuration', nil)
+    WCC::Contentful.instance_variable_set('@initialized', nil)
   end
 end
