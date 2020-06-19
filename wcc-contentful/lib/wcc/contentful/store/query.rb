@@ -14,11 +14,14 @@ module WCC::Contentful::Store
     # by default all enumerable methods delegated to the to_enum method
     delegate(*(Enumerable.instance_methods - Module.instance_methods), to: :to_enum)
 
+    # except count, which should not iterate the lazy enumerator
+    delegate :count, to: :result_set
+
     # Executes the query against the store and memoizes the resulting enumerable.
     #  Subclasses can override this to provide a more efficient implementation.
     def to_enum
       @to_enum ||=
-        result_set.map { |row| resolve_includes(row, @options[:include]) }.lazy
+        result_set.lazy.map { |row| resolve_includes(row, @options[:include]) }
     end
 
     attr_reader :store, :content_type, :conditions

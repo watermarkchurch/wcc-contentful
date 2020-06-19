@@ -41,7 +41,7 @@ module WCC::Contentful::ModelSingletonMethods
         store.find_all(content_type: content_type, options: options.except(:preview))
       end
     query = query.apply(filter) if filter.present?
-    query.map { |r| new(r, options) }
+    ModelQuery.new(query, options, self)
   end
 
   # Finds the first instance of this content type matching the given query.
@@ -72,5 +72,29 @@ module WCC::Contentful::ModelSingletonMethods
     return if WCC::Contentful::Model.registered?(content_type)
 
     WCC::Contentful::Model.register_for_content_type(content_type, klass: subclass)
+  end
+
+  class ModelQuery
+    include Enumerable
+
+    # by default all enumerable methods delegated to the to_enum method
+    delegate(*(Enumerable.instance_methods - Module.instance_methods), to: :to_enum)
+    delegate :each, to: :to_enum
+
+    # except count - because that needs to pull data off the final query obj
+    delegate :count, to: :wrapped_query
+
+    attr_reader :wrapped_query, :options, :klass
+
+    def initialize(wrapped_query, options, klass)
+      @wrapped_query = wrapped_query
+      @options = options
+      @klass = klass
+    end
+
+    def to_enum
+      wrapped_query.to_enum
+        .map { |r| klass.new(r, options) }
+    end
   end
 end
