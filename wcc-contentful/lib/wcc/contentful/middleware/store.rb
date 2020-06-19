@@ -33,12 +33,12 @@ module WCC::Contentful::Middleware::Store
 
   def find(id, **options)
     found = store.find(id, **options)
-    return transform(found) if found && select?(found)
+    return transform(found) if found && (!has_select? || select?(found))
   end
 
   def find_by(options: nil, **args)
     result = store.find_by(**args.merge(options: options))
-    return unless result && select?(result)
+    return unless result && (!has_select? || select?(result))
 
     result = resolve_includes(result, options[:include]) if options && options[:include]
     transform(result)
@@ -63,7 +63,7 @@ module WCC::Contentful::Middleware::Store
   def resolve_link(val)
     return val unless resolved_link?(val)
 
-    if select?(val)
+    if !has_select? || select?(val)
       transform(val)
     else
       # Pretend it's an unresolved link -
@@ -78,8 +78,12 @@ module WCC::Contentful::Middleware::Store
 
   # The default version of `#select?` returns true for all entries.
   # Override this with your own implementation.
-  def select?(_entry)
-    true
+  # def select?(_entry)
+  #   true
+  # end
+
+  def has_select? # rubocop:disable Naming/PredicateName
+    respond_to?(:select?)
   end
 
   # The default version of `#transform` just returns the entry.
@@ -95,12 +99,23 @@ module WCC::Contentful::Middleware::Store
     # by default all enumerable methods delegated to the to_enum method
     delegate(*(Enumerable.instance_methods - Module.instance_methods), to: :to_enum)
 
+    def count
+      if middleware.has_select?
+        raise NameError, "Count cannot be determined because the middleware '#{middleware}'" \
+          " implements the #select? method.  Please use '.to_a.count' to count entries that" \
+          ' pass the #select? method.'
+      end
+
+      # The wrapped query may get count from the "Total" field in the response,
+      # or apply a "COUNT(*)" to the query.
+      wrapped_query.count
+    end
+
     attr_reader :wrapped_query, :middleware, :options
 
     def to_enum
-      result =
-        wrapped_query.to_enum
-          .select { |x| middleware.select?(x) }
+      result = wrapped_query.to_enum
+      result = result.select { |x| middleware.select?(x) } if middleware.has_select?
 
       if options && options[:include]
         result = result.map { |x| middleware.resolve_includes(x, options[:include]) }
