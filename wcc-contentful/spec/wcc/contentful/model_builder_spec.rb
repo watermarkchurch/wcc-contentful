@@ -172,15 +172,28 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     expect(store).to receive(:find_all).and_return(store_resp)
     expect(store_resp).to receive(:apply).and_return(store_resp)
 
-    expect(store_resp).to_not be_nil
-
-    expect(store_resp).to receive(:map).and_return([])
+    expect(store_resp).to receive(:to_enum).and_return([])
 
     # act
     menu_items = WCC::Contentful::Model::MenuButton.find_all(button_style: 'asdf')
 
     # assert
-    expect(menu_items).to eq([])
+    expect(menu_items.to_a).to eq([])
+  end
+
+  it 'delegates #count to the underlying store w/o iterating the enumerable' do
+    @schema = subject.build_models
+    store_resp = double(count: 1234)
+    expect(store).to receive(:find_all).and_return(store_resp)
+    allow(store_resp).to receive(:apply).and_return(store_resp)
+
+    expect(store_resp).to_not receive(:to_enum)
+
+    # act
+    menu_items = WCC::Contentful::Model::MenuButton.find_all(button_style: 'asdf')
+
+    # assert
+    expect(menu_items.count).to eq(1234)
   end
 
   it 'finds single item with filter' do

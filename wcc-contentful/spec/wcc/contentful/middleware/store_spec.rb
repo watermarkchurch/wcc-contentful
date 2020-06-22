@@ -36,6 +36,61 @@ RSpec.describe WCC::Contentful::Middleware::Store do
     end
   end
 
+  it 'delegates Enumerable methods to lazy enum' do
+    sys_arr = [sys, sys, sys]
+    entries = [
+      {
+        'sys' => sys_arr[0],
+        'fields' => {
+          'a' => 1
+        }
+      }, {
+        'sys' => sys_arr[1],
+        'fields' => {
+          'a' => 2
+        }
+      }, {
+        'sys' => sys_arr[2],
+        'fields' => {
+          'a' => 3
+        }
+      }
+    ]
+    enum =
+      Enumerator.new do |y|
+        y << entries.shift until entries.empty?
+      end
+    enum = enum.lazy
+
+    allow(next_store).to receive(:find_all)
+      .and_return(double('lazy query', to_enum: enum))
+
+    result = instance.find_all
+
+    result = result.take(2).to_a
+    # critical - did it not iterate the third time?
+    expect(entries).to eq([{
+      'sys' => sys_arr[2],
+      'fields' => {
+        'a' => 3
+      }
+    }])
+    expect(result.length).to eq(2)
+  end
+
+  it 'delegates Count to query not to enum' do
+    query = double('lazy query')
+    expect(query).to receive(:count)
+      .and_return(512)
+
+    allow(next_store).to receive(:find_all)
+      .and_return(query)
+
+    result = instance.find_all
+
+    expect(result.count).to eq(512)
+  end
+
   context 'has select?' do
     let(:implementation) {
       Class.new do
@@ -209,35 +264,6 @@ RSpec.describe WCC::Contentful::Middleware::Store do
                                  ])
       end
 
-      it 'counts only entries that matches select?' do
-        entries = [
-          {
-            'sys' => sys,
-            'fields' => {
-              'exclude' => nil
-            }
-          }, {
-            'sys' => sys,
-            'fields' => {
-              'exclude' => { 'en-US' => true }
-            }
-          }, {
-            'sys' => sys,
-            'fields' => {
-              'exclude' => { 'en-US' => false }
-            }
-          }
-        ]
-        expect(next_store).to receive(:find_all)
-          .with(content_type: 'test', filter: { 'test' => 'ok' }, options: nil)
-          .and_return(entries)
-
-        # act
-        found = instance.find_all(content_type: 'test', filter: { 'test' => 'ok' })
-
-        expect(found.count).to eq(2)
-      end
-
       it 'resolves as broken link for linked entry that doesnt match select?' do
         entries = [{
           'sys' => sys,
@@ -321,6 +347,20 @@ RSpec.describe WCC::Contentful::Middleware::Store do
                               entries[2]
                             ])
         expect(found.count).to eq(2)
+      end
+
+      it 'Does not delegate count to the query b/c it has to go through #select' do
+        query = double('lazy query')
+        expect(query).to_not receive(:count)
+
+        allow(next_store).to receive(:find_all)
+          .and_return(query)
+
+        result = instance.find_all
+
+        expect {
+          result.count
+        }.to raise_error(NameError)
       end
     end
   end
