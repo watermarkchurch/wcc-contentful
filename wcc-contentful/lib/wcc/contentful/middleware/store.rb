@@ -75,13 +75,7 @@ module WCC::Contentful::Middleware::Store
   def resolved_link?(value)
     value.is_a?(Hash) && value.dig('sys', 'type') == 'Entry'
   end
-
-  # The default version of `#select?` returns true for all entries.
-  # Override this with your own implementation.
-  # def select?(_entry)
-  #   true
-  # end
-
+ 
   def has_select? # rubocop:disable Naming/PredicateName
     respond_to?(:select?)
   end
