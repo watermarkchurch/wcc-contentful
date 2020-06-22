@@ -75,7 +75,7 @@ module WCC::Contentful::Middleware::Store
   def resolved_link?(value)
     value.is_a?(Hash) && value.dig('sys', 'type') == 'Entry'
   end
- 
+
   def has_select? # rubocop:disable Naming/PredicateName
     respond_to?(:select?)
   end
