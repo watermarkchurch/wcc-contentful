@@ -145,11 +145,24 @@ RSpec.describe WCC::Contentful::Configuration do
     Test_Middleware =
       Class.new do
         include WCC::Contentful::Middleware::Store
+
+        attr_reader :opt1, :optional_param
+
+        def self.call(store, *params, optional_param: nil, **_extra)
+          instance = new(*params, optional_param: optional_param)
+          instance.store = store
+          instance
+        end
+
+        def initialize(opt1 = nil, optional_param: nil)
+          @opt1 = opt1
+          @optional_param = optional_param
+        end
       end
 
     it 'applies a middleware to the configured store' do
       config.store :direct do
-        use Test_Middleware
+        use Test_Middleware, 7
       end
 
       # act
@@ -157,6 +170,7 @@ RSpec.describe WCC::Contentful::Configuration do
 
       stack = middleware_stack(store)
       expect(stack[stack.length - 2]).to be_a Test_Middleware
+      expect(stack[stack.length - 2].opt1).to eq(7)
       expect(stack[stack.length - 1]).to be_a WCC::Contentful::Store::CDNAdapter
     end
 
@@ -190,6 +204,60 @@ RSpec.describe WCC::Contentful::Configuration do
       expect {
         store.index({ 'sys' => { 'type' => 'test', 'id' => 1 } })
       }.to instrument('index.store.contentful.wcc').once
+    end
+
+    it 'can duplicate middleware' do
+      config.store :direct do
+        use Test_Middleware
+        use Test_Middleware, optional_param: 3
+      end
+
+      # act
+      store = config.store.build
+
+      stack = middleware_stack(store)
+      expect(stack.length).to eq(4)
+      expect(stack[0]).to be_a WCC::Contentful::Store::InstrumentationMiddleware
+      expect(stack[1]).to be_a Test_Middleware
+      expect(stack[2]).to be_a Test_Middleware
+      expect(stack[2].optional_param).to eq(3)
+      expect(stack[3]).to be_a WCC::Contentful::Store::CDNAdapter
+    end
+
+    it 'replaces a middleware in the stack' do
+      block_executed = false
+
+      config.store :direct do
+        use Test_Middleware
+        replace Test_Middleware, optional_param: 1 do
+          block_executed = true
+        end
+      end
+
+      # act
+      store = config.store.build
+
+      stack = middleware_stack(store)
+      expect(stack.length).to eq(3)
+      expect(stack[0]).to be_a WCC::Contentful::Store::InstrumentationMiddleware
+      expect(stack[1]).to be_a Test_Middleware
+      expect(stack[1].optional_param).to eq(1)
+      expect(stack[2]).to be_a WCC::Contentful::Store::CDNAdapter
+
+      expect(block_executed).to be true
+    end
+
+    it 'removes a middleware from the stack' do
+      config.store :direct do
+        unuse WCC::Contentful::Store::InstrumentationMiddleware
+      end
+
+      # act
+      store = config.store.build
+
+      stack = middleware_stack(store)
+      expect(stack.length).to eq(1)
+      expect(stack[0]).to be_a WCC::Contentful::Store::CDNAdapter
     end
   end
 
