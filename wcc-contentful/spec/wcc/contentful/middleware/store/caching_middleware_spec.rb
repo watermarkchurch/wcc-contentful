@@ -461,6 +461,22 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
       expect(req).to have_been_requested
     end
 
+    it 'always writes to the cache for the sync token' do
+      token = {
+        'sys' => {
+          'id' => 'sync:token',
+          'type' => 'token'
+        },
+        'token' => '1234'
+      }
+      # act
+      store.index(token)
+
+      # assert
+      got = store.find('sync:token')
+      expect(got.dig('token')).to eq('1234')
+    end
+
     it 'updates the cache if the item was recently accessed' do
       original_about_page = JSON.parse(load_fixture('contentful/lazy_cache_store/page_about.json'))
       cache.write('47PsST8EicKgWIWwK2AsW6', original_about_page)

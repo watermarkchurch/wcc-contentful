@@ -65,10 +65,19 @@ module WCC::Contentful::Middleware::Store
 
     private
 
+    LAZILY_CACHEABLE_TYPES = %w[
+      Entry
+      Asset
+      DeletedEntry
+      DeletedAsset
+    ].freeze
+
     def _index(json)
       ensure_hash(json)
       id = json.dig('sys', 'id')
-      return unless prev = @cache.read(id)
+      type = json.dig('sys', 'type')
+      prev = @cache.read(id)
+      return if prev.nil? && LAZILY_CACHEABLE_TYPES.include?(type)
 
       if (prev_rev = prev&.dig('sys', 'revision')) && (next_rev = json.dig('sys', 'revision'))
         return prev if next_rev < prev_rev
@@ -78,7 +87,7 @@ module WCC::Contentful::Middleware::Store
       # this is a nil object
       @cache.write(id, json, expires_in: expires_in)
 
-      case json.dig('sys', 'type')
+      case type
       when 'DeletedEntry', 'DeletedAsset'
         _instrument 'delete', id: id
         nil
