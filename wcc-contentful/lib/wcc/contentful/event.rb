@@ -65,7 +65,7 @@ module WCC::Contentful::Event
     delegate :revision, to: :sys
     delegate :space, to: :sys
 
-    delegate :dig, :[], to: :raw
+    delegate :dig, :[], to: :to_h
     delegate :to_h, to: :raw
   end
 end
@@ -131,6 +131,8 @@ class WCC::Contentful::Event::DeletedAsset
 end
 
 class WCC::Contentful::Event::SyncComplete
+  include WCC::Contentful::Event
+
   def initialize(items, context = nil, source: nil)
     items =
       items.map do |item|
