@@ -6,14 +6,17 @@ module WCC::Contentful::Middleware::Store
     # include instrumentation, but not specifically store stack instrumentation
     include WCC::Contentful::Instrumentation
 
+    attr_accessor :expires_in
+
     def initialize(cache = nil)
       @cache = cache || ActiveSupport::Cache::MemoryStore.new
+      @expires_in = nil
     end
 
     def find(key, **options)
       event = 'fresh'
       found =
-        @cache.fetch(key) do
+        @cache.fetch(key, expires_in: expires_in) do
           event = 'miss'
           # if it's not a contentful ID don't hit the API.
           # Store a nil object if we can't find the object on the CDN.
@@ -73,7 +76,7 @@ module WCC::Contentful::Middleware::Store
 
       # we also set DeletedEntry objects in the cache - no need to go hit the API when we know
       # this is a nil object
-      @cache.write(id, json)
+      @cache.write(id, json, expires_in: expires_in)
 
       case json.dig('sys', 'type')
       when 'DeletedEntry', 'DeletedAsset'
