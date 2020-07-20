@@ -130,6 +130,40 @@ class WCC::Contentful::Event::DeletedAsset
   alias_method :entry, :asset
 end
 
+class WCC::Contentful::Event::SyncComplete
+  def initialize(items, context = nil, source: nil)
+    items =
+      items.map do |item|
+        next item if item.is_a? WCC::Contentful::Event
+
+        WCC::Contentful::Event.from_raw(item, context, source: source)
+      end
+    @items = items.freeze
+    @source = source
+    @sys = WCC::Contentful::Sys.new(
+      nil,
+      'Array',
+      nil,
+      nil,
+      nil,
+      nil,
+      nil,
+      OpenStruct.new(context).freeze
+    )
+  end
+
+  attr_reader :sys, :items, :source
+
+  def to_h
+    {
+      'sys' => {
+        'type' => 'Array'
+      },
+      'items' => items.map(&:to_h)
+    }
+  end
+end
+
 class WCC::Contentful::Event::Unknown
   include WCC::Contentful::Event
 end
