@@ -6,14 +6,17 @@ module WCC::Contentful::Middleware::Store
     # include instrumentation, but not specifically store stack instrumentation
     include WCC::Contentful::Instrumentation
 
+    attr_accessor :expires_in
+
     def initialize(cache = nil)
       @cache = cache || ActiveSupport::Cache::MemoryStore.new
+      @expires_in = nil
     end
 
     def find(key, **options)
       event = 'fresh'
       found =
-        @cache.fetch(key) do
+        @cache.fetch(key, expires_in: expires_in) do
           event = 'miss'
           # if it's not a contentful ID don't hit the API.
           # Store a nil object if we can't find the object on the CDN.
@@ -62,10 +65,19 @@ module WCC::Contentful::Middleware::Store
 
     private
 
+    LAZILY_CACHEABLE_TYPES = %w[
+      Entry
+      Asset
+      DeletedEntry
+      DeletedAsset
+    ].freeze
+
     def _index(json)
       ensure_hash(json)
       id = json.dig('sys', 'id')
-      return unless prev = @cache.read(id)
+      type = json.dig('sys', 'type')
+      prev = @cache.read(id)
+      return if prev.nil? && LAZILY_CACHEABLE_TYPES.include?(type)
 
       if (prev_rev = prev&.dig('sys', 'revision')) && (next_rev = json.dig('sys', 'revision'))
         return prev if next_rev < prev_rev
@@ -73,9 +85,9 @@ module WCC::Contentful::Middleware::Store
 
       # we also set DeletedEntry objects in the cache - no need to go hit the API when we know
       # this is a nil object
-      @cache.write(id, json)
+      @cache.write(id, json, expires_in: expires_in)
 
-      case json.dig('sys', 'type')
+      case type
       when 'DeletedEntry', 'DeletedAsset'
         _instrument 'delete', id: id
         nil

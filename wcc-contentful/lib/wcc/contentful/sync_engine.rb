@@ -72,7 +72,7 @@ module WCC::Contentful
     #   and the second value is the number of items returned.
     def next(up_to_id: nil)
       id_found = up_to_id.nil?
-      count = 0
+      all_events = []
 
       @mutex.synchronize do
         @state ||= read_state || token_wrapper_factory(nil)
@@ -87,15 +87,16 @@ module WCC::Contentful
           event = WCC::Contentful::Event.from_raw(item, source: self)
           yield(event) if block_given?
           emit_event(event)
-
-          count += 1
+          all_events << event
         end
 
         @state['token'] = sync_resp.next_sync_token
         write_state
       end
 
-      [id_found, count]
+      emit_sync_complete(all_events)
+
+      [id_found, all_events.length]
     end
 
     def emit_event(event)
@@ -103,6 +104,11 @@ module WCC::Contentful
       raise ArgumentError, "Unknown event type #{event}" unless type.present?
 
       broadcast(type, event)
+    end
+
+    def emit_sync_complete(events)
+      event = WCC::Contentful::Event::SyncComplete.new(events, source: self)
+      broadcast('SyncComplete', event)
     end
 
     private

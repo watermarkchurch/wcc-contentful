@@ -46,6 +46,21 @@ module WCC::Contentful::Store
       self.middleware << [middleware, middleware_params, configure_proc]
     end
 
+    def replace(middleware, *middleware_params, &block)
+      idx = self.middleware.find_index { |m| m[0] == middleware }
+      raise ArgumentError, "Middleware #{middleware} not present" if idx.nil?
+
+      configure_proc = block_given? ? Proc.new(&block) : nil
+      self.middleware[idx] = [middleware, middleware_params, configure_proc]
+    end
+
+    def unuse(middleware)
+      idx = self.middleware.find_index { |m| m[0] == middleware }
+      return if idx.nil?
+
+      self.middleware.delete_at idx
+    end
+
     def build(services = WCC::Contentful::Services.instance)
       store_instance = build_store(services)
       options = {
@@ -58,7 +73,8 @@ module WCC::Contentful::Store
           middleware_config = [middleware_config] unless middleware_config.is_a? Array
 
           middleware, params, configure_proc = middleware_config
-          middleware = middleware.call(memo, *params, **options)
+          middleware_options = options.merge((params || []).extract_options!)
+          middleware = middleware.call(memo, *params, **middleware_options)
           middleware&.instance_exec(&configure_proc) if configure_proc
           middleware || memo
         end

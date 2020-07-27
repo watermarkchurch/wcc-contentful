@@ -109,6 +109,30 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
 
         expect(emitted_entries.dig(1, 'sys', 'id')).to eq('1qLdW7i7g4Ycq6i4Cckg44')
       end
+
+      it 'emits sync complete event' do
+        allow(client).to receive(:sync)
+          .and_return(double(
+                        items: next_sync['items'],
+                        next_sync_token: 'test2'
+                      ))
+
+        sync_complete_events = []
+        sync_engine.on('SyncComplete') { |item| sync_complete_events << item }
+
+        # act
+        job.sync!
+
+        expect(sync_complete_events.count).to eq(1)
+
+        emitted0 = sync_complete_events[0]
+        expect(emitted0).to be_a WCC::Contentful::Event::SyncComplete
+        expect(emitted0.source).to eq(sync_engine)
+        expect(emitted0.items.length).to eq(14)
+
+        expect(emitted0.items.dig(0, 'sys', 'id')).to eq('47PsST8EicKgWIWwK2AsW6')
+        expect(emitted0.items.dig(1, 'sys', 'id')).to eq('6HQsABhZDiWmi0ekCouUuy')
+      end
     end
 
     context 'when ID given' do

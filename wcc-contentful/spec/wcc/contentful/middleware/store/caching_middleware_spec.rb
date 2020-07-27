@@ -47,6 +47,24 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
       expect(page2).to eq(page)
     end
 
+    it 'uses configured expires_in' do
+      subject.expires_in = 30.days
+
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
+          '/entries/47PsST8EicKgWIWwK2AsW6')
+        .with(query: hash_including({ locale: '*' }))
+        .to_return(body: load_fixture('contentful/lazy_cache_store/page_about.json'))
+        .times(1)
+        .then.to_raise('Should not hit the API a second time!')
+
+      # assert
+      expect(cache).to receive(:fetch)
+        .with('47PsST8EicKgWIWwK2AsW6', expires_in: 30.days)
+
+      # act
+      store.find('47PsST8EicKgWIWwK2AsW6')
+    end
+
     it 'instruments a cache hit' do
       cache.write('47PsST8EicKgWIWwK2AsW6',
         JSON.parse(load_fixture('contentful/lazy_cache_store/page_about.json')))
@@ -443,6 +461,22 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
       expect(req).to have_been_requested
     end
 
+    it 'always writes to the cache for the sync token' do
+      token = {
+        'sys' => {
+          'id' => 'sync:token',
+          'type' => 'token'
+        },
+        'token' => '1234'
+      }
+      # act
+      store.index(token)
+
+      # assert
+      got = store.find('sync:token')
+      expect(got.dig('token')).to eq('1234')
+    end
+
     it 'updates the cache if the item was recently accessed' do
       original_about_page = JSON.parse(load_fixture('contentful/lazy_cache_store/page_about.json'))
       cache.write('47PsST8EicKgWIWwK2AsW6', original_about_page)
@@ -456,6 +490,23 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
       # assert
       got = store.find('47PsST8EicKgWIWwK2AsW6')
       expect(got.dig('fields', 'heroText', 'en-US')).to eq('updated hero text')
+    end
+
+    it 'uses configured expires_in' do
+      subject.expires_in = 30.minutes
+
+      original_about_page = JSON.parse(load_fixture('contentful/lazy_cache_store/page_about.json'))
+      cache.write('47PsST8EicKgWIWwK2AsW6', original_about_page)
+
+      updated_about_page = JSON.parse(load_fixture('contentful/lazy_cache_store/page_about.json'))
+      updated_about_page['fields']['heroText']['en-US'] = 'updated hero text'
+
+      # assert
+      expect(cache).to receive(:write)
+        .with('47PsST8EicKgWIWwK2AsW6', updated_about_page, expires_in: 30.minutes)
+
+      # act
+      store.index(updated_about_page)
     end
 
     it 'updates an "Entry" when exists' do

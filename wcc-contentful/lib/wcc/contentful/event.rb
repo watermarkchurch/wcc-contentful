@@ -65,7 +65,7 @@ module WCC::Contentful::Event
     delegate :revision, to: :sys
     delegate :space, to: :sys
 
-    delegate :dig, :[], to: :raw
+    delegate :dig, :[], to: :to_h
     delegate :to_h, to: :raw
   end
 end
@@ -128,6 +128,42 @@ class WCC::Contentful::Event::DeletedAsset
   end
 
   alias_method :entry, :asset
+end
+
+class WCC::Contentful::Event::SyncComplete
+  include WCC::Contentful::Event
+
+  def initialize(items, context = nil, source: nil)
+    items =
+      items.map do |item|
+        next item if item.is_a? WCC::Contentful::Event
+
+        WCC::Contentful::Event.from_raw(item, context, source: source)
+      end
+    @items = items.freeze
+    @source = source
+    @sys = WCC::Contentful::Sys.new(
+      nil,
+      'Array',
+      nil,
+      nil,
+      nil,
+      nil,
+      nil,
+      OpenStruct.new(context).freeze
+    )
+  end
+
+  attr_reader :sys, :items, :source
+
+  def to_h
+    {
+      'sys' => {
+        'type' => 'Array'
+      },
+      'items' => items.map(&:to_h)
+    }
+  end
 end
 
 class WCC::Contentful::Event::Unknown
