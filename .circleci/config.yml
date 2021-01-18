@@ -39,7 +39,7 @@ jobs:
       - run:
           name: Coverage
           command: |
-            bundle exec rake coverage
+            bin/bundle exec rspec
             bundle exec rake coverage:coveralls
       - run:
           name: Lint
