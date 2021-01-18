@@ -19,13 +19,6 @@ GEMS.each do |name|
     Dir.chdir(name) do
       Bundler::GemHelper.install_tasks
     end
-
-    task :coverage do
-      Bundler.with_clean_env do
-        warn "#{name} $ bundle exec rspec"
-        system('bundle exec rspec', chdir: name)
-      end
-    end
   end
 end
 

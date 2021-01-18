@@ -1,0 +1,101 @@
+version: 2.1
+
+executors:
+  ruby:
+    parameters:
+      version:
+        type: string
+    docker:
+      - image: circleci/ruby:<< parameters.version >>-node
+        environment:
+          POSTGRES_CONNECTION: postgresql://ubuntu:test@127.0.0.1:5432/circle_ruby_test
+      - image: postgres:10
+        environment:
+          POSTGRES_USER: ubuntu
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: circle_ruby_test
+
+jobs:
+  lint:
+    parameters:
+      ruby:
+        type: string
+      gemfile:
+        type: string
+    executor:
+      name: ruby
+      version: << parameters.ruby >>
+    environment:
+      BUNDLE_PATH: ~/vendor/bundle
+      BUNDLE_GEMFILE: gemfiles/<< parameters.gemfile >>_ruby_<< parameters.ruby >>.gemfile
+    steps:
+      - checkout
+      - run:
+          name: Install Gems
+          command: |
+            bin/use
+            bundle install
+            bin/bundle install
+      - run:
+          name: Coverage
+          command: |
+            bin/bundle exec rspec
+            bundle exec rake coverage:coveralls
+      - run:
+          name: Lint
+          command: |
+            bundle exec danger
+            bundle exec rubocop
+            bundle exec erblint '*/app/views/**/*.erb'
+            npm install
+            npm run lint
+
+  test:
+    parameters:
+      ruby:
+        type: string
+      gemfile:
+        type: string
+    executor:
+      name: ruby
+      version: << parameters.ruby >>
+    environment:
+      BUNDLE_PATH: ~/vendor/bundle
+      BUNDLE_GEMFILE: gemfiles/<< parameters.gemfile >>_ruby_<< parameters.ruby >>.gemfile
+      COVERALLS_PARALLEL: true
+    steps:
+      - checkout
+      - run:
+          name: Install Gems
+          command: |
+            bin/use
+            bundle install
+            bin/bundle install
+      - run:
+          name: Run Tests
+          command: |
+            bin/bundle exec rspec --format documentation --order rand
+
+workflows:
+  build:
+    jobs:
+      - test:
+          name: test_rails_5_0_ruby_2_3
+          ruby: 2.3.8
+          gemfile: rails_5.0
+      - test:
+          name: test_rails_5_2_ruby_2_5
+          ruby: 2.5.7
+          gemfile: rails_5.2
+      - test:
+          name: test_middleman_4_2_ruby_2_5
+          ruby: 2.5.7
+          gemfile: middleman_4.2
+
+      - lint: 
+          ruby: 2.5.7
+          gemfile: rails_5.2
+          requires:
+            - test_rails_5_2_ruby_2_5
+
+
