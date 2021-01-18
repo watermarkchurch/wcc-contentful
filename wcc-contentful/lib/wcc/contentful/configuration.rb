@@ -133,6 +133,9 @@ class WCC::Contentful::Configuration
   #          not found errors at runtime.  If your schema file does not exist or is invalid,
   #          WCC::Contentful.init! will raise a WCC::Contentful::InitializitionError
   #
+  # [:if_missing] wcc-contentful will only download the schema if the schema file
+  #               doesn't exist.
+  #
   # [:if_possible] wcc-contentful will attempt to reach out to the management API for
   #                content types, and will fall back to the schema file if the API
   #                cannot be reached.  This is the default.
@@ -141,7 +144,7 @@ class WCC::Contentful::Configuration
   #           most up-to-date content types and will raise a
   #           WCC::Contentful::InitializationError if the API cannot be reached.
   def update_schema_file=(sym)
-    valid_syms = %i[never if_possible always]
+    valid_syms = %i[never if_possible if_missing always]
     unless valid_syms.include?(sym)
       raise ArgumentError, "update_schema_file must be one of #{valid_syms}"
     end
@@ -169,16 +172,16 @@ class WCC::Contentful::Configuration
   attr_accessor :instrumentation_adapter
 
   def initialize
-    @access_token = ''
+    @access_token = ENV['CONTENTFUL_ACCESS_TOKEN']
     @app_url = ENV['APP_URL']
     @connection_options = {
       api_url: 'https://cdn.contentful.com/',
       preview_api_url: 'https://preview.contentful.com/',
       management_api_url: 'https://api.contentful.com'
     }
-    @management_token = ''
-    @preview_token = ''
-    @space = ''
+    @management_token = ENV['CONTENTFUL_MANAGEMENT_TOKEN']
+    @preview_token = ENV['CONTENTFUL_PREVIEW_TOKEN']
+    @space = ENV['CONTENTFUL_SPACE_ID']
     @default_locale = nil
     @middleware = []
     @update_schema_file = :if_possible

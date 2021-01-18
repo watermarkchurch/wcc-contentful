@@ -78,7 +78,8 @@ module WCC::Contentful
     raise InitializationError, 'Already Initialized' if @initialized
 
     if configuration.update_schema_file == :always ||
-        (configuration.update_schema_file == :if_possible && Services.instance.management_client)
+        (configuration.update_schema_file == :if_possible && Services.instance.management_client) ||
+        configuration.update_schema_file == :if_missing && !File.exist?(configuration.schema_file)
 
       begin
         downloader = WCC::Contentful::DownloadsSchema.new
