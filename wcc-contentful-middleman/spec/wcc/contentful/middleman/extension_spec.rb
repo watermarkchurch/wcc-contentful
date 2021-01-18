@@ -5,10 +5,15 @@ require 'wcc/contentful/middleman/extension'
 
 RSpec.describe WCC::Contentful::Middleman::Extension do
   let(:app) {
-    double('app', after_configuration: nil)
+    double('app', after_configuration: nil, ready: nil)
   }
 
   describe '#initialize' do
+    before do
+      stub_request(:get, /https:\/\/cdn.contentful.com\/spaces\/.+\/sync/)
+        .to_return(body: load_fixture('contentful/sync.json'))
+    end
+
     it 'sets contentful config variables' do
       described_class.new(app,
         space: 'testspace',
@@ -35,8 +40,8 @@ RSpec.describe WCC::Contentful::Middleman::Extension do
       described_class.new(app)
 
       # middleman uses memory store by default to sync all content over
-      expect(WCC::Contentful.configuration.store.cdn_method).to eq(:eager_sync)
-      expect(WCC::Contentful.configuration.store.content_delivery_params[0]).to eq(:memory)
+      store = WCC::Contentful::Services.instance.store.store
+      expect(store).to be_a WCC::Contentful::Store::MemoryStore
     end
 
     it 'passes block' do
@@ -54,9 +59,6 @@ RSpec.describe WCC::Contentful::Middleman::Extension do
     end
 
     it 'syncs over new content' do
-      stub_request(:get, /https:\/\/cdn.contentful.com\/spaces\/.+\/sync/)
-        .to_return(body: load_fixture('contentful/sync.json'))
-
       described_class.new(app)
 
       store = WCC::Contentful::Services.instance.store
