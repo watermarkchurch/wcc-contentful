@@ -3,7 +3,14 @@
 require 'rails_helper'
 
 RSpec.describe WCC::Contentful::Configuration do
-  subject(:config) { WCC::Contentful::Configuration.new }
+  subject(:config) {
+    WCC::Contentful::Configuration.new.tap do |config|
+      config.space = contentful_space_id
+      config.access_token = contentful_access_token
+      config.management_token = contentful_management_token
+      config.preview_token = contentful_preview_token
+    end
+  }
 
   let(:services) { WCC::Contentful::Services.instance }
 
