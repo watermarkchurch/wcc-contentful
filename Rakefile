@@ -21,10 +21,15 @@ GEMS.each do |name|
 
     task :coverage do
       gemfile = ENV['BUNDLE_GEMFILE']
+      path = ENV['BUNDLE_PATH']
 
       Bundler.with_clean_env do
         warn "#{name} $ bundle exec rspec"
-        system({ 'BUNDLE_GEMFILE' => gemfile }, 'bundle exec rspec', chdir: name)
+        system(
+          { 'BUNDLE_GEMFILE' => gemfile, 'BUNDLE_PATH' => path },
+          'bundle exec rspec',
+          chdir: name
+        )
       end
     end
   end
