@@ -60,25 +60,24 @@ class WCC::Contentful::Middleman::Extension < ::Middleman::Extension
     def initialize(app)
       @app = app
     end
-  
+
     def call(env)
       if (Time.now - ContentfulSyncUpdate.last_sync) > 10.seconds
         ::WCC::Contentful::Services.instance.sync_engine&.next
         ContentfulSyncUpdate.last_sync = Time.now
       end
-  
+
       @app.call(env)
     end
 
     class << self
       def last_sync
-        @@last_sync ||= Time.at(0)
+        @@last_sync ||= Time.at(0) # rubocop:disable Style/ClassVars
       end
 
       def last_sync=(time)
-        @@last_sync = time
+        @@last_sync = time # rubocop:disable Style/ClassVars
       end
     end
   end
-  
 end
