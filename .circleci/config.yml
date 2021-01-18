@@ -1,19 +1,12 @@
 version: 2.1
 
 executors:
-  ruby_2_3:
+  ruby:
+    parameters:
+      version:
+        type: string
     docker:
-      - image: circleci/ruby:2.3.8-node
-        environment:
-          POSTGRES_CONNECTION: postgresql://ubuntu:test@127.0.0.1:5432/circle_ruby_test
-      - image: postgres:10
-        environment:
-          POSTGRES_USER: ubuntu
-          POSTGRES_PASSWORD: test
-          POSTGRES_DB: circle_ruby_test
-  ruby_2_5:
-    docker:
-      - image: circleci/ruby:2.5.7-node
+      - image: circleci/ruby:<< parameters.version >>-node
         environment:
           POSTGRES_CONNECTION: postgresql://ubuntu:test@127.0.0.1:5432/circle_ruby_test
       - image: postgres:10
@@ -23,15 +16,52 @@ executors:
           POSTGRES_DB: circle_ruby_test
 
 jobs:
-  test:
+  lint:
     parameters:
-      ruby-version:
-        type: executor
+      ruby:
+        type: string
       gemfile:
         type: string
-    executor: << parameters.ruby-version >>
+    executor:
+      name: ruby
+      version: << parameters.ruby >>
     environment:
-      BUNDLE_GEMFILE: << parameters.gemfile >>
+      BUNDLE_GEMFILE: gemfiles/<< parameters.gemfile >>_ruby_<< parameters.ruby >>.gemfile
+    steps:
+      - checkout
+      - run:
+          name: Install Gems
+          command: |
+            bin/use
+            bundle install --path /tmp/vendor/bundle
+            bin/bundle install --path /tmp/vendor/bundle
+      - run:
+          name: Coverage
+          command: |
+            bundle exec rake coverage
+            bundle exec rake coverage:coveralls
+      - run:
+          name: Lint
+          command: |
+            bundle exec danger
+            bundle exec rubocop
+            bundle exec erblint '*/app/views/**/*.erb'
+            npm install
+            npm run lint
+     
+
+
+  test:
+    parameters:
+      ruby:
+        type: string
+      gemfile:
+        type: string
+    executor:
+      name: ruby
+      version: << parameters.ruby >>
+    environment:
+      BUNDLE_GEMFILE: gemfiles/<< parameters.gemfile >>_ruby_<< parameters.ruby >>.gemfile
       COVERALLS_PARALLEL: true
     steps:
       - checkout
@@ -50,7 +80,14 @@ workflows:
   build:
     jobs:
       - test:
-          ruby-version: ruby_2_3
-          gemfile: gemfiles/rails_5.2_ruby_2.3.8.gemfile
+          matrix:
+            parameters:
+              ruby: [2.3.8, 2.5.7]
+              gemfile: [rails_5.0, rails_5.2, middleman_4.2]
+      - lint: 
+          ruby: 2.5.7
+          gemfile: rails_5.2
+          requires:
+            - test
 
 
