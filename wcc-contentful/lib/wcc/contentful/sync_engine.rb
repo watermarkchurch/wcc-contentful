@@ -90,7 +90,7 @@ module WCC::Contentful
           all_events << event
         end
 
-        @state['token'] = sync_resp.next_sync_token
+        @state = @state.merge('token' => sync_resp.next_sync_token)
         write_state
       end
 
