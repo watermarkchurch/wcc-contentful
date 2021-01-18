@@ -4,9 +4,23 @@ executors:
   ruby_2_3:
     docker:
       - image: circleci/ruby:2.3.8-node
+        environment:
+          POSTGRES_CONNECTION: postgresql://ubuntu:test@127.0.0.1:5432/circle_ruby_test
+      - image: postgres:10
+        environment:
+          POSTGRES_USER: ubuntu
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: circle_ruby_test
   ruby_2_5:
     docker:
       - image: circleci/ruby:2.5.7-node
+        environment:
+          POSTGRES_CONNECTION: postgresql://ubuntu:test@127.0.0.1:5432/circle_ruby_test
+      - image: postgres:10
+        environment:
+          POSTGRES_USER: ubuntu
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: circle_ruby_test
 
 jobs:
   test:
