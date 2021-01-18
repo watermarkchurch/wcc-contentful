@@ -1,0 +1,42 @@
+version: 2.1
+
+executors:
+  ruby_2_3:
+    docker:
+      - image: circleci/ruby:2.3.8-node
+  ruby_2_5:
+    docker:
+      - image: circleci/ruby:2.5.7-node
+
+jobs:
+  test:
+    parameters:
+      ruby-version:
+        type: executor
+      gemfile:
+        type: string
+    executor: << parameters.ruby-version >>
+    environment:
+      BUNDLE_GEMFILE: << parameters.gemfile >>
+      COVERALLS_PARALLEL: true
+    steps:
+      - checkout
+      - run:
+          name: Install Gems
+          command: |
+            bin/use
+            bundle install --path /tmp/vendor/bundle
+            bin/bundle install --path /tmp/vendor/bundle
+      - run:
+          name: Run Tests
+          command: |
+            bin/bundle exec rspec --format documentation --order rand
+      
+workflows:
+  build:
+    jobs:
+      - test:
+          ruby-version: ruby_2_3
+          gemfile: gemfiles/rails_5.2_ruby_2.3.8.gemfile
+
+
