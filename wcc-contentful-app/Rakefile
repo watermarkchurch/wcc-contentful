@@ -121,5 +121,5 @@ end
 # rubocop:enable Metrics/LineLength
 
 task :release do
-  raise 'Please run rake release only from the root folder.'
+  raise StandardError, 'Please run rake release only from the root folder.'
 end

@@ -4,8 +4,9 @@ lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'wcc/contentful/version'
 
-doc_version = Gem::Version.new(WCC::Contentful::VERSION).release.to_s.sub(/\.\d+$/, "")
+doc_version = Gem::Version.new(WCC::Contentful::VERSION).release.to_s.sub(/\.\d+$/, '')
 
+# rubocop:disable Metrics/LineLength
 Gem::Specification.new do |spec|
   spec.name          = 'wcc-contentful'
   spec.version       = WCC::Contentful::VERSION
@@ -18,7 +19,7 @@ Gem::Specification.new do |spec|
   spec.license       = 'MIT'
 
   spec.metadata = {
-    "documentation_uri" => "https://watermarkchurch.github.io/wcc-contentful/#{doc_version}/wcc-contentful",
+    'documentation_uri' => "https://watermarkchurch.github.io/wcc-contentful/#{doc_version}/wcc-contentful"
   }
 
   spec.required_ruby_version = '>= 2.3'
@@ -69,3 +70,4 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'wcc-base', '~> 0.3.1'
   spec.add_dependency 'wisper', '~> 2.0.0'
 end
+# rubocop:enable Metrics/LineLength
