@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://preview.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=redirect2&fields.slug.en-US=draft-redirect&limit=1&locale=*
+    uri: https://preview.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=redirect2&fields.slug.en-US=draft-redirect&limit=1
     body:
       encoding: US-ASCII
       string: ''
