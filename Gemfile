@@ -16,4 +16,5 @@ group :development do
   gem 'rake', '~> 13.0'
   gem 'rubocop', '0.68', require: false
   gem 'simplecov', '~> 0.16'
+  gem 'yard', '~> 0.9.26'
 end

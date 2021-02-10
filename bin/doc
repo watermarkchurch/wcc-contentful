@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+set -e
+
+gems=(wcc-*)
+
+# generate base doc (top-level readme only)
+bundle exec yard doc --no-public
+
+for gem in "${gems[@]}"
+do
+  (
+    cd $gem;
+    # link the doc folder
+    mkdir -p "../doc/$gem"
+    ln -s "../doc/$gem" "./doc"
+
+    BUNDLE_GEMFILE=../Gemfile bundle exec yard doc
+  )
+done
+
