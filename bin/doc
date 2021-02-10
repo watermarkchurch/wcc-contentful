@@ -7,18 +7,18 @@ gems=(wcc-*)
 # get version as a major.minor string (don't have different doc folders for patch versions)
 version=$(ruby -e 'require "./lib/version"; puts Gem::Version.new(WCC::Contentful::VERSION).release.to_s.sub(/\.\d+$/, "")')
 
-mkdir -p "./doc/$version"
-rm doc/latest; ln -s  "./$version" doc/latest
+mkdir -p "./docs/$version"
+rm docs/latest; ln -s  "./$version" docs/latest
 
 # generate base doc (top-level readme only)
-bundle exec yard doc --no-public --output-dir "./doc/$version"
+bundle exec yard doc --no-public --output-dir "./docs/$version"
 
 for gem in "${gems[@]}"
 do
   (
     cd "$gem";
 
-    BUNDLE_GEMFILE=../Gemfile bundle exec yard doc --output-dir "../doc/$version/$gem"
+    BUNDLE_GEMFILE=../Gemfile bundle exec yard doc --output-dir "../docs/$version/$gem"
   )
 done
 

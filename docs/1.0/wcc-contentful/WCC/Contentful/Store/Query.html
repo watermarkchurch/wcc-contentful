@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: WCC::Contentful::Store::Query
+  
+    &mdash; Documentation by YARD 0.9.26
+  
+</title>
+
+  <link rel="stylesheet" href="../../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "WCC::Contentful::Store::Query";
+  relpath = '../../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../../_index.html">Index (Q)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../WCC.html" title="WCC (module)">WCC</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../Contentful.html" title="WCC::Contentful (module)">Contentful</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Store.html" title="WCC::Contentful::Store (module)">Store</a></span></span>
+     &raquo; 
+    <span class="title">Query</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: WCC::Contentful::Store::Query
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">WCC::Contentful::Store::Query</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  <dl>
+      <dt>Includes:</dt>
+      <dd>Enumerable, <span class='object_link'><a href="Query/Interface.html" title="WCC::Contentful::Store::Query::Interface (module)">Interface</a></span></dd>
+  </dl>
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/wcc/contentful/store/query.rb<span class="defines">,<br />
+  lib/wcc/contentful/store/query/interface.rb</span>
+</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>The default query object returned by Stores that extend
+WCC::Contentful::Store::Base. It exposes several chainable query methods to
+apply query filters. Enumerating the query executes it, caching the result.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><div id="subclasses">
+  <h2>Direct Known Subclasses</h2>
+  <p class="children"><span class='object_link'><a href="PostgresStore/Query.html" title="WCC::Contentful::Store::PostgresStore::Query (class)">PostgresStore::Query</a></span></p>
+</div>
+<h2>Defined Under Namespace</h2>
+<p class="children">
+  
+    
+      <strong class="modules">Modules:</strong> <span class='object_link'><a href="Query/Interface.html" title="WCC::Contentful::Store::Query::Interface (module)">Interface</a></span>
+    
+  
+    
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Query/Condition.html" title="WCC::Contentful::Store::Query::Condition (class)">Condition</a></span>
+    
+  
+</p>
+
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="RESERVED_NAMES-constant" class="">RESERVED_NAMES =
+          <div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='qwords_beg'>%w[</span><span class='tstring_content'>fields</span><span class='words_sep'> </span><span class='tstring_content'>sys</span><span class='tstring_end'>]</span></span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+    </dl>
+  
+
+
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="Query/Interface.html" title="WCC::Contentful::Store::Query::Interface (module)">Interface</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Query/Interface.html#OPERATORS-constant" title="WCC::Contentful::Store::Query::Interface::OPERATORS (constant)">Interface::OPERATORS</a></span></p>
+
+
+  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#conditions-instance_method" title="#conditions (instance method)">#<strong>conditions</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#content_type-instance_method" title="#content_type (instance method)">#<strong>content_type</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#store-instance_method" title="#store (instance method)">#<strong>store</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+
+  
+    <h2>
+      Class Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#flatten_filter_hash-class_method" title="flatten_filter_hash (class method)">.<strong>flatten_filter_hash</strong>(hash, path = [])  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Turns a hash into a flat array of individual conditions, where each element
+can be passed as params to apply_operator.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#known_locales-class_method" title="known_locales (class method)">.<strong>known_locales</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#normalize_condition_path-class_method" title="normalize_condition_path (class method)">.<strong>normalize_condition_path</strong>(path, context = nil)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Takes a path array in non-normal form and inserts &#39;sys&#39;,
+&#39;fields&#39;, and the current locale as appropriate to normalize it.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#op%3F-class_method" title="op? (class method)">.<strong>op?</strong>(key)  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#apply-instance_method" title="#apply (instance method)">#<strong>apply</strong>(filter, context = nil)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Called with a filter object by <span class='object_link'><a href="Base.html#find_by-instance_method" title="WCC::Contentful::Store::Base#find_by (method)">Base#find_by</a></span> in order to apply the filter.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#apply_operator-instance_method" title="#apply_operator (instance method)">#<strong>apply_operator</strong>(operator, field, expected, context = nil)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns a new chained Query that has a new condition.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(store, content_type:, conditions: nil, options: nil, **extra)  &#x21d2; Query </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>A new instance of Query.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#result_set-instance_method" title="#result_set (instance method)">#<strong>result_set</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Override this to provide a result set from the Query object itself rather
+than from calling #execute in the store.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#to_enum-instance_method" title="#to_enum (instance method)">#<strong>to_enum</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Executes the query against the store and memoizes the resulting enumerable.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Query/Interface.html" title="WCC::Contentful::Store::Query::Interface (module)">Interface</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Query/Interface.html#eq-instance_method" title="WCC::Contentful::Store::Query::Interface#eq (method)">#eq</a></span></p>
+
+  <div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    #<strong>initialize</strong>(store, content_type:, conditions: nil, options: nil, **extra)  &#x21d2; <tt><span class='object_link'><a href="" title="WCC::Contentful::Store::Query (class)">Query</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns a new instance of Query.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+29
+30
+31
+32
+33
+34
+35</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/store/query.rb', line 29</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_store'>store</span><span class='comma'>,</span> <span class='label'>content_type:</span><span class='comma'>,</span> <span class='label'>conditions:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>options:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_extra'>extra</span><span class='rparen'>)</span>
+  <span class='ivar'>@store</span> <span class='op'>=</span> <span class='id identifier rubyid_store'>store</span>
+  <span class='ivar'>@content_type</span> <span class='op'>=</span> <span class='id identifier rubyid_content_type'>content_type</span>
+  <span class='ivar'>@conditions</span> <span class='op'>=</span> <span class='id identifier rubyid_conditions'>conditions</span> <span class='op'>||</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='ivar'>@options</span> <span class='op'>=</span> <span class='id identifier rubyid_options'>options</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+  <span class='ivar'>@extra</span> <span class='op'>=</span> <span class='id identifier rubyid_extra'>extra</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id=""></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="conditions-instance_method">
+  
+    #<strong>conditions</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+27
+28
+29</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/store/query.rb', line 27</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_conditions'>conditions</span>
+  <span class='ivar'>@conditions</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="content_type-instance_method">
+  
+    #<strong>content_type</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+27
+28
+29</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/store/query.rb', line 27</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_content_type'>content_type</span>
+  <span class='ivar'>@content_type</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="store-instance_method">
+  
+    #<strong>store</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+27
+28
+29</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/store/query.rb', line 27</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_store'>store</span>
+  <span class='ivar'>@store</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+  <div id="class_method_details" class="method_details_list">
+    <h2>Class Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="flatten_filter_hash-class_method">
+  
+    .<strong>flatten_filter_hash</strong>(hash, path = [])  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Turns a hash into a flat array of individual conditions, where each element
+can be passed as params to apply_operator</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/store/query.rb', line 141</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_flatten_filter_hash'>flatten_filter_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_hash'>hash</span><span class='comma'>,</span> <span class='id identifier rubyid_path'>path</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_hash'>hash</span><span class='period'>.</span><span class='id identifier rubyid_flat_map'>flat_map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='lparen'>(</span><span class='id identifier rubyid_k'>k</span><span class='comma'>,</span> <span class='id identifier rubyid_v'>v</span><span class='rparen'>)</span><span class='op'>|</span>
+    <span class='id identifier rubyid_k'>k</span> <span class='op'>=</span> <span class='id identifier rubyid_k'>k</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_k'>k</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_k'>k</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_rest'>rest</span> <span class='op'>=</span> <span class='id identifier rubyid_k'>k</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_v'>v</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='id identifier rubyid_rest'>rest</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_v'>v</span> <span class='rbrace'>}</span>
+    <span class='kw'>end</span>
+
+    <span class='kw'>if</span> <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'>Hash</span>
+      <span class='id identifier rubyid_flatten_filter_hash'>flatten_filter_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='comma'>,</span> <span class='id identifier rubyid_path'>path</span> <span class='op'>+</span> <span class='lbracket'>[</span><span class='id identifier rubyid_k'>k</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+    <span class='kw'>elsif</span> <span class='id identifier rubyid_op?'>op?</span><span class='lparen'>(</span><span class='id identifier rubyid_k'>k</span><span class='rparen'>)</span>
+      <span class='lbrace'>{</span> <span class='label'>path:</span> <span class='id identifier rubyid_path'>path</span><span class='comma'>,</span> <span class='label'>op:</span> <span class='id identifier rubyid_k'>k</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span><span class='comma'>,</span> <span class='label'>expected:</span> <span class='id identifier rubyid_v'>v</span> <span class='rbrace'>}</span>
+    <span class='kw'>else</span>
+      <span class='lbrace'>{</span> <span class='label'>path:</span> <span class='id identifier rubyid_path'>path</span> <span class='op'>+</span> <span class='lbracket'>[</span><span class='id identifier rubyid_k'>k</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='label'>op:</span> <span class='symbol'>:eq</span><span class='comma'>,</span> <span class='label'>expected:</span> <span class='id identifier rubyid_v'>v</span> <span class='rbrace'>}</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="known_locales-class_method">
+  
+    .<strong>known_locales</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+159
+160
+161</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/store/query.rb', line 159</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_known_locales'>known_locales</span>
+  <span class='ivar'>@known_locales</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../../WCC.html" title="WCC (module)">WCC</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../Contentful.html" title="WCC::Contentful (module)">Contentful</a></span></span><span class='period'>.</span><span class='id identifier rubyid_locales'><span class='object_link'><a href="../../Contentful.html#locales-class_method" title="WCC::Contentful.locales (method)">locales</a></span></span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="normalize_condition_path-class_method">
+  
+    .<strong>normalize_condition_path</strong>(path, context = nil)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Takes a path array in non-normal form and inserts &#39;sys&#39;,
+&#39;fields&#39;, and the current locale as appropriate to normalize it.
+rubocop:disable Metrics/BlockNesting</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/store/query.rb', line 167</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_normalize_condition_path'>normalize_condition_path</span><span class='lparen'>(</span><span class='id identifier rubyid_path'>path</span><span class='comma'>,</span> <span class='id identifier rubyid_context'>context</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_context_locale'>context_locale</span> <span class='op'>=</span> <span class='id identifier rubyid_context'>context</span><span class='lbracket'>[</span><span class='symbol'>:locale</span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+  <span class='id identifier rubyid_context_locale'>context_locale</span> <span class='op'>||=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>en-US</span><span class='tstring_end'>&#39;</span></span>
+
+  <span class='id identifier rubyid_rev_path'>rev_path</span> <span class='op'>=</span> <span class='id identifier rubyid_path'>path</span><span class='period'>.</span><span class='id identifier rubyid_reverse'>reverse</span>
+  <span class='id identifier rubyid_new_path'>new_path</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+
+  <span class='id identifier rubyid_current_tuple'>current_tuple</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_current_locale_was_inferred'>current_locale_was_inferred</span> <span class='op'>=</span> <span class='kw'>false</span>
+  <span class='kw'>until</span> <span class='id identifier rubyid_rev_path'>rev_path</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_current_tuple'>current_tuple</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+    <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Query too complex: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_path'>path</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_new_path'>new_path</span><span class='period'>.</span><span class='id identifier rubyid_length'>length</span> <span class='op'>&gt;</span> <span class='int'>7</span>
+
+    <span class='kw'>case</span> <span class='id identifier rubyid_current_tuple'>current_tuple</span><span class='period'>.</span><span class='id identifier rubyid_length'>length</span>
+    <span class='kw'>when</span> <span class='int'>0</span>
+      <span class='comment'># expect a locale
+</span>      <span class='id identifier rubyid_current_tuple'>current_tuple</span> <span class='op'>&lt;&lt;</span>
+        <span class='kw'>if</span> <span class='id identifier rubyid_known_locales'>known_locales</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_rev_path'>rev_path</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_current_locale_was_inferred'>current_locale_was_inferred</span> <span class='op'>=</span> <span class='kw'>false</span>
+          <span class='id identifier rubyid_rev_path'>rev_path</span><span class='period'>.</span><span class='id identifier rubyid_shift'>shift</span>
+        <span class='kw'>else</span>
+          <span class='comment'># infer locale
+</span>          <span class='id identifier rubyid_current_locale_was_inferred'>current_locale_was_inferred</span> <span class='op'>=</span> <span class='kw'>true</span>
+          <span class='id identifier rubyid_context_locale'>context_locale</span>
+        <span class='kw'>end</span>
+    <span class='kw'>when</span> <span class='int'>1</span>
+      <span class='comment'># expect a path
+</span>      <span class='id identifier rubyid_current_tuple'>current_tuple</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_rev_path'>rev_path</span><span class='period'>.</span><span class='id identifier rubyid_shift'>shift</span>
+    <span class='kw'>when</span> <span class='int'>2</span>
+      <span class='comment'># expect &#39;sys&#39; or &#39;fields&#39;
+</span>      <span class='id identifier rubyid_current_tuple'>current_tuple</span> <span class='op'>&lt;&lt;</span>
+        <span class='kw'>if</span> <span class='const'><span class='object_link'><a href="#RESERVED_NAMES-constant" title="WCC::Contentful::Store::Query::RESERVED_NAMES (constant)">RESERVED_NAMES</a></span></span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_rev_path'>rev_path</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_rev_path'>rev_path</span><span class='period'>.</span><span class='id identifier rubyid_shift'>shift</span>
+        <span class='kw'>else</span>
+          <span class='comment'># infer &#39;sys&#39; or &#39;fields&#39;
+</span>          <span class='id identifier rubyid_current_tuple'>current_tuple</span><span class='period'>.</span><span class='id identifier rubyid_last'>last</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>id</span><span class='tstring_end'>&#39;</span></span> <span class='op'>?</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>sys</span><span class='tstring_end'>&#39;</span></span> <span class='op'>:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>fields</span><span class='tstring_end'>&#39;</span></span>
+        <span class='kw'>end</span>
+
+      <span class='kw'>if</span> <span class='id identifier rubyid_current_tuple'>current_tuple</span><span class='period'>.</span><span class='id identifier rubyid_last'>last</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>sys</span><span class='tstring_end'>&#39;</span></span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_current_locale_was_inferred'>current_locale_was_inferred</span>
+        <span class='comment'># remove the inferred current locale
+</span>        <span class='id identifier rubyid_current_tuple'>current_tuple</span><span class='period'>.</span><span class='id identifier rubyid_shift'>shift</span>
+      <span class='kw'>end</span>
+      <span class='id identifier rubyid_new_path'>new_path</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_current_tuple'>current_tuple</span>
+      <span class='id identifier rubyid_current_tuple'>current_tuple</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_new_path'>new_path</span><span class='period'>.</span><span class='id identifier rubyid_flat_map'>flat_map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_x'>x</span><span class='op'>|</span> <span class='id identifier rubyid_x'>x</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_reverse'>reverse</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="op?-class_method">
+  
+    .<strong>op?</strong>(key)  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+135
+136
+137</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/store/query.rb', line 135</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_op?'>op?</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="Query/Interface.html" title="WCC::Contentful::Store::Query::Interface (module)">Interface</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Query/Interface.html#OPERATORS-constant" title="WCC::Contentful::Store::Query::Interface::OPERATORS (constant)">OPERATORS</a></span></span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="apply-instance_method">
+  
+    #<strong>apply</strong>(filter, context = nil)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Called with a filter object by <span class='object_link'><a href="Base.html#find_by-instance_method" title="WCC::Contentful::Store::Base#find_by (method)">Base#find_by</a></span> in order to apply the filter.
+The filter in this case is a hash where the keys are paths and the values
+are expectations.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="#apply_operator-instance_method" title="WCC::Contentful::Store::Query#apply_operator (method)">#apply_operator</a></span></li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+76
+77
+78
+79
+80</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/store/query.rb', line 76</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_apply'>apply</span><span class='lparen'>(</span><span class='id identifier rubyid_filter'>filter</span><span class='comma'>,</span> <span class='id identifier rubyid_context'>context</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_flatten_filter_hash'>flatten_filter_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_filter'>filter</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_reduce'>reduce</span><span class='lparen'>(</span><span class='kw'>self</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_query'>query</span><span class='comma'>,</span> <span class='id identifier rubyid_cond'>cond</span><span class='op'>|</span>
+    <span class='id identifier rubyid_query'>query</span><span class='period'>.</span><span class='id identifier rubyid_apply_operator'>apply_operator</span><span class='lparen'>(</span><span class='id identifier rubyid_cond'>cond</span><span class='lbracket'>[</span><span class='symbol'>:op</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_cond'>cond</span><span class='lbracket'>[</span><span class='symbol'>:path</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_cond'>cond</span><span class='lbracket'>[</span><span class='symbol'>:expected</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_context'>context</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="apply_operator-instance_method">
+  
+    #<strong>apply_operator</strong>(operator, field, expected, context = nil)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns a new chained Query that has a new condition.  The new condition
+represents the WHERE comparison being applied here.  The underlying store
+implementation translates this condition statement into an appropriate
+query against the datastore.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <p class="tag_title">Examples:</p>
+    
+      
+      <pre class="example code"><code><span class='id identifier rubyid_query'>query</span> <span class='op'>=</span> <span class='id identifier rubyid_query'>query</span><span class='period'>.</span><span class='id identifier rubyid_apply_operator'>apply_operator</span><span class='lparen'>(</span><span class='symbol'>:gt</span><span class='comma'>,</span> <span class='symbol'>:timestamp</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>2019-01-01</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_context'>context</span><span class='rparen'>)</span>
+<span class='comment'># in a SQL based store, the query now contains a condition like:
+</span><span class='comment'>#  WHERE table.&#39;timestamp&#39; &gt; &#39;2019-01-01&#39;</span></code></pre>
+    
+  </div>
+
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>ArgumentError</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/store/query.rb', line 52</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_apply_operator'>apply_operator</span><span class='lparen'>(</span><span class='id identifier rubyid_operator'>operator</span><span class='comma'>,</span> <span class='id identifier rubyid_field'>field</span><span class='comma'>,</span> <span class='id identifier rubyid_expected'>expected</span><span class='comma'>,</span> <span class='id identifier rubyid_context'>context</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Operator </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_operator'>operator</span><span class='embexpr_end'>}</span><span class='tstring_content'> not supported</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='id identifier rubyid_operator'>operator</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_field'>field</span> <span class='op'>=</span> <span class='id identifier rubyid_field'>field</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='kw'>if</span> <span class='id identifier rubyid_field'>field</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'>Symbol</span>
+  <span class='id identifier rubyid_path'>path</span> <span class='op'>=</span> <span class='id identifier rubyid_field'>field</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Array</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='id identifier rubyid_field'>field</span> <span class='op'>:</span> <span class='id identifier rubyid_field'>field</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_path'>path</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_normalize_condition_path'>normalize_condition_path</span><span class='lparen'>(</span><span class='id identifier rubyid_path'>path</span><span class='comma'>,</span> <span class='id identifier rubyid_context'>context</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid__append_condition'>_append_condition</span><span class='lparen'>(</span>
+    <span class='const'><span class='object_link'><a href="Query/Condition.html" title="WCC::Contentful::Store::Query::Condition (class)">Condition</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="#initialize-instance_method" title="WCC::Contentful::Store::Query#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_path'>path</span><span class='comma'>,</span> <span class='id identifier rubyid_operator'>operator</span><span class='comma'>,</span> <span class='id identifier rubyid_expected'>expected</span><span class='rparen'>)</span>
+  <span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="result_set-instance_method">
+  
+    #<strong>result_set</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Override this to provide a result set from the Query object itself rather
+than from calling #execute in the store.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+84
+85
+86</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/store/query.rb', line 84</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_result_set'>result_set</span>
+  <span class='ivar'>@result_set</span> <span class='op'>||=</span> <span class='id identifier rubyid_store'>store</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='kw'>self</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="to_enum-instance_method">
+  
+    #<strong>to_enum</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Executes the query against the store and memoizes the resulting enumerable.</p>
+
+<pre class="code ruby"><code class="ruby">Subclasses can override this to provide a more efficient implementation.
+</code></pre>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+22
+23
+24
+25</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/store/query.rb', line 22</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_to_enum'>to_enum</span>
+  <span class='ivar'>@to_enum</span> <span class='op'>||=</span>
+    <span class='id identifier rubyid_result_set'>result_set</span><span class='period'>.</span><span class='id identifier rubyid_lazy'>lazy</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_row'>row</span><span class='op'>|</span> <span class='id identifier rubyid_resolve_includes'>resolve_includes</span><span class='lparen'>(</span><span class='id identifier rubyid_row'>row</span><span class='comma'>,</span> <span class='ivar'>@options</span><span class='lbracket'>[</span><span class='symbol'>:include</span><span class='rbracket'>]</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Wed Feb 10 11:15:41 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-2.5.7).
+</div>
+
+    </div>
+  </body>
+</html>
