@@ -22,3 +22,5 @@ do
   )
 done
 
+# remove the "generated on" line
+grep -rli 'Generated on' docs | xargs -I{} sed -i '' 's/Generated on .*//' {}
