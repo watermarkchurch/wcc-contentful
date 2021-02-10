@@ -29,7 +29,7 @@ module WCC::Contentful::Store
     end
 
     def find(key, hint: nil, **options)
-      options = { locale: '*' }.merge!(options || {})
+      options = options&.dup || {}
       entry =
         if hint
           client.public_send(hint.underscore, key, options)
@@ -157,10 +157,10 @@ module WCC::Contentful::Store
         @response ||=
           if @relation[:content_type] == 'Asset'
             @client.assets(
-              { locale: '*' }.merge!(@relation.reject { |k| k == :content_type }).merge!(@options)
+              @relation.reject { |k| k == :content_type }.merge(@options)
             )
           else
-            @client.entries({ locale: '*' }.merge!(@relation).merge!(@options))
+            @client.entries(@relation.merge(@options))
           end
       end
 

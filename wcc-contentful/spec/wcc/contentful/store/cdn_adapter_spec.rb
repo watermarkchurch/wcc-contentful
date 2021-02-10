@@ -135,12 +135,12 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
     it 'follows hint for assets' do
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}" \
                          '/entries/3pWma8spR62aegAWAWacyA')
-        .with(query: hash_including(locale: '*'))
+        .with(query: anything)
         .to_raise('Should not hit the Entries endpoint')
 
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}" \
                          '/assets/3pWma8spR62aegAWAWacyA')
-        .with(query: hash_including(locale: '*'))
+        .with(query: anything)
         .to_return(status: 200, body: asset)
 
       # act
@@ -268,7 +268,6 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
 
       expect(adapter.client).to receive(:entries)
         .with({
-          locale: '*',
           content_type: 'page',
           'fields.test.en-US' => 'junk',
           limit: 2,
