@@ -60,13 +60,13 @@
       <div id="content"><div id='filecontents'><p>The home of multiple gems that Watermark Community Church uses to integrate with
 Contentful.</p>
 
-<p><a href="https://circleci.com/gh/watermarkchurch/wcc-contentful"><img src="https://circleci.com/gh/watermarkchurch/wcc-contentful.svg?style=svg" alt="Build Status" /></a>
-<a href="https://coveralls.io/github/watermarkchurch/wcc-contentful?branch=master"><img src="https://coveralls.io/repos/github/watermarkchurch/wcc-contentful/badge.svg?branch=master" alt="Coverage Status" /></a></p>
+<p><a href="https://circleci.com/gh/watermarkchurch/wcc-contentful"><img src="https://circleci.com/gh/watermarkchurch/wcc-contentful.svg?style=svg" alt="Build Status"></a>
+<a href="https://coveralls.io/github/watermarkchurch/wcc-contentful?branch=master"><img src="https://coveralls.io/repos/github/watermarkchurch/wcc-contentful/badge.svg?branch=master" alt="Coverage Status"></a></p>
 
 <ul>
-  <li><a href="./wcc-contentful">wcc-contentful</a> <a href="https://rubygems.org/gems/wcc-contentful"><img src="https://badge.fury.io/rb/wcc-contentful.svg" alt="Gem Version" /></a></li>
-  <li><a href="./wcc-contentful-middleman">wcc-contentful-middleman</a> <a href="https://rubygems.org/gems/wcc-contentful-middleman"><img src="https://badge.fury.io/rb/wcc-contentful-middleman.svg" alt="Gem Version" /></a></li>
-  <li><a href="./wcc-contentful-graphql">wcc-contentful-graphql</a> <a href="https://rubygems.org/gems/wcc-contentful-graphql"><img src="https://badge.fury.io/rb/wcc-contentful-graphql.svg" alt="Gem Version" /></a></li>
+<li><a href="./wcc-contentful">wcc-contentful</a> <a href="https://rubygems.org/gems/wcc-contentful"><img src="https://badge.fury.io/rb/wcc-contentful.svg" alt="Gem Version"></a></li>
+<li><a href="./wcc-contentful-middleman">wcc-contentful-middleman</a> <a href="https://rubygems.org/gems/wcc-contentful-middleman"><img src="https://badge.fury.io/rb/wcc-contentful-middleman.svg" alt="Gem Version"></a></li>
+<li><a href="./wcc-contentful-graphql">wcc-contentful-graphql</a> <a href="https://rubygems.org/gems/wcc-contentful-graphql"><img src="https://badge.fury.io/rb/wcc-contentful-graphql.svg" alt="Gem Version"></a></li>
 </ul>
 
 <h2 id="supported-rails-versions">Supported Rails versions</h2>
@@ -76,19 +76,19 @@ up-to-date list of supported framework environments.  At the time of this writin
 the gem officially supports the following:</p>
 
 <ul>
-  <li>Ruby versions:
-    <ul>
-      <li>2.5</li>
-      <li>2.3</li>
-    </ul>
-  </li>
-  <li>Framework versions:
-    <ul>
-      <li>Rails 5.2</li>
-      <li>Rails 5.0</li>
-      <li>Middleman 4.2</li>
-    </ul>
-  </li>
+<li>Ruby versions:
+
+<ul>
+<li>2.5</li>
+<li>2.3</li>
+</ul></li>
+<li>Framework versions:
+
+<ul>
+<li>Rails 5.2</li>
+<li>Rails 5.0</li>
+<li>Middleman 4.2</li>
+</ul></li>
 </ul>
 
 <p>Pull requests are welcome to enable supporting other frameworks!</p>
@@ -96,77 +96,73 @@ the gem officially supports the following:</p>
 <p>To get started in testing a new Ruby version, use <code>rvm</code> or <code>rbenv</code> to choose your
 ruby version.  Then, check out the appropriate Gemfile using the <code>bin/use</code> helper:</p>
 
-<p><code>bash
-$ rbenv local 2.2.6
+<pre class="code bash"><code class="bash">$ rbenv local 2.2.6
 $ gem install bundler
 $ bundle install
 $ bin/use gemfiles/rails_5.2.gemfile
-</code></p>
+</code></pre>
 
 <p>Now each of the <code>wcc-</code> gems has a Gemfile based on that Appraisal gemfile.  <code>cd</code>
-into the gem’s directory and run <code>bundle install</code> to install the gems.</p>
+into the gem&#39;s directory and run <code>bundle install</code> to install the gems. </p>
 
 <h3 id="adding-a-new-rails-version">Adding a new Rails version</h3>
 
 <p>To get started testing a new framework, add the appropriate combination of gems to the <code>Appraisals</code> file
 and run <code>bundle exec appraisal install</code> to generate the appropriate gemfile in the <code>gemfiles</code> directory:</p>
 
-<p>```diff
-diff –git a/Appraisals b/Appraisals
+<pre class="code diff"><code class="diff">diff --git a/Appraisals b/Appraisals
 index 041abea..917142f 100644
-— a/Appraisals
+--- a/Appraisals
 +++ b/Appraisals
 @@ -1,5 +1,9 @@
- # frozen_string_literal: true</p>
+ # frozen_string_literal: true
 
-<p>+appraise ‘sinatra-2.0’ do
-+  gem ‘sinatra’, ‘~&gt; 2.0.0’
++appraise &#39;sinatra-2.0&#39; do
++  gem &#39;sinatra&#39;, &#39;~&gt; 2.0.0&#39;
 +end
 +
- appraise ‘rails-5.2’ do
-   gem ‘rails’, ‘~&gt; 5.2.0’
-   gem ‘railties’, ‘~&gt; 5.2.0’
-```</p>
+ appraise &#39;rails-5.2&#39; do
+   gem &#39;rails&#39;, &#39;~&gt; 5.2.0&#39;
+   gem &#39;railties&#39;, &#39;~&gt; 5.2.0&#39;
+</code></pre>
 
 <p>Then you can use the <code>bin/use</code> helper to check out that set of gems:</p>
 
-<p><code>bash
-$ bundle exec appraisal install
+<pre class="code bash"><code class="bash">$ bundle exec appraisal install
 $ bin/use gemfiles/rails_6.0.gemfile
-</code></p>
+</code></pre>
 
 <p>And build a helper that conditionally includes your framework specs based on whether
 that gem is installed.  Example:</p>
 
-<p>```rb
-# spec/active_record_helper.rb</p>
+<pre class="code rb"><code class="rb"># spec/active_record_helper.rb
 
-<p>require ‘spec_helper’</p>
+require &#39;spec_helper&#39;
 
-<p>begin
-  gem ‘activerecord’
-  require ‘active_record’
+begin
+  gem &#39;activerecord&#39;
+  require &#39;active_record&#39;
 rescue Gem::LoadError =&gt; e
   # active_record is not loaded in this test run
-  warn “WARNING: Cannot load active_record - some tests will be skipped\n#e”
-end</p>
+  warn &quot;WARNING: Cannot load active_record - some tests will be skipped\n#{e}&quot;
+end
 
-<p>if defined?(ActiveJob)
+if defined?(ActiveJob)
   ActiveJob::Base.queue_adapter = :test
 else
   RSpec.configure do |c|
     # skip active record based specs
     c.before(:each, active_record: true) do
-      skip ‘activerecord is not loaded’
+      skip &#39;activerecord is not loaded&#39;
     end
   end
-end</p>
+end
 
-<p>```</p>
+</code></pre>
 
 <h2 id="contributing">Contributing</h2>
 
-<p>Bug reports and pull requests are welcome on GitHub at https://github.com/watermarkchurch/wcc-contentful. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the <a href="http://contributor-covenant.org">Contributor Covenant</a> code of conduct.</p>
+<p>Bug reports and pull requests are welcome on GitHub at <a href="https://github.com/watermarkchurch/wcc-contentful">https://github.com/watermarkchurch/wcc-contentful</a>. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the <a href="http://contributor-covenant.org">Contributor Covenant</a> code of conduct.</p>
 
 <h2 id="license">License</h2>
 
@@ -174,18 +170,17 @@ end</p>
 
 <h2 id="code-of-conduct">Code of Conduct</h2>
 
-<p>Everyone interacting in the WCC::Contentful project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the <a href="https://github.com/watermarkchurch/wcc-contentful/blob/master/CODE_OF_CONDUCT.md">code of conduct</a>.</p>
+<p>Everyone interacting in the WCC::Contentful project&#39;s codebases, issue trackers, chat rooms and mailing lists is expected to follow the <a href="https://github.com/watermarkchurch/wcc-contentful/blob/master/CODE_OF_CONDUCT.md">code of conduct</a>.</p>
 
 <h2 id="deployment-instructions">Deployment instructions:</h2>
 
 <p>1) Bump the version number using the appropriate rake task:</p>
 
-<p><code>
-rake bump:major
-rake bump:patch
-rake bump:minor
-rake bump:pre
-</code></p>
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_rake'>rake</span> <span class='label'>bump:</span><span class='id identifier rubyid_major'>major</span>
+<span class='id identifier rubyid_rake'>rake</span> <span class='label'>bump:</span><span class='id identifier rubyid_patch'>patch</span>
+<span class='id identifier rubyid_rake'>rake</span> <span class='label'>bump:</span><span class='id identifier rubyid_minor'>minor</span>
+<span class='id identifier rubyid_rake'>rake</span> <span class='label'>bump:</span><span class='id identifier rubyid_pre'>pre</span>
+</code></pre>
 
 <p>Note: ensure that the versions of both gems are synchronized!  The release command
 will run <code>rake check</code> and will fail if this is not the case.  The bump tasks should

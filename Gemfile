@@ -14,6 +14,7 @@ group :development do
   gem 'guard-rubocop'
   gem 'guard-shell', '~> 0.7.1'
   gem 'rake', '~> 13.0'
+  gem 'redcarpet', '~> 3.5'
   gem 'rubocop', '0.68', require: false
   gem 'simplecov', '~> 0.16'
   gem 'yard', '~> 0.9.26'
