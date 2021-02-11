@@ -90,15 +90,12 @@ http_interactions:
                     "type": "Link",
                     "linkType": "Environment"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "slug": {
-                  "en-US": "published-redirect"
-                },
-                "url": {
-                  "en-US": "https://watermark.formstack.com/forms/theporch"
-                }
+                "slug": "published-redirect"
+                "url": https://watermark.formstack.com/forms/theporch
               }
             }
           ]

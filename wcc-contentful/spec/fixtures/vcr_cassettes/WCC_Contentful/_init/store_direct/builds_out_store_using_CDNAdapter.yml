@@ -2065,18 +2065,13 @@ http_interactions:
                 "linkType": "ContentType",
                 "id": "page"
               }
-            }
+            },
+            "locale": "en-US"
           },
           "fields": {
-            "title": {
-              "en-US": "Ministries"
-            },
-            "slug": {
-              "en-US": "/ministries"
-            },
-            "heroText": {
-              "en-US": "Test Test 123"
-            }
+            "title": "Ministries",
+            "slug": "/ministries",
+            "heroText": "Test Test 123"
           }
         }
     http_version: 
