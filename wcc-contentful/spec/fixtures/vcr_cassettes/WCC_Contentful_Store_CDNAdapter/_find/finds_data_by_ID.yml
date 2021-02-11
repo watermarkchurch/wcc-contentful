@@ -87,33 +87,24 @@ http_interactions:
                 "linkType": "ContentType",
                 "id": "menuButton"
               }
-            }
+            },
+            "locale": "en-US"
           },
           "fields": {
-            "text": {
-              "en-US": "Ministries"
-            },
-            "iconFA": {
-              "en-US": "fa-file-alt"
-            },
-            "buttonStyle": {
-              "en-US": [
-                "rounded",
-                "custom"
-              ]
-            },
-            "customButtonCss": {
-              "en-US": [
-                "border-color: green;"
-              ]
-            },
+            "text": "Ministries",
+            "iconFA": "fa-file-alt",
+            "buttonStyle": [
+              "rounded",
+              "custom"
+            ],
+            "customButtonCss": [
+              "border-color: green;"
+            ],
             "link": {
-              "en-US": {
-                "sys": {
-                  "type": "Link",
-                  "linkType": "Entry",
-                  "id": "JhYhSfZPAOMqsaK8cYOUK"
-                }
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "JhYhSfZPAOMqsaK8cYOUK"
               }
             }
           }

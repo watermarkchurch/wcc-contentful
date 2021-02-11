@@ -90,15 +90,12 @@ http_interactions:
                     "type": "Link",
                     "linkType": "Environment"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "slug": {
-                  "en-US": "draft-redirect"
-                },
-                "url": {
-                  "en-US": "https://google.com"
-                }
+                "slug": "draft-redirect"
+                "url": https://google.com
               }
             }
           ]

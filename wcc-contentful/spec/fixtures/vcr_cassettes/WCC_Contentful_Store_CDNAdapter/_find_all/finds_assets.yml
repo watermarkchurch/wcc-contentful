@@ -88,14 +88,12 @@ http_interactions:
                 "type": "Asset",
                 "createdAt": "2018-02-12T21:59:33.792Z",
                 "updatedAt": "2018-02-12T21:59:33.792Z",
-                "revision": 1
+                "revision": 1,
+                "locale": "en-US"
               },
               "fields": {
-                "title": {
-                  "en-US": "goat-clip-art"
-                },
+                "title": "goat-clip-art",
                 "file": {
-                  "en-US": {
                     "url": "//images.ctfassets.net/<CONTENTFUL_SPACE_ID>/4JV2MbQVoAeEUQGUmYGQGY/1f0e377e665d2ab94fb86b0c88e75b06/goat-clip-art.png",
                     "details": {
                       "size": 62310,
@@ -107,7 +105,6 @@ http_interactions:
                     "fileName": "goat-clip-art.png",
                     "contentType": "image/png"
                   }
-                }
               }
             },
             {
@@ -123,21 +120,18 @@ http_interactions:
                 "type": "Asset",
                 "createdAt": "2018-02-12T19:51:26.894Z",
                 "updatedAt": "2018-02-12T19:53:00.804Z",
-                "revision": 2
+                "revision": 2,
+                "locale": "en-US"
               },
               "fields": {
-                "title": {
-                  "en-US": "favicon"
-                },
+                "title": "favicon",
                 "file": {
-                  "en-US": {
-                    "url": "//assets.ctfassets.net/<CONTENTFUL_SPACE_ID>/2zKTmej544IakmIqoEu0y8/4829acf8bb9cb8d1436a3d5b47c836fd/favicon.ico",
-                    "details": {
-                      "size": 15086
-                    },
-                    "fileName": "favicon.ico",
-                    "contentType": "image/x-icon"
-                  }
+                  "url": "//assets.ctfassets.net/<CONTENTFUL_SPACE_ID>/2zKTmej544IakmIqoEu0y8/4829acf8bb9cb8d1436a3d5b47c836fd/favicon.ico",
+                  "details": {
+                    "size": 15086
+                  },
+                  "fileName": "favicon.ico",
+                  "contentType": "image/x-icon"
                 }
               }
             },
@@ -154,25 +148,22 @@ http_interactions:
                 "type": "Asset",
                 "createdAt": "2018-02-12T20:14:23.896Z",
                 "updatedAt": "2018-02-12T20:14:23.896Z",
-                "revision": 1
+                "revision": 1,
+                "locale": "en-US"
               },
               "fields": {
-                "title": {
-                  "en-US": "worship"
-                },
+                "title": "worship",
                 "file": {
-                  "en-US": {
-                    "url": "//images.ctfassets.net/<CONTENTFUL_SPACE_ID>/572YrsdGZGo0sw2Www2Si8/545f53511e362a78a8f34e1837868256/worship.jpg",
-                    "details": {
-                      "size": 159236,
-                      "image": {
-                        "width": 1352,
-                        "height": 1014
-                      }
-                    },
-                    "fileName": "worship.jpg",
-                    "contentType": "image/jpeg"
-                  }
+                  "url": "//images.ctfassets.net/<CONTENTFUL_SPACE_ID>/572YrsdGZGo0sw2Www2Si8/545f53511e362a78a8f34e1837868256/worship.jpg",
+                  "details": {
+                    "size": 159236,
+                    "image": {
+                      "width": 1352,
+                      "height": 1014
+                    }
+                  },
+                  "fileName": "worship.jpg",
+                  "contentType": "image/jpeg"
                 }
               }
             },
@@ -189,25 +180,22 @@ http_interactions:
                 "type": "Asset",
                 "createdAt": "2018-02-12T19:51:52.654Z",
                 "updatedAt": "2018-02-12T19:51:52.654Z",
-                "revision": 1
+                "revision": 1,
+                "locale": "en-US"
               },
               "fields": {
-                "title": {
-                  "en-US": "favicon-16x16"
-                },
+                "title": "favicon-16x16",
                 "file": {
-                  "en-US": {
-                    "url": "//images.ctfassets.net/<CONTENTFUL_SPACE_ID>/1MsOLBrDwEUAUIuMY8Ys6o/0f756fef004c26d96f691b279df6427f/favicon-16x16.png",
-                    "details": {
-                      "size": 1365,
-                      "image": {
-                        "width": 16,
-                        "height": 16
-                      }
-                    },
-                    "fileName": "favicon-16x16.png",
-                    "contentType": "image/png"
-                  }
+                  "url": "//images.ctfassets.net/<CONTENTFUL_SPACE_ID>/1MsOLBrDwEUAUIuMY8Ys6o/0f756fef004c26d96f691b279df6427f/favicon-16x16.png",
+                  "details": {
+                    "size": 1365,
+                    "image": {
+                      "width": 16,
+                      "height": 16
+                    }
+                  },
+                  "fileName": "favicon-16x16.png",
+                  "contentType": "image/png"
                 }
               }
             },
@@ -224,25 +212,22 @@ http_interactions:
                 "type": "Asset",
                 "createdAt": "2018-02-12T19:53:39.309Z",
                 "updatedAt": "2018-02-12T19:53:39.309Z",
-                "revision": 1
+                "revision": 1,
+                "locale": "en-US"
               },
               "fields": {
-                "title": {
-                  "en-US": "apple-touch-icon"
-                },
+                "title": "apple-touch-icon",
                 "file": {
-                  "en-US": {
-                    "url": "//images.ctfassets.net/<CONTENTFUL_SPACE_ID>/3pWma8spR62aegAWAWacyA/1beaebf5b66d2405ff9c9769a74db709/apple-touch-icon.png",
-                    "details": {
-                      "size": 40832,
-                      "image": {
-                        "width": 180,
-                        "height": 180
-                      }
-                    },
-                    "fileName": "apple-touch-icon.png",
-                    "contentType": "image/png"
-                  }
+                  "url": "//images.ctfassets.net/<CONTENTFUL_SPACE_ID>/3pWma8spR62aegAWAWacyA/1beaebf5b66d2405ff9c9769a74db709/apple-touch-icon.png",
+                  "details": {
+                    "size": 40832,
+                    "image": {
+                      "width": 180,
+                      "height": 180
+                    }
+                  },
+                  "fileName": "apple-touch-icon.png",
+                  "contentType": "image/png"
                 }
               }
             },
@@ -259,25 +244,22 @@ http_interactions:
                 "type": "Asset",
                 "createdAt": "2018-02-12T19:53:25.296Z",
                 "updatedAt": "2018-02-12T19:53:25.296Z",
-                "revision": 1
+                "revision": 1,
+                "locale": "en-US"
               },
               "fields": {
-                "title": {
-                  "en-US": "favicon-32x32"
-                },
+                "title": "favicon-32x32",
                 "file": {
-                  "en-US": {
-                    "url": "//images.ctfassets.net/<CONTENTFUL_SPACE_ID>/6MbzYciSPKkcWIUUS2UGSw/856f4217b3aded5dab8ab10182e96f16/favicon-32x32.png",
-                    "details": {
-                      "size": 2817,
-                      "image": {
-                        "width": 32,
-                        "height": 32
-                      }
-                    },
-                    "fileName": "favicon-32x32.png",
-                    "contentType": "image/png"
-                  }
+                  "url": "//images.ctfassets.net/<CONTENTFUL_SPACE_ID>/6MbzYciSPKkcWIUUS2UGSw/856f4217b3aded5dab8ab10182e96f16/favicon-32x32.png",
+                  "details": {
+                    "size": 2817,
+                    "image": {
+                      "width": 32,
+                      "height": 32
+                    }
+                  },
+                  "fileName": "favicon-32x32.png",
+                  "contentType": "image/png"
                 }
               }
             }

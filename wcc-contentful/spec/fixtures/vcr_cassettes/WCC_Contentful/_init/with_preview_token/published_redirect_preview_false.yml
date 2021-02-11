@@ -102,15 +102,12 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "redirect2"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "slug": {
-                  "en-US": "published-redirect"
-                },
-                "url": {
-                  "en-US": "https://watermark.formstack.com/forms/theporch"
-                }
+                "slug": "published-redirect"
+                "url": https://watermark.formstack.com/forms/theporch
               }
             }
           ]

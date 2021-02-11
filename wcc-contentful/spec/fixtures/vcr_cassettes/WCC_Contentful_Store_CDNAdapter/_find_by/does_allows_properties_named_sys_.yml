@@ -102,15 +102,12 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "system"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "title": {
-                  "en-US": "Test System 1"
-                },
-                "system": {
-                  "en-US": "One"
-                }
+                "title": "Test System 1",
+                "system": "One"
               }
             }
           ]

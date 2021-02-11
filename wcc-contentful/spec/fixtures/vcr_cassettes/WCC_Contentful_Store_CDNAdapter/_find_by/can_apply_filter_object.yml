@@ -95,15 +95,12 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "page"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "title": {
-                  "en-US": "Conferences"
-                },
-                "slug": {
-                  "en-US": "/conferences"
-                }
+                "title": "Conferences",
+                "slug": "/conferences"
               }
             }
           ]
