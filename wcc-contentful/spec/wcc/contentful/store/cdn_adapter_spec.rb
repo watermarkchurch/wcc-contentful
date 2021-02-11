@@ -25,25 +25,22 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
           "type": "Asset",
           "createdAt": "2018-02-12T19:53:39.309Z",
           "updatedAt": "2018-02-12T19:53:39.309Z",
-          "revision": 1
+          "revision": 1,
+          "locale": "en-US"
         },
         "fields": {
-          "title": {
-            "en-US": "apple-touch-icon"
-          },
+          "title": "apple-touch-icon",
           "file": {
-            "en-US": {
-              "url": "//images.contentful.com/343qxys30lid/3pWma8spR62aegAWAWacyA/1beaebf5b66d2405ff9c9769a74db709/apple-touch-icon.png",
-              "details": {
-                "size": 40832,
-                "image": {
-                  "width": 180,
-                  "height": 180
-                }
-              },
-              "fileName": "apple-touch-icon.png",
-              "contentType": "image/png"
-            }
+            "url": "//images.contentful.com/343qxys30lid/3pWma8spR62aegAWAWacyA/1beaebf5b66d2405ff9c9769a74db709/apple-touch-icon.png",
+            "details": {
+              "size": 40832,
+              "image": {
+                "width": 180,
+                "height": 180
+              }
+            },
+            "fileName": "apple-touch-icon.png",
+            "contentType": "image/png"
           }
         }
       }
@@ -71,30 +68,20 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
         'type' => 'Entry'
       })
       expect(found['fields']).to include({
-        'text' => {
-          'en-US' => 'Ministries'
-        },
-        'iconFA' => {
-          'en-US' => 'fa-file-alt'
-        },
-        'buttonStyle' => {
-          'en-US' => %w[
-            rounded
-            custom
-          ]
-        },
-        'customButtonCss' => {
-          'en-US' => [
-            'border-color: green;'
-          ]
-        },
+        'text' => 'Ministries',
+        'iconFA' => 'fa-file-alt',
+        'buttonStyle' => %w[
+          rounded
+          custom
+        ],
+        'customButtonCss' => [
+          'border-color: green;'
+        ],
         'link' => {
-          'en-US' => {
-            'sys' => {
-              'type' => 'Link',
-              'linkType' => 'Entry',
-              'id' => 'JhYhSfZPAOMqsaK8cYOUK'
-            }
+          'sys' => {
+            'type' => 'Link',
+            'linkType' => 'Entry',
+            'id' => 'JhYhSfZPAOMqsaK8cYOUK'
           }
         }
       })
@@ -111,23 +98,19 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       })
 
       expect(found['fields']).to eq({
-        'title' => {
-          'en-US' => 'goat-clip-art'
-        },
+        'title' => 'goat-clip-art',
         'file' => {
-          'en-US' => {
-            'url' => "//images.ctfassets.net/#{contentful_space_id}/" \
-                     '4JV2MbQVoAeEUQGUmYGQGY/1f0e377e665d2ab94fb86b0c88e75b06/goat-clip-art.png',
-            'details' => {
-              'size' => 62_310,
-              'image' => {
-                'width' => 219,
-                'height' => 203
-              }
-            },
-            'fileName' => 'goat-clip-art.png',
-            'contentType' => 'image/png'
-          }
+          'url' => "//images.ctfassets.net/#{contentful_space_id}/"\
+            '4JV2MbQVoAeEUQGUmYGQGY/1f0e377e665d2ab94fb86b0c88e75b06/goat-clip-art.png',
+          'details' => {
+            'size' => 62_310,
+            'image' => {
+              'width' => 219,
+              'height' => 203
+            }
+          },
+          'fileName' => 'goat-clip-art.png',
+          'contentType' => 'image/png'
         }
       })
     end
@@ -135,12 +118,10 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
     it 'follows hint for assets' do
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}" \
                          '/entries/3pWma8spR62aegAWAWacyA')
-        .with(query: anything)
         .to_raise('Should not hit the Entries endpoint')
 
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}" \
                          '/assets/3pWma8spR62aegAWAWacyA')
-        .with(query: anything)
         .to_return(status: 200, body: asset)
 
       # act
@@ -149,7 +130,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       # assert
       expect(found).to be_present
       expect(found.dig('sys', 'id')).to eq('3pWma8spR62aegAWAWacyA')
-      expect(found.dig('fields', 'title', 'en-US')).to eq('apple-touch-icon')
+      expect(found.dig('fields', 'title')).to eq('apple-touch-icon')
     end
 
     it 'returns nil when not found' do
@@ -177,7 +158,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
 
       # assert
       expect(found).to_not be_nil
-      expect(found.dig('fields', 'title', 'en-US')).to eq('goat-clip-art')
+      expect(found.dig('fields', 'title')).to eq('goat-clip-art')
     end
 
     it 'can apply filter object' do
@@ -187,7 +168,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       # assert
       expect(found).to_not be_nil
       expect(found.dig('sys', 'id')).to eq('1UojJt7YoMiemCq2mGGUmQ')
-      expect(found.dig('fields', 'title', 'en-US')).to eq('Conferences')
+      expect(found.dig('fields', 'title')).to eq('Conferences')
     end
 
     it 'allows filtering by a reference field' do
@@ -246,7 +227,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       # assert
       expect(found).to_not be_nil
       expect(found.dig('sys', 'id')).to eq('1UojJt7YoMiemCq2mGGUmQ')
-      expect(found.dig('fields', 'slug', 'en-US')).to eq('/conferences')
+      expect(found.dig('fields', 'slug')).to eq('/conferences')
     end
 
     it 'does allows properties named `*sys*`' do
@@ -256,7 +237,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       # assert
       expect(found).to_not be_nil
       expect(found.dig('sys', 'id')).to eq('2eXv0N3vUkIOWAauGg4q8a')
-      expect(found.dig('fields', 'system', 'en-US')).to eq('One')
+      expect(found.dig('fields', 'system')).to eq('One')
     end
 
     it 'passes query params thru to client' do
@@ -299,7 +280,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
 
       # assert
       expect(found.count).to eq(11)
-      expect(found.map { |i| i.dig('fields', 'text', 'en-US') }.sort).to eq(
+      expect(found.map { |i| i.dig('fields', 'text') }.sort).to eq(
         [
           'About',
           'About Watermark Resources',
@@ -322,7 +303,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
 
       # assert
       expect(found.count).to eq(6)
-      expect(found.map { |i| i.dig('fields', 'title', 'en-US') }.sort).to eq(
+      expect(found.map { |i| i.dig('fields', 'title') }.sort).to eq(
         %w[
           apple-touch-icon
           favicon
@@ -343,7 +324,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       expect(found.count).to eq(1)
       page = found.first
       expect(page.dig('sys', 'id')).to eq('1UojJt7YoMiemCq2mGGUmQ')
-      expect(page.dig('fields', 'title', 'en-US')).to eq('Conferences')
+      expect(page.dig('fields', 'title')).to eq('Conferences')
     end
 
     it 'defaults to :in if given an array' do
@@ -389,17 +370,17 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
 
     it 'recursively resolves links if include > 0' do
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
-                         '?content_type=page&include=2&limit=5&locale=*')
+        '?content_type=page&include=2&limit=5')
         .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_1.json'))
         .then.to_raise(StandardError.new('Should not hit page 1 a second time!'))
 
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
-                         '?content_type=page&include=2&limit=5&locale=*&skip=5')
+        '?content_type=page&include=2&limit=5&skip=5')
         .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_2.json'))
         .then.to_raise(StandardError.new('Should not hit page 2 a second time!'))
 
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
-                         '?content_type=page&include=2&limit=5&locale=*&skip=10')
+        '?content_type=page&include=2&limit=5&skip=10')
         .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_3.json'))
         .then.to_raise(StandardError.new('Should not hit page 3 a second time!'))
 
@@ -419,27 +400,27 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       expect(page5.dig('sys', 'id')).to eq('MNL6HaLyWAAo4A2S2mkkk')
 
       # depth 1
-      header = page5.dig('fields', 'header', 'en-US')
+      header = page5.dig('fields', 'header')
       expect(header.dig('sys', 'type')).to eq('Entry')
 
       # depth 2
-      domain_object = header.dig('fields', 'domainObject', 'en-US')
+      domain_object = header.dig('fields', 'domainObject')
       expect(domain_object.dig('sys', 'type')).to eq('Entry')
     end
 
     it 'stops resolving links at include depth' do
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
-                         '?content_type=page&include=2&limit=5&locale=*')
+        '?content_type=page&include=2&limit=5')
         .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_1.json'))
         .then.to_raise(StandardError)
 
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
-                         '?content_type=page&include=2&limit=5&locale=*&skip=5')
+        '?content_type=page&include=2&limit=5&skip=5')
         .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_2.json'))
         .then.to_raise(StandardError)
 
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
-                         '?content_type=page&include=2&limit=5&locale=*&skip=10')
+        '?content_type=page&include=2&limit=5&skip=10')
         .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_3.json'))
         .then.to_raise(StandardError)
 
@@ -458,10 +439,10 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       expect(page5.dig('sys', 'id')).to eq('MNL6HaLyWAAo4A2S2mkkk')
 
       # depth 1
-      header = page5.dig('fields', 'header', 'en-US')
+      header = page5.dig('fields', 'header')
 
       # depth 2
-      domain_object = header.dig('fields', 'domainObject', 'en-US')
+      domain_object = header.dig('fields', 'domainObject')
 
       # depth 3
       thumbnail = domain_object.dig('fields', 'thumbnail', 'en-US')
@@ -470,12 +451,12 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
 
     it 'ensures enumerator remains lazy when map applied at higher layer' do
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
-                         '?content_type=page&include=2&limit=5&locale=*')
+        '?content_type=page&include=2&limit=5')
         .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_1.json'))
         .then.to_raise(StandardError)
 
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
-                         '?content_type=page&include=2&limit=5&locale=*&skip=5')
+        '?content_type=page&include=2&limit=5&skip=5')
         .to_raise(StandardError.new('Should not call second page'))
 
       # act
