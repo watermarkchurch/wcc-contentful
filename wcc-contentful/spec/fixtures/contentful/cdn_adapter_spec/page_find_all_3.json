@@ -36,12 +36,8 @@
         }
       },
       "fields": {
-        "title": {
-          "en-US": "Hotels and Parking"
-        },
-        "slug": {
-          "en-US": "/conferences/yatc/hotels"
-        },
+        "title": "Hotels and Parking",
+        "slug": "/conferences/yatc/hotels",
         "sections": {
           "en-US": [
             {

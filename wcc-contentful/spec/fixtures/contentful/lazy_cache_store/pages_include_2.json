@@ -36,12 +36,8 @@
         }
       },
       "fields": {
-        "title": {
-          "en-US": "Podcasts"
-        },
-        "slug": {
-          "en-US": "/equipping/real_truth_real_quick"
-        }
+        "title": "Podcasts",
+        "slug": "/equipping/real_truth_real_quick"
       }
     },
     {
@@ -74,12 +70,8 @@
         }
       },
       "fields": {
-        "title": {
-          "en-US": "re:generation recovery Hotels & Parking "
-        },
-        "slug": {
-          "en-US": "/conferences/regeneration/hotels"
-        },
+        "title": "re:generation recovery Hotels & Parking ",
+        "slug": "/conferences/regeneration/hotels",
         "sections": {
           "en-US": [
             {
@@ -123,12 +115,8 @@
         }
       },
       "fields": {
-        "title": {
-          "en-US": "Hotels and Parking"
-        },
-        "slug": {
-          "en-US": "/ctc/hotels"
-        },
+        "title": "Hotels and Parking",
+        "slug": "/ctc/hotels",
         "sections": {
           "en-US": [
             {
@@ -172,12 +160,8 @@
         }
       },
       "fields": {
-        "title": {
-          "en-US": "Materials"
-        },
-        "slug": {
-          "en-US": "/ministries/regen/materials"
-        },
+        "title": "Materials",
+        "slug": "/ministries/regen/materials",
         "sections": {
           "en-US": [
             {
@@ -221,12 +205,8 @@
         }
       },
       "fields": {
-        "title": {
-          "en-US": "Church Leaders Podcast"
-        },
-        "slug": {
-          "en-US": "/equipping/church_leaders_podcast"
-        }
+        "title": "Church Leaders Podcast",
+        "slug": "/equipping/church_leaders_podcast"
       }
     }
   ],

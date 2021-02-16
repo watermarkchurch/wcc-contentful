@@ -36,12 +36,8 @@
         }
       },
       "fields": {
-        "title": {
-          "en-US": "Step 5 - Week 2 Guide"
-        },
-        "slug": {
-          "en-US": "/ministries/regen/12steps/step5w2"
-        },
+        "title": "Step 5 - Week 2 Guide",
+        "slug": "/ministries/regen/12steps/step5w2",
         "header": {
           "en-US": {
             "sys": {
@@ -117,12 +113,8 @@
         }
       },
       "fields": {
-        "title": {
-          "en-US": "Overview"
-        },
-        "slug": {
-          "en-US": "/ministries/merge"
-        },
+        "title": "Overview",
+        "slug": "/ministries/merge",
         "header": {
           "en-US": {
             "sys": {
@@ -244,12 +236,8 @@
         }
       },
       "fields": {
-        "title": {
-          "en-US": "Church Profile"
-        },
-        "slug": {
-          "en-US": "/church"
-        }
+        "title": "Church Profile",
+        "slug": "/church"
       }
     },
     {
@@ -282,12 +270,8 @@
         }
       },
       "fields": {
-        "title": {
-          "en-US": "Launch Guide"
-        },
-        "slug": {
-          "en-US": "/ministries/regen/12steps/guide"
-        },
+        "title": "Launch Guide",
+        "slug": "/ministries/regen/12steps/guide",
         "header": {
           "en-US": {
             "sys": {
@@ -363,12 +347,8 @@
         }
       },
       "fields": {
-        "title": {
-          "en-US": "Overview"
-        },
-        "slug": {
-          "en-US": "/ministries/regen"
-        },
+        "title": "Overview",
+        "slug": "/ministries/regen",
         "header": {
           "en-US": {
             "sys": {

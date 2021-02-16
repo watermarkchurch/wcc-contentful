@@ -36,12 +36,8 @@
         }
       },
       "fields": {
-        "title": {
-          "en-US": "Materials"
-        },
-        "slug": {
-          "en-US": "/ministries/shiloh/materials"
-        },
+        "title": "Materials",
+        "slug": "/ministries/shiloh/materials",
         "header": {
           "en-US": {
             "sys": {
@@ -62,9 +58,7 @@
             }
           ]
         },
-        "minimumSecurityLevel": {
-          "en-US": "Mentor"
-        }
+        "minimumSecurityLevel": "Mentor"
       }
     },
     {
@@ -97,12 +91,8 @@
         }
       },
       "fields": {
-        "title": {
-          "en-US": "Watermark Resources"
-        },
-        "slug": {
-          "en-US": "/"
-        },
+        "title": "Watermark Resources",
+        "slug": "/",
         "sections": {
           "en-US": [
             {
@@ -174,12 +164,8 @@
         }
       },
       "fields": {
-        "title": {
-          "en-US": "Podcasts"
-        },
-        "slug": {
-          "en-US": "/equipping/real_truth_real_quick"
-        }
+        "title": "Podcasts",
+        "slug": "/equipping/real_truth_real_quick"
       }
     },
     {
@@ -212,12 +198,8 @@
         }
       },
       "fields": {
-        "title": {
-          "en-US": "Overview"
-        },
-        "slug": {
-          "en-US": "/conferences/regeneration"
-        },
+        "title": "Overview",
+        "slug": "/conferences/regeneration",
         "header": {
           "en-US": {
             "sys": {
@@ -304,12 +286,8 @@
         }
       },
       "fields": {
-        "title": {
-          "en-US": "Overview"
-        },
-        "slug": {
-          "en-US": "/ministries/reengage"
-        },
+        "title": "Overview",
+        "slug": "/ministries/reengage",
         "header": {
           "en-US": {
             "sys": {

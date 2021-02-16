@@ -29,9 +29,7 @@
         }
       },
       "fields": {
-        "name": {
-          "en-US": "Main Menu"
-        },
+        "name": "Main Menu",
         "icon": {
           "en-US": {
             "sys": {
