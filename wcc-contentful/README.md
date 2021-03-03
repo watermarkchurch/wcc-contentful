@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/watermarkchurch/wcc-contentful.svg?branch=master)](https://travis-ci.org/watermarkchurch/wcc-contentful)
 [![Coverage Status](https://coveralls.io/repos/github/watermarkchurch/wcc-contentful/badge.svg?branch=master)](https://coveralls.io/github/watermarkchurch/wcc-contentful?branch=master)
 
-Full documentation: https://www.rubydoc.info/gems/wcc-contentful
+Full documentation: https://watermarkchurch.github.io/wcc-contentful/
 
 # WCC::Contentful
 
@@ -21,17 +21,21 @@ gem 'wcc-contentful'
 ```
 
 And then execute:
+
 ```
-    $ bundle
+$ bundle
 ```
-Or install it yourself as:
+
+Or install it yourself:
+
 ```
-    $ gem install wcc-contentful
+$ gem install wcc-contentful
 ```
 
 ## Configure
 
 Put this in an initializer:
+
 ```ruby
 # config/initializers/wcc_contentful.rb
 WCC::Contentful.configure do |config|
@@ -42,8 +46,8 @@ end
 WCC::Contentful.init!
 ```
 
-All configuration options can be found [in the rubydoc](https://www.rubydoc.info/gems/wcc-contentful/WCC/Contentful/Configuration) under
-{WCC::Contentful::Configuration}
+All configuration options can be found [in the rubydoc under
+WCC::Contentful::Configuration](https://watermarkchurch.github.io/wcc-contentful/latest/wcc-contentful/WCC/Contentful/Configuration) 
 
 ## Usage
 

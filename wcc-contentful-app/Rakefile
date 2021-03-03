@@ -119,3 +119,7 @@ namespace :app do
 end
 
 # rubocop:enable Metrics/LineLength
+
+task :release do
+  raise StandardError, 'Please run rake release only from the root folder.'
+end

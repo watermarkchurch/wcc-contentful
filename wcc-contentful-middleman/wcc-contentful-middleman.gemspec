@@ -4,6 +4,9 @@ lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'wcc/contentful/middleman/version'
 
+doc_version = Gem::Version.new(WCC::Contentful::Middleman::VERSION).release.to_s.sub(/\.\d+$/, '')
+
+# rubocop:disable Metrics/LineLength
 Gem::Specification.new do |spec|
   spec.name        = 'wcc-contentful-middleman'
   spec.version     = WCC::Contentful::Middleman::VERSION
@@ -16,6 +19,10 @@ Gem::Specification.new do |spec|
   spec.license       = 'MIT'
 
   spec.required_ruby_version = '>= 2.3'
+
+  spec.metadata = {
+    'documentation_uri' => "https://watermarkchurch.github.io/wcc-contentful/#{doc_version}/wcc-contentful-graphql"
+  }
 
   spec.files         =
     `git ls-files -z`.split("\x0").reject do |f|
@@ -46,3 +53,4 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'guard-rubocop', '~> 1.3.0'
   spec.add_development_dependency 'guard-shell', '~> 0.7.1'
 end
+# rubocop:enable Metrics/LineLength

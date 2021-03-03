@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+set -e
+
+gems=(wcc-*)
+
+# get version as a major.minor string (don't have different doc folders for patch versions)
+version=$(ruby -e 'require "./lib/version"; puts Gem::Version.new(WCC::Contentful::VERSION).release.to_s.sub(/\.\d+$/, "")')
+
+mkdir -p "./docs/$version"
+rm docs/latest; ln -s  "./$version" docs/latest
+
+# generate base doc (top-level readme only)
+bundle exec yard doc --no-public --output-dir "./docs/$version"
+
+for gem in "${gems[@]}"
+do
+  (
+    cd "$gem";
+
+    BUNDLE_GEMFILE=../Gemfile bundle exec yard doc --output-dir "../docs/$version/$gem"
+  )
+done
+
+# remove the "generated on" line
+grep -rli 'Generated on' docs | xargs -I{} sed -i '' 's/Generated on .*//' {}

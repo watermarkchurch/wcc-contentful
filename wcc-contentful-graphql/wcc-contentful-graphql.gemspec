@@ -4,6 +4,9 @@ lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'wcc/contentful/graphql/version'
 
+doc_version = Gem::Version.new(WCC::Contentful::Graphql::VERSION).release.to_s.sub(/\.\d+$/, '')
+
+# rubocop:disable Metrics/LineLength
 Gem::Specification.new do |spec|
   spec.name          = 'wcc-contentful-graphql'
   spec.version       = WCC::Contentful::Graphql::VERSION
@@ -16,6 +19,10 @@ Gem::Specification.new do |spec|
   spec.license       = 'MIT'
 
   spec.required_ruby_version = '>= 2.3'
+
+  spec.metadata = {
+    'documentation_uri' => "https://watermarkchurch.github.io/wcc-contentful/#{doc_version}/wcc-contentful-graphql"
+  }
 
   spec.files         =
     `git ls-files -z`.split("\x0").reject do |f|
@@ -50,3 +57,4 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'graphql', '~> 1.7'
   spec.add_dependency 'wcc-contentful', "~> #{WCC::Contentful::Graphql::VERSION}"
 end
+# rubocop:enable Metrics/LineLength

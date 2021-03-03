@@ -1,16 +1,16 @@
 The home of multiple gems that Watermark Community Church uses to integrate with
 Contentful.
 
-[![Build Status](https://travis-ci.org/watermarkchurch/wcc-contentful.svg?branch=master)](https://travis-ci.org/watermarkchurch/wcc-contentful)
+[![Build Status](https://circleci.com/gh/watermarkchurch/wcc-contentful.svg?style=svg)](https://circleci.com/gh/watermarkchurch/wcc-contentful)
 [![Coverage Status](https://coveralls.io/repos/github/watermarkchurch/wcc-contentful/badge.svg?branch=master)](https://coveralls.io/github/watermarkchurch/wcc-contentful?branch=master)
 
 * [wcc-contentful](./wcc-contentful) [![Gem Version](https://badge.fury.io/rb/wcc-contentful.svg)](https://rubygems.org/gems/wcc-contentful)
-* [wcc-contentful-app](./wcc-contentful-app) [![Gem Version](https://badge.fury.io/rb/wcc-contentful-app.svg)](https://rubygems.org/gems/wcc-contentful-app)
-* [wcc-contentful-graphql](./wcc-contentful-app) [![Gem Version](https://badge.fury.io/rb/wcc-contentful-graphql.svg)](https://rubygems.org/gems/wcc-contentful-graphql)
+* [wcc-contentful-middleman](./wcc-contentful-middleman) [![Gem Version](https://badge.fury.io/rb/wcc-contentful-middleman.svg)](https://rubygems.org/gems/wcc-contentful-middleman)
+* [wcc-contentful-graphql](./wcc-contentful-graphql) [![Gem Version](https://badge.fury.io/rb/wcc-contentful-graphql.svg)](https://rubygems.org/gems/wcc-contentful-graphql)
 
 ## Supported Rails versions
 
-Please see the [most recent Travis-CI build](https://travis-ci.org/watermarkchurch/wcc-contentful) for the most
+Please see the [most recent CircleCI build](https://app.circleci.com/pipelines/github/watermarkchurch/wcc-contentful?branch=master) for the most
 up-to-date list of supported framework environments.  At the time of this writing, 
 the gem officially supports the following:
 

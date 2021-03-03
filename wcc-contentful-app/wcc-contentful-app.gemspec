@@ -4,6 +4,9 @@ lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'wcc/contentful/app/version'
 
+doc_version = Gem::Version.new(WCC::Contentful::App::VERSION).release.to_s.sub(/\.\d+$/, '')
+
+# rubocop:disable Metrics/LineLength
 Gem::Specification.new do |spec|
   spec.name          = 'wcc-contentful-app'
   spec.version       = WCC::Contentful::App::VERSION
@@ -14,6 +17,10 @@ Gem::Specification.new do |spec|
   spec.description   = 'Models, Controllers, and Views common to Watermark Church apps'
   spec.homepage      = 'https://github.com/watermarkchurch/wcc-contentful'
   spec.license       = 'MIT'
+
+  spec.metadata = {
+    'documentation_uri' => "https://watermarkchurch.github.io/wcc-contentful/#{doc_version}/wcc-contentful-app"
+  }
 
   spec.required_ruby_version = '>= 2.3'
 
@@ -57,3 +64,4 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'redcarpet', '~> 3.4'
   spec.add_dependency 'wcc-contentful', "~> #{WCC::Contentful::App::VERSION}"
 end
+# rubocop:enable Metrics/LineLength

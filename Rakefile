@@ -32,6 +32,11 @@ def sync_versions
 end
 
 task :check do
+  doc_version = Gem::Version.new(version).release.to_s.sub(/\.\d+$/, "")
+  unless File.exists?("docs/latest") && File.readlink("docs/latest") == "./#{doc_version}"
+    raise "docs/latest does not point to ./#{doc_version}.  Please run 'bin/doc'."
+  end
+
   GEMS.each do |gem|
     version_file = "#{gem}/lib/#{gem.gsub('-', '/')}/version"
     require_relative version_file
@@ -40,7 +45,13 @@ task :check do
     unless version_const == version
       raise "Versions are not synchronized!  Please update #{version_file}.rb"
     end
+
+    doc_folder = "docs/#{doc_version}/#{gem}"
+    unless File.exists?(doc_folder)
+      raise "Documentation does not exist in '#{doc_folder}'. please run 'bin/doc'"
+    end
   end
+
 end
 
 # After each version bump task, sync the versions of the gems
