@@ -173,15 +173,13 @@ RSpec.describe WCC::Contentful::LinkVisitor do
 
   context 'resolved entry with sys.locale' do
     let(:entry) {
-      JSON.parse(load_fixture('contentful/resolved_homepage_include_2.json')).tap do |e|
-        e['sys']['locale'] = 'en-US'
-      end
+      JSON.parse(load_fixture('contentful/resolved_homepage_include_2_in_locale.json'))
     }
 
     describe '#each' do
       it 'visits all links recursively' do
         visited = []
-        subject = described_class.new(entry.dup, :Link, :Entry, :Asset, depth: 2)
+        subject = described_class.new(entry.dup, :Link, :Asset, depth: 2)
 
         result =
           subject.each do |link, _field|
@@ -197,37 +195,54 @@ RSpec.describe WCC::Contentful::LinkVisitor do
         expect(visited).to_not include(entry.dig('sys', 'id'))
       end
 
-      it 'visits all fields' do
-        visited = {}
-        subject = described_class.new(entry.dup, depth: 2)
+      it 'visits all slugs' do
+        visited = []
+        subject = described_class.new(entry.dup, 'slug', depth: 4)
 
-        subject.each do |value, field|
-          visited[field] ||= []
-          visited[field] <<
-            if value.is_a?(Hash)
-              value.dig('sys', 'id')
-            else
-              value
-            end
+        subject.each do |value, field, locale|
+          expect(field.name).to eq('slug')
+          expect(field.type).to eq(:String)
+          expect(locale).to eq('en-US')
+          visited << value
         end
 
-        expected = %w[
-          title slug sections backgroundImage text primaryButton externalLink
-          secondaryButton style tag subtext embedCode link items header subpages
-          domainObject name actionButton faqs question answer
-          ionIcon
-        ]
-        expect(expected - visited.keys).to eq([])
-        expect(visited.keys - expected).to eq([])
+        expect(visited).to eq([
+                                '/',
+                                '/ministries/reengage',
+                                '/ministries/regen',
+                                '/ministries/merge',
+                                '/ministries/foundation-groups',
+                                '/conferences/mmtc',
+                                '/ctc',
+                                '/conferences/yatc',
+                                '/conferences/regeneration'
+                              ])
+      end
+
+      it 'visits all fields' do
+        visited = []
+        subject = described_class.new(entry.dup, depth: 3)
+
+        subject.each do |_value, field, _locale, _idx|
+          visited << field.name
+        end
+
+        expect(visited.take(10).join("\n")).to eq(
+          %w[
+            title slug sections backgroundImage text primaryButton text externalLink
+            secondaryButton text
+          ].join("\n")
+        )
+        expect(visited.count).to eq(143)
       end
 
       it 'handles nil entries' do
         visited = []
-        subject = described_class.new(entry.dup, :Link, :Entry, :Asset, depth: 2)
+        subject = described_class.new(entry.dup, :Link, :Asset, depth: 2)
 
         # insert a nil section & broken (nil) link
-        entry.dig('fields', 'sections', 'en-US') << nil
-        entry.dig('fields', 'sections', 'en-US', 2,
+        entry.dig('fields', 'sections') << nil
+        entry.dig('fields', 'sections', 2,
           'fields')['link'] = nil
 
         subject.each do |link|
