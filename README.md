@@ -103,9 +103,12 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/waterm
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
 
-## Code of Conduct
+## Code of Ethics
 
-Everyone interacting in the WCC::Contentful project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/watermarkchurch/wcc-contentful/blob/master/CODE_OF_CONDUCT.md).
+The developers at Watermark Community Church have pledged to govern their interactions with each other, with their clients, and with the larger wcc-contentful user community in accordance with the "instruments of good works" from chapter 4 of The Rule of St. Benedict (hereafter: "The Rule"). This code of ethics has proven its mettle in thousands of diverse communities for over 1,500 years, and has served as a baseline for many civil law codes since the time of Charlemagne.
+
+[See the full Code of Ethics](./CODE_OF_ETHICS.md)
+
 
 ## Deployment instructions:
 
