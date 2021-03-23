@@ -33,22 +33,20 @@
             "linkType": "ContentType",
             "id": "page"
           }
-        }
+        },
+        "locale": "en-US"
       },
       "fields": {
         "title": "Step 5 - Week 2 Guide",
         "slug": "/ministries/regen/12steps/step5w2",
         "header": {
-          "en-US": {
             "sys": {
               "type": "Link",
               "linkType": "Entry",
               "id": "6rWcFFiW4gsukKI8ecue62"
             }
-          }
         },
-        "sections": {
-          "en-US": [
+        "sections": [
             {
               "sys": {
                 "type": "Link",
@@ -70,10 +68,8 @@
                 "id": "1UglJqaFIMmUIQsk6k4yq4"
               }
             }
-          ]
-        },
+          ],
         "domainObject": {
-          "en-US": {
             "sys": {
               "type": "Link",
               "linkType": "Entry",
@@ -81,7 +77,6 @@
             }
           }
         }
-      }
     },
     {
       "sys": {
@@ -116,7 +111,6 @@
         "title": "Overview",
         "slug": "/ministries/merge",
         "header": {
-          "en-US": {
             "sys": {
               "type": "Link",
               "linkType": "Entry",
@@ -124,8 +118,7 @@
             }
           }
         },
-        "sections": {
-          "en-US": [
+        "sections": [
             {
               "sys": {
                 "type": "Link",
@@ -168,10 +161,8 @@
                 "id": "1jHNV9tCgCaq6qkwmsYOEQ"
               }
             }
-          ]
-        },
-        "subpages": {
-          "en-US": [
+          ],
+        "subpages": [
             {
               "sys": {
                 "type": "Link",
@@ -193,18 +184,14 @@
                 "id": "2x4kbH3IOkM4IYwCm8yUsE"
               }
             }
-          ]
-        },
+          ],
         "domainObject": {
-          "en-US": {
-            "sys": {
-              "type": "Link",
-              "linkType": "Entry",
-              "id": "5AV1HUXQ7mUuAO6qyCmMg6"
-            }
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "5AV1HUXQ7mUuAO6qyCmMg6"
           }
         }
-      }
     },
     {
       "sys": {
@@ -273,7 +260,6 @@
         "title": "Launch Guide",
         "slug": "/ministries/regen/12steps/guide",
         "header": {
-          "en-US": {
             "sys": {
               "type": "Link",
               "linkType": "Entry",
@@ -307,16 +293,13 @@
           ]
         },
         "domainObject": {
-          "en-US": {
             "sys": {
               "type": "Link",
               "linkType": "Entry",
               "id": "2UrIsNCJM4OYY8CQUu8kY6"
             }
           }
-        }
-      }
-    },
+        },
     {
       "sys": {
         "space": {
@@ -350,7 +333,6 @@
         "title": "Overview",
         "slug": "/ministries/regen",
         "header": {
-          "en-US": {
             "sys": {
               "type": "Link",
               "linkType": "Entry",
@@ -358,8 +340,7 @@
             }
           }
         },
-        "sections": {
-          "en-US": [
+        "sections": [
             {
               "sys": {
                 "type": "Link",
@@ -416,10 +397,8 @@
                 "id": "2mh3TbLvMwAEqOIic4accq"
               }
             }
-          ]
-        },
-        "subpages": {
-          "en-US": [
+          ],
+        "subpages": [
             {
               "sys": {
                 "type": "Link",
@@ -455,10 +434,8 @@
                 "id": "4kaOJiFuVGiSO0gYYCQ0Oy"
               }
             }
-          ]
-        },
+          ],
         "domainObject": {
-          "en-US": {
             "sys": {
               "type": "Link",
               "linkType": "Entry",
@@ -466,8 +443,6 @@
             }
           }
         }
-      }
-    }
   ],
   "includes": {
     "Entry": [
