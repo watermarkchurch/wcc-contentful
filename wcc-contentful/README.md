@@ -2,9 +2,91 @@
 [![Build Status](https://travis-ci.org/watermarkchurch/wcc-contentful.svg?branch=master)](https://travis-ci.org/watermarkchurch/wcc-contentful)
 [![Coverage Status](https://coveralls.io/repos/github/watermarkchurch/wcc-contentful/badge.svg?branch=master)](https://coveralls.io/github/watermarkchurch/wcc-contentful?branch=master)
 
-Full documentation: https://watermarkchurch.github.io/wcc-contentful/
+Full documentation: https://watermarkchurch.github.io/wcc-contentful/latest/wcc-contentful/
 
 # WCC::Contentful
+
+An alternative to Contentful's [contentful.rb ruby client](https://github.com/contentful/contentful.rb/), [contentful_model](https://github.com/contentful/contentful_model), and [contentful_rails](https://github.com/contentful/contentful_rails) gems all in one.
+
+Table of Contents:
+
+1. [Why?](#why-did-you-rewrite-the-contentful-ruby-stack)
+2. [Installation](#installation)
+
+## Why did you rewrite the Contentful ruby stack?
+
+We started working with Contentful almost 3 years ago.  Since that time, Contentful's ruby stack has improved, but there are still a number of pain points that we feel we have addressed better with our gem.  These are:
+
+* [Low-level caching](#low-level-caching)
+* [Better integration with Rails & Rails models](#better-rails-integration)
+* [Automatic pagination and Automatic link resolution](#automatic-pagination-and-link-resolution)
+* [Automatic webhook management](#automatic-webhook-management)
+
+Our gem no longer depends on any of the Contentful gems and interacts directly with the [Contentful CDA](https://www.contentful.com/developers/docs/references/content-delivery-api/) and [Content Management API](https://www.contentful.com/developers/docs/references/content-management-api/) over HTTPS.
+
+### Low-level caching
+
+The wcc-contentful gem enables caching at two levels: the HTTP response using [Faraday HTTP cache middleware](https://github.com/sourcelevel/faraday-http-cache), and at the Entry level using the Rails cache and the [Sync API](https://www.contentful.com/developers/docs/references/content-delivery-api/#/reference/synchronization) to keep it up to date.  We've found these two cache layers to be very effective at reducing both round trip latency to the Content Delivery API, as well as reducing our monthly API request usage. (which reduces our overage charges.  Hooray!)
+
+#### At the request/response level
+By default, the contentful.rb gem requires the [HTTP library](https://rubygems.org/gems/http).  While simple and straightforward to use, it is not as powerful for caching.  We decided to make our client conform to the [Faraday gem's API](https://github.com/lostisland/faraday).  If you prefer not to use Faraday, you can choose to supply your own HTTP adapter that "quacks like" Faraday (see the [TyphoeusAdapter](https://github.com/watermarkchurch/wcc-contentful/blob/master/wcc-contentful/lib/wcc/contentful/simple_client/typhoeus_adapter.rb) for one implementation).
+
+Using Faraday makes it easy to add Middleware.  As an example, our flagship Rails app that powers watermark.org uses the following configuration in Production, which provides us with instrumentation through statsd, logging, and caching:
+```rb
+config.connection = Faraday.new do |builder|
+  builder.use :http_cache,
+    shared_cache: false,
+    store: ActiveSupport::Cache::MemoryStore.new(size: 512.megabytes),
+    logger: Rails.logger,
+    serializer: Marshal,
+    instrumenter: ActiveSupport::Notifications
+
+  builder.use :gzip
+  builder.response :logger, Rails.logger, headers: false, bodies: false if Rails.env.development?
+  builder.request :instrumentation
+  builder.adapter :typhoeus
+end
+```
+
+#### At the Entry level
+
+Our stack has three layers, the middle layer being essentially a cache for individual Entry hashes parsed out of responses from the Delivery API.  We were able to add a caching layer here which stores entries retrieved over the Sync API, and responds to queries with cached versions of local content when possible.  We consider this to be our best innovation on the Contentful ruby stack.
+
+We have successfully created caching layers using Memcached, Postgres, and an in-memory hash.  The architecture allows other caching implementations to be created fairly easily, and we have a set of rspec specs that can verify that a cache store behaves appropriately.  For more information, [see the documentation on the caching modes here](https://watermarkchurch.github.io/wcc-contentful/latest/wcc-contentful/WCC/Contentful/Store.html).
+
+### Better Rails Integration
+
+When we initially got started with the Contentful ruby models, we encountered one problem that was more frustrating than all others: If a field exists in the content model, but the particular entry we're working with does not have that field populated, then accessing that field raised a `NoMethodError`.  This caused us to litter our code with `if defined?(entry.my_field)` which is bad practice.  (Note: this has since been fixed in contentful.rb v2).
+
+We decided it was better to not rely on `method_missing?` (what contentful.rb does), and instead to use `define_method` in an initializer to generate the methods for our models.  This has the advantage that calling `.instance_methods` on a model class includes all the fields present in the content model.
+
+We also took advantage of Rails' naming conventions to automatically infer the content type name based on the class name.  Thus in our code, we have `app/models/page.rb` which defines `class Page << WCC::Contentful::Model::Page`, and is automatically linked to the `page` content type ID.  (Note: this is overridable on a per-model basis)
+
+All our models are automatically generated at startup which improves response times at the expense of initialization time.  In addition, our content model registry allows easy definition of custom models in your `app/models` directory to override fields.  This plays nice with other gems like algoliasearch-rails, which allows you to declaratively manage your Algolia indexes.  Another example from our flagship watermark.org:
+
+```rb
+class Page < WCC::Contentful::Model::Page
+  include AlgoliaSearch
+
+  algoliasearch(index_name: 'pages') do
+    attribute(:title, :slug)
+    ...
+  end
+```
+
+### Automatic Pagination and Link Resolution
+
+Using the `contentful_model` gem, calling `Page.all.load` does not give you all Page entries if there are more than 100.  To get the next page you must call `.paginate` on the response.  By contrast, `Page.find_all` in the `wcc-contentful` gem gives you a [Lazy Enumerator](https://ruby-doc.org/core-2.5.0/Enumerator/Lazy.html).  As you iterate past the 100th entry, the enumerator will automatically fetch the next page.  If you only enumerate 99 entries (say with `.take(99)`), then the second page will never be fetched.
+
+Similarly, if your Page references an asset, say `hero_image`, that field returns a `Link` object rather than the actual `Asset`.  You must either predefine how many links you need using `Page.load_children(3).all.load`, or detect that `hero_image` is a `Link` like `if @page.hero_image.is_a? Contentful::Link` and then call `.resolve` on the link.  We found all of that to be too cumbersome when we are down in a nested partial view template that may be invoked from multiple places.
+
+The `wcc-contentful` gem, by contrast, automatically resolves a link when accessing the associated attribute.  So in our example above, `wcc-contentful` will **always** return a `WCC::Contentful::Asset` when calling `@page.hero_image`, even if it has to execute a query to cdn.contentful.com in order to fetch it.
+
+Warning: This can easily lead to you exhausting your Contentful API quota if you do not carefully tune your cache, which you should be doing anyways!  The default settings will use the Rails cache to try to cache these resolutions, but *you are ultimately responsible for how many queries you execute!*
+
+### Automatic webhook management
+
+The `wcc-contentful` gem, just like `contentful_rails`, provides an Engine to be mounted in your Rails routes file.  Unlike `contentful_rails`, if you also configure `wcc-contentful` with a Contentful Management Token and a public `app_url`, then on startup the `wcc-contentful` engine will reach out to the Contentful Management API and ensure that a webhook is configured to point to your app.  This is one less devops burden on you, and plays very nicely in with Heroku review apps.
 
 ## Installation
 
