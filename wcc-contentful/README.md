@@ -12,6 +12,19 @@ Table of Contents:
 
 1. [Why?](#why-did-you-rewrite-the-contentful-ruby-stack)
 2. [Installation](#installation)
+3. [Configuration](#configure)
+4. [Usage](#usage)
+  1. [Model API](#wcccontentfulmodel-api)
+  2. [Store API](#store-api)
+  3. [Direct CDN client](#direct-cdn-api-simpleclient)
+  4. [Accessing the APIs](#accessing-the-apis-within-application-code)
+5. [Architecture](#architecture)
+6. [Test Helpers](#test-helpers)
+7. [Advanced Configuration Example](#advanced-configuration-example)
+8. [Development](#development)
+9. [Contributing](#contributing)
+10. [License](#license)
+
 
 ## Why did you rewrite the Contentful ruby stack?
 
@@ -454,12 +467,8 @@ After checking out the repo, run `bin/setup` to install dependencies. Then, run 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/watermarkchurch/wcc-contentful. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/watermarkchurch/wcc-contentful. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to our [code of conduct](https://github.com/watermarkchurch/wcc-contentful/blob/master/CODE_OF_CONDUCT.md).
 
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
-## Code of Conduct
-
-Everyone interacting in the WCC::Contentful project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/watermarkchurch/wcc-contentful/blob/master/CODE_OF_CONDUCT.md).
