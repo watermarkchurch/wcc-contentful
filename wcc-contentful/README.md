@@ -325,7 +325,7 @@ end
 
 ## Architecture
 
-![wcc-contentful diagram](./doc/wcc-contentful.png)
+![wcc-contentful diagram](./doc-static/wcc-contentful.png)
 
 ## Test Helpers
 

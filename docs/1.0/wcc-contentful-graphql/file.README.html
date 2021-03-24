@@ -71,7 +71,7 @@ resolve all the requested data.</p>
 <h3 id="important-note">Important note!</h3>
 
 <p>The GraphQL schema currently does not utilize the &quot;include&quot; parameter, so it is
-a very good idea to configure your store to either <code>:direct</code>
+a very good idea to configure your store to either <code>:eager_sync</code>
 or <code>:lazy_sync</code>.  If you don&#39;t do this, you will see a lot of requests to
 Contentful for specific entries by ID as the GraphQL resolver walks all your links!</p>
 

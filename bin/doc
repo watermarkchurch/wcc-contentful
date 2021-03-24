@@ -19,6 +19,9 @@ do
     cd "$gem";
 
     BUNDLE_GEMFILE=../Gemfile bundle exec yard doc --output-dir "../docs/$version/$gem"
+    if [[ -d "./doc-static" ]]; then
+      cp -R "./doc-static" "../docs/$version/$gem/doc-static"
+    fi
   )
 done
 

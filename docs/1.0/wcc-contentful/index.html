@@ -61,9 +61,110 @@
 <a href="https://travis-ci.org/watermarkchurch/wcc-contentful"><img src="https://travis-ci.org/watermarkchurch/wcc-contentful.svg?branch=master" alt="Build Status"></a>
 <a href="https://coveralls.io/github/watermarkchurch/wcc-contentful?branch=master"><img src="https://coveralls.io/repos/github/watermarkchurch/wcc-contentful/badge.svg?branch=master" alt="Coverage Status"></a></p>
 
-<p>Full documentation: <a href="https://www.rubydoc.info/gems/wcc-contentful">https://www.rubydoc.info/gems/wcc-contentful</a></p>
+<p>Full documentation: <a href="https://watermarkchurch.github.io/wcc-contentful/latest/wcc-contentful/">https://watermarkchurch.github.io/wcc-contentful/latest/wcc-contentful/</a></p>
 
 <h1 id="wcc-contentful">WCC::Contentful</h1>
+
+<p>An alternative to Contentful&#39;s <a href="https://github.com/contentful/contentful.rb/">contentful.rb ruby client</a>, <a href="https://github.com/contentful/contentful_model">contentful_model</a>, and <a href="https://github.com/contentful/contentful_rails">contentful_rails</a> gems all in one.</p>
+
+<p>Table of Contents:</p>
+
+<ol>
+<li><a href="#why-did-you-rewrite-the-contentful-ruby-stack">Why?</a></li>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#configure">Configuration</a></li>
+<li><a href="#usage">Usage</a>
+
+<ol>
+<li><a href="#wcccontentfulmodel-api">Model API</a></li>
+<li><a href="#store-api">Store API</a></li>
+<li><a href="#direct-cdn-api-simpleclient">Direct CDN client</a></li>
+<li><a href="#accessing-the-apis-within-application-code">Accessing the APIs</a></li>
+</ol></li>
+<li><a href="#architecture">Architecture</a></li>
+<li><a href="#test-helpers">Test Helpers</a></li>
+<li><a href="#advanced-configuration-example">Advanced Configuration Example</a></li>
+<li><a href="#development">Development</a></li>
+<li><a href="#contributing">Contributing</a></li>
+<li><a href="#license">License</a></li>
+</ol>
+
+<h2 id="why-did-you-rewrite-the-contentful-ruby-stack">Why did you rewrite the Contentful ruby stack?</h2>
+
+<p>We started working with Contentful almost 3 years ago.  Since that time, Contentful&#39;s ruby stack has improved, but there are still a number of pain points that we feel we have addressed better with our gem.  These are:</p>
+
+<ul>
+<li><a href="#low-level-caching">Low-level caching</a></li>
+<li><a href="#better-rails-integration">Better integration with Rails &amp; Rails models</a></li>
+<li><a href="#automatic-pagination-and-link-resolution">Automatic pagination and Automatic link resolution</a></li>
+<li><a href="#automatic-webhook-management">Automatic webhook management</a></li>
+</ul>
+
+<p>Our gem no longer depends on any of the Contentful gems and interacts directly with the <a href="https://www.contentful.com/developers/docs/references/content-delivery-api/">Contentful CDA</a> and <a href="https://www.contentful.com/developers/docs/references/content-management-api/">Content Management API</a> over HTTPS.</p>
+
+<h3 id="low-level-caching">Low-level caching</h3>
+
+<p>The wcc-contentful gem enables caching at two levels: the HTTP response using <a href="https://github.com/sourcelevel/faraday-http-cache">Faraday HTTP cache middleware</a>, and at the Entry level using the Rails cache and the <a href="https://www.contentful.com/developers/docs/references/content-delivery-api/#/reference/synchronization">Sync API</a> to keep it up to date.  We&#39;ve found these two cache layers to be very effective at reducing both round trip latency to the Content Delivery API, as well as reducing our monthly API request usage. (which reduces our overage charges.  Hooray!)</p>
+
+<h4 id="at-the-request-response-level">At the request/response level</h4>
+
+<p>By default, the contentful.rb gem requires the <a href="https://rubygems.org/gems/http">HTTP library</a>.  While simple and straightforward to use, it is not as powerful for caching.  We decided to make our client conform to the <a href="https://github.com/lostisland/faraday">Faraday gem&#39;s API</a>.  If you prefer not to use Faraday, you can choose to supply your own HTTP adapter that &quot;quacks like&quot; Faraday (see the <a href="https://github.com/watermarkchurch/wcc-contentful/blob/master/wcc-contentful/lib/wcc/contentful/simple_client/typhoeus_adapter.rb">TyphoeusAdapter</a> for one implementation).</p>
+
+<p>Using Faraday makes it easy to add Middleware.  As an example, our flagship Rails app that powers watermark.org uses the following configuration in Production, which provides us with instrumentation through statsd, logging, and caching:</p>
+
+<pre class="code rb"><code class="rb">config.connection = Faraday.new do |builder|
+  builder.use :http_cache,
+    shared_cache: false,
+    store: ActiveSupport::Cache::MemoryStore.new(size: 512.megabytes),
+    logger: Rails.logger,
+    serializer: Marshal,
+    instrumenter: ActiveSupport::Notifications
+
+  builder.use :gzip
+  builder.response :logger, Rails.logger, headers: false, bodies: false if Rails.env.development?
+  builder.request :instrumentation
+  builder.adapter :typhoeus
+end
+</code></pre>
+
+<h4 id="at-the-entry-level">At the Entry level</h4>
+
+<p>Our stack has three layers, the middle layer being essentially a cache for individual Entry hashes parsed out of responses from the Delivery API.  We were able to add a caching layer here which stores entries retrieved over the Sync API, and responds to queries with cached versions of local content when possible.  We consider this to be our best innovation on the Contentful ruby stack.</p>
+
+<p>We have successfully created caching layers using Memcached, Postgres, and an in-memory hash.  The architecture allows other caching implementations to be created fairly easily, and we have a set of rspec specs that can verify that a cache store behaves appropriately.  For more information, <a href="https://watermarkchurch.github.io/wcc-contentful/latest/wcc-contentful/WCC/Contentful/Store.html">see the documentation on the caching modes here</a>.</p>
+
+<h3 id="better-rails-integration">Better Rails Integration</h3>
+
+<p>When we initially got started with the Contentful ruby models, we encountered one problem that was more frustrating than all others: If a field exists in the content model, but the particular entry we&#39;re working with does not have that field populated, then accessing that field raised a <code>NoMethodError</code>.  This caused us to litter our code with <code>if defined?(entry.my_field)</code> which is bad practice.  (Note: this has since been fixed in contentful.rb v2).</p>
+
+<p>We decided it was better to not rely on <code>method_missing?</code> (what contentful.rb does), and instead to use <code>define_method</code> in an initializer to generate the methods for our models.  This has the advantage that calling <code>.instance_methods</code> on a model class includes all the fields present in the content model.</p>
+
+<p>We also took advantage of Rails&#39; naming conventions to automatically infer the content type name based on the class name.  Thus in our code, we have <code>app/models/page.rb</code> which defines <code>class Page &lt;&lt; WCC::Contentful::Model::Page</code>, and is automatically linked to the <code>page</code> content type ID.  (Note: this is overridable on a per-model basis)</p>
+
+<p>All our models are automatically generated at startup which improves response times at the expense of initialization time.  In addition, our content model registry allows easy definition of custom models in your <code>app/models</code> directory to override fields.  This plays nice with other gems like algoliasearch-rails, which allows you to declaratively manage your Algolia indexes.  Another example from our flagship watermark.org:</p>
+
+<pre class="code rb"><code class="rb">class Page &lt; WCC::Contentful::Model::Page
+  include AlgoliaSearch
+
+  algoliasearch(index_name: &#39;pages&#39;) do
+    attribute(:title, :slug)
+    ...
+  end
+</code></pre>
+
+<h3 id="automatic-pagination-and-link-resolution">Automatic Pagination and Link Resolution</h3>
+
+<p>Using the <code>contentful_model</code> gem, calling <code>Page.all.load</code> does not give you all Page entries if there are more than 100.  To get the next page you must call <code>.paginate</code> on the response.  By contrast, <code>Page.find_all</code> in the <code>wcc-contentful</code> gem gives you a <a href="https://ruby-doc.org/core-2.5.0/Enumerator/Lazy.html">Lazy Enumerator</a>.  As you iterate past the 100th entry, the enumerator will automatically fetch the next page.  If you only enumerate 99 entries (say with <code>.take(99)</code>), then the second page will never be fetched.</p>
+
+<p>Similarly, if your Page references an asset, say <code>hero_image</code>, that field returns a <code>Link</code> object rather than the actual <code>Asset</code>.  You must either predefine how many links you need using <code>Page.load_children(3).all.load</code>, or detect that <code>hero_image</code> is a <code>Link</code> like <code>if @page.hero_image.is_a? Contentful::Link</code> and then call <code>.resolve</code> on the link.  We found all of that to be too cumbersome when we are down in a nested partial view template that may be invoked from multiple places.</p>
+
+<p>The <code>wcc-contentful</code> gem, by contrast, automatically resolves a link when accessing the associated attribute.  So in our example above, <code>wcc-contentful</code> will <strong>always</strong> return a <code>WCC::Contentful::Asset</code> when calling <code>@page.hero_image</code>, even if it has to execute a query to cdn.contentful.com in order to fetch it.</p>
+
+<p>Warning: This can easily lead to you exhausting your Contentful API quota if you do not carefully tune your cache, which you should be doing anyways!  The default settings will use the Rails cache to try to cache these resolutions, but <em>you are ultimately responsible for how many queries you execute!</em></p>
+
+<h3 id="automatic-webhook-management">Automatic webhook management</h3>
+
+<p>The <code>wcc-contentful</code> gem, just like <code>contentful_rails</code>, provides an Engine to be mounted in your Rails routes file.  Unlike <code>contentful_rails</code>, if you also configure <code>wcc-contentful</code> with a Contentful Management Token and a public <code>app_url</code>, then on startup the <code>wcc-contentful</code> engine will reach out to the Contentful Management API and ensure that a webhook is configured to point to your app.  This is one less devops burden on you, and plays very nicely in with Heroku review apps.</p>
 
 <h2 id="installation">Installation</h2>
 
@@ -79,12 +180,12 @@
 
 <p>And then execute:</p>
 
-<pre class="code ruby"><code class="ruby">    $ bundle
+<pre class="code ruby"><code class="ruby">$ bundle
 </code></pre>
 
-<p>Or install it yourself as:</p>
+<p>Or install it yourself:</p>
 
-<pre class="code ruby"><code class="ruby">    $ gem install wcc-contentful
+<pre class="code ruby"><code class="ruby">$ gem install wcc-contentful
 </code></pre>
 
 <h2 id="configure">Configure</h2>
@@ -100,8 +201,8 @@ end
 WCC::Contentful.init!
 </code></pre>
 
-<p>All configuration options can be found <a href="https://www.rubydoc.info/gems/wcc-contentful/WCC/Contentful/Configuration">in the rubydoc</a> under
-<span class='object_link'><a href="WCC/Contentful/Configuration.html" title="WCC::Contentful::Configuration (class)">WCC::Contentful::Configuration</a></span></p>
+<p>All configuration options can be found <a href="https://watermarkchurch.github.io/wcc-contentful/latest/wcc-contentful/WCC/Contentful/Configuration">in the rubydoc under
+WCC::Contentful::Configuration</a> </p>
 
 <h2 id="usage">Usage</h2>
 
@@ -279,7 +380,7 @@ end
 
 <h2 id="architecture">Architecture</h2>
 
-<p><img src="./doc/wcc-contentful.png" alt="wcc-contentful diagram"></p>
+<p><img src="./doc-static/wcc-contentful.png" alt="wcc-contentful diagram"></p>
 
 <h2 id="test-helpers">Test Helpers</h2>
 
@@ -415,15 +516,15 @@ rake wcc_contentful:download_schema
 
 <h2 id="contributing">Contributing</h2>
 
-<p>Bug reports and pull requests are welcome on GitHub at <a href="https://github.com/watermarkchurch/wcc-contentful">https://github.com/watermarkchurch/wcc-contentful</a>. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the <a href="http://contributor-covenant.org">Contributor Covenant</a> code of conduct.</p>
+<p>Bug reports and pull requests are welcome on GitHub at <a href="https://github.com/watermarkchurch/wcc-contentful">https://github.com/watermarkchurch/wcc-contentful</a>.</p>
+
+<p>The developers at Watermark Community Church have pledged to govern their interactions with each other, with their clients, and with the larger wcc-contentful user community in accordance with the &quot;instruments of good works&quot; from chapter 4 of The Rule of St. Benedict (hereafter: &quot;The Rule&quot;). This code of ethics has proven its mettle in thousands of diverse communities for over 1,500 years, and has served as a baseline for many civil law codes since the time of Charlemagne.</p>
+
+<p><a href="https://github.com/watermarkchurch/wcc-contentful/blob/master/CODE_OF_ETHICS.md">See the full Code of Ethics</a></p>
 
 <h2 id="license">License</h2>
 
 <p>The gem is available as open source under the terms of the <a href="http://opensource.org/licenses/MIT">MIT License</a>.</p>
-
-<h2 id="code-of-conduct">Code of Conduct</h2>
-
-<p>Everyone interacting in the WCC::Contentful project&#39;s codebases, issue trackers, chat rooms and mailing lists is expected to follow the <a href="https://github.com/watermarkchurch/wcc-contentful/blob/master/CODE_OF_CONDUCT.md">code of conduct</a>.</p>
 </div></div>
 
       <div id="footer">
