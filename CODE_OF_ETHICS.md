@@ -1,17 +1,17 @@
 # Watermark Church Code of Ethics
 
-In our desire to be an open and welcoming place where all people can join us in creating great software without first subscribing to our beliefs, we felt it wise to follow the lead of the SQLite project developers and promise a Code of Ethics instead of a Code of Conduct.  We hope and pray that this document will assure you of our desire to dialogue and work productively with everyone.
+In our desire to be an open and welcoming place where all people can join us in creating great software, we invite you to learn more about [our mission](https://www.watermark.org/discover-watermark) at Watermark Community Church, even as we work independently to create unique software projects for our clients and the larger community.  Our Development Team felt it wise to follow the lead of the SQLite project developers and promise a Code of Ethics instead of a Code of Conduct. We hope and pray that this document will assure you of our desire to dialogue and work productively with everyone.
 
 The following is adapted from https://www.sqlite.org/codeofethics.html
 
-The developers at Watermark Community Church have pledged to govern their interactions with each other, with their clients, and with the larger wcc-contentful user community in accordance with the "instruments of good works" from chapter 4 of The Rule of St. Benedict (hereafter: "The Rule"). This code of ethics has proven its mettle in thousands of diverse communities for over 1,500 years, and has served as a baseline for many civil law codes since the time of Charlemagne.
+The developers at Watermark Community Church have pledged to govern their interactions with each other, with their clients, and with the larger wcc-contentful user community in accordance with the "instruments of good works" from chapter 4 of The Rule of St. Benedict (hereafter: "The Rule"). This code of ethics has proven its mettle in thousands of diverse communities for over 1,500 years and has served as a baseline for many civil law codes since the time of Charlemagne.
 
 ## 1. Scope of Application
 
-No one is required to follow The Rule, to know The Rule, or even to think that The Rule is a good idea. The Founder of 
-ite believes that anyone who follows The Rule will live a happier and more productive life, but individuals are free to dispute or ignore that advice if they wish.
+No one is required to follow The Rule, to know The Rule, or even to think that The Rule is a good idea. The developers at Watermark Community Church believe that anyone who follows The Rule will live a happier and more productive life, but individuals are free to dispute or ignore that advice if they wish.
 
-The developers at Watermark Community Church and all current developers have pledged to follow the spirit of The Rule to the best of their ability. They view The Rule as their promise to all wcc-contentful users of how the developers are expected to behave. This is a one-way promise, or covenant. In other words, the developers are saying: "We will treat you this way regardless of how you treat us."
+The developers at Watermark Community Church have pledged to follow the spirit of The Rule to the best of their ability. They view The Rule as their promise to all wcc-contentful users of how the developers are expected to behave. This is a one-way promise, or covenant. In other words, the developers are saying: "We will treat you this way regardless of how you treat us."
+
 
 ## 2. The Rule
 
