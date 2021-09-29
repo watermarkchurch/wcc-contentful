@@ -546,6 +546,68 @@ RSpec.shared_examples 'basic store' do
       expect(found.dig('sys', 'id')).to eq('idTwo')
       expect(found.dig('fields', 'system', 'en-US')).to eq('Two')
     end
+
+    [
+      [Integer, proc { rand(-4_611_686_018_427_387_903..4_611_686_018_427_387_903) }],
+      [Float, proc { rand }]
+    ].each do |(type, generator)|
+      context "by #{type} equality" do
+        it 'can apply filter object' do
+          data =
+            1.upto(10).map do |i|
+              {
+                'sys' => { 'id' => "k#{i}", 'contentType' => { 'sys' => { 'id' => 'test1' } } },
+                'fields' => { type.to_s => { 'en-US' => generator.call } }
+              }
+            end
+
+          desired_value = generator.call
+          desired = {
+            'sys' => { 'id' => "k#{rand}", 'contentType' => { 'sys' => { 'id' => 'test1' } } },
+            'fields' => { type.to_s => { 'en-US' => desired_value } }
+          }
+
+          data << desired
+          data.shuffle.each { |d| subject.set(d.dig('sys', 'id'), d) }
+
+          # act
+          found = subject.find_by(content_type: 'test1', filter: { type.to_s => desired_value })
+
+          # assert
+          expect(found).to_not be_nil
+          expect(found).to eq(desired)
+        end
+
+        it 'filter object can find value in array' do
+          data =
+            1.upto(10).map do |i|
+              {
+                'sys' => {
+                  'id' => "k#{i}",
+                  'contentType' => { 'sys' => { 'id' => 'test1' } }
+                },
+                'fields' => { 'name' => { 'en-US' => [generator.call, generator.call] } }
+              }
+            end
+
+          desired_value = generator.call
+          desired = {
+            'sys' => { 'id' => "k#{rand}", 'contentType' => { 'sys' => { 'id' => 'test1' } } },
+            'fields' => { type.to_s => { 'en-US' => [generator.call, desired_value].shuffle } }
+          }
+
+          data << desired
+          data.shuffle.each { |d| subject.set(d.dig('sys', 'id'), d) }
+
+          # act
+          found = subject.find_by(content_type: 'test1', filter: { type.to_s => { eq: desired_value } })
+
+          # assert
+          expect(found).to_not be_nil
+          expect(found).to eq(desired)
+        end
+      end
+    end
   end
 
   describe '#find_all' do

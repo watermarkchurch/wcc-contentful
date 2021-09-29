@@ -253,12 +253,20 @@ module WCC::Contentful::Store
         end
 
         " AND t.data->#{quote_parameter_path(path)}" \
-          " ? $#{push_param(expected, params)}::text"
+          " @> to_jsonb($#{push_param(expected, params)})"
       end
+
+      PARAM_TYPES = {
+        String => 'text',
+        Integer => 'bigint',
+        Float => 'double precision'
+      }.freeze
 
       def push_param(param, params)
         params << param
-        params.length
+        param_type = PARAM_TYPES[param.class] || 'jsonb'
+
+        "#{params.length}::#{param_type}"
       end
 
       def quote_parameter_path(path)
