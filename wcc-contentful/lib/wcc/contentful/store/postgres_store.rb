@@ -257,9 +257,11 @@ module WCC::Contentful::Store
       end
 
       PARAM_TYPES = {
-        String => 'text',
-        Integer => 'bigint',
-        Float => 'double precision'
+        String => 'text'
+
+        # These can be cast directly to jsonb
+        # Integer => 'jsonb'
+        # Float => 'jsonb'
       }.freeze
 
       def push_param(param, params)
