@@ -14,7 +14,11 @@ module WCC::Contentful::ActiveRecordShim
   end
 
   def cache_key_with_version
-    "#{self.class.model_name}/#{id}-#{cache_version}"
+    "#{cache_key_without_version}-#{cache_version}"
+  end
+
+  def cache_key_without_version
+    "#{self.class.model_name}/#{id}"
   end
 
   def cache_version
