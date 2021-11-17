@@ -24,10 +24,7 @@ Gem::Specification.new do |spec|
     'documentation_uri' => "https://watermarkchurch.github.io/wcc-contentful/#{doc_version}/wcc-contentful-graphql"
   }
 
-  spec.files         =
-    `git ls-files -z`.split("\x0").reject do |f|
-      f.match(%r{^(test|spec|features)/})
-    end
+  spec.files = Dir['lib/**/*'] + %w[Rakefile README.md wcc-contentful-graphql.gemspec]
 
   spec.require_paths = ['lib']
 

@@ -29,6 +29,9 @@ Gem::Specification.new do |spec|
       f.match(%r{^(test|spec|features)/})
     end
 
+  spec.files = Dir['app/**/*', 'config/**/*', 'lib/**/*'] +
+    %w[Rakefile README.md wcc-contentful.gemspec]
+
   spec.require_paths = ['lib']
 
   spec.add_development_dependency 'byebug', '~> 11.0.1'
