@@ -31,7 +31,7 @@ ruby version.  Then, check out the appropriate Gemfile using the `bin/use` helpe
 $ rbenv local 2.2.6
 $ gem install bundler
 $ bundle install
-$ bin/use gemfiles/rails_5.2.gemfile
+$ bin/use gemfiles/rails_5.2_ruby_2.5.7.gemfile
 ```
 
 Now each of the `wcc-` gems has a Gemfile based on that Appraisal gemfile.  `cd`
