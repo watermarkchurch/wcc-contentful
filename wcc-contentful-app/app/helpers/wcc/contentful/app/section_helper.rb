@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'redcarpet'
-require '../wcc-contentful-app/lib/wcc/contentful/app/markdown_renderer'
 
 module WCC::Contentful::App::SectionHelper
   extend self
