@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'redcarpet'
+
 module WCC::Contentful::App
   class CustomMarkdownRender < Redcarpet::Render::HTML
     def initialize(options)
