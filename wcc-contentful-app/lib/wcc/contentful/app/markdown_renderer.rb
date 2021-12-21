@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative './custom_markdown_render'
+
 class WCC::Contentful::App::MarkdownRenderer
   def markdown(text)
     raise ArgumentError, 'markdown method requires text' unless text
