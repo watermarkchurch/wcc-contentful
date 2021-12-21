@@ -17,7 +17,7 @@ RSpec.describe WCC::Contentful::App::MarkdownRenderer do
 
   describe '#links_within_markdown' do
     context 'when given markdown that includes links' do
-      it 'returns an array that is not empty', focus: true do
+      it 'returns an array that is not empty' do
         markdown_links = subject.send(:links_within_markdown,
           markdown_string_with_links_that_have_classes)
 
