@@ -3,7 +3,7 @@
 module WCC
   module Contentful
     module Graphql
-      VERSION = '1.0.6'
+      VERSION = '1.0.7'
     end
   end
 end
