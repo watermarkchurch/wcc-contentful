@@ -34,8 +34,11 @@ module WCC::Contentful::App::SectionHelper
     CGI.escape(title.gsub(/\W+/, '-')) if title.present?
   end
 
-  def markdown(text)
-    html_to_render = WCC::Contentful::App::MarkdownRenderer.new.markdown(text)
+  def markdown(text, options = {})
+    renderer = WCC::Contentful::App::MarkdownRenderer.new(
+      options
+    )
+    html_to_render = renderer.markdown(text)
 
     content_tag(:div,
       CGI.unescapeHTML(html_to_render).html_safe,

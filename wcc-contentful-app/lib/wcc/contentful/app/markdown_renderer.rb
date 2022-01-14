@@ -3,32 +3,41 @@
 require_relative './custom_markdown_render'
 
 class WCC::Contentful::App::MarkdownRenderer
+  attr_reader :options, :extensions
+
+  def initialize(options = nil)
+    @extensions = {
+      autolink: true,
+      superscript: true,
+      disable_indented_code_blocks: true,
+      tables: true
+    }.merge!(options&.delete(:extensions) || {})
+
+    @options = {
+      filter_html: true,
+      hard_wrap: true,
+      link_attributes: { target: '_blank' },
+      space_after_headers: true,
+      fenced_code_blocks: true
+    }.merge!(options || {})
+  end
+
   def markdown(text)
     raise ArgumentError, 'markdown method requires text' unless text
 
     markdown_links = links_within_markdown(text)
     links_with_classes, raw_classes = gather_links_with_classes_data(markdown_links)
 
-    options = {
-      filter_html: true,
-      hard_wrap: true,
-      link_attributes: { target: '_blank' },
-      space_after_headers: true,
-      fenced_code_blocks: true,
+    options = @options.merge({
       links_with_classes: links_with_classes
-    }
-
-    extensions = {
-      autolink: true,
-      superscript: true,
-      disable_indented_code_blocks: true,
-      tables: true
-    }
+    })
 
     renderer = ::WCC::Contentful::App::CustomMarkdownRender.new(options)
     markdown = ::Redcarpet::Markdown.new(renderer, extensions)
     markdown.render(remove_markdown_href_class_syntax(raw_classes, text))
   end
+
+  alias_method :call, :markdown
 
   private
 
