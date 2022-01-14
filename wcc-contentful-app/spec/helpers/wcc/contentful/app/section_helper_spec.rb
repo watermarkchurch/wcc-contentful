@@ -370,5 +370,17 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
       expect(html).to include('<table class="table')
       expect(html).to match(/<tr>\s*<th>\s*col1/)
     end
+
+    it 'allows setting :with_toc_data option' do
+      html = helper.markdown <<~MARKDOWN, with_toc_data: true
+        # some h1
+        some text
+        ## some h2
+        some more text
+      MARKDOWN
+
+      expect(html).to include('<h1 id="some-h1">some h1</h1>')
+      expect(html).to include('<h2 id="some-h2">some h2</h2>')
+    end
   end
 end
