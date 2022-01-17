@@ -7,8 +7,11 @@ module WCC::Contentful
   class ModelBuilder
     include Helpers
 
-    def initialize(types)
+    attr_reader :namespace
+
+    def initialize(types, namespace: WCC::Contentful::Model)
       @types = types
+      @namespace = namespace
     end
 
     def build_models
@@ -21,12 +24,12 @@ module WCC::Contentful
 
     def build_model(typedef)
       const = typedef.name
-      return WCC::Contentful::Model.const_get(const) if WCC::Contentful::Model.const_defined?(const)
+      return namespace.const_get(const) if namespace.const_defined?(const)
 
       # TODO: https://github.com/dkubb/ice_nine ?
       typedef = typedef.deep_dup.freeze
-      WCC::Contentful::Model.const_set(const,
-        Class.new(WCC::Contentful::Model) do
+      namespace.const_set(const,
+        Class.new(namespace) do
           extend ModelSingletonMethods
           include ModelMethods
           include Helpers

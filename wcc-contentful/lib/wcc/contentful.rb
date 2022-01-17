@@ -34,7 +34,10 @@ module WCC::Contentful
     # Gets the current configuration, after calling WCC::Contentful.configure
     attr_reader :configuration
 
-    attr_reader :types
+    def types
+      ActiveSupport::Deprecation.warn('Use WCC::Contentful::Model.schema instead')
+      WCC::Contentful::Model.schema
+    end
 
     # Gets all queryable locales.
     # Reserved for future use.
@@ -120,13 +123,12 @@ module WCC::Contentful
         ' Check your access token and space ID.'
     end
 
-    indexer = ContentTypeIndexer.from_json_schema(@content_types)
-    @types = indexer.types
+    # Set the schema on the default WCC::Contentful::Model
+    WCC::Contentful::Model.schema(@content_types)
 
     # Drop an initial sync
     WCC::Contentful::SyncEngine::Job.perform_later if defined?(WCC::Contentful::SyncEngine::Job)
 
-    WCC::Contentful::ModelBuilder.new(@types).build_models
     @configuration = @configuration.freeze
     @initialized = true
   end
