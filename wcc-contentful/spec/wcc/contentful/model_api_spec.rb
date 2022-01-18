@@ -313,6 +313,152 @@ RSpec.describe WCC::Contentful::ModelAPI do
     }.to instrument('find.model.contentful.wcc')
   end
 
+  it 'subclass instruments find using configured instrumentation', focus: true do
+    class MyBlogPost2 < TestNamespace::BlogPost
+    end
+
+    instrumentation = double
+    allow(instrumentation).to receive(:instrument)
+    allow(services).to receive(:instrumentation)
+      .and_return(instrumentation)
+
+    allow(store).to receive(:find)
+
+    # act
+    MyBlogPost2.find('1234')
+
+    expect(instrumentation).to have_received(:instrument)
+      .with('find.model.contentful.wcc',
+        content_type: 'blogPost', id: '1234', options: {})
+  end
+
+  it 'finds all by content type' do
+    allow(store).to receive(:find_all)
+      .with(content_type: 'blogPost', options: {})
+      .and_return([
+        {
+          'sys' => {
+            'id' => '1234',
+            'type' => 'Entry',
+            'contentType' => {
+              'sys' => {
+                'id' => 'blogPost'
+              }
+            }
+          }
+        },
+        {
+          'sys' => {
+            'id' => '5678',
+            'type' => 'Entry',
+            'contentType' => {
+              'sys' => {
+                'id' => 'blogPost'
+              }
+            }
+          }
+        },
+        {
+          'sys' => {
+            'id' => '9012',
+            'type' => 'Entry',
+            'contentType' => {
+              'sys' => {
+                'id' => 'blogPost'
+              }
+            }
+          }
+        }
+      ].lazy)
+
+    # act
+    posts = TestNamespace::BlogPost.find_all
+
+    # assert
+    expect(posts.map(&:id).sort).to eq(
+      %w[
+        1234
+        5678
+        9012
+      ]
+    )
+  end
+
+  it 'finds single item with filter' do
+    allow(store).to receive(:find_by)
+      .with(content_type: 'blogPost', filter: { 'slug' => 'mister_roboto' }, options: {})
+      .and_return(
+        {
+          'sys' => {
+            'id' => '1234',
+            'type' => 'Entry',
+            'contentType' => {
+              'sys' => {
+                'id' => 'blogPost'
+              }
+            }
+          }
+        }
+      )
+
+    # act
+    post = TestNamespace::BlogPost.find_by(slug: 'mister_roboto')
+
+    # assert
+    expect(post.id).to eq('1234')
+  end
+
+  it 'calls into store to resolve linked types' do
+    allow(store).to receive(:find)
+      .with('blockText1234', anything)
+      .and_return(
+        {
+          'sys' => {
+            'type' => 'Entry',
+            'contentType' => {
+              'sys' => {
+                'id' => 'sectionBlockText'
+              }
+            }
+          },
+          'fields' => {
+            'text' => {
+              'en-US' => 'Lorem Ipsum Dolor Sit Amet'
+            }
+          }
+        }
+      )
+
+    # act
+    post = TestNamespace::BlogPost.new({
+      'sys' => {
+        'type' => 'Entry',
+        'contentType' => {
+          'sys' => {
+            'id' => 'blogPost'
+          }
+        }
+      },
+      'fields' => {
+        'sections' => {
+          'en-US' => [
+            {
+              'sys' => {
+                'type' => 'Link',
+                'linkType' => 'Entry',
+                'id' => 'blockText1234'
+              }
+            }
+          ]
+        }
+      }
+    })
+
+    # assert
+    expect(post.sections[0]).to be_a TestNamespace::SectionBlockText
+    expect(post.sections[0].text).to eq('Lorem Ipsum Dolor Sit Amet')
+  end
+
   class TestNamespace
     include WCC::Contentful::ModelAPI
   end

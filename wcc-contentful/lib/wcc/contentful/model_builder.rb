@@ -34,6 +34,7 @@ module WCC::Contentful
           extend ModelSingletonMethods
           include ModelMethods
           include Helpers
+          include WCC::Contentful::Instrumentation
 
           const_set('ATTRIBUTES', typedef.fields.keys.map(&:to_sym).freeze)
           const_set('FIELDS', typedef.fields.keys.freeze)
@@ -55,7 +56,6 @@ module WCC::Contentful
           end
 
           define_singleton_method(:model_namespace) { ns }
-          define_singleton_method(:services) { ns.services }
 
           define_method(:initialize) do |raw, context = nil|
             ct = content_type_from_raw(raw)

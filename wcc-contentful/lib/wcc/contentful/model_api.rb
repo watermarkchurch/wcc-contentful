@@ -25,7 +25,11 @@ module WCC::Contentful::ModelAPI
     end
 
     def services
-      @services ||= WCC::Contentful::Services.new(configuration)
+      @services ||=
+        # try looking up the class heierarchy
+        superclass.try(&:services) ||
+        # create it if we have a configuration
+        WCC::Contentful::Services.new(configuration)
     end
     delegate :store, :preview_store, to: :services
 
