@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 module FixturesHelper
-  def fixture_path(file_name)
+  def path_to_fixture(file_name)
     File.join(fixture_root, file_name)
   end
 
   def load_fixture(file_name)
-    file = fixture_path(file_name)
+    file = path_to_fixture(file_name)
     return unless File.exist?(file)
 
     File.read(file)

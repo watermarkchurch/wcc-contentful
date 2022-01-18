@@ -27,7 +27,7 @@ module WCC::Contentful::ModelAPI
     def services
       @services ||=
         # try looking up the class heierarchy
-        superclass.try(&:services) ||
+        (superclass.services if superclass.respond_to?(:services)) ||
         # create it if we have a configuration
         WCC::Contentful::Services.new(configuration)
     end

@@ -46,8 +46,6 @@ class WCC::Contentful::Model
   # rubocop:disable Style/ClassVars
 
   class << self
-    include WCC::Contentful::ServiceAccessors
-
     def const_missing(name)
       type = WCC::Contentful::Helpers.content_type_from_constant(name)
       raise WCC::Contentful::ContentTypeNotFoundError,

@@ -11,13 +11,17 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       .and_return(types)
     types
   }
-  let!(:store) {
+  let(:store) {
     load_store_from_sync
   }
 
+  let(:services) {
+    double('services', store: store, instrumentation: ActiveSupport::Notifications)
+  }
+
   before do
-    allow(WCC::Contentful::Services.instance).to receive(:store)
-      .and_return(store)
+    allow(WCC::Contentful::Model).to receive(:services)
+      .and_return(services)
   end
 
   it 'builds models from loaded types' do

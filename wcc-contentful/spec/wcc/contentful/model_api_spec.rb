@@ -26,7 +26,7 @@ RSpec.describe WCC::Contentful::ModelAPI do
     TestNamespace.instance_variable_set('@configuration', nil)
 
     TestNamespace.configure(services: services) do |config|
-      config.schema_file = fixture_path('contentful/blog-contentful-schema.json')
+      config.schema_file = path_to_fixture('contentful/blog-contentful-schema.json')
     end
   end
 
@@ -313,7 +313,7 @@ RSpec.describe WCC::Contentful::ModelAPI do
     }.to instrument('find.model.contentful.wcc')
   end
 
-  it 'subclass instruments find using configured instrumentation', focus: true do
+  it 'subclass instruments find using configured instrumentation' do
     class MyBlogPost2 < TestNamespace::BlogPost
     end
 

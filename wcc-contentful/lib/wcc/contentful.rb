@@ -94,7 +94,7 @@ module WCC::Contentful
       end
     end
 
-    schema =
+    content_types =
       begin
         if File.exist?(configuration.schema_file)
           JSON.parse(File.read(configuration.schema_file))['contentTypes']
@@ -104,21 +104,21 @@ module WCC::Contentful
         nil
       end
 
-    if !schema && %i[if_possible never].include?(configuration.update_schema_file)
+    if !content_types && %i[if_possible never].include?(configuration.update_schema_file)
       # Final fallback - try to grab content types from CDN.  We can't update the file
       # because the CDN doesn't have all the field validation info, but we can at least
       # build the WCC::Contentful::Model instances.
       client = Services.instance.management_client ||
         Services.instance.client
       begin
-        schema = client.content_types(limit: 1000).items if client
+        content_types = client.content_types(limit: 1000).items if client
       rescue WCC::Contentful::SimpleClient::ApiError => e
         # indicates bad credentials
         WCC::Contentful.logger.warn("Unable to load content types from API - #{e.message}")
       end
     end
 
-    unless schema
+    unless content_types
       raise InitializationError, 'Unable to load content types from schema file or API!' \
         ' Check your access token and space ID.'
     end
@@ -126,7 +126,7 @@ module WCC::Contentful
     # Set the schema on the default WCC::Contentful::Model
     WCC::Contentful::Model.configure(
       configuration,
-      schema: schema,
+      schema: WCC::Contentful::ContentTypeIndexer.from_json_schema(content_types).types,
       services: WCC::Contentful::Services.instance
     )
 
