@@ -12,9 +12,9 @@ module WCC::Contentful::ModelSingletonMethods
   #   WCC::Contentful::Model::Page.find(id)
   def find(id, options: nil)
     options ||= {}
-    store = store(options[:preview])
+    store = options[:preview] ? services.preview_store : services.store
     raw =
-      WCC::Contentful::Instrumentation.instrument 'find.model.contentful.wcc',
+      services.instrumentation.instrument 'find.model.contentful.wcc',
         content_type: content_type, id: id, options: options do
         store.find(id, { hint: type }.merge!(options.except(:preview)))
       end
@@ -34,9 +34,9 @@ module WCC::Contentful::ModelSingletonMethods
 
     filter.transform_keys! { |k| k.to_s.camelize(:lower) } if filter.present?
 
-    store = store(options[:preview])
+    store = options[:preview] ? services.preview_store : services.store
     query =
-      WCC::Contentful::Instrumentation.instrument 'find_all.model.contentful.wcc',
+      services.instrumentation.instrument 'find_all.model.contentful.wcc',
         content_type: content_type, filter: filter, options: options do
         store.find_all(content_type: content_type, options: options.except(:preview))
       end
@@ -56,9 +56,9 @@ module WCC::Contentful::ModelSingletonMethods
 
     filter.transform_keys! { |k| k.to_s.camelize(:lower) } if filter.present?
 
-    store = store(options[:preview])
+    store = options[:preview] ? services.preview_store : services.store
     result =
-      WCC::Contentful::Instrumentation.instrument 'find_by.model.contentful.wcc',
+      services.instrumentation.instrument 'find_by.model.contentful.wcc',
         content_type: content_type, filter: filter, options: options do
         store.find_by(content_type: content_type, filter: filter, options: options.except(:preview))
       end

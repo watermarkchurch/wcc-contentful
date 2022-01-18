@@ -10,34 +10,35 @@ module WCC::Contentful::ModelAPI
   end
 
   class_methods do
-    def schema(schema_json = nil, file: nil)
-      raise ArgumentError, 'Schema can only be set once!' if @schema && (schema_json || file)
+    attr_reader :configuration
+
+    def configure(configuration = nil, schema: nil, services: nil)
+      configuration ||= @configuration || WCC::Contentful::Configuration.new
+      yield(configuration) if block_given?
+
+      @schema = schema if schema
+      @services = services if services
+      @configuration = configuration.freeze
+
+      WCC::Contentful::ModelBuilder.new(self.schema, namespace: self).build_models
+      nil
+    end
+
+    def services
+      @services ||= WCC::Contentful::Services.new(configuration)
+    end
+    delegate :store, :preview_store, to: :services
+
+    def schema
       return @schema if @schema
 
-      schema_json ||= JSON.parse(File.read(file))['contentTypes'] if file
+      file = configuration.schema_file
+      schema_json = JSON.parse(File.read(file))['contentTypes']
       unless schema_json
         raise ArgumentError, 'Please give either a JSON array of content types or file to load from'
       end
 
       @schema = WCC::Contentful::ContentTypeIndexer.from_json_schema(schema_json).types
-      WCC::Contentful::ModelBuilder.new(@schema, namespace: self).build_models
-      @schema
-    end
-
-    def store(new_store = nil)
-      if new_store.present?
-        @store = new_store
-      else
-        @store
-      end
-    end
-
-    def preview_store(new_store = nil)
-      if new_store.present?
-        @preview_store = new_store
-      else
-        @preview_store
-      end
     end
 
     # Finds an Entry or Asset by ID in the configured contentful space
@@ -47,7 +48,7 @@ module WCC::Contentful::ModelAPI
     # to access the Contentful CDN.
     def find(id, options: nil)
       options ||= {}
-      store = options[:preview] ? preview_store : self.store
+      store = options[:preview] ? services.preview_store : services.store
       raw = store.find(id, options.except(*WCC::Contentful::ModelMethods::MODEL_LAYER_CONTEXT_KEYS))
 
       new_from_raw(raw, options) if raw.present?

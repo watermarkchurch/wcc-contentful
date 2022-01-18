@@ -54,9 +54,8 @@ module WCC::Contentful
             typedef
           end
 
-          define_singleton_method(:model_namespace) do
-            ns
-          end
+          define_singleton_method(:model_namespace) { ns }
+          define_singleton_method(:services) { ns.services }
 
           define_method(:initialize) do |raw, context = nil|
             ct = content_type_from_raw(raw)
