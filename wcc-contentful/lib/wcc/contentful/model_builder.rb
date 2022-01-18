@@ -24,11 +24,12 @@ module WCC::Contentful
 
     def build_model(typedef)
       const = typedef.name
-      return namespace.const_get(const) if namespace.const_defined?(const)
+      ns = namespace
+      return ns.const_get(const) if ns.const_defined?(const)
 
       # TODO: https://github.com/dkubb/ice_nine ?
       typedef = typedef.deep_dup.freeze
-      namespace.const_set(const,
+      ns.const_set(const,
         Class.new(namespace) do
           extend ModelSingletonMethods
           include ModelMethods
@@ -51,6 +52,10 @@ module WCC::Contentful
 
           define_singleton_method(:content_type_definition) do
             typedef
+          end
+
+          define_singleton_method(:model_namespace) do
+            ns
           end
 
           define_method(:initialize) do |raw, context = nil|

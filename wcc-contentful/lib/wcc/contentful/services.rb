@@ -8,12 +8,10 @@ module WCC::Contentful
       end
     end
 
-    def configuration
-      @configuration ||= WCC::Contentful.configuration
-    end
+    attr_reader :configuration
 
     def initialize(configuration = nil)
-      @configuration = configuration
+      @configuration = configuration || WCC::Contentful.configuration
     end
 
     # Gets the data-store which executes the queries run against the dynamic

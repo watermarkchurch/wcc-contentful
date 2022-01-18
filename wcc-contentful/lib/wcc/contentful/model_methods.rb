@@ -170,10 +170,10 @@ module WCC::Contentful::ModelMethods
           if raw.dig('sys', 'type') == 'Link'
             _instrument 'resolve',
               id: self.id, depth: depth, backlinks: context[:backlinks]&.map(&:id) do
-              WCC::Contentful::Model.find(id, options: new_context)
+              self.class.model_namespace.find(id, options: new_context)
             end
           else
-            WCC::Contentful::Model.new_from_raw(raw, new_context)
+            self.class.model_namespace.new_from_raw(raw, new_context)
           end
 
         m.resolve(depth: depth - 1, context: new_context, **options) if m && depth > 1

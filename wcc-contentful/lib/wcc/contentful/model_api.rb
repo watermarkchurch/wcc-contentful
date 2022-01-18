@@ -82,7 +82,7 @@ module WCC::Contentful::ModelAPI
       end
 
       # Autoloading couldn't find their model - we'll register our own.
-      const = WCC::Contentful::Model.const_get(
+      const = const_get(
         WCC::Contentful::Helpers.constant_from_content_type(content_type)
       )
       register_for_content_type(content_type, klass: const)
