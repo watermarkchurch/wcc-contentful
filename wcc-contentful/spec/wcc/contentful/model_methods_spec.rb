@@ -265,8 +265,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
       })
 
       preview_store = double('preview_store')
-      allow(WCC::Contentful::Model).to receive(:store)
-        .with(true)
+      allow(services).to receive(:preview_store)
         .and_return(preview_store)
 
       expect(store).to_not receive(:find_by)
