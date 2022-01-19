@@ -34,7 +34,6 @@ module WCC::Contentful
           extend ModelSingletonMethods
           include ModelMethods
           include Helpers
-          include WCC::Contentful::Instrumentation
 
           const_set('ATTRIBUTES', typedef.fields.keys.map(&:to_sym).freeze)
           const_set('FIELDS', typedef.fields.keys.freeze)

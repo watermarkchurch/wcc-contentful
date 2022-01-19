@@ -4,6 +4,8 @@ module WCC::Contentful::ModelAPI
   extend ActiveSupport::Concern
 
   included do
+    include WCC::Contentful::Instrumentation
+
     # We use a class var here because this is a global registry for all subclasses
     # of this namespace
     @@registry = {} # rubocop:disable Style/ClassVars
