@@ -11,12 +11,18 @@ module WCC::Contentful
           .name.parameterize.split('-').reverse.join('.')
     end
 
+    attr_writer :_instrumentation
+    def _instrumentation
+      # look for per-instance instrumentation then try class level
+      @_instrumentation || self.class._instrumentation
+    end
+
     included do
       protected
 
       def _instrument(name, payload = {}, &block)
         name += _instrumentation_event_prefix
-        self.class._instrumentation&.instrument(name, payload, &block)
+        _instrumentation&.instrument(name, payload, &block)
       end
     end
 
@@ -28,7 +34,7 @@ module WCC::Contentful
           # try looking up the class heierarchy
           superclass.try(:_instrumentation) ||
           # default to global
-          WCC::Contentful.configuration&.instrumentation_adapter ||
+          WCC::Contentful::Services.instance&.instrumentation_adapter ||
           ActiveSupport::Notifications
       end
     end

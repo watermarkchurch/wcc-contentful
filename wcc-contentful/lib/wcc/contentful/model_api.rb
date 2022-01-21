@@ -33,7 +33,7 @@ module WCC::Contentful::ModelAPI
         # create it if we have a configuration
         WCC::Contentful::Services.new(configuration)
     end
-    delegate :store, :preview_store, to: :services
+    delegate :_instrumentation, to: :services
 
     def schema
       return @schema if @schema
@@ -55,7 +55,10 @@ module WCC::Contentful::ModelAPI
     def find(id, options: nil)
       options ||= {}
       store = options[:preview] ? services.preview_store : services.store
-      raw = store.find(id, options.except(*WCC::Contentful::ModelMethods::MODEL_LAYER_CONTEXT_KEYS))
+      raw =
+        _instrumentation.instrument 'find.model.contentful.wcc', id: id, options: options do
+          store.find(id, options.except(*WCC::Contentful::ModelMethods::MODEL_LAYER_CONTEXT_KEYS))
+        end
 
       new_from_raw(raw, options) if raw.present?
     end

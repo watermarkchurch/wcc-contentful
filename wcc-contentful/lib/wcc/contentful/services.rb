@@ -4,15 +4,15 @@ module WCC::Contentful
   class Services
     class << self
       def instance
-        @singleton__instance__ ||= new # rubocop:disable Naming/MemoizedInstanceVariableName
+        @singleton__instance__ ||= # rubocop:disable Naming/MemoizedInstanceVariableName
+          (new(WCC::Contentful.configuration) if WCC::Contentful.configuration)
       end
     end
 
     attr_reader :configuration
 
-    def initialize(configuration = nil)
-      @configuration = configuration || WCC::Contentful.configuration
-      raise StandardError, 'WCC::Contentful has not yet been configured!' if @configuration.nil?
+    def initialize(configuration)
+      @configuration = configuration
     end
 
     # Gets the data-store which executes the queries run against the dynamic
@@ -60,7 +60,8 @@ module WCC::Contentful
           space: configuration.space,
           default_locale: configuration.default_locale,
           connection: configuration.connection,
-          environment: configuration.environment
+          environment: configuration.environment,
+          instrumentation: instrumentation
         )
     end
 
@@ -77,7 +78,8 @@ module WCC::Contentful
             space: configuration.space,
             default_locale: configuration.default_locale,
             connection: configuration.connection,
-            environment: configuration.environment
+            environment: configuration.environment,
+            instrumentation: instrumentation
           )
         end
     end
@@ -95,7 +97,8 @@ module WCC::Contentful
             space: configuration.space,
             default_locale: configuration.default_locale,
             connection: configuration.connection,
-            environment: configuration.environment
+            environment: configuration.environment,
+            instrumentation: instrumentation
           )
         end
     end
@@ -120,19 +123,30 @@ module WCC::Contentful
 
     # Gets the configured instrumentation adapter, defaulting to ActiveSupport::Notifications
     def instrumentation
-      ActiveSupport::Deprecation.warn('Use ._instrumentation from '\
-        'WCC::Contentful::Instrumentation instead')
-      return @instrumentation if @instrumentation
-      return ActiveSupport::Notifications if WCC::Contentful.configuration.nil?
-
       @instrumentation ||=
         configuration.instrumentation_adapter ||
         ActiveSupport::Notifications
     end
+    # Allow it to be injected into a store
+    alias_method :_instrumentation, :instrumentation
+
+    ##
+    # This method enables simple dependency injection -
+    # If the target has a setter matching the name of one of the services,
+    # set that setter with the value of the service.
+    def inject_into(target, except: [])
+      (WCC::Contentful::SERVICES - except).each do |s|
+        next unless target.respond_to?("#{s}=")
+
+        target.public_send("#{s}=",
+          public_send(s))
+      end
+    end
   end
 
-  SERVICES = (WCC::Contentful::Services.instance_methods -
-      Object.instance_methods)
+  SERVICES =
+    WCC::Contentful::Services.instance_methods(false)
+      .select { |m| WCC::Contentful::Services.instance_method(m).arity == 0 }
 
   # Include this module to define accessors for every method defined on the
   # {Services} singleton.

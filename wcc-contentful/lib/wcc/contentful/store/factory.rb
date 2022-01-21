@@ -75,6 +75,7 @@ module WCC::Contentful::Store
           middleware, params, configure_proc = middleware_config
           middleware_options = options.merge((params || []).extract_options!)
           middleware = middleware.call(memo, *params, **middleware_options)
+          services.inject_into(middleware, except: %i[store preview_store])
           middleware&.instance_exec(&configure_proc) if configure_proc
           middleware || memo
         end
@@ -154,12 +155,7 @@ module WCC::Contentful::Store
         end
 
       # Inject services into the custom store class
-      (WCC::Contentful::SERVICES - %i[store preview_store]).each do |s|
-        next unless store.respond_to?("#{s}=")
-
-        store.public_send("#{s}=",
-          services.public_send(s))
-      end
+      services.inject_into(store, except: %i[store preview_store])
 
       store
     end
