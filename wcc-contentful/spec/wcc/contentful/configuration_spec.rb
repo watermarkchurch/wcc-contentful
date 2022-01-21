@@ -280,6 +280,11 @@ RSpec.describe WCC::Contentful::Configuration do
       expect(instrumentation).to receive(:instrument) { |_, _, &block| block.call }
         .at_least(:once)
 
+      WCC::Contentful::Model.configure(
+        config,
+        services: WCC::Contentful::Services.instance
+      )
+
       # act
       WCC::Contentful::Model.find('test')
     end

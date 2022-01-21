@@ -12,6 +12,8 @@ module WCC::Contentful
     attr_reader :configuration
 
     def initialize(configuration)
+      raise ArgumentError, 'Not yet configured!' unless configuration
+
       @configuration = configuration
     end
 
