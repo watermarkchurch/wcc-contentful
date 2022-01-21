@@ -24,13 +24,12 @@ module WCC::Contentful
       attr_writer :_instrumentation
 
       def _instrumentation
-        @_instrumentation ||=
+        @_instrumentation ||
           # try looking up the class heierarchy
           superclass.try(:_instrumentation) ||
-          # see if we have a services
-          try(:services)&.instrumentation ||
           # default to global
-          WCC::Contentful::Services.instance.instrumentation
+          WCC::Contentful.configuration&.instrumentation_adapter ||
+          ActiveSupport::Notifications
       end
     end
 
