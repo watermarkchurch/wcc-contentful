@@ -120,6 +120,8 @@ module WCC::Contentful
 
     # Gets the configured instrumentation adapter, defaulting to ActiveSupport::Notifications
     def instrumentation
+      ActiveSupport::Deprecation.warn('Use ._instrumentation from '\
+        'WCC::Contentful::Instrumentation instead')
       return @instrumentation if @instrumentation
       return ActiveSupport::Notifications if WCC::Contentful.configuration.nil?
 

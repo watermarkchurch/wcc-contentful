@@ -52,20 +52,6 @@ class WCC::Contentful::Model
         "Content type '#{type}' does not exist in the space"
     end
   end
-
-  @@registry = {}
-
-  def self.store(preview = false)
-    if preview
-      if preview_store.nil?
-        raise ArgumentError,
-          'You must include a contentful preview token in your WCC::Contentful.configure block'
-      end
-      preview_store
-    else
-      super()
-    end
-  end
 end
 
 # rubocop:enable Style/ClassVars
