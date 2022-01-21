@@ -1067,7 +1067,6 @@
           "settings": {
             "space": "hw5pse7y1ojx",
             "display": "${firstName} ${lastName}",
-            "accessToken": "riHZ3gFYMgocp_V20x40T5C_Dfe_MWaFJstIzbc-Q34",
             "contentType": "person"
           },
           "widgetId": "cross-space-link"
