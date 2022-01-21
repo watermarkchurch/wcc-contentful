@@ -453,7 +453,7 @@ RSpec.describe WCC::Contentful::ModelAPI do
   end
 
   describe '.configure' do
-    it 'applies custom instrumentation adapter to the whole stack', focus: true do
+    it 'applies custom instrumentation adapter to the whole stack' do
       instrumentation = double('instrumentation')
 
       TestNamespace.configure do |config|

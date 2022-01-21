@@ -6,6 +6,11 @@ module WCC::Contentful::ModelAPI
   included do
     include WCC::Contentful::Instrumentation
 
+    # override class-level _instrumentation from WCC::Contentful::Instrumentation
+    def self._instrumentation
+      services.instrumentation
+    end
+
     # We use a class var here because this is a global registry for all subclasses
     # of this namespace
     @@registry = {} # rubocop:disable Style/ClassVars
@@ -33,7 +38,6 @@ module WCC::Contentful::ModelAPI
         # create it if we have a configuration
         WCC::Contentful::Services.new(configuration)
     end
-    delegate :_instrumentation, to: :services
 
     def schema
       return @schema if @schema

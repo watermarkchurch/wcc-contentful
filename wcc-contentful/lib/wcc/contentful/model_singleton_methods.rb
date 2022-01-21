@@ -14,7 +14,7 @@ module WCC::Contentful::ModelSingletonMethods
     options ||= {}
     store = options[:preview] ? services.preview_store : services.store
     raw =
-      services.instrumentation.instrument 'find.model.contentful.wcc',
+      _instrumentation.instrument 'find.model.contentful.wcc',
         content_type: content_type, id: id, options: options do
         store.find(id, { hint: type }.merge!(options.except(:preview)))
       end
@@ -36,7 +36,7 @@ module WCC::Contentful::ModelSingletonMethods
 
     store = options[:preview] ? services.preview_store : services.store
     query =
-      services.instrumentation.instrument 'find_all.model.contentful.wcc',
+      _instrumentation.instrument 'find_all.model.contentful.wcc',
         content_type: content_type, filter: filter, options: options do
         store.find_all(content_type: content_type, options: options.except(:preview))
       end
@@ -58,7 +58,7 @@ module WCC::Contentful::ModelSingletonMethods
 
     store = options[:preview] ? services.preview_store : services.store
     result =
-      services.instrumentation.instrument 'find_by.model.contentful.wcc',
+      _instrumentation.instrument 'find_by.model.contentful.wcc',
         content_type: content_type, filter: filter, options: options do
         store.find_by(content_type: content_type, filter: filter, options: options.except(:preview))
       end
