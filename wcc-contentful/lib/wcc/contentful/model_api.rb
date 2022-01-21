@@ -39,6 +39,12 @@ module WCC::Contentful::ModelAPI
         WCC::Contentful::Services.new(configuration)
     end
 
+    def store(preview = nil)
+      ActiveSupport::Deprecation.warn('Use services.store instead')
+
+      preview ? services.preview_store : services.store
+    end
+
     def schema
       return @schema if @schema
 

@@ -34,7 +34,7 @@ module WCC::Contentful
           # try looking up the class heierarchy
           superclass.try(:_instrumentation) ||
           # default to global
-          WCC::Contentful::Services.instance&.instrumentation_adapter ||
+          WCC::Contentful::Services.instance&.instrumentation ||
           ActiveSupport::Notifications
       end
     end
