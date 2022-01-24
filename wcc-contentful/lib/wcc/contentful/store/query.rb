@@ -108,7 +108,7 @@ module WCC::Contentful::Store
       includes = row.try(:includes) || row.try(:[], 1)
       return entry unless entry && depth && depth > 0
 
-      WCC::Contentful::LinkVisitor.new(entry, :Link, :Asset,
+      WCC::Contentful::LinkVisitor.new(entry, :Link,
         # Walk all the links except for the leaf nodes
         depth: depth - 1).map! do |val|
         resolve_link(val, includes)

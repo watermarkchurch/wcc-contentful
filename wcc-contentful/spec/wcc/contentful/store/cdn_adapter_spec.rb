@@ -464,6 +464,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
     {
       'sys' => {
         'id' => id,
+        'type' => 'Entry',
         'contentType' => {
           'sys' => {
             'type' => 'Link',

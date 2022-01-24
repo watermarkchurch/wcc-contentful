@@ -158,7 +158,8 @@ module WCC::Contentful::Store
       def resolve_includes(entry, depth)
         return entry unless entry && depth && depth > 0
 
-        WCC::Contentful::LinkVisitor.new(entry, :Link, :Asset, depth: depth - 1).map! do |val|
+        # Dig links out of response.includes and insert them into the entry
+        WCC::Contentful::LinkVisitor.new(entry, :Link, depth: depth - 1).map! do |val|
           resolve_link(val)
         end
       end

@@ -5,32 +5,21 @@
 # But you can use it too!
 class WCC::Contentful::LinkVisitor
   attr_reader :entry
-  attr_reader :type
   attr_reader :fields
   attr_reader :depth
 
   # @param [Hash] entry The entry hash (resolved or unresolved) to walk
-  # @param [Array<String, Symbol>] The fields to select from the entry tree.
-  #         Use `:Link` to select only links, or `'slug'` to select all slugs in the tree.
+  # @param [Array<Symbol>] The type of fields to select from the entry tree.
+  #         Must be one of `:Link`, `:Entry`, `:Asset`.
   # @param [Fixnum] depth (optional) How far to walk down the tree of links.  Be careful of
   #         recursive trees!
-  # @example
-  #   entry = store.find_by(id: id, include: 3)
-  #   WCC::Contentful::LinkVisitor.new(entry, 'slug', depth: 3)
-  #     .map { |slug| 'https://mirror-site' + slug }
   def initialize(entry, *fields, depth: 0)
-    unless entry.is_a?(Hash) && entry.dig('sys', 'id')
+    unless entry.is_a?(Hash) && entry.dig('sys', 'type') == 'Entry'
       raise ArgumentError, "Please provide an entry as a hash value (got #{entry})"
     end
-    unless ct = entry.dig('sys', 'contentType', 'sys', 'id')
-      raise ArgumentError, 'Entry has no content type!'
-    end
-
-    @type = WCC::Contentful.types[ct]
-    raise ArgumentError, "Unknown content type '#{ct}'" unless @type
 
     @entry = entry
-    @fields = fields
+    @fields = fields.map(&:to_s)
     @depth = depth
   end
 
@@ -42,7 +31,7 @@ class WCC::Contentful::LinkVisitor
   # @returns nil
   def each(&block)
     _each do |val, field, locale, index|
-      yield(val, field, locale, index) if should_yield_field?(field)
+      yield(val, field, locale, index) if should_yield_field?(field, val)
 
       next unless should_walk_link?(field, val)
 
@@ -54,7 +43,7 @@ class WCC::Contentful::LinkVisitor
 
   def map!(&block)
     _each do |val, field, locale, index|
-      if should_yield_field?(field)
+      if should_yield_field?(field, val)
         val = yield(val, field, locale, index)
         set_field(field, locale, index, val)
       end
@@ -70,15 +59,15 @@ class WCC::Contentful::LinkVisitor
   private
 
   def _each(&block)
-    type.fields.each_value do |f|
-      each_field(f, &block)
+    (entry['fields'] || {}).each do |(k, _v)|
+      each_field(k, &block)
     end
   end
 
   def each_field(field)
     each_locale(field) do |val, locale|
-      if field.array
-        val&.each_with_index do |v, index|
+      if val&.is_a?(Array)
+        val.each_with_index do |v, index|
           yield(v, field, locale, index) unless v.nil?
         end
       else
@@ -88,7 +77,7 @@ class WCC::Contentful::LinkVisitor
   end
 
   def each_locale(field)
-    raw_value = entry.dig('fields', field.name)
+    raw_value = entry.dig('fields', field)
     if locale = entry.dig('sys', 'locale')
       if raw_value.is_a?(Hash) && raw_value[locale]
         # it's a locale=* entry, but they've added sys.locale to those now
@@ -102,21 +91,28 @@ class WCC::Contentful::LinkVisitor
     end
   end
 
-  def should_yield_field?(field)
-    fields.empty? || fields.include?(field.type) || fields.include?(field.name)
+  def should_yield_field?(_field, value)
+    return true if fields.empty?
+
+    case value
+    when Hash
+      fields.include?(value.dig('sys', 'type'))
+    when Array
+      value.any? { |v| v.is_a?(Hash) && fields.include?(v.dig('sys', 'type')) }
+    end
   end
 
-  def should_walk_link?(field, val, dep = depth)
-    dep > 0 && field.type == :Link && val.dig('sys', 'type') == 'Entry'
+  def should_walk_link?(_field, val, dep = depth)
+    dep > 0 && val.is_a?(Hash) && val.dig('sys', 'type') == 'Entry'
   end
 
   def set_field(field, locale, index, val)
-    current_field = (entry['fields'][field.name] ||= {})
+    current_field = (entry['fields'][field] ||= {})
 
-    if field.array
-      (current_field[locale] ||= [])[index] = val
-    else
+    if index.nil?
       current_field[locale] = val
+    else
+      (current_field[locale] ||= [])[index] = val
     end
   end
 end

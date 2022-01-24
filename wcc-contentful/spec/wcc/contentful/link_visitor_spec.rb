@@ -28,7 +28,7 @@ RSpec.describe WCC::Contentful::LinkVisitor do
 
         result =
           subject.each do |link, field|
-            expect(field.name).to eq('sections')
+            expect(field).to eq('sections')
             expect(link.dig('sys', 'type')).to eq('Link')
             visited << link.dig('sys', 'id')
           end
@@ -44,28 +44,14 @@ RSpec.describe WCC::Contentful::LinkVisitor do
                               ])
       end
 
-      it 'visits all slugs' do
-        visited = []
-        subject = described_class.new(entry.dup, 'slug')
-
-        subject.each do |value, field, locale|
-          expect(field.name).to eq('slug')
-          expect(field.type).to eq(:String)
-          expect(locale).to eq('en-US')
-          visited << value
-        end
-
-        expect(visited).to eq(['/'])
-      end
-
       it 'visits all fields' do
         visited = {}
         subject = described_class.new(entry.dup)
 
         subject.each do |value, field|
-          visited[field.name] ||= []
-          visited[field.name] <<
-            if field.type == :Link
+          visited[field] ||= []
+          visited[field] <<
+            if value.is_a?(Hash)
               value.dig('sys', 'id')
             else
               value
@@ -95,7 +81,7 @@ RSpec.describe WCC::Contentful::LinkVisitor do
     describe '#each' do
       it 'visits all links recursively' do
         visited = []
-        subject = described_class.new(entry.dup, :Link, :Asset, depth: 2)
+        subject = described_class.new(entry.dup, :Link, :Entry, :Asset, depth: 2)
 
         result =
           subject.each do |link, _field|
@@ -111,56 +97,33 @@ RSpec.describe WCC::Contentful::LinkVisitor do
         expect(visited).to_not include(entry.dig('sys', 'id'))
       end
 
-      it 'visits all slugs' do
-        visited = []
-        subject = described_class.new(entry.dup, 'slug', depth: 4)
-
-        subject.each do |value, field, locale|
-          expect(field.name).to eq('slug')
-          expect(field.type).to eq(:String)
-          expect(locale).to eq('en-US')
-          visited << value
-        end
-
-        expect(visited).to eq([
-                                '/',
-                                '/ministries/reengage',
-                                '/ministries/regen',
-                                '/ministries/merge',
-                                '/ministries/foundation-groups',
-                                '/conferences/mmtc',
-                                '/ctc',
-                                '/conferences/yatc',
-                                '/conferences/regeneration'
-                              ])
-      end
-
       it 'visits all fields' do
         visited = {}
         subject = described_class.new(entry.dup, depth: 2)
 
         subject.each do |value, field|
-          visited[field.name] ||= []
-          visited[field.name] <<
-            if field.type == :Link
+          visited[field] ||= []
+          visited[field] <<
+            if value.is_a?(Hash)
               value.dig('sys', 'id')
             else
               value
             end
         end
 
-        expect(visited.keys).to eq(
-          %w[
-            title slug sections backgroundImage text primaryButton externalLink
-            secondaryButton style tag subtext embedCode link items header subpages
-            domainObject name actionButton faqs question answer
-          ]
-        )
+        expected = %w[
+          title slug sections backgroundImage text primaryButton externalLink
+          secondaryButton style tag subtext embedCode link items header subpages
+          domainObject name actionButton faqs question answer
+          ionIcon
+        ]
+        expect(expected - visited.keys).to eq([])
+        expect(visited.keys - expected).to eq([])
       end
 
       it 'handles nil entries' do
         visited = []
-        subject = described_class.new(entry.dup, :Link, :Asset, depth: 2)
+        subject = described_class.new(entry.dup, :Link, :Entry, :Asset, depth: 2)
 
         # insert a nil section & broken (nil) link
         entry.dig('fields', 'sections', 'en-US') << nil
@@ -190,7 +153,9 @@ RSpec.describe WCC::Contentful::LinkVisitor do
         expect(subject.entry).to_not eq(entry)
         expect(result).to eq(subject.entry)
 
-        expect(subject.entry.dig('fields', 'sections', 'en-US', 2, 'resolved')).to eq(true)
+        # This one is an entry (not included in the fields option above so not yielded)
+        expect(subject.entry.dig('fields', 'sections', 'en-US', 2).keys).to_not include('resolved')
+        # This one is a link
         expect(subject.entry.dig('fields', 'sections', 'en-US', 2,
           'fields', 'items', 'en-US', 0,
           'fields', 'header', 'en-US'))
@@ -216,7 +181,7 @@ RSpec.describe WCC::Contentful::LinkVisitor do
     describe '#each' do
       it 'visits all links recursively' do
         visited = []
-        subject = described_class.new(entry.dup, :Link, :Asset, depth: 2)
+        subject = described_class.new(entry.dup, :Link, :Entry, :Asset, depth: 2)
 
         result =
           subject.each do |link, _field|
@@ -232,56 +197,33 @@ RSpec.describe WCC::Contentful::LinkVisitor do
         expect(visited).to_not include(entry.dig('sys', 'id'))
       end
 
-      it 'visits all slugs' do
-        visited = []
-        subject = described_class.new(entry.dup, 'slug', depth: 4)
-
-        subject.each do |value, field, locale|
-          expect(field.name).to eq('slug')
-          expect(field.type).to eq(:String)
-          expect(locale).to eq('en-US')
-          visited << value
-        end
-
-        expect(visited).to eq([
-                                '/',
-                                '/ministries/reengage',
-                                '/ministries/regen',
-                                '/ministries/merge',
-                                '/ministries/foundation-groups',
-                                '/conferences/mmtc',
-                                '/ctc',
-                                '/conferences/yatc',
-                                '/conferences/regeneration'
-                              ])
-      end
-
       it 'visits all fields' do
         visited = {}
         subject = described_class.new(entry.dup, depth: 2)
 
         subject.each do |value, field|
-          visited[field.name] ||= []
-          visited[field.name] <<
-            if field.type == :Link
+          visited[field] ||= []
+          visited[field] <<
+            if value.is_a?(Hash)
               value.dig('sys', 'id')
             else
               value
             end
         end
 
-        expect(visited.keys).to eq(
-          %w[
-            title slug sections backgroundImage text primaryButton externalLink
-            secondaryButton style tag subtext embedCode link items header subpages
-            domainObject name actionButton faqs question answer
-          ]
-        )
+        expected = %w[
+          title slug sections backgroundImage text primaryButton externalLink
+          secondaryButton style tag subtext embedCode link items header subpages
+          domainObject name actionButton faqs question answer
+          ionIcon
+        ]
+        expect(expected - visited.keys).to eq([])
+        expect(visited.keys - expected).to eq([])
       end
 
       it 'handles nil entries' do
         visited = []
-        subject = described_class.new(entry.dup, :Link, :Asset, depth: 2)
+        subject = described_class.new(entry.dup, :Link, :Entry, :Asset, depth: 2)
 
         # insert a nil section & broken (nil) link
         entry.dig('fields', 'sections', 'en-US') << nil
