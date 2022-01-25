@@ -5,6 +5,7 @@ require 'rails_helper'
 RSpec.describe WCC::Contentful::Configuration do
   subject(:config) {
     WCC::Contentful::Configuration.new.tap do |config|
+      config.schema_file = path_to_fixture('contentful/contentful-schema.json')
       config.space = contentful_space_id
       config.access_token = contentful_access_token
       config.management_token = contentful_management_token
