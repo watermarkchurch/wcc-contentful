@@ -7,8 +7,10 @@ module WCC::Contentful::Test::Factory
   # Builds a in-memory instance of the Contentful model for the given content_type.
   # All attributes that are known to be required fields on the content type
   # will return a default value based on the field type.
-  def contentful_create(content_type, context = nil, **attrs)
-    const = WCC::Contentful::Model.resolve_constant(content_type.to_s)
+  def contentful_create(const, context = nil, **attrs)
+    unless const.respond_to?(:content_type_definition)
+      const = WCC::Contentful::Model.resolve_constant(const.to_s)
+    end
     attrs = attrs.transform_keys { |a| a.to_s.camelize(:lower) }
 
     id = attrs.delete('id')

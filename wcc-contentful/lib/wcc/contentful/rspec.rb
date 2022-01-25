@@ -12,16 +12,15 @@ module WCC::Contentful::RSpec
   # Builds out a fake Contentful entry for the given content type, and then
   # stubs the Model API to return that content type for `.find` and `.find_by`
   # query methods.
-  def contentful_stub(content_type, **attrs)
-    const = WCC::Contentful::Model.resolve_constant(content_type.to_s)
-    instance = contentful_create(content_type, **attrs)
+  def contentful_stub(const, **attrs)
+    instance = contentful_create(const, **attrs)
 
     # mimic what's going on inside model_singleton_methods.rb
     # find, find_by, etc always return a new instance from the same raw
     allow(WCC::Contentful::Model).to receive(:find)
       .with(instance.id, any_args) do |_id, keyword_params|
         options = keyword_params && keyword_params[:options]
-        contentful_create(content_type, options, raw: instance.raw, **attrs)
+        contentful_create(const, options, raw: instance.raw, **attrs)
       end
     allow(const).to receive(:find) { |id, options| WCC::Contentful::Model.find(id, **(options || {})) }
 
@@ -31,7 +30,7 @@ module WCC::Contentful::RSpec
           filter = filter&.dup
           options = filter&.delete(:options) || {}
 
-          contentful_create(content_type, options, raw: instance.raw, **attrs)
+          contentful_create(const, options, raw: instance.raw, **attrs)
         end
     end
 

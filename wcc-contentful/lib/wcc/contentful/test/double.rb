@@ -7,8 +7,10 @@ module WCC::Contentful::Test::Double
   # Builds a rspec double of the Contentful model for the given content_type.
   # All attributes that are known to be required fields on the content type
   # will return a default value based on the field type.
-  def contentful_double(content_type, **attrs)
-    const = WCC::Contentful::Model.resolve_constant(content_type)
+  def contentful_double(const, **attrs)
+    unless const.respond_to?(:content_type_definition)
+      const = WCC::Contentful::Model.resolve_constant(const.to_s)
+    end
     attrs.symbolize_keys!
 
     bad_attrs = attrs.reject { |a| const.instance_methods.include?(a) }
