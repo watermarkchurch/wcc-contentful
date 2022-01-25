@@ -457,6 +457,7 @@ RSpec.describe WCC::Contentful::ModelAPI do
       instrumentation = double('instrumentation')
 
       TestNamespace.configure do |config|
+        config.space = 'test'
         config.schema_file = path_to_fixture('contentful/blog-contentful-schema.json')
         config.instrumentation_adapter = instrumentation
       end
