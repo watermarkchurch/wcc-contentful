@@ -6,6 +6,8 @@ class WCC::Contentful::App::MarkdownRenderer
   attr_reader :options, :extensions
 
   def initialize(options = nil)
+    options = options&.dup
+
     @extensions = {
       autolink: true,
       superscript: true,
