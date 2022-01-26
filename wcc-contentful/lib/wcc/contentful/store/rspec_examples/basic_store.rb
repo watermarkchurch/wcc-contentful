@@ -130,24 +130,6 @@ RSpec.shared_examples 'basic store' do
     JSON
   end
 
-  before do
-    allow(WCC::Contentful).to receive(:types)
-      .and_return({
-        'root' => double(fields: {
-          'name' => double(name: 'name', type: :String, array: false),
-          'link' => double(name: 'link', type: :Link, array: false),
-          'links' => double(name: 'links', type: :Link, array: true)
-        }),
-        'shallow' => double(fields: {
-          'name' => double(name: 'name', type: :String, array: false)
-        }),
-        'deep' => double(fields: {
-          'name' => double(name: 'name', type: :String, array: false),
-          'subLink' => double(name: 'subLink', type: :Link, array: false)
-        })
-      })
-  end
-
   describe '#set/#find' do
     describe 'ensures that the stored value is of type Hash' do
       it 'should not raise an error if value is a Hash' do
