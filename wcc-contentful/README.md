@@ -49,7 +49,7 @@ The wcc-contentful gem enables caching at two levels: the HTTP response using [F
 By default, the contentful.rb gem requires the [HTTP library](https://rubygems.org/gems/http).  While simple and straightforward to use, it is not as powerful for caching.  We decided to make our client conform to the [Faraday gem's API](https://github.com/lostisland/faraday).  If you prefer not to use Faraday, you can choose to supply your own HTTP adapter that "quacks like" Faraday (see the [TyphoeusAdapter](https://github.com/watermarkchurch/wcc-contentful/blob/master/wcc-contentful/lib/wcc/contentful/simple_client/typhoeus_adapter.rb) for one implementation).
 
 Using Faraday makes it easy to add Middleware.  As an example, our flagship Rails app that powers watermark.org uses the following configuration in Production, which provides us with instrumentation through statsd, logging, and caching:
-```rb
+```ruby
 config.connection = Faraday.new do |builder|
   builder.use :http_cache,
     shared_cache: false,
@@ -81,7 +81,7 @@ We also took advantage of Rails' naming conventions to automatically infer the c
 
 All our models are automatically generated at startup which improves response times at the expense of initialization time.  In addition, our content model registry allows easy definition of custom models in your `app/models` directory to override fields.  This plays nice with other gems like algoliasearch-rails, which allows you to declaratively manage your Algolia indexes.  Another example from our flagship watermark.org:
 
-```rb
+```ruby
 class Page < WCC::Contentful::Model::Page
   include AlgoliaSearch
 
@@ -399,7 +399,7 @@ allows custom transformation of received entries via the `#select` and `#transfo
 methods.  To create your own middleware simply include {WCC::Contentful::Middleware::Store}
 and implement those methods, then call `use` when configuring the store:
 
-```rb
+```ruby
 config.store :direct do
   use MyMiddleware, param1: 'xxx'
 end
