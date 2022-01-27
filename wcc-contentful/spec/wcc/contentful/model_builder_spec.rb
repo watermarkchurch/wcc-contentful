@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'rails_helper'
+
 RSpec.describe WCC::Contentful::ModelBuilder do
   subject {
     WCC::Contentful::ModelBuilder.new(types)
@@ -638,7 +640,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
             def initialize(raw, context)
             end
           end
-      end
+      end.at_most(2).times
 
       # act
       button = WCC::Contentful::Model.find('5NBhDw3i2kUqSwqYok4YQO')
@@ -650,6 +652,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     it 'does not use loaded class if it does not exist' do
       expect(Object).to receive(:const_missing).with('MenuButton')
         .and_raise(NameError, 'uninitialized constant MenuButton')
+        .at_most(3).times
 
       # act
       button = WCC::Contentful::Model.find('5NBhDw3i2kUqSwqYok4YQO')

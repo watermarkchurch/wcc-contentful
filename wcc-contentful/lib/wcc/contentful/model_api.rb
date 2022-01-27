@@ -105,9 +105,11 @@ module WCC::Contentful::ModelAPI
           raise e unless e.message =~ /uninitialized constant (.+::)*#{const_name}$/
         end
 
+        # const_missing only searches recursively up the module tree in a Rails
+        # context.  If we're in a non-Rails app, we have to do that recursion ourselves.
+        # Keep looking upwards until we get to Object.
         break if parent == Object
 
-        # Keep looking up the module tree until we get to Object
         parent = parent.try(:module_parent) || parent.parent
       end
 
