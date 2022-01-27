@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'rails_helper'
 require 'wcc/contentful/model_api'
 
 RSpec.describe WCC::Contentful::ModelAPI do
@@ -17,13 +18,13 @@ RSpec.describe WCC::Contentful::ModelAPI do
 
   context 'when configured' do
     before do
-      TestNamespace.configure(services: services) do |config|
+      TestNamespace::Model.configure(services: services) do |config|
         config.schema_file = path_to_fixture('contentful/blog-contentful-schema.json')
       end
     end
 
     it 'builds classes under namespace' do
-      expect(TestNamespace.constants(false).sort).to eq(
+      expect(TestNamespace::Model.constants(false).sort).to eq(
         %i[
           Asset
           BlogPost
@@ -44,7 +45,7 @@ RSpec.describe WCC::Contentful::ModelAPI do
 
     it 'resolves json blobs' do
       # act
-      migration = TestNamespace::MigrationHistory.new({
+      migration = TestNamespace::Model::MigrationHistory.new({
         'sys' => {
           'type' => 'Entry',
           'contentType' => {
@@ -105,7 +106,7 @@ RSpec.describe WCC::Contentful::ModelAPI do
     # Note: see code comment inside model_builder.rb for why we do not parse DateTime objects
     it 'does not parse date times' do
       # act
-      post = TestNamespace::BlogPost.new({
+      post = TestNamespace::Model::BlogPost.new({
         'sys' => {
           'type' => 'Entry',
           'contentType' => {
@@ -128,7 +129,7 @@ RSpec.describe WCC::Contentful::ModelAPI do
 
     it 'resolves linked types' do
       # act
-      post = TestNamespace::BlogPost.new({
+      post = TestNamespace::Model::BlogPost.new({
         'sys' => {
           'type' => 'Entry',
           'contentType' => {
@@ -161,15 +162,15 @@ RSpec.describe WCC::Contentful::ModelAPI do
       })
 
       # assert
-      expect(post.sections[0]).to be_instance_of(TestNamespace::SectionBlockText)
+      expect(post.sections[0]).to be_instance_of(TestNamespace::Model::SectionBlockText)
       expect(post.sections[0].text).to eq('Lorem Ipsum Dolor Sit Amet')
     end
 
     it 'inherited class resolves linked types' do
-      class MyBlogPost < TestNamespace::BlogPost
+      class MyBlogPost < TestNamespace::Model::BlogPost
       end
 
-      class MyBlockText < TestNamespace::SectionBlockText
+      class MyBlockText < TestNamespace::Model::SectionBlockText
       end
 
       # act
@@ -231,10 +232,10 @@ RSpec.describe WCC::Contentful::ModelAPI do
         })
 
       # act
-      entry = TestNamespace.find('1234')
+      entry = TestNamespace::Model.find('1234')
 
       # assert
-      expect(entry).to be_a(TestNamespace::BlogPost)
+      expect(entry).to be_a(TestNamespace::Model::BlogPost)
       expect(entry.id).to eq('1234')
       expect(entry.title).to eq('Lorem Ipsum')
     end
@@ -260,10 +261,10 @@ RSpec.describe WCC::Contentful::ModelAPI do
         })
 
       # act
-      entry = TestNamespace::BlogPost.find('1234')
+      entry = TestNamespace::Model::BlogPost.find('1234')
 
       # assert
-      expect(entry).to be_a(TestNamespace::BlogPost)
+      expect(entry).to be_a(TestNamespace::Model::BlogPost)
       expect(entry.id).to eq('1234')
       expect(entry.title).to eq('Lorem Ipsum')
     end
@@ -289,10 +290,10 @@ RSpec.describe WCC::Contentful::ModelAPI do
         })
 
       # act
-      entry = TestNamespace::BlogPost.find('1234')
+      entry = TestNamespace::Model::BlogPost.find('1234')
 
       # assert
-      expect(entry).to be_a(TestNamespace::BlogPost)
+      expect(entry).to be_a(TestNamespace::Model::BlogPost)
       expect(entry.id).to eq('1234')
       expect(entry.title).to eq('Lorem Ipsum')
     end
@@ -301,12 +302,12 @@ RSpec.describe WCC::Contentful::ModelAPI do
       allow(store).to receive(:find)
       # act
       expect {
-        TestNamespace::BlogPost.find('1234')
+        TestNamespace::Model::BlogPost.find('1234')
       }.to instrument('find.model.contentful.wcc')
     end
 
     it 'subclass instruments find using configured instrumentation' do
-      class MyBlogPost2 < TestNamespace::BlogPost
+      class MyBlogPost2 < TestNamespace::Model::BlogPost
       end
 
       instrumentation = double
@@ -364,7 +365,7 @@ RSpec.describe WCC::Contentful::ModelAPI do
         ].lazy)
 
       # act
-      posts = TestNamespace::BlogPost.find_all
+      posts = TestNamespace::Model::BlogPost.find_all
 
       # assert
       expect(posts.map(&:id).sort).to eq(
@@ -394,7 +395,7 @@ RSpec.describe WCC::Contentful::ModelAPI do
         )
 
       # act
-      post = TestNamespace::BlogPost.find_by(slug: 'mister_roboto')
+      post = TestNamespace::Model::BlogPost.find_by(slug: 'mister_roboto')
 
       # assert
       expect(post.id).to eq('1234')
@@ -422,7 +423,7 @@ RSpec.describe WCC::Contentful::ModelAPI do
         )
 
       # act
-      post = TestNamespace::BlogPost.new({
+      post = TestNamespace::Model::BlogPost.new({
         'sys' => {
           'type' => 'Entry',
           'contentType' => {
@@ -447,8 +448,63 @@ RSpec.describe WCC::Contentful::ModelAPI do
       })
 
       # assert
-      expect(post.sections[0]).to be_a TestNamespace::SectionBlockText
+      expect(post.sections[0]).to be_a TestNamespace::Model::SectionBlockText
       expect(post.sections[0].text).to eq('Lorem Ipsum Dolor Sit Amet')
+    end
+
+    it 'loads app-defined constant from namespace' do
+      allow(store).to receive(:find)
+        .and_return({
+          'sys' => {
+            'id' => '1234',
+            'type' => 'Entry',
+            'contentType' => {
+              'sys' => {
+                'id' => 'blogPost'
+              }
+            }
+          }
+        })
+
+      expect(TestNamespace).to receive(:const_missing).with('BlogPost') do
+        TestNamespace::BlogPost =
+          Class.new(TestNamespace::Model::BlogPost) do
+          end
+      end
+
+      # act
+      button = TestNamespace::Model.find('1234')
+
+      # assert
+      expect(button).to be_a(TestNamespace::BlogPost)
+    end
+
+    it 'falls back to object if not found' do
+      allow(store).to receive(:find)
+        .and_return({
+          'sys' => {
+            'id' => '1234',
+            'type' => 'Entry',
+            'contentType' => {
+              'sys' => {
+                'id' => 'blogPost'
+              }
+            }
+          }
+        })
+
+      blog_post_class = nil
+      expect(Object).to receive(:const_missing).with('BlogPost') do
+        blog_post_class =
+          Class.new(TestNamespace::Model::BlogPost) do
+          end
+      end
+
+      # act
+      button = TestNamespace::Model.find('1234')
+
+      # assert
+      expect(button).to be_a(blog_post_class)
     end
   end
 
@@ -456,7 +512,7 @@ RSpec.describe WCC::Contentful::ModelAPI do
     it 'applies custom instrumentation adapter to the whole stack' do
       instrumentation = double('instrumentation')
 
-      TestNamespace.configure do |config|
+      TestNamespace::Model.configure do |config|
         config.space = 'test'
         config.schema_file = path_to_fixture('contentful/blog-contentful-schema.json')
         config.instrumentation_adapter = instrumentation
@@ -476,7 +532,7 @@ RSpec.describe WCC::Contentful::ModelAPI do
         .at_least(:once)
 
       # act
-      TestNamespace::BlogPost.find('test')
+      TestNamespace::Model::BlogPost.find('test')
 
       expect(events).to eq(
         [
@@ -490,21 +546,23 @@ RSpec.describe WCC::Contentful::ModelAPI do
   end
 
   def reset_test_namespace!
-    consts = TestNamespace.constants(false).map(&:to_s).uniq
+    consts = TestNamespace::Model.constants(false).map(&:to_s).uniq
     consts.each do |c|
       begin
-        TestNamespace.send(:remove_const, c.split(':').last)
+        TestNamespace::Model.send(:remove_const, c.split(':').last)
       rescue StandardError => e
         warn e
       end
     end
-    TestNamespace.class_variable_get('@@registry').clear
-    TestNamespace.instance_variable_set('@schema', nil)
-    TestNamespace.instance_variable_set('@services', nil)
-    TestNamespace.instance_variable_set('@configuration', nil)
+    TestNamespace::Model.class_variable_get('@@registry').clear
+    TestNamespace::Model.instance_variable_set('@schema', nil)
+    TestNamespace::Model.instance_variable_set('@services', nil)
+    TestNamespace::Model.instance_variable_set('@configuration', nil)
   end
 
-  class TestNamespace
-    include WCC::Contentful::ModelAPI
+  module TestNamespace # rubocop:disable Style/ClassAndModuleChildren
+    class Model
+      include WCC::Contentful::ModelAPI
+    end
   end
 end

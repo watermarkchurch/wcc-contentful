@@ -91,12 +91,13 @@ module WCC::Contentful::ModelAPI
       return const if const
 
       const_name = WCC::Contentful::Helpers.constant_from_content_type(content_type).to_s
+      parent = try(:parent) || module_parent
       begin
         # The app may have defined a model and we haven't loaded it yet
-        const = Object.const_missing(const_name)
-        return const if const && const < WCC::Contentful::Model
+        const = parent.const_missing(const_name)
+        return const if const && const < self
       rescue NameError => e
-        raise e unless e.message =~ /uninitialized constant #{const_name}/
+        raise e unless e.message =~ /uninitialized constant (.+::)*#{const_name}/
 
         nil
       end
@@ -146,6 +147,7 @@ module WCC::Contentful::ModelAPI
       registry.each do |(content_type, klass)|
         const_name = klass.name
         begin
+          # the const_name is fully qualified so search from root
           const = Object.const_missing(const_name)
           register_for_content_type(content_type, klass: const) if const
         rescue NameError => e
