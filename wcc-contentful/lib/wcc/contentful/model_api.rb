@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'active_support/core_ext/module/introspection'
+
 module WCC::Contentful::ModelAPI
   extend ActiveSupport::Concern
 
@@ -91,15 +93,22 @@ module WCC::Contentful::ModelAPI
       return const if const
 
       const_name = WCC::Contentful::Helpers.constant_from_content_type(content_type).to_s
-      parent = try(:parent) || module_parent
-      begin
-        # The app may have defined a model and we haven't loaded it yet
-        const = parent.const_missing(const_name)
-        return const if const && const < self
-      rescue NameError => e
-        raise e unless e.message =~ /uninitialized constant (.+::)*#{const_name}/
+      # #parent renamed to #module_parent in Rails 6
+      parent = try(:module_parent) || self.parent
 
-        nil
+      loop do
+        begin
+          # The app may have defined a model and we haven't loaded it yet
+          const = parent.const_missing(const_name)
+          return const if const && const < self
+        rescue NameError => e
+          raise e unless e.message =~ /uninitialized constant (.+::)*#{const_name}$/
+        end
+
+        break if parent == Object
+
+        # Keep looking up the module tree until we get to Object
+        parent = parent.try(:module_parent) || parent.parent
       end
 
       # Autoloading couldn't find their model - we'll register our own.
