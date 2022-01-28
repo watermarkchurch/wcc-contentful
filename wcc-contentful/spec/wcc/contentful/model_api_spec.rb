@@ -8,8 +8,15 @@ RSpec.describe WCC::Contentful::ModelAPI do
     double('store')
   }
 
+  let(:preview_store) {
+    double('preview_store')
+  }
+
   let(:services) {
-    double('services', store: store, instrumentation: ActiveSupport::Notifications)
+    double('services',
+      store: store,
+      preview_store: preview_store,
+      instrumentation: ActiveSupport::Notifications)
   }
 
   before do
@@ -450,6 +457,176 @@ RSpec.describe WCC::Contentful::ModelAPI do
       # assert
       expect(post.sections[0]).to be_a TestNamespace::Model::SectionBlockText
       expect(post.sections[0].text).to eq('Lorem Ipsum Dolor Sit Amet')
+    end
+
+    context 'when options: { preview: true }' do
+      it 'find chooses preview_store' do
+        expect(store).to_not receive(:find)
+
+        allow(preview_store).to receive(:find)
+          .with('1234', anything)
+          .and_return({
+            'sys' => {
+              'id' => '1234',
+              'type' => 'Entry',
+              'contentType' => {
+                'sys' => {
+                  'id' => 'blogPost'
+                }
+              }
+            },
+          'fields' => {
+            'title' => {
+              'en-US' => 'Lorem Ipsum'
+            }
+          }
+          })
+
+        # act
+        entry = TestNamespace::Model.find('1234', options: { preview: true })
+
+        # assert
+        expect(entry).to be_a(TestNamespace::Model::BlogPost)
+        expect(entry.id).to eq('1234')
+        expect(entry.title).to eq('Lorem Ipsum')
+      end
+
+      it 'find_by chooses preview_store' do
+        expect(store).to_not receive(:find_by)
+
+        allow(preview_store).to receive(:find_by)
+          .with(content_type: 'blogPost', filter: { 'slug' => 'mister_roboto' }, options: {})
+          .and_return(
+            {
+              'sys' => {
+                'id' => '1234',
+                'type' => 'Entry',
+                'contentType' => {
+                  'sys' => {
+                    'id' => 'blogPost'
+                  }
+                }
+              }
+            }
+          )
+
+        # act
+        post = TestNamespace::Model::BlogPost.find_by(slug: 'mister_roboto', options: { preview: true })
+
+        # assert
+        expect(post.id).to eq('1234')
+      end
+
+      it 'find_all chooses preview_store' do
+        expect(store).to_not receive(:find_all)
+
+        allow(preview_store).to receive(:find_all)
+          .with(content_type: 'blogPost', options: {})
+          .and_return([
+            {
+              'sys' => {
+                'id' => '1234',
+                'type' => 'Entry',
+                'contentType' => {
+                  'sys' => {
+                    'id' => 'blogPost'
+                  }
+                }
+              }
+            },
+            {
+              'sys' => {
+                'id' => '5678',
+                'type' => 'Entry',
+                'contentType' => {
+                  'sys' => {
+                    'id' => 'blogPost'
+                  }
+                }
+              }
+            },
+            {
+              'sys' => {
+                'id' => '9012',
+                'type' => 'Entry',
+                'contentType' => {
+                  'sys' => {
+                    'id' => 'blogPost'
+                  }
+                }
+              }
+            }
+          ].lazy)
+
+        # act
+        posts = TestNamespace::Model::BlogPost.find_all(options: { preview: true })
+
+        # assert
+        expect(posts.map(&:id).sort).to eq(
+          %w[
+            1234
+            5678
+            9012
+          ]
+        )
+      end
+
+      it 'links are resolved using preview store as well' do
+        expect(store).to_not receive(:find)
+
+        allow(preview_store).to receive(:find)
+          .with('blockText1234', anything)
+          .and_return(
+            {
+              'sys' => {
+                'type' => 'Entry',
+                'contentType' => {
+                  'sys' => {
+                    'id' => 'sectionBlockText'
+                  }
+                }
+              },
+              'fields' => {
+                'text' => {
+                  'en-US' => 'Lorem Ipsum Dolor Sit Amet'
+                }
+              }
+            }
+          )
+        allow(preview_store).to receive(:find)
+          .with('blogPost1', anything)
+          .and_return({
+            'sys' => {
+              'id' => 'blogPost1',
+              'type' => 'Entry',
+              'contentType' => {
+                'sys' => {
+                  'id' => 'blogPost'
+                }
+              }
+            },
+            'fields' => {
+              'sections' => {
+                'en-US' => [
+                  {
+                    'sys' => {
+                      'type' => 'Link',
+                      'linkType' => 'Entry',
+                      'id' => 'blockText1234'
+                    }
+                  }
+                ]
+              }
+            }
+          })
+
+        # act
+        post = TestNamespace::Model::BlogPost.find('blogPost1', options: { preview: true })
+
+        # assert
+        expect(post.sections[0]).to be_a TestNamespace::Model::SectionBlockText
+        expect(post.sections[0].text).to eq('Lorem Ipsum Dolor Sit Amet')
+      end
     end
 
     it 'loads app-defined constant from namespace' do
