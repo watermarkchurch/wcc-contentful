@@ -112,13 +112,21 @@ RSpec.describe WCC::Contentful::ModelMethods do
     double('store')
   }
 
+  let(:services) {
+    double('services',
+      store: store,
+      instrumentation: ActiveSupport::Notifications)
+  }
+
   subject {
     WCC::Contentful::Model::ToJsonTest.new(raw)
   }
 
   before do
-    builder = WCC::Contentful::ModelBuilder.new({ 'toJsonTest' => typedef })
-    builder.build_models
+    WCC::Contentful::Model.configure(
+      schema: { 'toJsonTest' => typedef },
+      services: services
+    )
 
     allow(WCC::Contentful::Model).to receive(:store)
       .with(no_args)
@@ -130,7 +138,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
       .with(false)
       .and_return(store)
     allow(WCC::Contentful::Services).to receive(:instance)
-      .and_return(double('services', instrumentation: ActiveSupport::Notifications))
+      .and_return(services)
   end
 
   describe '#resolve' do
@@ -257,8 +265,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
       })
 
       preview_store = double('preview_store')
-      allow(WCC::Contentful::Model).to receive(:store)
-        .with(true)
+      allow(services).to receive(:preview_store)
         .and_return(preview_store)
 
       expect(store).to_not receive(:find_by)

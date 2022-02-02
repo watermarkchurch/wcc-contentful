@@ -4,15 +4,16 @@ module WCC::Contentful
   class Services
     class << self
       def instance
-        @singleton__instance__ ||= new # rubocop:disable Naming/MemoizedInstanceVariableName
+        @singleton__instance__ ||= # rubocop:disable Naming/MemoizedInstanceVariableName
+          (new(WCC::Contentful.configuration) if WCC::Contentful.configuration)
       end
     end
 
-    def configuration
-      @configuration ||= WCC::Contentful.configuration
-    end
+    attr_reader :configuration
 
-    def initialize(configuration = nil)
+    def initialize(configuration)
+      raise ArgumentError, 'Not yet configured!' unless configuration
+
       @configuration = configuration
     end
 
@@ -33,10 +34,7 @@ module WCC::Contentful
     #
     # @api Store
     def store
-      @store ||=
-        ensure_configured do |config|
-          config.store.build(self)
-        end
+      @store ||= configuration.store.build(self)
     end
 
     # An instance of {WCC::Contentful::Store::CDNAdapter} which connects to the
@@ -45,13 +43,11 @@ module WCC::Contentful
     # @api Store
     def preview_store
       @preview_store ||=
-        ensure_configured do |config|
-          WCC::Contentful::Store::Factory.new(
-            config,
-            :direct,
-            :preview
-          ).build(self)
-        end
+        WCC::Contentful::Store::Factory.new(
+          configuration,
+          :direct,
+          :preview
+        ).build(self)
     end
 
     # Gets a {WCC::Contentful::SimpleClient::Cdn CDN Client} which provides
@@ -60,16 +56,15 @@ module WCC::Contentful
     # @api Client
     def client
       @client ||=
-        ensure_configured do |config|
-          WCC::Contentful::SimpleClient::Cdn.new(
-            **config.connection_options,
-            access_token: config.access_token,
-            space: config.space,
-            default_locale: config.default_locale,
-            connection: config.connection,
-            environment: config.environment
-          )
-        end
+        WCC::Contentful::SimpleClient::Cdn.new(
+          **configuration.connection_options,
+          access_token: configuration.access_token,
+          space: configuration.space,
+          default_locale: configuration.default_locale,
+          connection: configuration.connection,
+          environment: configuration.environment,
+          instrumentation: instrumentation
+        )
     end
 
     # Gets a {WCC::Contentful::SimpleClient::Cdn CDN Client} which provides
@@ -78,17 +73,16 @@ module WCC::Contentful
     # @api Client
     def preview_client
       @preview_client ||=
-        ensure_configured do |config|
-          if config.preview_token.present?
-            WCC::Contentful::SimpleClient::Preview.new(
-              **config.connection_options,
-              preview_token: config.preview_token,
-              space: config.space,
-              default_locale: config.default_locale,
-              connection: config.connection,
-              environment: config.environment
-            )
-          end
+        if configuration.preview_token.present?
+          WCC::Contentful::SimpleClient::Preview.new(
+            **configuration.connection_options,
+            preview_token: configuration.preview_token,
+            space: configuration.space,
+            default_locale: configuration.default_locale,
+            connection: configuration.connection,
+            environment: configuration.environment,
+            instrumentation: instrumentation
+          )
         end
     end
 
@@ -98,17 +92,16 @@ module WCC::Contentful
     # @api Client
     def management_client
       @management_client ||=
-        ensure_configured do |config|
-          if config.management_token.present?
-            WCC::Contentful::SimpleClient::Management.new(
-              **config.connection_options,
-              management_token: config.management_token,
-              space: config.space,
-              default_locale: config.default_locale,
-              connection: config.connection,
-              environment: config.environment
-            )
-          end
+        if configuration.management_token.present?
+          WCC::Contentful::SimpleClient::Management.new(
+            **configuration.connection_options,
+            management_token: configuration.management_token,
+            space: configuration.space,
+            default_locale: configuration.default_locale,
+            connection: configuration.connection,
+            environment: configuration.environment,
+            instrumentation: instrumentation
+          )
         end
     end
 
@@ -132,25 +125,30 @@ module WCC::Contentful
 
     # Gets the configured instrumentation adapter, defaulting to ActiveSupport::Notifications
     def instrumentation
-      return @instrumentation if @instrumentation
-      return ActiveSupport::Notifications if WCC::Contentful.configuration.nil?
-
       @instrumentation ||=
-        WCC::Contentful.configuration.instrumentation_adapter ||
+        configuration.instrumentation_adapter ||
         ActiveSupport::Notifications
     end
+    # Allow it to be injected into a store
+    alias_method :_instrumentation, :instrumentation
 
-    private
+    ##
+    # This method enables simple dependency injection -
+    # If the target has a setter matching the name of one of the services,
+    # set that setter with the value of the service.
+    def inject_into(target, except: [])
+      (WCC::Contentful::SERVICES - except).each do |s|
+        next unless target.respond_to?("#{s}=")
 
-    def ensure_configured
-      raise StandardError, 'WCC::Contentful has not yet been configured!' if configuration.nil?
-
-      yield configuration
+        target.public_send("#{s}=",
+          public_send(s))
+      end
     end
   end
 
-  SERVICES = (WCC::Contentful::Services.instance_methods -
-      Object.instance_methods)
+  SERVICES =
+    WCC::Contentful::Services.instance_methods(false)
+      .select { |m| WCC::Contentful::Services.instance_method(m).arity == 0 }
 
   # Include this module to define accessors for every method defined on the
   # {Services} singleton.

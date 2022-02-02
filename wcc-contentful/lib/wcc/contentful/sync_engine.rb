@@ -49,7 +49,6 @@ module WCC::Contentful
         end
 
         @store = store
-        @state = read_state if should_sync?
       end
       if state
         @state = token_wrapper_factory(state)

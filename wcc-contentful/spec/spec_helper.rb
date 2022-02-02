@@ -42,6 +42,10 @@ RSpec.shared_context 'Contentful config' do
       end
     end
     WCC::Contentful::Model.class_variable_get('@@registry').clear
+
+    WCC::Contentful::Model.instance_variable_set('@schema', nil)
+    WCC::Contentful::Model.instance_variable_set('@services', nil)
+    WCC::Contentful::Model.instance_variable_set('@configuration', nil)
     Wisper.clear
   end
 end

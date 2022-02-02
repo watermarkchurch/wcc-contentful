@@ -7,8 +7,12 @@ RSpec.describe WCC::Contentful::Events do
     it 'rebroadcasts sync engine events' do
       client = double('client')
       sync_engine = WCC::Contentful::SyncEngine.new(state: 'start-token', client: client)
-      allow(WCC::Contentful::Services.instance).to receive(:sync_engine)
-        .and_return(sync_engine)
+      services = double(
+        client: client,
+        sync_engine: sync_engine
+      )
+      allow(WCC::Contentful::Services).to receive(:instance)
+        .and_return(services)
 
       allow(client).to receive(:sync)
         .and_return(
@@ -38,8 +42,9 @@ RSpec.describe WCC::Contentful::Events do
       subscriber = double('subsc 2')
       expect(subscriber).to receive(:Entry)
 
-      allow(WCC::Contentful::Services.instance).to receive(:sync_engine)
-        .and_return(double('sync_engine', subscribe: nil))
+      sync_engine = double('sync_engine', subscribe: nil)
+      allow(WCC::Contentful::Services).to receive(:instance)
+        .and_return(double(sync_engine: sync_engine))
 
       instance = WCC::Contentful::Events.new
       instance.subscribe(subscriber)

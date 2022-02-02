@@ -31,10 +31,6 @@ module WCC::Contentful::Test::Attributes
     ##
     # Get a hash of default values for all attributes unique to the given Contentful model.
     def defaults(const)
-      unless const < WCC::Contentful::Model
-        raise ArgumentError, "#{const} is not a subclass of WCC::Contentful::Model"
-      end
-
       const.content_type_definition.fields.each_with_object({}) do |(name, f), h|
         h[name.to_sym] = h[name.underscore.to_sym] = default_value(f)
       end

@@ -7,8 +7,11 @@ module WCC::Contentful
   class ModelBuilder
     include Helpers
 
-    def initialize(types)
+    attr_reader :namespace
+
+    def initialize(types, namespace: WCC::Contentful::Model)
       @types = types
+      @namespace = namespace
     end
 
     def build_models
@@ -21,12 +24,13 @@ module WCC::Contentful
 
     def build_model(typedef)
       const = typedef.name
-      return WCC::Contentful::Model.const_get(const) if WCC::Contentful::Model.const_defined?(const)
+      ns = namespace
+      return ns.const_get(const) if ns.const_defined?(const)
 
       # TODO: https://github.com/dkubb/ice_nine ?
       typedef = typedef.deep_dup.freeze
-      WCC::Contentful::Model.const_set(const,
-        Class.new(WCC::Contentful::Model) do
+      ns.const_set(const,
+        Class.new(namespace) do
           extend ModelSingletonMethods
           include ModelMethods
           include Helpers
@@ -49,6 +53,8 @@ module WCC::Contentful
           define_singleton_method(:content_type_definition) do
             typedef
           end
+
+          define_singleton_method(:model_namespace) { ns }
 
           define_method(:initialize) do |raw, context = nil|
             ct = content_type_from_raw(raw)

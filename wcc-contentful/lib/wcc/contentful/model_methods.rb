@@ -5,8 +5,6 @@
 #
 # @api Model
 module WCC::Contentful::ModelMethods
-  include WCC::Contentful::Instrumentation
-
   # The set of options keys that are specific to the Model layer and shouldn't
   # be passed down to the Store layer.
   MODEL_LAYER_CONTEXT_KEYS = %i[
@@ -40,6 +38,7 @@ module WCC::Contentful::ModelMethods
 
     typedef = self.class.content_type_definition
     links = fields.select { |f| %i[Asset Link].include?(typedef.fields[f].type) }
+    store = context[:preview] ? self.class.services.preview_store : self.class.services.store
 
     raw_link_ids =
       links.map { |field_name| raw.dig('fields', field_name, sys.locale) }
@@ -54,12 +53,11 @@ module WCC::Contentful::ModelMethods
       raw =
         _instrument 'resolve', id: id, depth: depth, backlinks: backlinked_ids do
           # use include param to do resolution
-          self.class.store(context[:preview])
-            .find_by(content_type: self.class.content_type,
-                     filter: { 'sys.id' => id },
-                     options: context.except(*MODEL_LAYER_CONTEXT_KEYS).merge!({
-                       include: [depth, 10].min
-                     }))
+          store.find_by(content_type: self.class.content_type,
+                        filter: { 'sys.id' => id },
+                        options: context.except(*MODEL_LAYER_CONTEXT_KEYS).merge!({
+                          include: [depth, 10].min
+                        }))
         end
       unless raw
         raise WCC::Contentful::ResolveError, "Cannot find #{self.class.content_type} with ID #{id}"
@@ -170,10 +168,10 @@ module WCC::Contentful::ModelMethods
           if raw.dig('sys', 'type') == 'Link'
             _instrument 'resolve',
               id: self.id, depth: depth, backlinks: context[:backlinks]&.map(&:id) do
-              WCC::Contentful::Model.find(id, options: new_context)
+              self.class.model_namespace.find(id, options: new_context)
             end
           else
-            WCC::Contentful::Model.new_from_raw(raw, new_context)
+            self.class.model_namespace.new_from_raw(raw, new_context)
           end
 
         m.resolve(depth: depth - 1, context: new_context, **options) if m && depth > 1

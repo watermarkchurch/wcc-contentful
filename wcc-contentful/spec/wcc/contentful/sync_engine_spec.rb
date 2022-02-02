@@ -22,14 +22,13 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
   }
 
   before do
-    allow(WCC::Contentful::Services.instance).to receive(:store)
-      .and_return(store)
-
-    allow(WCC::Contentful::Services.instance).to receive(:client)
-      .and_return(client)
-
-    allow(WCC::Contentful::Services.instance).to receive(:sync_engine)
-      .and_return(sync_engine)
+    allow(WCC::Contentful::Services).to receive(:instance)
+      .and_return(double(
+                    store: store,
+                    client: client,
+                    sync_engine: sync_engine,
+                    instrumentation: ActiveSupport::Notifications
+                  ))
 
     described_class.instance_variable_set('@sync_engine', nil)
   end

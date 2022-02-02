@@ -373,7 +373,7 @@ RSpec.describe WCC::Contentful, :vcr do
         WCC::Contentful.init!
 
         # assert
-        store = WCC::Contentful::Model.store
+        store = WCC::Contentful::Model.services.store
         stack = [store]
         while store = store.try(:store)
           stack << store

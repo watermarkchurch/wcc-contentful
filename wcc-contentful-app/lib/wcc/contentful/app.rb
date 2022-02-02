@@ -37,7 +37,7 @@ module WCC::Contentful::App
     WCC::Contentful.init!
 
     # Extend all model types w/ validation & extra fields
-    WCC::Contentful.types.each_value do |t|
+    WCC::Contentful::Model.schema.each_value do |t|
       file = File.dirname(__FILE__) + "/model/#{t.name.underscore}.rb"
       require file if File.exist?(file)
     end

@@ -1,0 +1,1567 @@
+{
+  "contentTypes": [
+    {
+      "sys": {
+        "id": "blogPost",
+        "type": "ContentType"
+      },
+      "displayField": "internalTitle",
+      "name": "BlogPost",
+      "description": "",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "title",
+          "name": "Title",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "subtitle",
+          "name": "Subtitle",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "summary",
+          "name": "Summary",
+          "type": "Text",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "slug",
+          "name": "Slug",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [
+            {
+              "unique": true
+            },
+            {
+              "regexp": {
+                "pattern": "^(\\/|(?:\\/[a-z\\d](?:[a-z\\d_\\-]|(?:\\%[\\dA-Z]{2}))*)+)$"
+              },
+              "message": "The slug must look like the path part of a URL and begin with a forward slash, example: '/my-blog-post-slug'.  It must also be all lower-case."
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "publishAt",
+          "name": "Publish At",
+          "type": "Date",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "flags",
+          "name": "Flags",
+          "type": "Array",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Symbol",
+            "validations": [
+              {
+                "in": [
+                  "hide from internal search"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "heroImage",
+          "name": "Hero Image",
+          "type": "Link",
+          "localized": false,
+          "required": true,
+          "validations": [
+            {
+              "linkMimetypeGroup": [
+                "image"
+              ]
+            },
+            {
+              "assetImageDimensions": {
+                "width": {
+                  "min": 1920,
+                  "max": 1920
+                },
+                "height": {
+                  "min": 1080,
+                  "max": 1080
+                }
+              }
+            }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Asset"
+        },
+        {
+          "id": "thumbnailImage",
+          "name": "Thumbnail Image",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "linkMimetypeGroup": [
+                "image"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Asset"
+        },
+        {
+          "id": "author",
+          "name": "Author",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "sections",
+          "name": "Sections",
+          "type": "Array",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Link",
+            "validations": [
+              {
+                "linkContentType": [
+                  "sectionBlockText",
+                  "section-pull-quote",
+                  "section-scripture-quote",
+                  "section-video-embed"
+                ]
+              }
+            ],
+            "linkType": "Entry"
+          }
+        },
+        {
+          "id": "metadata",
+          "name": "Metadata",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "linkContentType": [
+                "pageMetadata"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        },
+        {
+          "id": "canonicalProperty",
+          "name": "Canonical Property",
+          "type": "Link",
+          "localized": false,
+          "required": true,
+          "validations": [
+            {
+              "linkContentType": [
+                "property"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        },
+        {
+          "id": "categories",
+          "name": "Categories",
+          "type": "Array",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Link",
+            "validations": [
+              {
+                "linkContentType": [
+                  "category"
+                ]
+              }
+            ],
+            "linkType": "Entry"
+          }
+        },
+        {
+          "id": "tags",
+          "name": "Tags",
+          "type": "Array",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Link",
+            "validations": [
+              {
+                "linkContentType": [
+                  "tag"
+                ]
+              }
+            ],
+            "linkType": "Entry"
+          }
+        },
+        {
+          "id": "primaryPublishingTarget",
+          "name": "Primary Publishing Target",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "linkContentType": [
+                "publishingTarget"
+              ]
+            }
+          ],
+          "disabled": true,
+          "omitted": true,
+          "linkType": "Entry"
+        },
+        {
+          "id": "publishingTargets",
+          "name": "Publishing Targets",
+          "type": "Array",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": true,
+          "omitted": true,
+          "items": {
+            "type": "Link",
+            "validations": [
+              {
+                "linkContentType": [
+                  "publishingTarget"
+                ]
+              }
+            ],
+            "linkType": "Entry"
+          }
+        },
+        {
+          "id": "buildStatus",
+          "name": "Build Status",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": true,
+          "omitted": false
+        },
+        {
+          "id": "relatedTo",
+          "name": "Related To",
+          "type": "Array",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Link",
+            "validations": [
+              {
+                "linkContentType": [
+                  "blogPost"
+                ]
+              }
+            ],
+            "linkType": "Entry"
+          }
+        }
+      ]
+    },
+    {
+      "sys": {
+        "id": "category",
+        "type": "ContentType"
+      },
+      "displayField": "internalTitle",
+      "name": "Category",
+      "description": "",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title (Contentful Only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "key",
+          "name": "Key",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [
+            {
+              "unique": true
+            },
+            {
+              "regexp": {
+                "pattern": "^[a-z][a-z0-9\\-_]+$",
+                "flags": null
+              },
+              "message": "The key must be all lower-case and start with a letter.  It can contain underscores."
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "title",
+          "name": "Title",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "errorNotificationEmailList",
+          "name": "Error Notification Email List",
+          "type": "Array",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Symbol",
+            "validations": [
+              {
+                "regexp": {
+                  "pattern": "^\\w[\\w.-]*@([\\w-]+\\.)+[\\w-]+$"
+                },
+                "message": "Must be an email address"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "sys": {
+        "id": "collection",
+        "type": "ContentType"
+      },
+      "displayField": "internalTitle",
+      "name": "Collection",
+      "description": "",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "title",
+          "name": "Title",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "key",
+          "name": "Key",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [
+            {
+              "unique": true
+            },
+            {
+              "regexp": {
+                "pattern": "^[a-z]+(\\-[a-z0-9]+)*$",
+                "flags": null
+              },
+              "message": "The key must be lower-case and can only include letters, numbers, and dashes '-'."
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "posts",
+          "name": "Posts",
+          "type": "Array",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Link",
+            "validations": [
+              {
+                "linkContentType": [
+                  "blogPost"
+                ]
+              }
+            ],
+            "linkType": "Entry"
+          }
+        },
+        {
+          "id": "heroImage",
+          "name": "Hero Image",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "linkMimetypeGroup": [
+                "image"
+              ]
+            },
+            {
+              "assetImageDimensions": {
+                "width": {
+                  "min": 1920,
+                  "max": 1920
+                },
+                "height": {
+                  "min": 1080,
+                  "max": 1080
+                }
+              }
+            }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Asset"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "id": "migrationHistory",
+        "type": "ContentType"
+      },
+      "displayField": "migrationName",
+      "name": "Migration History",
+      "description": "System Type - Do Not Modify",
+      "fields": [
+        {
+          "id": "migrationName",
+          "name": "Migration Name",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "started",
+          "name": "Started",
+          "type": "Date",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "completed",
+          "name": "Completed",
+          "type": "Date",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "detail",
+          "name": "Detail",
+          "type": "Object",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        }
+      ]
+    },
+    {
+      "sys": {
+        "id": "pageMetadata",
+        "type": "ContentType"
+      },
+      "displayField": "internalTitle",
+      "name": "Page Metadata",
+      "description": "",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "metaDescription",
+          "name": "Meta Description",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "metaKeywords",
+          "name": "Meta Keywords",
+          "type": "Text",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "metaFlag",
+          "name": "Meta Flag",
+          "type": "Array",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Symbol",
+            "validations": [
+              {
+                "in": [
+                  "no-follow",
+                  "no-index"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "canonicalLink",
+          "name": "Canonical Link",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "regexp": {
+                "pattern": "^(ftp|http|https):\\/\\/(\\w+:{0,1}\\w*@)?(\\S+)(:[0-9]+)?(\\/|\\/([\\w#!:.?+=&%@!\\-\\/]))?$"
+              }
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        }
+      ]
+    },
+    {
+      "sys": {
+        "id": "property",
+        "type": "ContentType"
+      },
+      "displayField": "internalTitle",
+      "name": "Property",
+      "description": "",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title (Contentful Only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "key",
+          "name": "Key",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [
+            {
+              "unique": true
+            },
+            {
+              "in": [
+                "paper_signs",
+                "watermark_resources",
+                "theporch-app",
+                "reengage",
+                "regeneration",
+                "test"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "categories",
+          "name": "Categories",
+          "type": "Array",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Link",
+            "validations": [
+              {
+                "linkContentType": [
+                  "category"
+                ]
+              }
+            ],
+            "linkType": "Entry"
+          }
+        },
+        {
+          "id": "acceptedTags",
+          "name": "Accepted Tags",
+          "type": "Array",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Link",
+            "validations": [
+              {
+                "linkContentType": [
+                  "tag"
+                ]
+              }
+            ],
+            "linkType": "Entry"
+          }
+        },
+        {
+          "id": "canonicalUrlTemplate",
+          "name": "Canonical URL Template",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [
+            {
+              "regexp": {
+                "pattern": "^(ftp|http|https):\\/\\/(\\w+:{0,1}\\w*@)?(\\S+)(:[0-9]+)?(\\/|\\/([\\w#!:.?+=&%@!\\-\\/]))?$"
+              }
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "webhookUrl",
+          "name": "Webhook URL",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        }
+      ]
+    },
+    {
+      "sys": {
+        "id": "publishingTarget",
+        "type": "ContentType"
+      },
+      "displayField": "internalTitle",
+      "name": "Publishing Target",
+      "description": "",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "key",
+          "name": "Key",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [
+            {
+              "unique": true
+            },
+            {
+              "in": [
+                "watermark_resources",
+                "paper_signs",
+                "reengage.org"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "webhookUrl",
+          "name": "Webhook URL",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "canonicalUrlTemplate",
+          "name": "Canonical URL Template",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [
+            {
+              "regexp": {
+                "pattern": "^(ftp|http|https):\\/\\/(\\w+:{0,1}\\w*@)?(\\S+)(:[0-9]+)?(\\/|\\/([\\w#!:.?+=&%@!\\-\\/]))?$"
+              }
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        }
+      ]
+    },
+    {
+      "sys": {
+        "id": "section-pull-quote",
+        "type": "ContentType"
+      },
+      "displayField": "internalTitle",
+      "name": "Section: Pull Quote",
+      "description": "",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title (Contentful Only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "anchorId",
+          "name": "Anchor ID",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "quoteText",
+          "name": "Quote Text",
+          "type": "Text",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        }
+      ]
+    },
+    {
+      "sys": {
+        "id": "section-scripture-quote",
+        "type": "ContentType"
+      },
+      "displayField": "internalTitle",
+      "name": "Section: Scripture Quote",
+      "description": "",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title (Contentful Only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "anchorId",
+          "name": "Anchor ID",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "keyVerse",
+          "name": "Key Verse",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "keyVerseContext",
+          "name": "Key Verse Context",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        }
+      ]
+    },
+    {
+      "sys": {
+        "id": "section-video-embed",
+        "type": "ContentType"
+      },
+      "displayField": "internalTitle",
+      "name": "Section: Video Embed",
+      "description": "",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title (Contentful Only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "anchorId",
+          "name": "Anchor ID",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "title",
+          "name": "Title",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "embedCode",
+          "name": "Embed Code",
+          "type": "Text",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        }
+      ]
+    },
+    {
+      "sys": {
+        "id": "sectionBlockText",
+        "type": "ContentType"
+      },
+      "displayField": "internalTitle",
+      "name": "Section: Block Text",
+      "description": "",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "anchorId",
+          "name": "Anchor ID",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "text",
+          "name": "Text",
+          "type": "Text",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        }
+      ]
+    },
+    {
+      "sys": {
+        "id": "tag",
+        "type": "ContentType"
+      },
+      "displayField": "internalTitle",
+      "name": "Tag",
+      "description": "",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title (Contentful Only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "key",
+          "name": "Key",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [
+            {
+              "unique": true
+            },
+            {
+              "regexp": {
+                "pattern": "^[a-z][a-z0-9\\-_]+$",
+                "flags": null
+              },
+              "message": "A tag key must be all lower case and start with a letter.  It can have hyphens or underscores."
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "title",
+          "name": "Title",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        }
+      ]
+    }
+  ],
+  "editorInterfaces": [
+    {
+      "sys": {
+        "id": "default",
+        "type": "EditorInterface",
+        "contentType": {
+          "sys": {
+            "id": "blogPost",
+            "type": "Link",
+            "linkType": "ContentType"
+          }
+        }
+      },
+      "controls": [
+        {
+          "fieldId": "author",
+          "settings": {
+            "space": "hw5pse7y1ojx",
+            "display": "${firstName} ${lastName}",
+            "contentType": "person"
+          },
+          "widgetId": "cross-space-link"
+        },
+        {
+          "fieldId": "buildStatus",
+          "widgetId": "15wvANEluAVvFw2AjjdQ4S"
+        },
+        {
+          "fieldId": "canonicalProperty",
+          "settings": {
+            "helpText": "The Blog Post must have a Canonical property that all other properties link back to for SEO purposes."
+          },
+          "widgetId": "entryLinkEditor"
+        },
+        {
+          "fieldId": "categories",
+          "settings": {
+            "helpText": "Pick the categories that this blog post should be listed under.  If a property subscribes to one of these categories, then the blog post will be shown on that website.",
+            "bulkEditing": false
+          },
+          "widgetId": "entryLinksEditor"
+        },
+        {
+          "fieldId": "flags",
+          "widgetId": "checkbox"
+        },
+        {
+          "fieldId": "heroImage",
+          "settings": {
+            "helpText": "The image must be 16x9 aspect ratio (1920x1080)"
+          },
+          "widgetId": "assetLinkEditor"
+        },
+        {
+          "fieldId": "internalTitle",
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "metadata",
+          "widgetId": "entryLinkEditor"
+        },
+        {
+          "fieldId": "primaryPublishingTarget",
+          "settings": {
+            "helpText": "Deprecated (this will be removed soon)"
+          },
+          "widgetId": "entryCardEditor"
+        },
+        {
+          "fieldId": "publishAt",
+          "widgetId": "datePicker"
+        },
+        {
+          "fieldId": "publishingTargets",
+          "settings": {
+            "helpText": "Deprecated (this will be removed soon)",
+            "bulkEditing": false
+          },
+          "widgetId": "entryLinksEditor"
+        },
+        {
+          "fieldId": "relatedTo",
+          "settings": {
+            "bulkEditing": false,
+            "showLinkEntityAction": true,
+            "showCreateEntityAction": true
+          },
+          "widgetId": "entryLinksEditor"
+        },
+        {
+          "fieldId": "sections",
+          "settings": {
+            "bulkEditing": false
+          },
+          "widgetId": "entryLinksEditor"
+        },
+        {
+          "fieldId": "slug",
+          "widgetId": "slugEditor"
+        },
+        {
+          "fieldId": "subtitle",
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "summary",
+          "widgetId": "multipleLine"
+        },
+        {
+          "fieldId": "tags",
+          "settings": {
+            "bulkEditing": false
+          },
+          "widgetId": "entryLinksEditor"
+        },
+        {
+          "fieldId": "thumbnailImage",
+          "settings": {
+            "helpText": "The image must be 1x1 (square) aspect ratio"
+          },
+          "widgetId": "assetLinkEditor"
+        },
+        {
+          "fieldId": "title",
+          "widgetId": "singleLine"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "id": "default",
+        "type": "EditorInterface",
+        "contentType": {
+          "sys": {
+            "id": "category",
+            "type": "Link",
+            "linkType": "ContentType"
+          }
+        }
+      },
+      "controls": [
+        {
+          "fieldId": "errorNotificationEmailList",
+          "widgetId": "tagEditor"
+        },
+        {
+          "fieldId": "internalTitle",
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "key",
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "title",
+          "settings": {
+            "helpText": "The Title is displayed in the category listing on a site, ex. on the search filters."
+          },
+          "widgetId": "singleLine"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "id": "default",
+        "type": "EditorInterface",
+        "contentType": {
+          "sys": {
+            "id": "collection",
+            "type": "Link",
+            "linkType": "ContentType"
+          }
+        }
+      },
+      "controls": [
+        {
+          "fieldId": "heroImage",
+          "widgetId": "assetLinkEditor"
+        },
+        {
+          "fieldId": "internalTitle",
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "key",
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "posts",
+          "settings": {
+            "bulkEditing": false,
+            "showLinkEntityAction": true,
+            "showCreateEntityAction": true
+          },
+          "widgetId": "entryLinksEditor"
+        },
+        {
+          "fieldId": "title",
+          "widgetId": "singleLine"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "id": "default",
+        "type": "EditorInterface",
+        "contentType": {
+          "sys": {
+            "id": "migrationHistory",
+            "type": "Link",
+            "linkType": "ContentType"
+          }
+        }
+      },
+      "controls": [
+        {
+          "fieldId": "completed"
+        },
+        {
+          "fieldId": "detail"
+        },
+        {
+          "fieldId": "migrationName"
+        },
+        {
+          "fieldId": "started"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "id": "default",
+        "type": "EditorInterface",
+        "contentType": {
+          "sys": {
+            "id": "pageMetadata",
+            "type": "Link",
+            "linkType": "ContentType"
+          }
+        }
+      },
+      "controls": [
+        {
+          "fieldId": "canonicalLink",
+          "settings": {
+            "helpText": "The Canonical URL tells Google where the primary version of this blog post lives.  Only set this field if the blog post's canonical location is not in one of the Publishing Targets."
+          },
+          "widgetId": "urlEditor"
+        },
+        {
+          "fieldId": "internalTitle",
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "metaDescription",
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "metaFlag",
+          "settings": {
+            "helpText": "No Index also removes page from sitemap"
+          },
+          "widgetId": "checkbox"
+        },
+        {
+          "fieldId": "metaKeywords",
+          "settings": {
+            "helpText": "Comma separated list of keywords to be used by internal and external search engines."
+          },
+          "widgetId": "multipleLine"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "id": "default",
+        "type": "EditorInterface",
+        "contentType": {
+          "sys": {
+            "id": "property",
+            "type": "Link",
+            "linkType": "ContentType"
+          }
+        }
+      },
+      "controls": [
+        {
+          "fieldId": "acceptedTags",
+          "settings": {
+            "helpText": "Select the blog tags which are relevant to this site.",
+            "bulkEditing": false
+          },
+          "widgetId": "entryLinksEditor"
+        },
+        {
+          "fieldId": "canonicalUrlTemplate",
+          "settings": {
+            "helpText": "The Canonical URL template is evaluated to determine the canonical URL of a blog that is primarily published to this property."
+          },
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "categories",
+          "settings": {
+            "helpText": "Link the categories that should be published to this site.",
+            "bulkEditing": false
+          },
+          "widgetId": "entryLinksEditor"
+        },
+        {
+          "fieldId": "internalTitle",
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "key",
+          "widgetId": "dropdown"
+        },
+        {
+          "fieldId": "webhookUrl",
+          "settings": {
+            "helpText": "The system will execute a POST to this URL with the contents of any blogs that have changed."
+          },
+          "widgetId": "urlEditor"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "id": "default",
+        "type": "EditorInterface",
+        "contentType": {
+          "sys": {
+            "id": "publishingTarget",
+            "type": "Link",
+            "linkType": "ContentType"
+          }
+        }
+      },
+      "controls": [
+        {
+          "fieldId": "canonicalUrlTemplate",
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "internalTitle",
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "key",
+          "widgetId": "dropdown"
+        },
+        {
+          "fieldId": "webhookUrl",
+          "settings": {
+            "helpText": "The system will execute a POST to this URL with the contents of any blogs that have changed."
+          },
+          "widgetId": "urlEditor"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "id": "default",
+        "type": "EditorInterface",
+        "contentType": {
+          "sys": {
+            "id": "section-pull-quote",
+            "type": "Link",
+            "linkType": "ContentType"
+          }
+        }
+      },
+      "controls": [
+        {
+          "fieldId": "anchorId",
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "internalTitle",
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "quoteText",
+          "widgetId": "multipleLine"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "id": "default",
+        "type": "EditorInterface",
+        "contentType": {
+          "sys": {
+            "id": "section-scripture-quote",
+            "type": "Link",
+            "linkType": "ContentType"
+          }
+        }
+      },
+      "controls": [
+        {
+          "fieldId": "anchorId",
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "internalTitle",
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "keyVerse",
+          "settings": {
+            "helpText": "Example: Colossians 3:23"
+          },
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "keyVerseContext",
+          "settings": {
+            "helpText": "Example: Colossians 3:21-26"
+          },
+          "widgetId": "singleLine"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "id": "default",
+        "type": "EditorInterface",
+        "contentType": {
+          "sys": {
+            "id": "section-video-embed",
+            "type": "Link",
+            "linkType": "ContentType"
+          }
+        }
+      },
+      "controls": [
+        {
+          "fieldId": "anchorId",
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "embedCode",
+          "settings": {
+            "helpText": "Copy and paste the embed HTML here"
+          },
+          "widgetId": "multipleLine"
+        },
+        {
+          "fieldId": "internalTitle",
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "title",
+          "widgetId": "singleLine"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "id": "default",
+        "type": "EditorInterface",
+        "contentType": {
+          "sys": {
+            "id": "sectionBlockText",
+            "type": "Link",
+            "linkType": "ContentType"
+          }
+        }
+      },
+      "controls": [
+        {
+          "fieldId": "anchorId",
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "internalTitle",
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "text",
+          "widgetId": "markdown"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "id": "default",
+        "type": "EditorInterface",
+        "contentType": {
+          "sys": {
+            "id": "tag",
+            "type": "Link",
+            "linkType": "ContentType"
+          }
+        }
+      },
+      "controls": [
+        {
+          "fieldId": "internalTitle",
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "key",
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "title",
+          "settings": {
+            "helpText": "The Title is displayed to the end user, for example in the list of tags for a blog post or on the search filters."
+          },
+          "widgetId": "singleLine"
+        }
+      ]
+    }
+  ]
+}

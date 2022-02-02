@@ -14,16 +14,20 @@ Table of Contents:
 2. [Installation](#installation)
 3. [Configuration](#configure)
 4. [Usage](#usage)
-  1. [Model API](#wcccontentfulmodel-api)
-  2. [Store API](#store-api)
-  3. [Direct CDN client](#direct-cdn-api-simpleclient)
-  4. [Accessing the APIs](#accessing-the-apis-within-application-code)
+   1. [Model API](#wcccontentfulmodel-api)
+   2. [Store API](#store-api)
+   3. [Direct CDN client](#direct-cdn-api-simpleclient)
+   4. [Accessing the APIs](#accessing-the-apis-within-application-code)
 5. [Architecture](#architecture)
+   1. [Client Layer](#client-layer)
+   2. [Store Layer](#store-layer)
+   3. [Model Layer](#model-layer)
 6. [Test Helpers](#test-helpers)
 7. [Advanced Configuration Example](#advanced-configuration-example)
-8. [Development](#development)
-9. [Contributing](#contributing)
-10. [License](#license)
+8. [Connecting to Multiple Spaces](#connecting-to-multiple-spaces-or-environments)
+9. [Development](#development)
+10. [Contributing](#contributing)
+11. [License](#license)
 
 
 ## Why did you rewrite the Contentful ruby stack?
@@ -45,7 +49,7 @@ The wcc-contentful gem enables caching at two levels: the HTTP response using [F
 By default, the contentful.rb gem requires the [HTTP library](https://rubygems.org/gems/http).  While simple and straightforward to use, it is not as powerful for caching.  We decided to make our client conform to the [Faraday gem's API](https://github.com/lostisland/faraday).  If you prefer not to use Faraday, you can choose to supply your own HTTP adapter that "quacks like" Faraday (see the [TyphoeusAdapter](https://github.com/watermarkchurch/wcc-contentful/blob/master/wcc-contentful/lib/wcc/contentful/simple_client/typhoeus_adapter.rb) for one implementation).
 
 Using Faraday makes it easy to add Middleware.  As an example, our flagship Rails app that powers watermark.org uses the following configuration in Production, which provides us with instrumentation through statsd, logging, and caching:
-```rb
+```ruby
 config.connection = Faraday.new do |builder|
   builder.use :http_cache,
     shared_cache: false,
@@ -77,7 +81,7 @@ We also took advantage of Rails' naming conventions to automatically infer the c
 
 All our models are automatically generated at startup which improves response times at the expense of initialization time.  In addition, our content model registry allows easy definition of custom models in your `app/models` directory to override fields.  This plays nice with other gems like algoliasearch-rails, which allows you to declaratively manage your Algolia indexes.  Another example from our flagship watermark.org:
 
-```rb
+```ruby
 class Page < WCC::Contentful::Model::Page
   include AlgoliaSearch
 
@@ -327,6 +331,98 @@ end
 
 ![wcc-contentful diagram](./doc-static/wcc-contentful.png)
 
+From the bottom up:
+
+### Client Layer
+
+The {WCC::Contentful::SimpleClient} provides methods to access the [Contentful 
+Content Delivery API](https://www.contentful.com/developers/docs/references/content-delivery-api/)
+through your favorite HTTP client gem.  The SimpleClient expects
+an Adapter that conforms to the Faraday interface.
+
+Creating a SimpleClient to connect using different credentials, or to connect
+without setting up all the rest of WCC::Contentful, is easy:
+
+```ruby
+WCC::Contentful::SimpleClient::Cdn.new(
+  # required
+  access_token: 'xxxx',
+  space: '1234',
+  # optional
+  environment: 'staging', # omit to use master
+  default_locale: '*',
+  rate_limit_wait_timeout: 10,
+  instrumentation: ActiveSupport::Notifications,
+  connection: Faraday.new { |builder| ... },
+)
+```
+
+You can also create a {WCC::Contentful::SimpleClient::Preview} to talk to the
+Preview API, or a {WCC::Contentful::SimpleClient::Management} to talk to the
+Management API.
+
+### Store Layer
+
+The Store Layer represents the data store where Contentful entries are kept for
+querying.  By default, `WCC::Contentful.init!` creates a {WCC::Contentful::Store::CDNAdapter}
+which uses a {WCC::Contentful::SimpleClient::Cdn} instance to query entries from
+the [Contentful Content Delivery API](https://www.contentful.com/developers/docs/references/content-delivery-api/).  You can also query entries from another
+source like Postgres or an in-memory hash if your data is small enough.
+
+You can also implement your own store if you want!  The gem contains a suite of
+RSpec shared examples that give you a baseline for implementing your own store.
+In your RSpec suite:
+```ruby
+# frozen_string_literal: true
+
+require 'my_store'
+require 'wcc/contentful/store/rspec_examples'
+
+RSpec.describe MyStore do
+  it_behaves_like 'contentful store', {
+    # Set which store features your store implements.  
+    nested_queries: true,  # Does your store implement JOINs?
+    include_param: true    # Does your store resolve links when given the :include option?
+  }
+```
+
+The store is kept up-to-date by the {WCC::Contentful::SyncEngine}.  The `SyncEngine#next` methodcalls the `#index` method on the configured store in order to update
+it with the latest data via the [Contentful Sync API](https://www.contentful.com/developers/docs/references/content-delivery-api/#/reference/synchronization).  For example,
+the {WCC::Contentful::Store::MemoryStore} uses this to update the hash with the
+newest version of an entry, or delete an entry out of the hash.
+
+#### Store Middleware
+
+The store layer is made up of a base store (which implements {WCC::Contentful::Store::Interface}),
+and optional middleware.  The middleware
+allows custom transformation of received entries via the `#select` and `#transform`
+methods.  To create your own middleware simply include {WCC::Contentful::Middleware::Store}
+and implement those methods, then call `use` when configuring the store:
+
+```ruby
+config.store :direct do
+  use MyMiddleware, param1: 'xxx'
+end
+```
+
+The most useful middleware is the {WCC::Contentful::Middleware::Store::CachingMiddleware},
+which enables `:lazy_sync` mode (see {WCC::Contentful::Configuration#store})
+
+### Model Layer
+
+This is the global top layer where your Rails app looks up content similarly to
+ActiveModel.  The models are namespaced under the root class {WCC::Contentful::Model}.
+Each model's implementation of `.find`, `.find_by`, and `.find_all` simply call
+into the configured Store.
+
+The main benefit of the Model layer is lazy link resolution.  When a model's
+property is accessed, if that property is a link that has not been resolved
+yet (for example using the `include: n` parameter on `.find_by`), the model
+will automatically call `#find` on the store to resolve that linked entry.
+
+Note that this can easily result in lots of CDN calls to Contentful!  To optimize
+this you should use the `include` parameter and/or use a different store.
+
 ## Test Helpers
 
 To use the test helpers, include the following in your rails_helper.rb:
@@ -460,6 +556,75 @@ rake wcc_contentful:download_schema
 All configuration options can be found [in the rubydoc](https://www.rubydoc.info/gems/wcc-contentful/WCC/Contentful/Configuration) under
 {WCC::Contentful::Configuration}
 
+## Connecting to multiple spaces or environments
+
+When initializing the WCC::Contentful gem using `WCC::Contentful.init!`, the gem will by default connect to the single
+Contentful space that you specify in the `WCC::Contentful.configure` step.  However the gem is also capable of connecting
+to multiple spaces within the same ruby process!  You just have to create and initialize a namespace.
+
+The {WCC::Contentful::ModelAPI} concern makes this straightforward.  Start by creating your Namespace
+and including the concern:
+```ruby
+# app/models/my_second_space.rb
+class MySecondSpace
+  include WCC::Contentful::ModelAPI
+end
+
+# app/models/other_page.rb
+class OtherPage < MySecondSpace::Page
+end
+```
+
+Then configure it in an initializer:
+```ruby
+# config/initializers/my_second_space.rb
+MySecondSpace.configure do |config|
+  # Make sure to point to a different schema file from your first space!
+  config.schema_file = Rails.root.join('db/second-contentful-schema.json')
+
+  config.access_token = ENV['SECOND_CONTENTFUL_ACCESS_TOKEN']
+  config.preview_token = ENV['SECOND_CONTENTFUL_PREVIEW_ACCESS_TOKEN']
+  config.space = ENV['SECOND_CONTENTFUL_SPACE_ID']
+  config.environment = ENV['CONTENTFUL_ENVIRONMENT']
+end
+```
+
+Finally, use it:
+```ruby
+OtherPage.find('1234')
+# GET https://cdn.contentful.com/spaces/other-space/environments/other-env/entries/1234
+# => #<OtherPage:0x0000000005c71a78 @created_at=2018-04-16 18:41:17 UTC...>
+
+Page.find('1234')
+# GET https://cdn.contentful.com/spaces/first-space/environments/first-env/entries/1234
+# => #<Page:0x0000000001271b70 @created_at=2018-04-15 12:02:14 UTC...>
+```
+
+The ModelAPI defines a second stack of services that you can access for lower level connections:
+```ruby
+store = MySecondSpace.services.store
+# => #<WCC::Contentful::Store::CDNAdapter:0x00007f888edac118
+client = MySecondSpace.services.client
+# => #<WCC::Contentful::SimpleClient::Cdn:0x00007f88942a8888
+preview_client = MySecondSpace.services.preview_client
+# => #<WCC::Contentful::SimpleClient::Preview:0x00007f888ccafa00
+sync_engine = MySecondSpace.services.sync_engine
+# => #<WCC::Contentful::SyncEngine:0x00007f88960b6b40
+```
+Note that the above services are not accessible on {WCC::Contentful::Services.instance}
+or via the {WCC::Contentful::ServiceAccessors}.
+
+### Using a sync store with a second space
+
+If you use something other than the CDNAdapter with your second space, you will
+need to find a way to trigger `MySecondSpace.services.sync_engine.next` to keep
+it up-to-date.  The {WCC::Contentful::Engine} will only manage the global SyncEngine
+configured by the global {WCC::Contentful.configure}.
+
+The easiest way to do this is to set up your own Rails route to respond to Contentful
+webhooks and then configure the second Contentful space to send webhooks to this route.
+You could also do this by triggering it periodically in a background job using
+Sidekiq and [sidekiq-scheduler](https://github.com/Moove-it/sidekiq-scheduler).
 
 ## Development
 
