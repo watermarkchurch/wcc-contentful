@@ -105,6 +105,11 @@ module WCC::Contentful::Store
 
       def apply_operator(operator, field, expected, context = nil)
         op = operator == :eq ? nil : operator
+        if expected.is_a?(Array)
+          expected = expected.join(',')
+          op = :in if op.nil?
+        end
+
         param = parameter(field, operator: op, context: context, locale: true)
 
         self.class.new(
