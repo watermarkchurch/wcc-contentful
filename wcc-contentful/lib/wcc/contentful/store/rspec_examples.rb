@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative './rspec_examples/basic_store'
+require_relative './rspec_examples/operators'
 require_relative './rspec_examples/nested_queries'
 require_relative './rspec_examples/include_param'
 
@@ -41,6 +42,7 @@ RSpec.shared_examples 'contentful store' do |feature_set|
   }.merge(feature_set&.symbolize_keys || {})
 
   include_examples 'basic store'
+  include_examples 'operators', feature_set[:operators]
   include_examples 'supports nested queries', feature_set[:nested_queries]
   include_examples 'supports include param', feature_set[:include_param]
 end
