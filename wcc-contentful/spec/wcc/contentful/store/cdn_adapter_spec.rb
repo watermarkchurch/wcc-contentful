@@ -344,7 +344,8 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
 
     it 'defaults to :in if given an array' do
       stub = stub_request(:get,
-        'https://cdn.contentful.com/spaces/hw5pse7y1ojx/entries?content_type=conference&fields.tags.en-US%5Bin%5D=a,b&locale=*')
+        "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries"\
+          '?content_type=conference&fields.tags.en-US%5Bin%5D=a,b&locale=*')
         .to_return(body: {
           sys: { type: 'Array' },
           total: 2,
@@ -364,7 +365,8 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
 
     it 'handles nin with array' do
       stub = stub_request(:get,
-        'https://cdn.contentful.com/spaces/hw5pse7y1ojx/entries?content_type=conference&fields.tags.en-US%5Bnin%5D=a,b&locale=*')
+        "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries"\
+          '?content_type=conference&fields.tags.en-US%5Bnin%5D=a,b&locale=*')
         .to_return(body: {
           sys: { type: 'Array' },
           total: 1,
