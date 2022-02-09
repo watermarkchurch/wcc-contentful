@@ -39,6 +39,11 @@ module WCC::Contentful::Store
     end
 
     def execute(query)
+      query.conditions.each do |condition|
+        # Our naiive implementation only supports equality operator
+        raise ArgumentError, "Operator :#{condition.op} not supported" unless condition.op == :eq
+      end
+
       relation = mutex.with_read_lock { @hash.values }
 
       # relation is an enumerable that we apply conditions to in the form of
@@ -57,9 +62,6 @@ module WCC::Contentful::Store
       # enforces the condition.
       query.conditions.reduce(relation) do |memo, condition|
         memo.select do |entry|
-          # Our naiive implementation only supports equality operator
-          raise ArgumentError, "Operator #{condition.op} not supported" unless condition.op == :eq
-
           # The condition's path tells us where to find the value in the JSON object
           val = entry.dig(*condition.path)
 
