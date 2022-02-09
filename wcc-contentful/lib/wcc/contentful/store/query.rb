@@ -50,6 +50,7 @@ module WCC::Contentful::Store
     # @expected The expected value to compare the field's value against.
     # @context A context object optionally containing `context[:locale]`
     def apply_operator(operator, field, expected, context = nil)
+      operator ||= expected.is_a?(Array) ? :in : :eq
       raise ArgumentError, "Operator #{operator} not supported" unless respond_to?(operator)
 
       field = field.to_s if field.is_a? Symbol
@@ -151,7 +152,7 @@ module WCC::Contentful::Store
           elsif op?(k)
             { path: path, op: k.to_sym, expected: v }
           else
-            { path: path + [k], op: :eq, expected: v }
+            { path: path + [k], op: nil, expected: v }
           end
         end
       end

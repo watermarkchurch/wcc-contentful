@@ -38,10 +38,11 @@ module WCC::Contentful::Store
       end
     end
 
+    SUPPORTED_OPS = %i[eq in].freeze
+
     def execute(query)
-      query.conditions.each do |condition|
-        # Our naiive implementation only supports equality operator
-        raise ArgumentError, "Operator :#{condition.op} not supported" unless condition.op == :eq
+      (query.conditions.map(&:op) - SUPPORTED_OPS).each do |op|
+        raise ArgumentError, "Operator :#{op} not supported"
       end
 
       relation = mutex.with_read_lock { @hash.values }
@@ -61,17 +62,36 @@ module WCC::Contentful::Store
       # For each condition, we apply a new Enumerable#select with a block that
       # enforces the condition.
       query.conditions.reduce(relation) do |memo, condition|
-        memo.select do |entry|
-          # The condition's path tells us where to find the value in the JSON object
-          val = entry.dig(*condition.path)
+        __send__("apply_#{condition.op}", memo, condition)
+      end
+    end
 
-          # For arrays, equality is defined as does the array include the expected value.
-          # See https://www.contentful.com/developers/docs/references/content-delivery-api/#/reference/search-parameters/array-equality-inequality
-          if val.is_a? Array
-            val.include?(condition.expected)
-          else
-            val == condition.expected
-          end
+    private
+
+    def apply_eq(memo, condition)
+      memo.select do |entry|
+        # The condition's path tells us where to find the value in the JSON object
+        val = entry.dig(*condition.path)
+
+        # For arrays, equality is defined as does the array include the expected value.
+        # See https://www.contentful.com/developers/docs/references/content-delivery-api/#/reference/search-parameters/array-equality-inequality
+        if val.is_a? Array
+          val.include?(condition.expected)
+        else
+          val == condition.expected
+        end
+      end
+    end
+
+    def apply_in(memo, condition)
+      memo.select do |entry|
+        val = entry.dig(*condition.path)
+
+        if val.is_a? Array
+          # TODO: detect if in ruby 3.1 and use val.intersect?(condition.expected)
+          val.any? { |item| condition.expected.include?(item) }
+        else
+          condition.expected.include?(val)
         end
       end
     end

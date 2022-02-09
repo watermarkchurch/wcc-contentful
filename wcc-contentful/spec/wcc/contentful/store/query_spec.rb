@@ -92,7 +92,7 @@ RSpec.describe WCC::Contentful::Store::Query do
   end
 
   describe '#apply' do
-    it 'adds a single condition' do
+    it 'adds a single condition (assumes :eq)' do
       query = subject.apply({ f: 'test' })
 
       cond = query.conditions[0]
@@ -173,6 +173,16 @@ RSpec.describe WCC::Contentful::Store::Query do
       expect(cond2.expected).to eq('/test')
 
       expect(query.conditions.length).to eq(3)
+    end
+
+    it 'assumes :in when value is array and op not provided' do
+      query = subject.apply({ f: %w[test test2] })
+
+      cond = query.conditions[0]
+      expect(cond&.path).to eq(['fields', 'f', 'en-US'])
+      expect(cond.op).to eq(:in)
+      expect(cond.expected).to eq(%w[test test2])
+      expect(query.conditions.length).to eq(1)
     end
   end
 end
