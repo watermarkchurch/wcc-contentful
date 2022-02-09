@@ -528,68 +528,6 @@ RSpec.shared_examples 'basic store' do
       expect(found.dig('sys', 'id')).to eq('idTwo')
       expect(found.dig('fields', 'system', 'en-US')).to eq('Two')
     end
-
-    [
-      [Integer, proc { rand(-4_611_686_018_427_387_903..4_611_686_018_427_387_903) }],
-      [Float, proc { rand }]
-    ].each do |(type, generator)|
-      context "by #{type} equality" do
-        it 'can apply filter object' do
-          data =
-            1.upto(10).map do |i|
-              {
-                'sys' => { 'id' => "k#{i}", 'contentType' => { 'sys' => { 'id' => 'test1' } } },
-                'fields' => { type.to_s => { 'en-US' => generator.call } }
-              }
-            end
-
-          desired_value = generator.call
-          desired = {
-            'sys' => { 'id' => "k#{rand}", 'contentType' => { 'sys' => { 'id' => 'test1' } } },
-            'fields' => { type.to_s => { 'en-US' => desired_value } }
-          }
-
-          data << desired
-          data.shuffle.each { |d| subject.set(d.dig('sys', 'id'), d) }
-
-          # act
-          found = subject.find_by(content_type: 'test1', filter: { type.to_s => desired_value })
-
-          # assert
-          expect(found).to_not be_nil
-          expect(found).to eq(desired)
-        end
-
-        it 'filter object can find value in array' do
-          data =
-            1.upto(10).map do |i|
-              {
-                'sys' => {
-                  'id' => "k#{i}",
-                  'contentType' => { 'sys' => { 'id' => 'test1' } }
-                },
-                'fields' => { 'name' => { 'en-US' => [generator.call, generator.call] } }
-              }
-            end
-
-          desired_value = generator.call
-          desired = {
-            'sys' => { 'id' => "k#{rand}", 'contentType' => { 'sys' => { 'id' => 'test1' } } },
-            'fields' => { type.to_s => { 'en-US' => [generator.call, desired_value].shuffle } }
-          }
-
-          data << desired
-          data.shuffle.each { |d| subject.set(d.dig('sys', 'id'), d) }
-
-          # act
-          found = subject.find_by(content_type: 'test1', filter: { type.to_s => { eq: desired_value } })
-
-          # assert
-          expect(found).to_not be_nil
-          expect(found).to eq(desired)
-        end
-      end
-    end
   end
 
   describe '#find_all' do
@@ -633,29 +571,6 @@ RSpec.shared_examples 'basic store' do
       expect(found.map { |d| d.dig('sys', 'id') }).to eq(
         %w[k1 k5 k9]
       )
-    end
-
-    it 'filter query eq can find value in array' do
-      content_types = %w[test1 test2 test3 test4]
-      data =
-        1.upto(10).map do |i|
-          {
-            'sys' => {
-              'id' => "k#{i}",
-              'contentType' => { 'sys' => { 'id' => content_types[i % content_types.length] } }
-            },
-            'fields' => { 'name' => { 'en-US' => ["test#{i}", "test_2_#{i}"] } }
-          }
-        end
-      data.each { |d| subject.set(d.dig('sys', 'id'), d) }
-
-      # act
-      found = subject.find_all(content_type: 'test2')
-        .apply('name' => { eq: 'test_2_5' })
-
-      # assert
-      expect(found.count).to eq(1)
-      expect(found.first.dig('sys', 'id')).to eq('k5')
     end
   end
 

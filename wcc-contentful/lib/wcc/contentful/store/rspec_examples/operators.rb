@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
+require_relative './operators/eq'
 require_relative './operators/in'
 
 (WCC::Contentful::Store::Query::Interface::OPERATORS -
-  %i[in]).each do |op|
+  %i[eq in]).each do |op|
     RSpec.shared_examples "supports :#{op} operator" do
       it 'TODO'
     end
