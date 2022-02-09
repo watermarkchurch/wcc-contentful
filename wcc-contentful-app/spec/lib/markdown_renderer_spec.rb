@@ -117,7 +117,7 @@ RSpec.describe WCC::Contentful::App::MarkdownRenderer do
         expect(links_with_classes).to_not include(link_data_arr[0])
       end
 
-      it 'returns an array that only has the raw classes', focus: true do
+      it 'returns an array that only has the raw classes' do
         links_with_classes_arr =
           [
             [

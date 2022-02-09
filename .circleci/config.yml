@@ -30,6 +30,11 @@ jobs:
       BUNDLE_GEMFILE: gemfiles/<< parameters.gemfile >>_ruby_<< parameters.ruby >>.gemfile
     steps:
       - checkout
+
+      - run:
+          name: Check if any specs have "focus"
+          command: |
+            [[ -z "$(find . -type f -name \*_spec.rb | xargs grep -e ':focus' -e 'focus: true')" ]]
       - run:
           name: Install Gems
           command: |
