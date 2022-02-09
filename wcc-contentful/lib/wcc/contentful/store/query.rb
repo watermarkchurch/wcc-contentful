@@ -34,6 +34,17 @@ module WCC::Contentful::Store
       @extra = extra
     end
 
+    FALSE_VALUES = [
+      false, 0,
+      '0', :"0",
+      'f', :f,
+      'F', :F,
+      'false', :false, # rubocop:disable Lint/BooleanSymbol
+      'FALSE', :FALSE,
+      'off', :off,
+      'OFF', :OFF
+    ].to_set.freeze
+
     # Returns a new chained Query that has a new condition.  The new condition
     # represents the WHERE comparison being applied here.  The underlying store
     # implementation translates this condition statement into an appropriate
@@ -52,6 +63,14 @@ module WCC::Contentful::Store
     def apply_operator(operator, field, expected, context = nil)
       operator ||= expected.is_a?(Array) ? :in : :eq
       raise ArgumentError, "Operator #{operator} not supported" unless respond_to?(operator)
+      raise ArgumentError, 'value cannot be nil (try using exists: false)' if expected.nil?
+
+      case operator
+      when :in, :nin, :all
+        expected = Array(expected)
+      when :exists
+        expected = !FALSE_VALUES.include?(expected)
+      end
 
       field = field.to_s if field.is_a? Symbol
       path = field.is_a?(Array) ? field : field.split('.')

@@ -67,26 +67,95 @@ RSpec.describe WCC::Contentful::Store::Query do
     end
   end
 
-  WCC::Contentful::Store::Query::Interface::OPERATORS.each do |op|
+  %i[eq ne lt lte gt gte query match].each do |op|
+    it 'adds a condition' do
+      query = subject.public_send(op, 'f', 'test')
+
+      cond = query.conditions[0]
+      expect(cond&.path).to eq(['fields', 'f', 'en-US'])
+      expect(cond.op).to eq(op)
+      expect(cond.expected).to eq('test')
+      expect(query.conditions.length).to eq(1)
+    end
+
+    it 'appends a second condition' do
+      query = subject.eq(:a, 1).public_send(op, 'f', 'test')
+
+      cond = query.conditions[1]
+      expect(cond&.path).to eq(['fields', 'f', 'en-US'])
+      expect(cond.op).to eq(op)
+      expect(cond.expected).to eq('test')
+      expect(query.conditions.length).to eq(2)
+    end
+  end
+
+  ARRAY_OPS = %i[in nin all].freeze
+  ARRAY_OPS.each do |op|
     describe "##{op}" do
-      it 'adds a condition' do
+      it 'converts to array' do
         query = subject.public_send(op, 'f', 'test')
 
         cond = query.conditions[0]
         expect(cond&.path).to eq(['fields', 'f', 'en-US'])
         expect(cond.op).to eq(op)
-        expect(cond.expected).to eq('test')
+        expect(cond.expected).to eq(['test'])
         expect(query.conditions.length).to eq(1)
       end
 
       it 'appends a second condition' do
-        query = subject.eq(:a, 1).public_send(op, 'f', 'test')
+        query = subject.eq(:a, 1).public_send(op, 'f', ['test'])
 
         cond = query.conditions[1]
         expect(cond&.path).to eq(['fields', 'f', 'en-US'])
         expect(cond.op).to eq(op)
-        expect(cond.expected).to eq('test')
+        expect(cond.expected).to eq(['test'])
         expect(query.conditions.length).to eq(2)
+      end
+    end
+  end
+
+  describe '#exists' do
+    it 'appends "false"' do
+      query = subject.exists('f', false)
+
+      cond = query.conditions[0]
+      expect(cond&.path).to eq(['fields', 'f', 'en-US'])
+      expect(cond.op).to eq(:exists)
+      expect(cond.expected).to eq(false)
+      expect(query.conditions.length).to eq(1)
+    end
+
+    it 'appends "true"' do
+      query = subject.exists('f', false)
+
+      cond = query.conditions[0]
+      expect(cond&.path).to eq(['fields', 'f', 'en-US'])
+      expect(cond.op).to eq(:exists)
+      expect(cond.expected).to eq(false)
+      expect(query.conditions.length).to eq(1)
+    end
+
+    it 'converts falsy value to false' do
+      query =
+        described_class::FALSE_VALUES.reduce(subject) do |q, value|
+          q.exists('f', value)
+        end
+
+      expect(query.conditions.length).to eq(described_class::FALSE_VALUES.length)
+      query.conditions.each do |cond|
+        expect(cond&.path).to eq(['fields', 'f', 'en-US'])
+        expect(cond.op).to eq(:exists)
+        expect(cond.expected).to eq(false)
+      end
+    end
+  end
+
+  WCC::Contentful::Store::Query::Interface::OPERATORS.each do |op|
+    describe "##{op}" do
+      it 'errors on nil values' do
+        expect {
+          subject.public_send(op, 'f', nil)
+        }.to raise_error(ArgumentError)
       end
     end
   end
@@ -124,8 +193,16 @@ RSpec.describe WCC::Contentful::Store::Query do
           cond = query.conditions[0]
           expect(cond&.path).to eq(['fields', 'f', 'en-US'])
           expect(cond.op).to eq(op)
-          expect(cond.expected).to eq('test')
           expect(query.conditions.length).to eq(1)
+
+          case op
+          when *ARRAY_OPS
+            expect(cond.expected).to eq(['test'])
+          when :exists
+            expect(cond.expected).to eq(true)
+          else
+            expect(cond.expected).to eq('test')
+          end
         end
       end
     end
