@@ -38,7 +38,7 @@ module WCC::Contentful::Store
       end
     end
 
-    SUPPORTED_OPS = %i[eq in].freeze
+    SUPPORTED_OPS = %i[eq ne in].freeze
 
     def execute(query)
       (query.conditions.map(&:op) - SUPPORTED_OPS).each do |op|
@@ -79,6 +79,18 @@ module WCC::Contentful::Store
           val.include?(condition.expected)
         else
           val == condition.expected
+        end
+      end
+    end
+
+    def apply_ne(memo, condition)
+      memo.select do |entry|
+        val = entry.dig(*condition.path)
+
+        if val.is_a? Array
+          !val.include?(condition.expected)
+        else
+          val != condition.expected
         end
       end
     end

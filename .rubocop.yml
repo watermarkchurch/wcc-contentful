@@ -35,7 +35,7 @@ Style/BlockDelimiters:
   Exclude:
     # we like the `let(:foo) {}` syntax in specs
     - '*/spec/**/*.rb'
-    - '**/rspec_examples/*.rb'
+    - '**/rspec_examples/**/*.rb'
 
 Style/ClassAndModuleChildren:
   EnforcedStyle: compact
@@ -123,7 +123,7 @@ Style/MultilineBlockChain:
   Exclude:
     # allow "expect { ... }.to raise_error do |ex|; end"
     - '*/spec/**/*.rb'
-    - '**/rspec_examples/*.rb'
+    - '**/rspec_examples/**/*.rb'
 
 
   # These are all the cops that are disabled in the default configuration.
