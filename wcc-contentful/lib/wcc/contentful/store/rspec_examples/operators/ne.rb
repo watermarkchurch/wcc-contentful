@@ -29,7 +29,7 @@ RSpec.shared_examples 'supports :ne operator' do
               'id' => "k#{i}",
               'contentType' => { 'sys' => { 'id' => 'test1' } }
             },
-            'fields' => { 'name' => { 'en-US' => [*random_values, specified_value].shuffle } }
+            'fields' => { type.to_s => { 'en-US' => [*random_values, specified_value].shuffle } }
           }
         end
       }
@@ -54,7 +54,7 @@ RSpec.shared_examples 'supports :ne operator' do
         [*data, desired].shuffle.each { |d| subject.set(d.dig('sys', 'id'), d) }
 
         # act
-        found = subject.find_by(content_type: 'test1', filter: { type.to_s => { eq: specified_value } })
+        found = subject.find_by(content_type: 'test1', filter: { type.to_s => { ne: specified_value } })
 
         # assert
         expect(found).to_not be_nil

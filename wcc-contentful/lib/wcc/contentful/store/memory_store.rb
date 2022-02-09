@@ -38,7 +38,7 @@ module WCC::Contentful::Store
       end
     end
 
-    SUPPORTED_OPS = %i[eq ne in].freeze
+    SUPPORTED_OPS = %i[eq ne in nin].freeze
 
     def execute(query)
       (query.conditions.map(&:op) - SUPPORTED_OPS).each do |op|
@@ -69,42 +69,42 @@ module WCC::Contentful::Store
     private
 
     def apply_eq(memo, condition)
-      memo.select do |entry|
-        # The condition's path tells us where to find the value in the JSON object
-        val = entry.dig(*condition.path)
-
-        # For arrays, equality is defined as does the array include the expected value.
-        # See https://www.contentful.com/developers/docs/references/content-delivery-api/#/reference/search-parameters/array-equality-inequality
-        if val.is_a? Array
-          val.include?(condition.expected)
-        else
-          val == condition.expected
-        end
-      end
+      memo.select { |entry| eq?(entry, condition) }
     end
 
     def apply_ne(memo, condition)
-      memo.select do |entry|
-        val = entry.dig(*condition.path)
+      memo.reject { |entry| eq?(entry, condition) }
+    end
 
-        if val.is_a? Array
-          !val.include?(condition.expected)
-        else
-          val != condition.expected
-        end
+    def eq?(entry, condition)
+      # The condition's path tells us where to find the value in the JSON object
+      val = entry.dig(*condition.path)
+
+      # For arrays, equality is defined as does the array include the expected value.
+      # See https://www.contentful.com/developers/docs/references/content-delivery-api/#/reference/search-parameters/array-equality-inequality
+      if val.is_a? Array
+        val.include?(condition.expected)
+      else
+        val == condition.expected
       end
     end
 
     def apply_in(memo, condition)
-      memo.select do |entry|
-        val = entry.dig(*condition.path)
+      memo.select { |entry| in?(entry, condition) }
+    end
 
-        if val.is_a? Array
-          # TODO: detect if in ruby 3.1 and use val.intersect?(condition.expected)
-          val.any? { |item| condition.expected.include?(item) }
-        else
-          condition.expected.include?(val)
-        end
+    def apply_nin(memo, condition)
+      memo.reject { |entry| in?(entry, condition) }
+    end
+
+    def in?(entry, condition)
+      val = entry.dig(*condition.path)
+
+      if val.is_a? Array
+        # TODO: detect if in ruby 3.1 and use val.intersect?(condition.expected)
+        val.any? { |item| condition.expected.include?(item) }
+      else
+        condition.expected.include?(val)
       end
     end
   end

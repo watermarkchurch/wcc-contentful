@@ -8,7 +8,7 @@ RSpec.describe WCC::Contentful::Store::MemoryStore do
   it_behaves_like 'contentful store', {
     nested_queries: false,
     include_param: 0,
-    operators: %i[eq ne in]
+    operators: %i[eq ne in nin]
   }
 
   it 'returns all keys' do

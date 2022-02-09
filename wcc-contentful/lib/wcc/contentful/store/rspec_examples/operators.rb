@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
 require_relative './operators/eq'
+require_relative './operators/ne'
 require_relative './operators/in'
+require_relative './operators/nin'
 
 (WCC::Contentful::Store::Query::Interface::OPERATORS -
-  %i[eq in]).each do |op|
+  %i[eq ne in nin]).each do |op|
     RSpec.shared_examples "supports :#{op} operator" do
       it 'TODO'
     end
