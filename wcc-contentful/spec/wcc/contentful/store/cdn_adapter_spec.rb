@@ -342,6 +342,47 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       expect(page.dig('fields', 'title', 'en-US')).to eq('Conferences')
     end
 
+    it 'defaults to :in if given an array' do
+      stub = stub_request(:get,
+        "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries"\
+          '?content_type=conference&fields.tags.en-US%5Bin%5D=a,b&locale=*')
+        .to_return(body: {
+          sys: { type: 'Array' },
+          total: 2,
+          items: [
+            { sys: { type: 'Entry', id: '1' } },
+            { sys: { type: 'Entry', id: '2' } }
+          ]
+        }.to_json)
+
+      # act
+      found = adapter.find_all(content_type: 'conference')
+        .apply(tags: %w[a b])
+
+      expect(found.count).to eq(2)
+      expect(stub).to have_been_requested
+    end
+
+    it 'handles nin with array' do
+      stub = stub_request(:get,
+        "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries"\
+          '?content_type=conference&fields.tags.en-US%5Bnin%5D=a,b&locale=*')
+        .to_return(body: {
+          sys: { type: 'Array' },
+          total: 1,
+          items: [
+            { sys: { type: 'Entry', id: '1' } }
+          ]
+        }.to_json)
+
+      # act
+      found = adapter.find_all(content_type: 'conference')
+        .apply(tags: { nin: %w[a b] })
+
+      expect(found.count).to eq(1)
+      expect(stub).to have_been_requested
+    end
+
     it 'recursively resolves links if include > 0' do
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
         '?content_type=page&include=2&limit=5&locale=*')
