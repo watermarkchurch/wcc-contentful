@@ -15,7 +15,7 @@ RSpec.describe 'WCC::Contentful::WebhookEnableJob', type: :job do
 
       # act
       job.enable_webhook(client,
-        app_url: 'https://test.url')
+        receive_url: 'https://test.url/webhook/receive')
 
       # assert
       # client should not receive a "post" message.
@@ -37,7 +37,7 @@ RSpec.describe 'WCC::Contentful::WebhookEnableJob', type: :job do
 
       # act
       job.enable_webhook(client,
-        app_url: 'https://test.url/')
+        receive_url: 'https://test.url/webhook/receive')
     end
 
     it 'posts webhook with auth if auth given' do
@@ -54,7 +54,7 @@ RSpec.describe 'WCC::Contentful::WebhookEnableJob', type: :job do
 
       # act
       job.enable_webhook(client,
-        app_url: 'https://test.url/',
+        receive_url: 'https://test.url/webhook/receive',
         webhook_username: 'testuser',
         webhook_password: 'testpw')
     end
@@ -82,7 +82,7 @@ RSpec.describe 'WCC::Contentful::WebhookEnableJob', type: :job do
 
       # act
       job.enable_webhook(client,
-        app_url: 'https://test.url/')
+        receive_url: 'https://test.url/webhook/receive')
     end
   end
 
@@ -102,7 +102,7 @@ RSpec.describe 'WCC::Contentful::WebhookEnableJob', type: :job do
     it 'gets default client params from WCC::Contentful.configuration' do
       defaults = {
         management_token: 'testtoken',
-        app_url: 'testurl',
+        app_url: 'http://testurl',
         space: 'testspace',
         environment: 'testenv',
         default_locale: 'testlocale',
@@ -118,8 +118,6 @@ RSpec.describe 'WCC::Contentful::WebhookEnableJob', type: :job do
         expect(client).to be_a WCC::Contentful::SimpleClient::Management
 
         options = client.instance_variable_get('@options')
-        expect(options.except(:connection))
-          .to eq(defaults.except(:space, :management_token, :connection))
         expect(client.space).to eq('testspace')
         expect(client.instance_variable_get('@access_token')).to eq('testtoken')
         expect(options[:connection]).to eq(:typhoeus)
