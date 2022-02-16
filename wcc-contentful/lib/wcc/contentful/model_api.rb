@@ -178,10 +178,12 @@ module WCC::Contentful::ModelAPI
       _registry[content_type]
     end
 
-    private
+    protected
 
     def _registry
-      @registry
+      # If calling register_for_content_type in a subclass, look up the superclass
+      # chain until we get to the model namespace which defines the registry
+      @registry || superclass._registry
     end
   end
 end
