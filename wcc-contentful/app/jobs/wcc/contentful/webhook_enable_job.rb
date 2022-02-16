@@ -13,18 +13,17 @@ module WCC::Contentful
       client = WCC::Contentful::SimpleClient::Management.new(
         args
       )
-      enable_webhook(client, args.slice(:app_url, :webhook_username, :webhook_password))
+      enable_webhook(client, args.slice(:receive_url, :webhook_username, :webhook_password))
     end
 
-    def enable_webhook(client, app_url:, webhook_username: nil, webhook_password: nil)
-      expected_url = URI.join(app_url, 'webhook/receive').to_s
-      webhook = client.webhook_definitions.items.find { |w| w['url'] == expected_url }
+    def enable_webhook(client, receive_url:, webhook_username: nil, webhook_password: nil)
+      webhook = client.webhook_definitions.items.find { |w| w['url'] == receive_url }
       logger.debug "existing webhook: #{webhook.inspect}" if webhook
       return if webhook
 
       body = {
         'name' => 'WCC::Contentful webhook',
-        'url' => expected_url,
+        'url' => receive_url,
         'topics' => [
           '*.publish',
           '*.unpublish'
@@ -50,13 +49,14 @@ module WCC::Contentful
 
       {
         management_token: config.management_token,
-        app_url: config.app_url,
         space: config.space,
         environment: config.environment,
         default_locale: config.default_locale,
         connection: config.connection,
         webhook_username: config.webhook_username,
-        webhook_password: config.webhook_password
+        webhook_password: config.webhook_password,
+
+        receive_url: URI.join(config.app_url, 'webhook/receive').to_s
       }
     end
 
