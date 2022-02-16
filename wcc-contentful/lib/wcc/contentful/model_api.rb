@@ -13,9 +13,8 @@ module WCC::Contentful::ModelAPI
       services.instrumentation
     end
 
-    # We use a class var here because this is a global registry for all subclasses
-    # of this namespace
-    @@registry = {} # rubocop:disable Style/ClassVars
+    # Set the registry at the top of the namespace
+    @registry = {}
   end
 
   class_methods do
@@ -89,7 +88,7 @@ module WCC::Contentful::ModelAPI
     def resolve_constant(content_type)
       raise ArgumentError, 'content_type cannot be nil' unless content_type
 
-      const = @@registry[content_type]
+      const = _registry[content_type]
       return const if const
 
       const_name = WCC::Contentful::Helpers.constant_from_content_type(content_type).to_s
@@ -143,14 +142,14 @@ module WCC::Contentful::ModelAPI
 
       content_type ||= WCC::Contentful::Helpers.content_type_from_constant(klass)
 
-      @@registry[content_type] = klass
+      _registry[content_type] = klass
     end
 
     # Returns the current registry of content type names to constants.
     def registry
-      return {} unless @@registry
+      return {} unless _registry
 
-      @@registry.dup.freeze
+      _registry.dup.freeze
     end
 
     def reload!
@@ -176,7 +175,13 @@ module WCC::Contentful::ModelAPI
     # that class.  If nil, the generated WCC::Contentful::Model::{content_type} class
     # will be resolved for this content type.
     def registered?(content_type)
-      @@registry[content_type]
+      _registry[content_type]
+    end
+
+    private
+
+    def _registry
+      @registry
     end
   end
 end

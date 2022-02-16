@@ -53,7 +53,7 @@ RSpec.describe WCC::Contentful::App::ContactFormController, type: :request do
     end
 
     after do
-      WCC::Contentful::Model.class_variable_get('@@registry').clear
+      WCC::Contentful::Model.instance_variable_get('@registry').clear
     end
 
     it 'resolves to the descendant contact form override' do

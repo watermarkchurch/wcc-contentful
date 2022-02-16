@@ -684,7 +684,7 @@ RSpec.describe WCC::Contentful::ModelAPI do
       expect(button).to be_a(blog_post_class)
     end
 
-    it 'two different namespaces have two different registries', focus: true do
+    it 'two different namespaces have two different registries' do
       alternate_schema = WCC::Contentful::IndexedRepresentation.from_json <<~JSON
         {
           "Asset": {
@@ -854,7 +854,7 @@ RSpec.describe WCC::Contentful::ModelAPI do
         warn e
       end
     end
-    TestNamespace::Model.class_variable_get('@@registry').clear
+    TestNamespace::Model.instance_variable_get('@registry').clear
     TestNamespace::Model.instance_variable_set('@schema', nil)
     TestNamespace::Model.instance_variable_set('@services', nil)
     TestNamespace::Model.instance_variable_set('@configuration', nil)
