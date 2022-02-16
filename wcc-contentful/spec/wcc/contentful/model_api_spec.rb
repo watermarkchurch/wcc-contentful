@@ -683,6 +683,129 @@ RSpec.describe WCC::Contentful::ModelAPI do
       # assert
       expect(button).to be_a(blog_post_class)
     end
+
+    it 'two different namespaces have two different registries' do
+      alternate_schema = WCC::Contentful::IndexedRepresentation.from_json <<~JSON
+        {
+          "Asset": {
+            "fields": {
+              "title": {
+                "name": "title",
+                "type": "String"
+              },
+              "description": {
+                "name": "description",
+                "type": "String"
+              },
+              "file": {
+                "name": "file",
+                "type": "Json"
+              }
+            },
+            "name": "Asset",
+            "content_type": "Asset"
+          },
+          "blogPost": {
+            "fields": {
+              "metadata": {
+                "name": "metadata",
+                "type": "Link",
+                "required": false,
+                "link_types": [
+                  "pageMetadata"
+                ]
+              }
+            },
+            "name": "BlogPost",
+            "content_type": "blogPost"
+          },
+          "pageMetadata": {
+            "fields": {
+              "alt": {
+                "name": "alt",
+                "type": "String",
+                "required": true
+              }
+            },
+            "name": "PageMetadata",
+            "content_type": "pageMetadata"
+          }
+        }
+      JSON
+
+      alternate_services = double('services 2',
+        store: double('store 2'),
+        instrumentation: ActiveSupport::Notifications)
+
+      TestNamespace2::Model.configure(
+        schema: alternate_schema,
+        services: alternate_services
+      )
+
+      # Register a subclass of meta in testnamespace2
+      TestNamespace2Meta = Class.new(TestNamespace2::Model::PageMetadata)
+      expect(TestNamespace2::Model.registry['pageMetadata']).to eq(TestNamespace2Meta)
+
+      # When we lookup a model from TestNamespace, we should not get a TestNamespace2 class...
+      allow(store).to receive(:find)
+        .with('blog-post-1', anything)
+        .and_return JSON.parse <<~JSON
+          {
+            "sys": {
+              "id": "blog-post-1",
+              "type": "Entry",
+              "contentType": {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "ContentType",
+                  "id": "blogPost"
+                }
+              }
+            },
+            "fields": {
+              "title": {
+                "en-US": "5 Characteristics Of A Godly Man"
+              },
+              "metadata": {
+                "en-US": {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Entry",
+                    "id": "metadata-1"
+                  }
+                }
+              }
+            }
+          }
+        JSON
+      post = TestNamespace::Model::BlogPost.find('blog-post-1')
+      expect(post).to be_a(TestNamespace::Model::BlogPost)
+
+      # When we follow the links, it should not get us a TestNamespace2 class...
+      allow(store).to receive(:find)
+        .with('metadata-1', anything)
+        .and_return JSON.parse <<~JSON
+          {
+            "sys": {
+              "id": "metadata-1",
+              "type": "Entry",
+              "contentType": {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "ContentType",
+                  "id": "pageMetadata"
+                }
+              }
+            },
+            "fields": {
+              "metaDescription": {
+                "en-US": "How do I become a Godly man? Learn five characteristics of a Godly man and learn about how to become the man God created you to be."
+              }
+            }
+          }
+        JSON
+      expect(post.metadata).to be_a(TestNamespace::Model::PageMetadata)
+    end
   end
 
   describe '.configure' do
@@ -731,13 +854,19 @@ RSpec.describe WCC::Contentful::ModelAPI do
         warn e
       end
     end
-    TestNamespace::Model.class_variable_get('@@registry').clear
+    TestNamespace::Model.instance_variable_get('@registry').clear
     TestNamespace::Model.instance_variable_set('@schema', nil)
     TestNamespace::Model.instance_variable_set('@services', nil)
     TestNamespace::Model.instance_variable_set('@configuration', nil)
   end
 
   module TestNamespace # rubocop:disable Style/ClassAndModuleChildren
+    class Model
+      include WCC::Contentful::ModelAPI
+    end
+  end
+
+  module TestNamespace2 # rubocop:disable Style/ClassAndModuleChildren
     class Model
       include WCC::Contentful::ModelAPI
     end

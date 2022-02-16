@@ -45,7 +45,7 @@ RSpec.shared_context 'Contentful config' do
         warn e
       end
     end
-    WCC::Contentful::Model.class_variable_get('@@registry').clear
+    WCC::Contentful::Model.instance_variable_get('@registry').clear
     Wisper.clear
   end
 end
@@ -80,7 +80,7 @@ RSpec.configure do |config|
         warn e
       end
     end
-    WCC::Contentful::Model.class_variable_get('@@registry').clear
+    WCC::Contentful::Model.instance_variable_get('@registry').clear
 
     # set up initialization mocks
     stub_request(:get, /https:\/\/cdn.contentful.com\/spaces\/.+\/sync/)

@@ -41,10 +41,6 @@ require_relative './model_api'
 class WCC::Contentful::Model
   include WCC::Contentful::ModelAPI
 
-  # The Model base class maintains a registry which is best expressed as a
-  # class var.
-  # rubocop:disable Style/ClassVars
-
   class << self
     def const_missing(name)
       type = WCC::Contentful::Helpers.content_type_from_constant(name)
@@ -53,5 +49,3 @@ class WCC::Contentful::Model
     end
   end
 end
-
-# rubocop:enable Style/ClassVars

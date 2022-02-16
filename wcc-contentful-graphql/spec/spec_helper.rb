@@ -57,7 +57,7 @@ RSpec.configure do |config|
         warn e
       end
     end
-    WCC::Contentful::Model.class_variable_get('@@registry').clear
+    WCC::Contentful::Model.instance_variable_get('@registry').clear
   end
 end
 

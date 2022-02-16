@@ -69,9 +69,9 @@ module WCC::Contentful::ModelSingletonMethods
   def inherited(subclass)
     # If another different class is already registered for this content type,
     # don't auto-register this one.
-    return if WCC::Contentful::Model.registered?(content_type)
+    return if model_namespace.registered?(content_type)
 
-    WCC::Contentful::Model.register_for_content_type(content_type, klass: subclass)
+    model_namespace.register_for_content_type(content_type, klass: subclass)
   end
 
   class ModelQuery

@@ -548,7 +548,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     end
 
     after do
-      WCC::Contentful::Model.class_variable_get('@@registry').clear
+      WCC::Contentful::Model.instance_variable_get('@registry').clear
 
       Object.send(:remove_const, :SUB_MENU) if defined?(SUB_MENU)
       Object.send(:remove_const, :SUB_MENU_BUTTON) if defined?(SUB_MENU_BUTTON)

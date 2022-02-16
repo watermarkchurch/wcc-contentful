@@ -14,7 +14,7 @@ RSpec.describe WCC::Contentful::Model::SectionContactForm do
 
     after do
       # clean out MyContactForm subclass
-      WCC::Contentful::Model.class_variable_get('@@registry').clear
+      WCC::Contentful::Model.instance_variable_get('@registry').clear
     end
 
     Person = Struct.new(:id, :first_name, :last_name, :email)
