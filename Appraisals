@@ -3,7 +3,8 @@
 rubies =
   [
     '2.3.8',
-    '2.5.7'
+    '2.5.7',
+    '3.1.1'
   ].map { |r| Gem::Version.new(r) }
 
 rubies.each do |ruby_version|
@@ -23,12 +24,12 @@ rubies.each do |ruby_version|
     instance_exec(&common)
   end
 
-  appraise "rails-5.0_ruby-#{ruby_version}" do
-    gem 'rails', '~> 5.0.0'
-    gem 'railties', '~> 5.0.0'
+  appraise "rails-6.1_ruby-#{ruby_version}" do
+    gem 'rails', '~> 6.1'
+    gem 'railties', '~> 6.1'
 
     group :test do
-      gem 'rspec-rails', '~> 3.7'
+      gem 'rspec-rails', '~> 6.0'
     end
 
     instance_exec(&common)
