@@ -1,0 +1,33 @@
+image:
+  file: .gitpod.Dockerfile
+tasks:
+  - init: |
+      bin/use gemfiles/rails_5.2_ruby_2.5.7.gemfile
+      bundle install
+      bin/bundle install
+    command: |
+      docker run -e POSTGRES_HOST_AUTH_METHOD=trust -e POSTGRES_USER=gitpod -v /var/run/postgresql:/var/run/postgresql --detach postgres:12
+      (pushd wcc-contentful && bundle exec guard -g autofix red_green_refactor)
+
+vscode:
+  extensions:
+    - dbaeumer.vscode-eslint
+    - wingrunr21.vscode-ruby
+    - ms-azuretools.vscode-docker
+
+github:
+  prebuilds:
+    # enable for the default branch (defaults to true)
+    master: true
+    # enable for all branches in this repo (defaults to false)
+    branches: false
+    # enable for pull requests coming from this repo (defaults to true)
+    pullRequests: false
+    # enable for pull requests coming from forks (defaults to false)
+    pullRequestsFromForks: false
+    # add a check to pull requests (defaults to true)
+    addCheck: true
+    # add a "Review in Gitpod" button as a comment to pull requests (defaults to false)
+    addComment: false
+    # add a "Review in Gitpod" button to the pull request's description (defaults to false)
+    addBadge: false
