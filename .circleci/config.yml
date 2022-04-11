@@ -93,6 +93,10 @@ workflows:
           ruby: 2.5.7
           gemfile: rails_5.2
       - test:
+          name: test_rails_6_1_ruby_3_0
+          ruby: 3.0.3
+          gemfile: rails_6.1
+      - test:
           name: test_middleman_4_2_ruby_2_5
           ruby: 2.5.7
           gemfile: middleman_4.2

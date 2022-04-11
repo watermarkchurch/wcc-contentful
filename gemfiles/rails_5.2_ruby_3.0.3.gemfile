@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-ruby "2.3.8"
+ruby "3.0.3"
 
 gem "rails", "~> 5.2.0"
 gem "railties", "~> 5.2.0"

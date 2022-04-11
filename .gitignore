@@ -31,3 +31,5 @@ node_modules
 log/
 tmp/
 coverage
+
+.rvm

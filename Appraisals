@@ -4,7 +4,7 @@ rubies =
   [
     '2.3.8',
     '2.5.7',
-    '3.1.1'
+    '3.0.3'
   ].map { |r| Gem::Version.new(r) }
 
 rubies.each do |ruby_version|
