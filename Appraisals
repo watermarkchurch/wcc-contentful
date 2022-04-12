@@ -29,7 +29,7 @@ rubies.each do |ruby_version|
     gem 'railties', '~> 6.1'
 
     group :test do
-      gem 'rspec-rails', '~> 6.0'
+      gem 'rspec-rails', '~> 5.0'
     end
 
     instance_exec(&common)
