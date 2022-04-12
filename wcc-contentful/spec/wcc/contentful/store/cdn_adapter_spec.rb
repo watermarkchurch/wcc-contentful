@@ -261,6 +261,11 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
 
     it 'passes query params thru to client' do
       entry_stub = make_entry('test1', 'page')
+      response = double('Response',
+        each_page: [
+          double('ResponsePage', page_items: [entry_stub], includes: {})
+        ])
+
       expect(adapter.client).to receive(:entries)
         .with({
           locale: '*',
@@ -270,7 +275,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
           skip: 10,
           include: 5
         })
-        .and_return(double(items: [entry_stub], includes: {}))
+        .and_return(response)
 
       # act
       found = adapter.find_by(
@@ -387,17 +392,17 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
         '?content_type=page&include=2&limit=5&locale=*')
         .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_1.json'))
-        .then.to_raise(StandardError)
+        .then.to_raise(StandardError.new('Should not hit page 1 a second time!'))
 
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
         '?content_type=page&include=2&limit=5&locale=*&skip=5')
         .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_2.json'))
-        .then.to_raise(StandardError)
+        .then.to_raise(StandardError.new('Should not hit page 2 a second time!'))
 
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
         '?content_type=page&include=2&limit=5&locale=*&skip=10')
         .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_3.json'))
-        .then.to_raise(StandardError)
+        .then.to_raise(StandardError.new('Should not hit page 3 a second time!'))
 
       # act
       found = adapter.find_all(content_type: 'page', options: {
@@ -406,8 +411,9 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       })
 
       # assert
-      expect(found.to_enum).to be_a(Enumerator::Lazy)
-      items = found.to_enum.force
+      enum = found.to_enum
+      expect(enum).to be_a(Enumerator::Lazy)
+      items = enum.force
       expect(items.count).to eq(11)
 
       page5 = items[5]
