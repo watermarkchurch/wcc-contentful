@@ -108,11 +108,6 @@ class WCC::Contentful::SimpleClient
         raw.dig('includes')&.each_with_object({}) do |(_t, entries), h|
           entries.each { |e| h[e.dig('sys', 'id')] = e }
         end || {}
-
-      return @includes unless @next_page
-
-      # This could be more efficient - maybe not worth worrying about
-      @includes.merge(@next_page.includes)
     end
   end
 
