@@ -134,8 +134,8 @@ class WCC::Contentful::SimpleClient
           @client.get(url)
         end
 
-      @next_page ||= SyncResponse.new(next_page)
-      @next_page.assert_ok!
+      next_page = SyncResponse.new(next_page)
+      next_page.assert_ok!
     end
 
     def next_sync_token
@@ -175,7 +175,7 @@ class WCC::Contentful::SimpleClient
     include Enumerable
 
     def initialize(initial_page)
-      raise ArgumentError, "Must provide initial page" unless initial_page.present?
+      raise ArgumentError, 'Must provide initial page' unless initial_page.present?
 
       @initial_page = initial_page
     end
