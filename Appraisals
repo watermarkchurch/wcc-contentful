@@ -36,6 +36,8 @@ rubies.each do |ruby_version|
 
   appraise "middleman-4.2_ruby-#{ruby_version}" do
     gem 'middleman', '~> 4.2'
+    # nokogiri 1.13+ requires ruby 2.6+
+    gem 'nokogiri', '< 1.13'
 
     instance_exec(&common)
   end
