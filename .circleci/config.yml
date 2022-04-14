@@ -6,7 +6,7 @@ executors:
       version:
         type: string
     docker:
-      - image: circleci/ruby:<< parameters.version >>-node
+      - image: cimg/ruby:<< parameters.version >>-node
         environment:
           POSTGRES_CONNECTION: postgresql://ubuntu:test@127.0.0.1:5432/circle_ruby_test
       - image: postgres:10
