@@ -1,43 +1,52 @@
 # frozen_string_literal: true
 
-rubies =
-  [
-    '2.3.8',
-    '2.5.7',
-    '3.0.3'
-  ].map { |r| Gem::Version.new(r) }
 
-rubies.each do |ruby_version|
-  common =
-    proc do
-      ruby ruby_version.to_s
-    end
+appraise "rails-5.2_ruby-2.7.6" do
+  gem 'rails', '~> 5.2.0'
+  gem 'railties', '~> 5.2.0'
 
-  appraise "rails-5.2_ruby-#{ruby_version}" do
-    gem 'rails', '~> 5.2.0'
-    gem 'railties', '~> 5.2.0'
-
-    group :test do
-      gem 'rspec-rails', '~> 3.7'
-    end
-
-    instance_exec(&common)
+  group :test do
+    gem 'rspec-rails', '~> 3.7'
   end
 
-  appraise "rails-6.1_ruby-#{ruby_version}" do
-    gem 'rails', '~> 6.1'
-    gem 'railties', '~> 6.1'
+  ruby '2.7.6'
+end
 
-    group :test do
-      gem 'rspec-rails', '~> 5.0'
-    end
+appraise "rails-5.2_ruby-2.7.6" do
+  gem 'rails', '~> 5.2.0'
+  gem 'railties', '~> 5.2.0'
 
-    instance_exec(&common)
+  group :test do
+    gem 'rspec-rails', '~> 3.7'
   end
 
-  appraise "middleman-4.2_ruby-#{ruby_version}" do
-    gem 'middleman', '~> 4.2'
+  ruby '2.7.6'
+end
 
-    instance_exec(&common)
+appraise "rails-6.1_ruby-2.7.6" do
+  gem 'rails', '~> 6.1'
+  gem 'railties', '~> 6.1'
+
+  group :test do
+    gem 'rspec-rails', '~> 5.0'
   end
+
+  ruby '2.7.6'
+end
+
+appraise "middleman-4.2_ruby-2.7.6" do
+  gem 'middleman', '~> 4.2'
+
+  ruby '2.7.6'
+end
+
+appraise "rails-6.1_ruby-3.1" do
+  gem 'rails', '~> 6.1'
+  gem 'railties', '~> 6.1'
+
+  group :test do
+    gem 'rspec-rails', '~> 5.0'
+  end
+
+  ruby '3.1.1'
 end
