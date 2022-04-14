@@ -33,3 +33,6 @@ tmp/
 coverage
 
 .rvm
+
+# we use yarn
+package-lock.json
