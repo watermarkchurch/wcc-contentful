@@ -6,6 +6,7 @@ ruby "3.1.1"
 
 gem "rails", "~> 6.1"
 gem "railties", "~> 6.1"
+gem "net-smtp", require: false
 
 group :development do
   gem "appraisal"
