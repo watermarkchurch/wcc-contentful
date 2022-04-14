@@ -90,7 +90,7 @@ workflows:
           gemfile: gemfiles/rails_5.2_ruby_2.7.6.gemfile
       - test:
           name: test_rails-6.1_ruby-2.7.6
-          ruby: 2.5.7
+          ruby: 2.7.6
           gemfile: gemfiles/rails_6.1_ruby_2.7.6.gemfile
       - test:
           name: test_rails-6.1_ruby-3.1
