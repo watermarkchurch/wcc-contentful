@@ -286,13 +286,17 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
           # act
           resp = client.get('entries', { content_type: 'page', limit: 5, include: 2 })
           # range the pages to load up the whole hash
-          resp.items.force
+          pages = resp.each_page.to_a
+          includes =
+            pages.each_with_object({}) do |p, h|
+              h.merge!(p.includes)
+            end
 
           # assert
-          expect(resp.includes.count).to eq(73)
+          expect(includes.count).to eq(73)
 
           # loads an entry from 2 levels deep
-          expect(resp.includes['6B4mPenxokGUM2GuIEmg8C']).to eq({
+          expect(includes['6B4mPenxokGUM2GuIEmg8C']).to eq({
             'sys' => {
               'space' => {
                 'sys' => {
@@ -329,7 +333,7 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
           })
 
           # loads an asset
-          expect(resp.includes['2rakCOkeRumQuig0K8uaYm']).to eq({
+          expect(includes['2rakCOkeRumQuig0K8uaYm']).to eq({
             'sys' => {
               'space' => {
                 'sys' => {
