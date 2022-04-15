@@ -16,6 +16,7 @@ do
   (
     cd $gem;
     cp $gemfile Gemfile
+    rm -f Gemfile.lock
     echo "gemspec" >> Gemfile
 
     # does this gem depend on any others?
