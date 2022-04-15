@@ -49,7 +49,6 @@ class WCC::Contentful::SimpleClient
 
     def next_page
       return unless next_page?
-      return @next_page if @next_page
 
       query = (@request[:query] || {}).merge({
         skip: page_items.length + skip
@@ -58,7 +57,7 @@ class WCC::Contentful::SimpleClient
         _instrument 'page', url: @request[:url], query: query do
           @client.get(@request[:url], query)
         end
-      @next_page = np.assert_ok!
+      np.assert_ok!
     end
 
     def initialize(client, request, raw_response)
@@ -77,16 +76,7 @@ class WCC::Contentful::SimpleClient
     def each_page(&block)
       raise ArgumentError, 'Not a collection response' unless page_items
 
-      ret =
-        Enumerator.new do |y|
-          y << self
-
-          if next_page?
-            next_page.each_page.each do |page|
-              y << page
-            end
-          end
-        end
+      ret = PaginatingEnumerable.new(self)
 
       if block_given?
         ret.map(&block)
@@ -118,11 +108,6 @@ class WCC::Contentful::SimpleClient
         raw.dig('includes')&.each_with_object({}) do |(_t, entries), h|
           entries.each { |e| h[e.dig('sys', 'id')] = e }
         end || {}
-
-      return @includes unless @next_page
-
-      # This could be more efficient - maybe not worth worrying about
-      @includes.merge(@next_page.includes)
     end
   end
 
@@ -144,8 +129,8 @@ class WCC::Contentful::SimpleClient
           @client.get(url)
         end
 
-      @next_page ||= SyncResponse.new(next_page)
-      @next_page.assert_ok!
+      next_page = SyncResponse.new(next_page)
+      next_page.assert_ok!
     end
 
     def next_sync_token
@@ -160,16 +145,7 @@ class WCC::Contentful::SimpleClient
     def each_page
       raise ArgumentError, 'Not a collection response' unless page_items
 
-      ret =
-        Enumerator.new do |y|
-          y << self
-
-          if next_page?
-            next_page.each_page.each do |page|
-              y << page
-            end
-          end
-        end
+      ret = PaginatingEnumerable.new(self)
 
       if block_given?
         ret.map(&block)
@@ -187,6 +163,26 @@ class WCC::Contentful::SimpleClient
       url = URI.parse(url)
       q = CGI.parse(url.query)
       q['sync_token']&.first
+    end
+  end
+
+  class PaginatingEnumerable
+    include Enumerable
+
+    def initialize(initial_page)
+      raise ArgumentError, 'Must provide initial page' unless initial_page.present?
+
+      @initial_page = initial_page
+    end
+
+    def each
+      page = @initial_page
+      yield page
+
+      while page.next_page?
+        page = page.next_page
+        yield page
+      end
     end
   end
 

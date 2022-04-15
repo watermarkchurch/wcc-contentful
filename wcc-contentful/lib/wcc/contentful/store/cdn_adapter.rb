@@ -72,9 +72,13 @@ module WCC::Contentful::Store
       delegate :count, to: :response
 
       def to_enum
-        return response.items unless @options[:include]
+        return response.each_page.flat_map(&:page_items) unless @options[:include]
 
-        response.items.map { |e| resolve_includes(e, @options[:include]) }
+        response.each_page
+          .flat_map { |page| page.page_items.each_with_object(page).to_a }
+          .map do |e, page|
+            resolve_includes(e, page.includes, depth: @options[:include])
+          end
       end
 
       def initialize(store, client:, relation:, options: nil, **extra)
@@ -160,18 +164,18 @@ module WCC::Contentful::Store
           end
       end
 
-      def resolve_includes(entry, depth)
+      def resolve_includes(entry, includes, depth:)
         return entry unless entry && depth && depth > 0
 
         # Dig links out of response.includes and insert them into the entry
         WCC::Contentful::LinkVisitor.new(entry, :Link, depth: depth - 1).map! do |val|
-          resolve_link(val)
+          resolve_link(val, includes)
         end
       end
 
-      def resolve_link(val)
+      def resolve_link(val, includes)
         return val unless val.is_a?(Hash) && val.dig('sys', 'type') == 'Link'
-        return val unless included = response.includes[val.dig('sys', 'id')]
+        return val unless included = includes[val.dig('sys', 'id')]
 
         included
       end
