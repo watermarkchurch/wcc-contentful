@@ -455,6 +455,34 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       expect(homepage.favicons[1].file.fileName).to eq('favicon-32x32.png')
       expect(homepage.favicons.length).to eq(3)
     end
+
+    describe 'rich text' do
+      let(:store) { double('store') }
+      let(:types) {
+        WCC::Contentful::ContentTypeIndexer
+          .load(path_to_fixture('contentful/content_types_rich_text.json'))
+          .types
+      }
+      let(:fixture) { JSON.parse(load_fixture('contentful/block-text-with-rich-text.json')) }
+      let(:block_text) {
+        fixture.dig('items', 0)
+      }
+
+      context 'unresolved' do
+        it 'has content blocks' do
+          allow(store).to receive(:find_by)
+            .and_return(block_text)
+
+          @schema = subject.build_models
+
+          # act
+          block_text = WCC::Contentful::Model::SectionBlockText.find_by(id: '5op6hsU6BYvZCt7S0PjTVv')
+
+          # assert
+          expect(block_text.rich_body['content'].length).to eq(9)
+        end
+      end
+    end
   end
 
   describe 'model subclasses' do
