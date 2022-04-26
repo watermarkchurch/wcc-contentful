@@ -103,6 +103,7 @@ module WCC::Contentful
         Boolean
         Json
         Coordinates
+        RichText
         Link
         Asset
       ].freeze

@@ -456,7 +456,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       expect(homepage.favicons.length).to eq(3)
     end
 
-    describe 'rich text' do
+    describe 'rich text', focus: true do
       let(:store) { double('store') }
       let(:types) {
         WCC::Contentful::ContentTypeIndexer
@@ -479,7 +479,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
           block_text = WCC::Contentful::Model::SectionBlockText.find_by(id: '5op6hsU6BYvZCt7S0PjTVv')
 
           # assert
-          expect(block_text.rich_body['content'].length).to eq(9)
+          expect(block_text.rich_body['content'].length).to eq(12)
         end
       end
     end
