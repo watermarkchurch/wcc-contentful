@@ -94,7 +94,6 @@ module WCC::Contentful::RichText
         include WCC::Contentful::RichText::Node
       end
     sz = i
-    struct.define_method(:size) { sz }
     struct.define_singleton_method(:node_type) { "heading-#{sz}" }
     const_set("Heading#{sz}", struct)
   end
