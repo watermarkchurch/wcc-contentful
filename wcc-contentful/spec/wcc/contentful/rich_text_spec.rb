@@ -14,14 +14,6 @@ RSpec.describe WCC::Contentful::RichText do
     described_class.tokenize(fixture)
   }
 
-  it { is_expected.to be_a WCC::Contentful::RichText::Document }
-
-  it 'cannot set node values' do
-    expect {
-      subject.rich_body['content'] = 'test'
-    }.to raise_error(NameError)
-  end
-
   # RichText structs should be as similar to a Hash as possible.
   shared_examples 'WCC::Contentful::RichText::Node' do
     it 'enumerates keys' do
@@ -48,14 +40,28 @@ RSpec.describe WCC::Contentful::RichText do
       expect(subject['nodeType']).to eq(fixture['nodeType'])
     end
 
+    it 'cannot set values' do
+      described_class.members.each do |member|
+        expect {
+          subject[member.to_s] = 'test'
+        }.to raise_error(NameError)
+
+        expect {
+          subject.public_send("#{member}=", 'test')
+        }.to raise_error(NameError)
+      end
+    end
+
     it 'responds to :dig method' do
       expect(subject.dig('nodeType')).to eq(fixture['nodeType'])
     end
   end
 
   describe WCC::Contentful::RichText::Document do
-    it_behaves_like 'WCC::Contentful::RichText::Node'
+    it { is_expected.to be_a WCC::Contentful::RichText::Document }
     it { is_expected.to have_node_type('document') }
+
+    it_behaves_like 'WCC::Contentful::RichText::Node'
 
     it 'can deep dig' do
       expect(
@@ -69,8 +75,10 @@ RSpec.describe WCC::Contentful::RichText do
       document.dig('content', 2)
     }
 
-    it_behaves_like 'WCC::Contentful::RichText::Node'
+    it { is_expected.to be_a WCC::Contentful::RichText::Paragraph }
     it { is_expected.to have_node_type('paragraph') }
+
+    it_behaves_like 'WCC::Contentful::RichText::Node'
   end
 
   describe WCC::Contentful::RichText::Blockquote do
@@ -78,8 +86,10 @@ RSpec.describe WCC::Contentful::RichText do
       document.dig('content', 3)
     }
 
-    it_behaves_like 'WCC::Contentful::RichText::Node'
+    it { is_expected.to be_a WCC::Contentful::RichText::Blockquote }
     it { is_expected.to have_node_type('blockquote') }
+
+    it_behaves_like 'WCC::Contentful::RichText::Node'
   end
 
   describe WCC::Contentful::RichText::Text do
@@ -87,8 +97,10 @@ RSpec.describe WCC::Contentful::RichText do
       document.dig('content', 4, 'content', 0)
     }
 
-    it_behaves_like 'WCC::Contentful::RichText::Node'
+    it { is_expected.to be_a WCC::Contentful::RichText::Text }
     it { is_expected.to have_node_type('text') }
+
+    it_behaves_like 'WCC::Contentful::RichText::Node'
   end
 
   describe WCC::Contentful::RichText::EmbeddedEntryInline do
@@ -96,8 +108,10 @@ RSpec.describe WCC::Contentful::RichText do
       document.dig('content', 9, 'content', 1)
     }
 
-    it_behaves_like 'WCC::Contentful::RichText::Node'
+    it { is_expected.to be_a WCC::Contentful::RichText::EmbeddedEntryInline }
     it { is_expected.to have_node_type('embedded-entry-inline') }
+
+    it_behaves_like 'WCC::Contentful::RichText::Node'
   end
 
   describe WCC::Contentful::RichText::EmbeddedEntryBlock do
@@ -105,8 +119,10 @@ RSpec.describe WCC::Contentful::RichText do
       document.dig('content', 7)
     }
 
-    it_behaves_like 'WCC::Contentful::RichText::Node'
+    it { is_expected.to be_a WCC::Contentful::RichText::EmbeddedEntryBlock }
     it { is_expected.to have_node_type('embedded-entry-block') }
+
+    it_behaves_like 'WCC::Contentful::RichText::Node'
   end
 
   describe WCC::Contentful::RichText::EmbeddedAssetBlock do
@@ -114,8 +130,10 @@ RSpec.describe WCC::Contentful::RichText do
       document.dig('content', 5)
     }
 
-    it_behaves_like 'WCC::Contentful::RichText::Node'
+    it { is_expected.to be_a WCC::Contentful::RichText::EmbeddedAssetBlock }
     it { is_expected.to have_node_type('embedded-asset-block') }
+
+    it_behaves_like 'WCC::Contentful::RichText::Node'
   end
 
   describe WCC::Contentful::RichText::Heading1 do
@@ -134,8 +152,10 @@ RSpec.describe WCC::Contentful::RichText do
       }
     }
 
-    it_behaves_like 'WCC::Contentful::RichText::Node'
+    it { is_expected.to be_a WCC::Contentful::RichText::Heading1 }
     it { is_expected.to have_node_type('heading-1') }
+
+    it_behaves_like 'WCC::Contentful::RichText::Node'
   end
 
   describe WCC::Contentful::RichText::Heading2 do
@@ -143,8 +163,10 @@ RSpec.describe WCC::Contentful::RichText do
       document.dig('content', 0)
     }
 
-    it_behaves_like 'WCC::Contentful::RichText::Node'
+    it { is_expected.to be_a WCC::Contentful::RichText::Heading2 }
     it { is_expected.to have_node_type('heading-2') }
+
+    it_behaves_like 'WCC::Contentful::RichText::Node'
   end
 
   describe WCC::Contentful::RichText::Heading3 do
@@ -152,8 +174,10 @@ RSpec.describe WCC::Contentful::RichText do
       document.dig('content', 1)
     }
 
-    it_behaves_like 'WCC::Contentful::RichText::Node'
+    it { is_expected.to be_a WCC::Contentful::RichText::Heading3 }
     it { is_expected.to have_node_type('heading-3') }
+
+    it_behaves_like 'WCC::Contentful::RichText::Node'
   end
 
   describe WCC::Contentful::RichText::Heading4 do
@@ -172,8 +196,10 @@ RSpec.describe WCC::Contentful::RichText do
       }
     }
 
-    it_behaves_like 'WCC::Contentful::RichText::Node'
+    it { is_expected.to be_a WCC::Contentful::RichText::Heading4 }
     it { is_expected.to have_node_type('heading-4') }
+
+    it_behaves_like 'WCC::Contentful::RichText::Node'
   end
 
   describe WCC::Contentful::RichText::Heading5 do
@@ -191,8 +217,11 @@ RSpec.describe WCC::Contentful::RichText do
         ]
       }
     }
-    it_behaves_like 'WCC::Contentful::RichText::Node'
+
+    it { is_expected.to be_a WCC::Contentful::RichText::Heading5 }
     it { is_expected.to have_node_type('heading-5') }
+
+    it_behaves_like 'WCC::Contentful::RichText::Node'
   end
 end
 

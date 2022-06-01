@@ -11,8 +11,13 @@ module WCC::Contentful::RichText
     included do
       include Enumerable
 
-      undef_method :[]=
       alias_method :node_type, :nodeType
+
+      # Make the nodes read-only
+      undef_method :[]=
+      members.each do |member|
+        undef_method("#{member}=")
+      end
 
       # Override each so it has a Hash-like interface rather than Struct-like.
       # The goal being to mimic a JSON-parsed hash representation of the raw
