@@ -26,7 +26,7 @@ module WCC::Contentful::RichText
       size = Regexp.last_match(1)
       const_get("Heading#{size}").new(tokenize(raw['content']), raw['data'])
     else
-      raise ArgumentError, "Unknown token '#{raw['content']}'"
+      Unknown.tokenize(raw, context)
     end
   end
 
@@ -75,4 +75,9 @@ module WCC::Contentful::RichText
     struct.define_singleton_method(:node_type) { "heading-#{sz}" }
     const_set("Heading#{sz}", struct)
   end
+
+  Unknown =
+    Struct.new(:nodeType, :data, :content) do
+      include WCC::Contentful::RichText::Node
+    end
 end

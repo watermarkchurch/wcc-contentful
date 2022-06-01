@@ -29,7 +29,7 @@ module WCC::Contentful::RichText
         name.demodulize.underscore.dasherize
       end
 
-      def tokenize(raw, _context = nil)
+      def tokenize(raw, context = nil)
         unless raw['nodeType'] == node_type
           raise ArgumentError, "Expected '#{node_type}', got '#{raw['nodeType']}'"
         end
@@ -40,7 +40,7 @@ module WCC::Contentful::RichText
 
             case symbol
             when :content
-              WCC::Contentful::RichText.tokenize(val)
+              WCC::Contentful::RichText.tokenize(val, context)
               # when :data
               # TODO: resolve links...
             else
