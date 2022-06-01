@@ -23,7 +23,9 @@ module WCC::Contentful::RichText
       # The goal being to mimic a JSON-parsed hash representation of the raw
       def each
         members.map do |key|
-          yield [key, self.[](key)] if block_given?
+          tuple = [key.to_s, self.[](key)]
+          yield tuple if block_given?
+          tuple
         end
       end
     end

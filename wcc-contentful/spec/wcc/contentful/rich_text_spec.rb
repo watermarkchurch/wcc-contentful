@@ -33,6 +33,7 @@ RSpec.describe WCC::Contentful::RichText do
 
       # returns an array of tuples when no block provided
       expect(subject.each.length).to eq(fixture.length)
+      expect(subject.each.map(&:first)).to eq(fixture.keys)
     end
 
     it 'responds to :[] method' do
