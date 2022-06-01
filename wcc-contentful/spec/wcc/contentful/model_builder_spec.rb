@@ -456,7 +456,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       expect(homepage.favicons.length).to eq(3)
     end
 
-    describe 'rich text', focus: true do
+    describe 'rich text' do
       let(:store) { double('store') }
       let(:types) {
         WCC::Contentful::ContentTypeIndexer
@@ -490,19 +490,23 @@ RSpec.describe WCC::Contentful::ModelBuilder do
               'paragraph', 'paragraph', 'blockquote', 'paragraph'
             ]
           )
-        end
-
-        it 'can dig to deep nodes' do
-          # act
-          block_text = WCC::Contentful::Model::SectionBlockText.find_by(id: '5op6hsU6BYvZCt7S0PjTVv')
-
-          # assert
-          expect(
-            block_text.rich_body.dig('content', 2, 'content', 2, 'data', 'target', 'sys', 'id')
-          ).to eq('1D9ASgqWylh9frKnBv8pSM')
-          expect(
-            block_text.rich_body['content'][2]['content'][2]['data']['target']['sys']['linkType']
-          ).to eq('Entry')
+          classes = block_text.rich_body['content'].map(&:class)
+          expect(classes).to eq(
+            [
+              WCC::Contentful::RichText::Heading2,
+              WCC::Contentful::RichText::Heading3,
+              WCC::Contentful::RichText::Paragraph,
+              WCC::Contentful::RichText::Blockquote,
+              WCC::Contentful::RichText::Paragraph,
+              WCC::Contentful::RichText::EmbeddedAssetBlock,
+              WCC::Contentful::RichText::Blockquote,
+              WCC::Contentful::RichText::EmbeddedEntryBlock,
+              WCC::Contentful::RichText::Paragraph,
+              WCC::Contentful::RichText::Paragraph,
+              WCC::Contentful::RichText::Blockquote,
+              WCC::Contentful::RichText::Paragraph
+            ]
+          )
         end
       end
     end

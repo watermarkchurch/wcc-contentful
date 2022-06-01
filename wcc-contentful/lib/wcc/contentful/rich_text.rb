@@ -24,7 +24,7 @@ module WCC::Contentful::RichText
       EmbeddedAssetBlock.tokenize(raw, context)
     when /heading\-(\d+)/
       size = Regexp.last_match(1)
-      const_get("Heading#{size}").new(tokenize(raw['content']), raw['data'])
+      const_get("Heading#{size}").tokenize(raw, context)
     else
       Unknown.tokenize(raw, context)
     end
