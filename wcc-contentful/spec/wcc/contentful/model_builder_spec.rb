@@ -468,18 +468,41 @@ RSpec.describe WCC::Contentful::ModelBuilder do
         fixture.dig('items', 0)
       }
 
+      before do
+        allow(store).to receive(:find_by)
+          .and_return(block_text)
+
+        @schema = subject.build_models
+      end
+
       context 'unresolved' do
         it 'has content blocks' do
-          allow(store).to receive(:find_by)
-            .and_return(block_text)
-
-          @schema = subject.build_models
-
           # act
           block_text = WCC::Contentful::Model::SectionBlockText.find_by(id: '5op6hsU6BYvZCt7S0PjTVv')
 
           # assert
           expect(block_text.rich_body['content'].length).to eq(12)
+          node_types = block_text.rich_body['content'].map { |c| c['nodeType'] }
+          expect(node_types).to eq(
+            [
+              'heading-2', 'heading-3', 'paragraph', 'blockquote', 'paragraph',
+              'embedded-asset-block', 'blockquote', 'embedded-entry-block',
+              'paragraph', 'paragraph', 'blockquote', 'paragraph'
+            ]
+          )
+        end
+
+        it 'can dig to deep nodes' do
+          # act
+          block_text = WCC::Contentful::Model::SectionBlockText.find_by(id: '5op6hsU6BYvZCt7S0PjTVv')
+
+          # assert
+          expect(
+            block_text.rich_body.dig('content', 2, 'content', 2, 'data', 'target', 'sys', 'id')
+          ).to eq('1D9ASgqWylh9frKnBv8pSM')
+          expect(
+            block_text.rich_body['content'][2]['content'][2]['data']['target']['sys']['linkType']
+          ).to eq('Entry')
         end
       end
     end

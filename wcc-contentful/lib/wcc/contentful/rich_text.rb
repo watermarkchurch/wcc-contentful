@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative './rich_text/node'
+
 module WCC::Contentful::RichText
   def self.tokenize(raw, context = nil)
     return unless raw
@@ -7,79 +9,70 @@ module WCC::Contentful::RichText
 
     case raw['nodeType']
     when 'document'
-      Document.new(tokenize(raw['content'], context), raw['data'])
+      Document.tokenize(raw, context)
     when 'paragraph'
-      Paragraph.new(tokenize(raw['content'], context), raw['data'])
+      Paragraph.tokenize(raw, context)
     when 'blockquote'
-      Paragraph.new(tokenize(raw['content'], context), raw['data'])
+      Blockquote.tokenize(raw, context)
     when 'text'
       Text.new(raw['value'], raw['marks'], raw['data'])
     when 'embedded-entry-inline'
-      EmbeddedEntryInline.new(tokenize(raw['content'], context), raw['data'])
+      EmbeddedEntryInline.tokenize(raw, context)
     when 'embedded-entry-block'
-      EmbeddedEntryBlock.new(tokenize(raw['content'], context), raw['data'])
+      EmbeddedEntryBlock.tokenize(raw, context)
     when 'embedded-asset-block'
-      EmbeddedAssetBlock.new(tokenize(raw['content'], context), raw['data'])
+      EmbeddedAssetBlock.tokenize(raw, context)
     when /heading\-(\d+)/
-      Heading.new(Regexp.last_match(1), tokenize(raw['content']), raw['data'])
+      size = Regexp.last_match(1)
+      const_get("Heading#{size}").new(tokenize(raw['content']), raw['data'])
     else
       raise ArgumentError, "Unknown token '#{raw['content']}'"
     end
   end
 
   Document =
-    Struct.new(:content, :data) do
-      def node_type
-        'document'
-      end
+    Struct.new(:nodeType, :data, :content) do
+      include WCC::Contentful::RichText::Node
     end
 
   Paragraph =
-    Struct.new(:content, :data) do
-      def node_type
-        'paragraph'
-      end
+    Struct.new(:nodeType, :data, :content) do
+      include WCC::Contentful::RichText::Node
     end
 
   Blockquote =
-    Struct.new(:content, :data) do
-      def node_type
-        'blockquote'
-      end
+    Struct.new(:nodeType, :data, :content) do
+      include WCC::Contentful::RichText::Node
     end
 
   Text =
-    Struct.new(:value, :marks, :data) do
-      def node_type
-        'text'
-      end
+    Struct.new(:nodeType, :value, :marks, :data) do
+      include WCC::Contentful::RichText::Node
     end
 
   EmbeddedEntryInline =
-    Struct.new(:content, :data) do
-      def node_type
-        'embedded-entry-inline'
-      end
+    Struct.new(:nodeType, :data, :content) do
+      include WCC::Contentful::RichText::Node
     end
 
   EmbeddedEntryBlock =
-    Struct.new(:content, :data) do
-      def node_type
-        'embedded-entry-block'
-      end
+    Struct.new(:nodeType, :data, :content) do
+      include WCC::Contentful::RichText::Node
     end
 
   EmbeddedAssetBlock =
-    Struct.new(:content, :data) do
-      def node_type
-        'embedded-asset-block'
-      end
+    Struct.new(:nodeType, :data, :content) do
+      include WCC::Contentful::RichText::Node
     end
 
-  Heading =
-    Struct.new(:size, :content, :data) do
-      def node_type
-        "heading-#{size}"
+  (1..5).each do |i|
+    struct =
+      Struct.new(:nodeType, :data, :content) do
+        include WCC::Contentful::RichText::Node
       end
-    end
+    sz = i
+    struct.define_method(:size) { sz }
+    struct.define_singleton_method(:node_type) { "heading-#{sz}" }
+    const_set("Heading#{sz}", struct)
+  end
 end
