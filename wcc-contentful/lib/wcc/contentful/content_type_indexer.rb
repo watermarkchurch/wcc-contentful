@@ -137,6 +137,8 @@ module WCC::Contentful
         :Json
       when 'Location'
         :Coordinates
+      when 'RichText'
+        :RichText
       when 'Array'
         find_field_type(field.try(:items) || field['items'])
       when 'Link'
