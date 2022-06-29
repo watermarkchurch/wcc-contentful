@@ -68,7 +68,7 @@ module WCC::Contentful::ModelAPI
       store = options[:preview] ? services.preview_store : services.store
       raw =
         _instrumentation.instrument 'find.model.contentful.wcc', id: id, options: options do
-          store.find(id, options.except(*WCC::Contentful::ModelMethods::MODEL_LAYER_CONTEXT_KEYS))
+          store.find(id, **options.except(*WCC::Contentful::ModelMethods::MODEL_LAYER_CONTEXT_KEYS))
         end
 
       new_from_raw(raw, options) if raw.present?

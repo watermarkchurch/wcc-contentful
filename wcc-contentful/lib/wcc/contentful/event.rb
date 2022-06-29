@@ -10,6 +10,8 @@ module WCC::Contentful::Event
   def self.from_raw(raw, context = nil)
     const = Registry.instance.get(raw.dig('sys', 'type'))
 
+    return const.new(raw, **context) unless context.nil?
+
     const.new(raw, context)
   end
 

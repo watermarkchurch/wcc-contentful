@@ -220,7 +220,7 @@ RSpec.describe WCC::Contentful::ModelAPI do
 
     it 'finds models by ID' do
       allow(store).to receive(:find)
-        .with('1234', anything)
+        .with('1234', any_args)
         .and_return({
           'sys' => {
             'id' => '1234',
@@ -410,7 +410,7 @@ RSpec.describe WCC::Contentful::ModelAPI do
 
     it 'calls into store to resolve linked types' do
       allow(store).to receive(:find)
-        .with('blockText1234', anything)
+        .with('blockText1234', any_args)
         .and_return(
           {
             'sys' => {
@@ -464,7 +464,7 @@ RSpec.describe WCC::Contentful::ModelAPI do
         expect(store).to_not receive(:find)
 
         allow(preview_store).to receive(:find)
-          .with('1234', anything)
+          .with('1234', any_args)
           .and_return({
             'sys' => {
               'id' => '1234',
@@ -575,7 +575,7 @@ RSpec.describe WCC::Contentful::ModelAPI do
         expect(store).to_not receive(:find)
 
         allow(preview_store).to receive(:find)
-          .with('blockText1234', anything)
+          .with('blockText1234', any_args)
           .and_return(
             {
               'sys' => {
@@ -594,7 +594,7 @@ RSpec.describe WCC::Contentful::ModelAPI do
             }
           )
         allow(preview_store).to receive(:find)
-          .with('blogPost1', anything)
+          .with('blogPost1', any_args)
           .and_return({
             'sys' => {
               'id' => 'blogPost1',
@@ -748,7 +748,7 @@ RSpec.describe WCC::Contentful::ModelAPI do
 
       # When we lookup a model from TestNamespace, we should not get a TestNamespace2 class...
       allow(store).to receive(:find)
-        .with('blog-post-1', anything)
+        .with('blog-post-1', any_args)
         .and_return JSON.parse <<~JSON
           {
             "sys": {
@@ -783,7 +783,7 @@ RSpec.describe WCC::Contentful::ModelAPI do
 
       # When we follow the links, it should not get us a TestNamespace2 class...
       allow(store).to receive(:find)
-        .with('metadata-1', anything)
+        .with('metadata-1', any_args)
         .and_return JSON.parse <<~JSON
           {
             "sys": {
