@@ -70,5 +70,24 @@ RSpec.describe WCC::Contentful::Events do
         })
       end
     end
+
+    it 'creates a SyncComplete event out of raw sync items' do
+      sync_engine = double('TestSyncEngine')
+      fixture = JSON.parse(load_fixture('contentful/sync.json'))
+
+      puts "item length: #{fixture['items'].length}"
+
+      event = WCC::Contentful::Event::SyncComplete.new(
+        fixture['items'],
+        { test_context_item: 1 },
+        source: sync_engine
+      )
+
+      expect(event.source).to eq(sync_engine)
+      expect(event.sys.context.test_context_item).to eq(1)
+      expect(event.items.length).to eq(34)
+      expect(event.items[0].source).to eq(sync_engine)
+      expect(event.items[0].sys.context.test_context_item).to eq(1)
+    end
   end
 end
