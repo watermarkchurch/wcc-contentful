@@ -29,12 +29,24 @@ RSpec.describe WCC::Contentful::Events do
         )
 
       subscriber = double('subscriber')
-      expect(subscriber).to receive(:DeletedEntry)
+      events = []
+      allow(subscriber).to receive(:call) do |e|
+        events << e
+      end
 
       instance = WCC::Contentful::Events.new
-      instance.subscribe(subscriber)
+      instance.subscribe(subscriber, with: :call)
 
+      # act
       sync_engine.next
+
+      # assert
+      expect(events[0]).to be_a(WCC::Contentful::Event::DeletedEntry)
+      expect(events[0].source).to eq(sync_engine)
+
+      expect(events[1]).to be_a(WCC::Contentful::Event::SyncComplete)
+      expect(events[1].source).to eq(sync_engine)
+      expect(events[1].items[0].source).to eq(sync_engine)
     end
 
     it 'rebroadcasts webhook events', rails: true do

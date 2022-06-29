@@ -220,25 +220,29 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
                    ])
         end
 
-        it 'memoizes pages' do
-          stub_request(:get, /https\:\/\/cdn\.contentful\.com\/spaces\/.+\/assets\?limit\=5/)
+        it 'does not memoize pages' do
+          page1 = stub_request(:get, /https\:\/\/cdn\.contentful\.com\/spaces\/.+\/assets\?limit\=5$/)
             .to_return(status: 200,
                        body: load_fixture('contentful/simple_client/assets_first_page.json'))
-            .times(1)
 
-          stub_request(:get, /https\:\/\/cdn\.contentful\.com\/spaces\/.+\/assets\?.*skip\=5.*/)
+          page2 = stub_request(:get, /https\:\/\/cdn\.contentful\.com\/spaces\/.+\/assets\?.*skip\=5.*/)
             .to_return(status: 200,
                        body: load_fixture('contentful/simple_client/assets_second_page.json'))
-            .times(1)
 
           # act
           resp = client.get('assets', { limit: 5 })
 
           # assert
           resp.assert_ok!
-          # first pagination
-          expect(resp.items.count).to eq(6)
-          # should be memoized
+          # Count should not cause a pagination
+          expect(resp.count).to eq(6)
+          expect(page2).to_not have_been_requested
+
+          # Forcing to_a should cause pagination
+          expect(resp.items.to_a.count).to eq(6)
+          expect(page2).to have_been_requested.times(1)
+
+          # Second pagination should not be memoized
           expect(resp.items.map { |c| c.dig('fields', 'title', 'en-US') }.force)
             .to eq([
                      'goat-clip-art',
@@ -248,6 +252,10 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
                      'apple-touch-icon',
                      'favicon-32x32'
                    ])
+          expect(page2).to have_been_requested.times(2)
+
+          # The original call generating the response object should be only once
+          expect(page1).to have_been_requested.times(1)
         end
 
         it 'paginates all items when enumerable forced' do
