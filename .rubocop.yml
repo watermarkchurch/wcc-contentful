@@ -17,6 +17,7 @@ AllCops:
     - '*/Guardfile'
     - 'Dangerfile'
     - 'Rakefile'
+    - 'Appraisals'
 
     # 3rd party
     - 'vendor/**/*'
