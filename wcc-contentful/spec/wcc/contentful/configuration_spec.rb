@@ -396,7 +396,7 @@ RSpec.describe WCC::Contentful::Configuration do
           frozen.send(att) << 'test'
         }.to(
           raise_error(RuntimeError) do |e|
-            expect(e.message).to eq("can't modify frozen Array")
+            expect(e.message).to include("can't modify frozen Array")
           end
         )
       end

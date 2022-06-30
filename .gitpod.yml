@@ -2,8 +2,9 @@ image:
   file: .gitpod.Dockerfile
 tasks:
   - init: |
-      bin/use gemfiles/rails_5.2_ruby_2.5.7.gemfile
+      bin/use gemfiles/rails_6.1_ruby_3.1.gemfile
       bundle install
+      yarn install
       bin/bundle install
     command: |
       docker run -e POSTGRES_HOST_AUTH_METHOD=trust -e POSTGRES_USER=gitpod -v /var/run/postgresql:/var/run/postgresql --detach postgres:12

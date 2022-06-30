@@ -4,7 +4,7 @@ USER gitpod
 RUN sudo apt-get install -y postgresql-client-12
 
 # https://www.gitpod.io/docs/languages/ruby
-RUN _ruby_version=ruby-2.5.7 \
+RUN _ruby_version=ruby-3.1.1 \
     && printf "rvm_gems_path=/home/gitpod/.rvm\n" > ~/.rvmrc \
     && bash -lc "rvm reinstall ruby-${_ruby_version} && rvm use ruby-${_ruby_version} --default" \
     && printf "rvm_gems_path=/workspace/.rvm" > ~/.rvmrc \

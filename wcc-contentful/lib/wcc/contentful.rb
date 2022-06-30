@@ -3,7 +3,7 @@
 require 'wcc/contentful/version'
 
 require 'active_support'
-require 'active_support/core_ext/object'
+require 'active_support/all'
 
 require 'wcc/contentful/active_record_shim'
 require 'wcc/contentful/configuration'

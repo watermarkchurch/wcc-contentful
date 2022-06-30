@@ -31,3 +31,8 @@ node_modules
 log/
 tmp/
 coverage
+
+.rvm
+
+# we use yarn
+package-lock.json

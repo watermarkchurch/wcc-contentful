@@ -165,8 +165,8 @@ RSpec.describe WCC::Contentful::App::PagesController, type: :request do
   end
 
   def with_preview_password
-    allow(WCC::Contentful::App.configuration).to receive(:preview_password)
-      .and_return('topsecret')
+    allow(WCC::Contentful::App).to receive(:configuration)
+      .and_return(double('configuration', preview_password: 'topsecret'))
     yield 'topsecret'
   end
 end

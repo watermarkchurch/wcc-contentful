@@ -16,7 +16,7 @@ module WCC::Contentful::ModelSingletonMethods
     raw =
       _instrumentation.instrument 'find.model.contentful.wcc',
         content_type: content_type, id: id, options: options do
-        store.find(id, { hint: type }.merge!(options.except(:preview)))
+        store.find(id, **{ hint: type }.merge!(options.except(:preview)))
       end
     new(raw, options) if raw.present?
   end

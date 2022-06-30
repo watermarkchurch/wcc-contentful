@@ -64,13 +64,13 @@ module WCC::Contentful::ActiveRecordShim
         }
       }
 
-      find_all(filter).each_slice(batch_size, &block)
+      find_all(**filter).each_slice(batch_size, &block)
     end
 
     def where(**conditions)
       # TODO: return a Query object that implements more of the ActiveRecord query interface
       # https://guides.rubyonrails.org/active_record_querying.html#conditions
-      find_all(conditions)
+      find_all(**conditions)
     end
   end
 end

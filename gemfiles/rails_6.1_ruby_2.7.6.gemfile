@@ -2,10 +2,10 @@
 
 source "https://rubygems.org"
 
-ruby "2.5.7"
+ruby "2.7.6"
 
-gem "middleman", "~> 4.2"
-gem "nokogiri", "< 1.13"
+gem "rails", "~> 6.1"
+gem "railties", "~> 6.1"
 
 group :development do
   gem "appraisal"
@@ -22,4 +22,8 @@ group :development do
   gem "rubocop", "0.68", require: false
   gem "simplecov", "~> 0.16"
   gem "yard", "~> 0.9.26"
+end
+
+group :test do
+  gem "rspec-rails", "~> 5.0"
 end

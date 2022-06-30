@@ -655,7 +655,8 @@ RSpec.describe WCC::Contentful::ModelMethods do
       end
 
       allow(store).to receive(:find) do |id, keyword_params|
-        expect(keyword_params.keys).to_not include(:backlinks)
+        # Checking that there are no backlinks
+        expect(keyword_params).to be_blank
         linked_item_for_id.call(id)
       end
 

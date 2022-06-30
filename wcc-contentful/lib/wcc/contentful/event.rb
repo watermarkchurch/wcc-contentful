@@ -7,10 +7,10 @@ module WCC::Contentful::Event
 
   # Creates an Event out of a raw value received by a webhook or given from
   # the Contentful Sync API.
-  def self.from_raw(raw, context = nil)
+  def self.from_raw(raw, context = nil, source: nil)
     const = Registry.instance.get(raw.dig('sys', 'type'))
 
-    const.new(raw, context)
+    const.new(raw, context, source: source)
   end
 
   class Registry
@@ -134,12 +134,6 @@ class WCC::Contentful::Event::SyncComplete
   include WCC::Contentful::Event
 
   def initialize(items, context = nil, source: nil)
-    items =
-      items.map do |item|
-        next item if item.is_a? WCC::Contentful::Event
-
-        WCC::Contentful::Event.from_raw(item, context, source: source)
-      end
     @items = items.freeze
     @source = source
     @sys = WCC::Contentful::Sys.new(

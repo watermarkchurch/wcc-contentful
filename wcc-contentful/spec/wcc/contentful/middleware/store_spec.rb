@@ -111,7 +111,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
           }
         }
         expect(next_store).to receive(:find)
-          .with('1234', {})
+          .with('1234', **{})
           .and_return(entry)
 
         # act
@@ -128,7 +128,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
           }
         }
         expect(next_store).to receive(:find)
-          .with('1234', {})
+          .with('1234', **{})
           .and_return(entry)
 
         # act
@@ -386,7 +386,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
           }
         }
         expect(next_store).to receive(:find)
-          .with('1234', {})
+          .with('1234', **{})
           .and_return(entry)
 
         # act

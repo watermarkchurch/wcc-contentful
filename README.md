@@ -15,11 +15,11 @@ up-to-date list of supported framework environments.  At the time of this writin
 the gem officially supports the following:
 
 * Ruby versions:
-  * 2.5
-  * 2.3
+  * 3.1
+  * 2.7
 * Framework versions:
+  * Rails 6.1
   * Rails 5.2
-  * Rails 5.0
   * Middleman 4.2
 
 Pull requests are welcome to enable supporting other frameworks!
@@ -28,10 +28,10 @@ To get started in testing a new Ruby version, use `rvm` or `rbenv` to choose you
 ruby version.  Then, check out the appropriate Gemfile using the `bin/use` helper:
 
 ```bash
-$ rbenv local 2.2.6
+$ rbenv local 3.1.1
 $ gem install bundler
 $ bundle install
-$ bin/use gemfiles/rails_5.2_ruby_2.5.7.gemfile
+$ bin/use gemfiles/rails_6.1_ruby_3.1.gemfile
 ```
 
 Now each of the `wcc-` gems has a Gemfile based on that Appraisal gemfile.  `cd`
@@ -54,16 +54,16 @@ index 041abea..917142f 100644
 +  gem 'sinatra', '~> 2.0.0'
 +end
 +
- appraise 'rails-5.2' do
-   gem 'rails', '~> 5.2.0'
-   gem 'railties', '~> 5.2.0'
+ appraise 'rails-6.1' do
+   gem 'rails', '~> 6.1'
+   gem 'railties', '~> 6.1'
 ```
 
 Then you can use the `bin/use` helper to check out that set of gems:
 
 ```bash
 $ bundle exec appraisal install
-$ bin/use gemfiles/rails_6.0.gemfile
+$ bin/use gemfiles/rails_6.1.gemfile
 ```
 
 And build a helper that conditionally includes your framework specs based on whether

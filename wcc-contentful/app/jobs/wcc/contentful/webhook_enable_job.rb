@@ -11,7 +11,7 @@ module WCC::Contentful
       args = default_configuration.merge!(args)
 
       client = WCC::Contentful::SimpleClient::Management.new(
-        args
+        **args
       )
       enable_webhook(client, args.slice(:receive_url, :webhook_username, :webhook_password))
     end
