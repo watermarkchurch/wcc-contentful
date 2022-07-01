@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 2.3'
 
   spec.metadata = {
-    'documentation_uri' => "https://watermarkchurch.github.io/wcc-contentful/#{doc_version}/wcc-contentful-graphql"
+    'documentation_uri' => "https://watermarkchurch.github.io/wcc-contentful/#{doc_version}/wcc-contentful-middleman"
   }
 
   spec.files = Dir['lib/**/*'] + %w[Rakefile README.md wcc-contentful-middleman.gemspec]
