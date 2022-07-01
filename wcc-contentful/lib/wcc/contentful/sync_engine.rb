@@ -31,8 +31,7 @@ module WCC::Contentful
       (@state&.dup || token_wrapper_factory(nil)).freeze
     end
 
-    attr_reader :store
-    attr_reader :client
+    attr_reader :store, :client
 
     def should_sync?
       store&.index?
@@ -53,9 +52,7 @@ module WCC::Contentful
       if state
         @state = token_wrapper_factory(state)
         raise ArgumentError, ':state param must be a String or Hash' unless @state.is_a? Hash
-        unless @state.dig('sys', 'type') == 'token'
-          raise ArgumentError, ':state param must be of sys.type = "token"'
-        end
+        raise ArgumentError, ':state param must be of sys.type = "token"' unless @state.dig('sys', 'type') == 'token'
       end
       raise ArgumentError, 'either :state or :store must be provided' unless @state || @store
     end

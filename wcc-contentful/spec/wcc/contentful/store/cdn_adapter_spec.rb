@@ -116,8 +116,8 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
         },
         'file' => {
           'en-US' => {
-            'url' => "//images.ctfassets.net/#{contentful_space_id}/"\
-              '4JV2MbQVoAeEUQGUmYGQGY/1f0e377e665d2ab94fb86b0c88e75b06/goat-clip-art.png',
+            'url' => "//images.ctfassets.net/#{contentful_space_id}/" \
+                     '4JV2MbQVoAeEUQGUmYGQGY/1f0e377e665d2ab94fb86b0c88e75b06/goat-clip-art.png',
             'details' => {
               'size' => 62_310,
               'image' => {
@@ -133,13 +133,13 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
     end
 
     it 'follows hint for assets' do
-      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
-          '/entries/3pWma8spR62aegAWAWacyA')
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}" \
+                         '/entries/3pWma8spR62aegAWAWacyA')
         .with(query: hash_including(locale: '*'))
         .to_raise('Should not hit the Entries endpoint')
 
-      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
-          '/assets/3pWma8spR62aegAWAWacyA')
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}" \
+                         '/assets/3pWma8spR62aegAWAWacyA')
         .with(query: hash_including(locale: '*'))
         .to_return(status: 200, body: asset)
 
@@ -324,13 +324,13 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       # assert
       expect(found.count).to eq(6)
       expect(found.map { |i| i.dig('fields', 'title', 'en-US') }.sort).to eq(
-        [
-          'apple-touch-icon',
-          'favicon',
-          'favicon-16x16',
-          'favicon-32x32',
-          'goat-clip-art',
-          'worship'
+        %w[
+          apple-touch-icon
+          favicon
+          favicon-16x16
+          favicon-32x32
+          goat-clip-art
+          worship
         ]
       )
     end
@@ -349,8 +349,8 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
 
     it 'defaults to :in if given an array' do
       stub = stub_request(:get,
-        "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries"\
-          '?content_type=conference&fields.tags.en-US%5Bin%5D=a,b&locale=*')
+        "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
+        '?content_type=conference&fields.tags.en-US%5Bin%5D=a,b&locale=*')
         .to_return(body: {
           sys: { type: 'Array' },
           total: 2,
@@ -370,8 +370,8 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
 
     it 'handles nin with array' do
       stub = stub_request(:get,
-        "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries"\
-          '?content_type=conference&fields.tags.en-US%5Bnin%5D=a,b&locale=*')
+        "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
+        '?content_type=conference&fields.tags.en-US%5Bnin%5D=a,b&locale=*')
         .to_return(body: {
           sys: { type: 'Array' },
           total: 1,
@@ -390,17 +390,17 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
 
     it 'recursively resolves links if include > 0' do
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
-        '?content_type=page&include=2&limit=5&locale=*')
+                         '?content_type=page&include=2&limit=5&locale=*')
         .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_1.json'))
         .then.to_raise(StandardError.new('Should not hit page 1 a second time!'))
 
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
-        '?content_type=page&include=2&limit=5&locale=*&skip=5')
+                         '?content_type=page&include=2&limit=5&locale=*&skip=5')
         .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_2.json'))
         .then.to_raise(StandardError.new('Should not hit page 2 a second time!'))
 
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
-        '?content_type=page&include=2&limit=5&locale=*&skip=10')
+                         '?content_type=page&include=2&limit=5&locale=*&skip=10')
         .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_3.json'))
         .then.to_raise(StandardError.new('Should not hit page 3 a second time!'))
 
@@ -430,17 +430,17 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
 
     it 'stops resolving links at include depth' do
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
-        '?content_type=page&include=2&limit=5&locale=*')
+                         '?content_type=page&include=2&limit=5&locale=*')
         .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_1.json'))
         .then.to_raise(StandardError)
 
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
-        '?content_type=page&include=2&limit=5&locale=*&skip=5')
+                         '?content_type=page&include=2&limit=5&locale=*&skip=5')
         .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_2.json'))
         .then.to_raise(StandardError)
 
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
-        '?content_type=page&include=2&limit=5&locale=*&skip=10')
+                         '?content_type=page&include=2&limit=5&locale=*&skip=10')
         .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_3.json'))
         .then.to_raise(StandardError)
 
@@ -471,12 +471,12 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
 
     it 'ensures enumerator remains lazy when map applied at higher layer' do
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
-        '?content_type=page&include=2&limit=5&locale=*')
+                         '?content_type=page&include=2&limit=5&locale=*')
         .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_1.json'))
         .then.to_raise(StandardError)
 
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
-        '?content_type=page&include=2&limit=5&locale=*&skip=5')
+                         '?content_type=page&include=2&limit=5&locale=*&skip=5')
         .to_raise(StandardError.new('Should not call second page'))
 
       # act

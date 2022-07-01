@@ -8,9 +8,7 @@ module WCC::Contentful::Test::Factory
   # All attributes that are known to be required fields on the content type
   # will return a default value based on the field type.
   def contentful_create(const, context = nil, **attrs)
-    unless const.respond_to?(:content_type_definition)
-      const = WCC::Contentful::Model.resolve_constant(const.to_s)
-    end
+    const = WCC::Contentful::Model.resolve_constant(const.to_s) unless const.respond_to?(:content_type_definition)
     attrs = attrs.transform_keys { |a| a.to_s.camelize(:lower) }
 
     id = attrs.delete('id')
@@ -59,7 +57,7 @@ module WCC::Contentful::Test::Factory
         sys: {
           type: 'Link',
           linkType: 'Space',
-          id: ENV['CONTENTFUL_SPACE_ID']
+          id: ENV.fetch('CONTENTFUL_SPACE_ID', nil)
         }
       },
       id: id || SecureRandom.urlsafe_base64,
@@ -86,8 +84,8 @@ module WCC::Contentful::Test::Factory
   end
 
   def contentful_fields(model)
-    WCC::Contentful::Test::Attributes.defaults(model).each_with_object({}) do |(k, v), h|
-      h[k] = { 'en-US' => v }
+    WCC::Contentful::Test::Attributes.defaults(model).transform_values do |v|
+      { 'en-US' => v }
     end
   end
 

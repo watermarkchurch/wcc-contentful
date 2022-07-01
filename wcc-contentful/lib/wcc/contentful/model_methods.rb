@@ -54,17 +54,15 @@ module WCC::Contentful::ModelMethods
         _instrument 'resolve', id: id, depth: depth, backlinks: backlinked_ids do
           # use include param to do resolution
           store.find_by(content_type: self.class.content_type,
-                        filter: { 'sys.id' => id },
-                        options: context.except(*MODEL_LAYER_CONTEXT_KEYS).merge!({
-                          include: [depth, 10].min
-                        }))
+            filter: { 'sys.id' => id },
+            options: context.except(*MODEL_LAYER_CONTEXT_KEYS).merge!({
+              include: [depth, 10].min
+            }))
         end
-      unless raw
-        raise WCC::Contentful::ResolveError, "Cannot find #{self.class.content_type} with ID #{id}"
-      end
+      raise WCC::Contentful::ResolveError, "Cannot find #{self.class.content_type} with ID #{id}" unless raw
 
       @raw = raw.freeze
-      links.each { |f| instance_variable_set('@' + f, raw.dig('fields', f, sys.locale)) }
+      links.each { |f| instance_variable_set("@#{f}", raw.dig('fields', f, sys.locale)) }
     end
 
     links.each { |f| _resolve_field(f, depth, context, options) }
@@ -142,7 +140,7 @@ module WCC::Contentful::ModelMethods
   def _resolve_field(field_name, depth = 1, context = {}, options = {})
     return if depth <= 0
 
-    var_name = '@' + field_name
+    var_name = "@#{field_name}"
     return unless val = instance_variable_get(var_name)
 
     context = sys.context.to_h.merge(context)
@@ -182,17 +180,17 @@ module WCC::Contentful::ModelMethods
       val = _try_map(val) { |v| load.call(v) }
       val = val.compact if val.is_a? Array
 
-      instance_variable_set(var_name + '_resolved', val)
+      instance_variable_set("#{var_name}_resolved", val)
     rescue WCC::Contentful::CircularReferenceError
       raise unless options[:circular_reference] == :ignore
     end
   end
 
   def _resolved_field?(field_name, depth = 1)
-    var_name = '@' + field_name
+    var_name = "@#{field_name}"
     raw = instance_variable_get(var_name)
     return true if raw.nil? || (raw.is_a?(Array) && raw.all?(&:nil?))
-    return false unless val = instance_variable_get(var_name + '_resolved')
+    return false unless val = instance_variable_get("#{var_name}_resolved")
     return true if depth <= 1
 
     return val.resolved?(depth: depth - 1) unless val.is_a? Array

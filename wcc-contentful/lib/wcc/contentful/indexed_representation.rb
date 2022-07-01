@@ -109,9 +109,7 @@ module WCC::Contentful
       ].freeze
 
       def type=(raw_type)
-        unless TYPES.include?(raw_type)
-          raise ArgumentError, "Unknown type #{raw_type}, expected one of: #{TYPES}"
-        end
+        raise ArgumentError, "Unknown type #{raw_type}, expected one of: #{TYPES}" unless TYPES.include?(raw_type)
 
         @type = raw_type
       end
@@ -131,9 +129,7 @@ module WCC::Contentful
 
         if raw_type = hash_or_id.delete('type')
           raw_type = raw_type.to_sym
-          unless TYPES.include?(raw_type)
-            raise ArgumentError, "Unknown type #{raw_type}, expected one of: #{TYPES}"
-          end
+          raise ArgumentError, "Unknown type #{raw_type}, expected one of: #{TYPES}" unless TYPES.include?(raw_type)
 
           @type = raw_type
         end

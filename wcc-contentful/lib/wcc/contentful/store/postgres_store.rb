@@ -45,12 +45,9 @@ module WCC::Contentful::Store
           JSON.parse(val) if val
         end
 
-      if views_need_update?(value, previous_value)
-        # mark dirty - we need to refresh the materialized view
-        unless mutex.with_read_lock { @dirty }
-          _instrument 'mark_dirty'
-          mutex.with_write_lock { @dirty = true }
-        end
+      if views_need_update?(value, previous_value) && !mutex.with_read_lock { @dirty }
+        _instrument 'mark_dirty'
+        mutex.with_write_lock { @dirty = true }
       end
 
       previous_value
@@ -105,7 +102,7 @@ module WCC::Contentful::Store
         end
       end
 
-      logger&.debug('[PostgresStore] ' + statement + "\n" + params.inspect)
+      logger&.debug("[PostgresStore] #{statement}\n#{params.inspect}")
       _instrument 'exec' do
         @connection_pool.with { |conn| conn.exec(statement, params) }
       end
@@ -231,16 +228,12 @@ module WCC::Contentful::Store
         end
 
         statement =
-          select_statement +
-          " FROM #{table} AS t \n" +
-          joins.join("\n") + "\n" +
-          statement +
-          (limit_statement || '')
+          "#{select_statement} FROM #{table} AS t \n#{joins.join("\n")}\n#{statement}#{limit_statement || ''}"
 
         [statement, params]
       end
 
-      def _eq(path, expected, params)
+      def _eq(path, expected, params) # rubocop:disable Layout/LineContinuationLeadingSpace
         return " AND t.id = $#{push_param(expected, params)}" if path == %w[sys id]
 
         if path[3] == 'sys'
@@ -248,12 +241,12 @@ module WCC::Contentful::Store
           # into it to detect whether it contains `{ "sys": { "id" => expected } }`
           expected = { 'sys' => { path[4] => expected } }.to_json
           return ' AND fn_contentful_jsonb_any_to_jsonb_array(t.data->' \
-            "#{quote_parameter_path(path.take(3))}) @> " \
-            "jsonb_build_array($#{push_param(expected, params)}::jsonb)"
+                 "#{quote_parameter_path(path.take(3))}) @> " \
+                 "jsonb_build_array($#{push_param(expected, params)}::jsonb)"
         end
 
-        " AND t.data->#{quote_parameter_path(path)}" \
-          " @> to_jsonb($#{push_param(expected, params)})"
+        " AND t.data->#{quote_parameter_path(path)} " \
+          "@> to_jsonb($#{push_param(expected, params)})"
       end
 
       PARAM_TYPES = {
@@ -292,7 +285,7 @@ module WCC::Contentful::Store
       def push_join(_path, joins)
         table_alias = "s#{joins.length}"
         joins << "JOIN contentful_raw AS #{table_alias} ON " \
-          "#{table_alias}.id=ANY(t.links)"
+                 "#{table_alias}.id=ANY(t.links)"
         table_alias
       end
     end
@@ -326,8 +319,8 @@ module WCC::Contentful::Store
       end
 
       def schema_ensured?(conn)
-        result = conn.exec('SELECT version FROM wcc_contentful_schema_version' \
-          ' ORDER BY version DESC LIMIT 1')
+        result = conn.exec('SELECT version FROM wcc_contentful_schema_version ' \
+                           'ORDER BY version DESC LIMIT 1')
         return false if result.num_tuples == 0
 
         result[0]['version'].to_i >= EXPECTED_VERSION
@@ -339,8 +332,8 @@ module WCC::Contentful::Store
       def ensure_schema(conn)
         result =
           begin
-            conn.exec('SELECT version FROM wcc_contentful_schema_version' \
-          ' ORDER BY version DESC')
+            conn.exec('SELECT version FROM wcc_contentful_schema_version ' \
+                      'ORDER BY version DESC')
           rescue PG::UndefinedTable
             []
           end

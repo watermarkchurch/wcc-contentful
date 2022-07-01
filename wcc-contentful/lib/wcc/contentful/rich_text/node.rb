@@ -37,9 +37,7 @@ module WCC::Contentful::RichText
       end
 
       def tokenize(raw, context = nil)
-        unless raw['nodeType'] == node_type
-          raise ArgumentError, "Expected '#{node_type}', got '#{raw['nodeType']}'"
-        end
+        raise ArgumentError, "Expected '#{node_type}', got '#{raw['nodeType']}'" unless raw['nodeType'] == node_type
 
         values =
           members.map do |symbol|

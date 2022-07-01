@@ -29,8 +29,8 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
 
   describe '#find' do
     it 'finds and caches items from the backing API' do
-      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
-          '/entries/47PsST8EicKgWIWwK2AsW6')
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}" \
+                         '/entries/47PsST8EicKgWIWwK2AsW6')
         .with(query: hash_including({ locale: '*' }))
         .to_return(body: load_fixture('contentful/lazy_cache_store/page_about.json'))
         .times(1)
@@ -50,8 +50,8 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
     it 'uses configured expires_in' do
       subject.expires_in = 30.days
 
-      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
-          '/entries/47PsST8EicKgWIWwK2AsW6')
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}" \
+                         '/entries/47PsST8EicKgWIWwK2AsW6')
         .with(query: hash_including({ locale: '*' }))
         .to_return(body: load_fixture('contentful/lazy_cache_store/page_about.json'))
         .times(1)
@@ -75,8 +75,8 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
     end
 
     it 'instruments a cache miss' do
-      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
-          '/entries/47PsST8EicKgWIWwK2AsW6')
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}" \
+                         '/entries/47PsST8EicKgWIWwK2AsW6')
         .with(query: hash_including({ locale: '*' }))
         .to_return(body: load_fixture('contentful/lazy_cache_store/page_about.json'))
 
@@ -104,15 +104,15 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
     }
 
     it 'finds and caches nils from the backing API' do
-      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
-        '/entries/xxxxxxxxxxxxxxxxxxasdf')
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}" \
+                         '/entries/xxxxxxxxxxxxxxxxxxasdf')
         .with(query: hash_including({ locale: '*' }))
         .to_return(status: 404, body: not_found)
         .times(1)
         .then.to_raise('Should not hit the API a second time!')
 
-      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
-        '/assets/xxxxxxxxxxxxxxxxxxasdf')
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}" \
+                         '/assets/xxxxxxxxxxxxxxxxxxasdf')
         .with(query: hash_including({ locale: '*' }))
         .to_return(status: 404, body: not_found)
         .times(1)
@@ -169,8 +169,8 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
     end
 
     it 'passes options to backing CDN adapter' do
-      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
-        '/entries/47PsST8EicKgWIWwK2AsW6')
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}" \
+                         '/entries/47PsST8EicKgWIWwK2AsW6')
         .with(query: hash_including({ 'locale' => '*', 'include' => '2' }))
         .to_return(body: load_fixture('contentful/lazy_cache_store/page_about.json'))
 
@@ -309,8 +309,8 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
 
       # act
       queried_page = store.find_by(content_type: 'page',
-                                   filter: { 'fields.slug' => '/' },
-                                   options: { include: 2 })
+        filter: { 'fields.slug' => '/' },
+        options: { include: 2 })
 
       # assert
       section0 = queried_page.dig('fields', 'sections', 'en-US', 0)
@@ -336,8 +336,8 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
 
       # act
       queried_page = store.find_by(content_type: 'page',
-                                   filter: { 'fields.slug' => '/' },
-                                   options: { include: 2 })
+        filter: { 'fields.slug' => '/' },
+        options: { include: 2 })
 
       # assert
       section0 = queried_page.dig('fields', 'sections', 'en-US', 0)
@@ -451,8 +451,8 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
 
       # assert
       # in the find, it will reach out to the CDN because it was not stored.
-      req = stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
-        '/entries/47PsST8EicKgWIWwK2AsW6')
+      req = stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}" \
+                               '/entries/47PsST8EicKgWIWwK2AsW6')
         .with(query: hash_including({ locale: '*' }))
         .to_return(body: load_fixture('contentful/lazy_cache_store/page_about.json'))
 
@@ -474,7 +474,7 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
 
       # assert
       got = store.find('sync:token')
-      expect(got.dig('token')).to eq('1234')
+      expect(got['token']).to eq('1234')
     end
 
     it 'updates the cache if the item was recently accessed' do
@@ -580,7 +580,7 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
 
     it 'instruments index - set when entry cached' do
       new_entry = entry.merge({
-        'sys' => entry['sys'].merge({ 'revision': 2 })
+        'sys' => entry['sys'].merge({ revision: 2 })
       })
       cache.write(entry.dig('sys', 'id'), entry)
 

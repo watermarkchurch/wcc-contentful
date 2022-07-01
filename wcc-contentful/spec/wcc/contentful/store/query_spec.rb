@@ -13,39 +13,39 @@ RSpec.describe WCC::Contentful::Store::Query do
 
   describe '.normalize_condition_path' do
     it 'does not mangle an explicit path' do
-      path = described_class.normalize_condition_path(['fields', 'a', 'en-US'])
+      path = described_class.normalize_condition_path(%w[fields a en-US])
 
-      expect(path).to eq(['fields', 'a', 'en-US'])
+      expect(path).to eq(%w[fields a en-US])
     end
 
     it 'inserts fields and locale' do
       path = described_class.normalize_condition_path(['a'])
 
-      expect(path).to eq(['fields', 'a', 'en-US'])
+      expect(path).to eq(%w[fields a en-US])
     end
 
     it 'inserts fields' do
-      path = described_class.normalize_condition_path(['a', 'en-US'])
+      path = described_class.normalize_condition_path(%w[a en-US])
 
-      expect(path).to eq(['fields', 'a', 'en-US'])
+      expect(path).to eq(%w[fields a en-US])
     end
 
     it 'inserts locale' do
       path = described_class.normalize_condition_path(%w[fields a])
 
-      expect(path).to eq(['fields', 'a', 'en-US'])
+      expect(path).to eq(%w[fields a en-US])
     end
 
     it 'allows an explicit field named "fields"' do
       path = described_class.normalize_condition_path(%w[fields fields])
 
-      expect(path).to eq(['fields', 'fields', 'en-US'])
+      expect(path).to eq(%w[fields fields en-US])
     end
 
     it 'handles a join' do
       path = described_class.normalize_condition_path(%w[page slug])
 
-      expect(path).to eq(['fields', 'page', 'en-US', 'fields', 'slug', 'en-US'])
+      expect(path).to eq(%w[fields page en-US fields slug en-US])
     end
 
     it 'infers sys' do
@@ -55,7 +55,7 @@ RSpec.describe WCC::Contentful::Store::Query do
     end
 
     it 'infers sys after a join' do
-      path = described_class.normalize_condition_path(['page', 'en-US', 'id'])
+      path = described_class.normalize_condition_path(%w[page en-US id])
 
       expect(path).to eq(%w[fields page en-US sys id])
     end
@@ -72,7 +72,7 @@ RSpec.describe WCC::Contentful::Store::Query do
       query = subject.public_send(op, 'f', 'test')
 
       cond = query.conditions[0]
-      expect(cond&.path).to eq(['fields', 'f', 'en-US'])
+      expect(cond&.path).to eq(%w[fields f en-US])
       expect(cond.op).to eq(op)
       expect(cond.expected).to eq('test')
       expect(query.conditions.length).to eq(1)
@@ -82,7 +82,7 @@ RSpec.describe WCC::Contentful::Store::Query do
       query = subject.eq(:a, 1).public_send(op, 'f', 'test')
 
       cond = query.conditions[1]
-      expect(cond&.path).to eq(['fields', 'f', 'en-US'])
+      expect(cond&.path).to eq(%w[fields f en-US])
       expect(cond.op).to eq(op)
       expect(cond.expected).to eq('test')
       expect(query.conditions.length).to eq(2)
@@ -96,7 +96,7 @@ RSpec.describe WCC::Contentful::Store::Query do
         query = subject.public_send(op, 'f', 'test')
 
         cond = query.conditions[0]
-        expect(cond&.path).to eq(['fields', 'f', 'en-US'])
+        expect(cond&.path).to eq(%w[fields f en-US])
         expect(cond.op).to eq(op)
         expect(cond.expected).to eq(['test'])
         expect(query.conditions.length).to eq(1)
@@ -106,7 +106,7 @@ RSpec.describe WCC::Contentful::Store::Query do
         query = subject.eq(:a, 1).public_send(op, 'f', ['test'])
 
         cond = query.conditions[1]
-        expect(cond&.path).to eq(['fields', 'f', 'en-US'])
+        expect(cond&.path).to eq(%w[fields f en-US])
         expect(cond.op).to eq(op)
         expect(cond.expected).to eq(['test'])
         expect(query.conditions.length).to eq(2)
@@ -119,7 +119,7 @@ RSpec.describe WCC::Contentful::Store::Query do
       query = subject.exists('f', false)
 
       cond = query.conditions[0]
-      expect(cond&.path).to eq(['fields', 'f', 'en-US'])
+      expect(cond&.path).to eq(%w[fields f en-US])
       expect(cond.op).to eq(:exists)
       expect(cond.expected).to eq(false)
       expect(query.conditions.length).to eq(1)
@@ -129,7 +129,7 @@ RSpec.describe WCC::Contentful::Store::Query do
       query = subject.exists('f', false)
 
       cond = query.conditions[0]
-      expect(cond&.path).to eq(['fields', 'f', 'en-US'])
+      expect(cond&.path).to eq(%w[fields f en-US])
       expect(cond.op).to eq(:exists)
       expect(cond.expected).to eq(false)
       expect(query.conditions.length).to eq(1)
@@ -143,7 +143,7 @@ RSpec.describe WCC::Contentful::Store::Query do
 
       expect(query.conditions.length).to eq(described_class::FALSE_VALUES.length)
       query.conditions.each do |cond|
-        expect(cond&.path).to eq(['fields', 'f', 'en-US'])
+        expect(cond&.path).to eq(%w[fields f en-US])
         expect(cond.op).to eq(:exists)
         expect(cond.expected).to eq(false)
       end
@@ -165,7 +165,7 @@ RSpec.describe WCC::Contentful::Store::Query do
       query = subject.apply({ f: 'test' })
 
       cond = query.conditions[0]
-      expect(cond&.path).to eq(['fields', 'f', 'en-US'])
+      expect(cond&.path).to eq(%w[fields f en-US])
       expect(cond.op).to eq(:eq)
       expect(cond.expected).to eq('test')
       expect(query.conditions.length).to eq(1)
@@ -175,7 +175,7 @@ RSpec.describe WCC::Contentful::Store::Query do
       query = subject.eq(:a, 1).apply({ 'f' => 'test' })
 
       cond = query.conditions[1]
-      expect(cond&.path).to eq(['fields', 'f', 'en-US'])
+      expect(cond&.path).to eq(%w[fields f en-US])
       expect(cond.op).to eq(:eq)
       expect(cond.expected).to eq('test')
       expect(query.conditions.length).to eq(2)
@@ -191,7 +191,7 @@ RSpec.describe WCC::Contentful::Store::Query do
           })
 
           cond = query.conditions[0]
-          expect(cond&.path).to eq(['fields', 'f', 'en-US'])
+          expect(cond&.path).to eq(%w[fields f en-US])
           expect(cond.op).to eq(op)
           expect(query.conditions.length).to eq(1)
 
@@ -216,12 +216,12 @@ RSpec.describe WCC::Contentful::Store::Query do
       })
 
       cond0 = query.conditions[0]
-      expect(cond0&.path).to eq(['fields', 'f', 'en-US'])
+      expect(cond0&.path).to eq(%w[fields f en-US])
       expect(cond0.op).to eq(:eq)
       expect(cond0.expected).to eq('test')
 
       cond1 = query.conditions[1]
-      expect(cond1&.path).to eq(['fields', 'f2', 'en-US'])
+      expect(cond1&.path).to eq(%w[fields f2 en-US])
       expect(cond1.op).to eq(:lt)
       expect(cond1.expected).to eq(2)
       expect(query.conditions.length).to eq(2)
@@ -240,12 +240,12 @@ RSpec.describe WCC::Contentful::Store::Query do
       expect(cond0.expected).to eq('button')
 
       cond1 = query.conditions[1]
-      expect(cond1&.path).to eq(['fields', 'link', 'en-US', 'sys', 'contentType', 'sys', 'id'])
+      expect(cond1&.path).to eq(%w[fields link en-US sys contentType sys id])
       expect(cond1.op).to eq(:eq)
       expect(cond1.expected).to eq('page')
 
       cond2 = query.conditions[2]
-      expect(cond2&.path).to eq(['fields', 'link', 'en-US', 'fields', 'slug', 'en-US'])
+      expect(cond2&.path).to eq(%w[fields link en-US fields slug en-US])
       expect(cond2.op).to eq(:ne)
       expect(cond2.expected).to eq('/test')
 
@@ -256,7 +256,7 @@ RSpec.describe WCC::Contentful::Store::Query do
       query = subject.apply({ f: %w[test test2] })
 
       cond = query.conditions[0]
-      expect(cond&.path).to eq(['fields', 'f', 'en-US'])
+      expect(cond&.path).to eq(%w[fields f en-US])
       expect(cond.op).to eq(:in)
       expect(cond.expected).to eq(%w[test test2])
       expect(query.conditions.length).to eq(1)

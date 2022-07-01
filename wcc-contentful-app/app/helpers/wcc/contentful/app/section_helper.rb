@@ -18,7 +18,7 @@ module WCC::Contentful::App::SectionHelper
   end
 
   def section_styles(section)
-    section_styles = ['section-' + section_css_name(section)]
+    section_styles = ["section-#{section_css_name(section)}"]
     if styles = section.try(:styles)
       section_styles.push(styles.map { |style| style.downcase.gsub(/[^\w]/, '-') })
     elsif style = section.try(:style)
@@ -49,8 +49,8 @@ module WCC::Contentful::App::SectionHelper
     return unless text.present?
 
     text = CGI.escapeHTML(text)
-    text = text.gsub(/\&amp;(nbsp|vert|\#\d+);/, '&\1;')
-      .gsub(/\&lt;br\/?\&gt;/, '<br/>')
+    text = text.gsub(/&amp;(nbsp|vert|\#\d+);/, '&\1;')
+      .gsub(/&lt;br\/?&gt;/, '<br/>')
     content_tag(:span, text.html_safe, {
       class: 'safe-line-break'
     }.merge(options))

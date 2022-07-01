@@ -50,7 +50,7 @@ class WCC::Contentful::App::MarkdownRenderer
   end
 
   def links_within_markdown(text)
-    text.scan(/(\[(.*?)\]\((.*?)\)(\{\:.*?\})?)/)
+    text.scan(/(\[(.*?)\]\((.*?)\)(\{:.*?\})?)/)
   end
 
   def gather_links_with_classes_data(markdown_links)
@@ -75,7 +75,7 @@ class WCC::Contentful::App::MarkdownRenderer
   def url_and_title(markdown_link_and_title)
     match =
       markdown_link_and_title.scan(
-        /(\s|^)(https?:\/\/\S*|^\/\S*\/*\S*|^#\S*|mailto:\S*)(?=\s|$)|(\".*?\")/
+        /(\s|^)(https?:\/\/\S*|^\/\S*\/*\S*|^#\S*|mailto:\S*)(?=\s|$)|(".*?")/
       )
     url = match[0][1]
     title = match[1] ? match[1][2] : nil
@@ -83,13 +83,13 @@ class WCC::Contentful::App::MarkdownRenderer
   end
 
   def capture_individual_classes(classes)
-    classes.scan(/\.[^\.\}\s]*/)
+    classes.scan(/\.[^.}\s]*/)
   end
 
   def combine_individual_classes_to_one_string(classes)
     class_string = ''
     classes.each do |klass|
-      class_string += klass.tr('.', '') + ' '
+      class_string += "#{klass.tr('.', '')} "
     end
     class_string
   end

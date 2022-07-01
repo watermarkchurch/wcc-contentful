@@ -66,7 +66,7 @@ module WCC::Contentful::ModelSingletonMethods
     new(result, options) if result
   end
 
-  def inherited(subclass)
+  def inherited(subclass) # rubocop:disable Lint/MissingSuper
     # If another different class is already registered for this content type,
     # don't auto-register this one.
     return if model_namespace.registered?(content_type)

@@ -45,9 +45,7 @@ RSpec.describe WCC::Contentful::Model::SectionContactForm do
         end
 
         def email_model(email_object_id, **options)
-          if email_object_id == 'test'
-            return OpenStruct.new(id: 'test', contact_email: 'test-opportunity@test.com')
-          end
+          return OpenStruct.new(id: 'test', contact_email: 'test-opportunity@test.com') if email_object_id == 'test'
 
           super
         end

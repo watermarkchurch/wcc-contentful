@@ -6,7 +6,7 @@ require 'wcc/contentful/app/version'
 
 doc_version = Gem::Version.new(WCC::Contentful::App::VERSION).release.to_s.sub(/\.\d+$/, '')
 
-# rubocop:disable Metrics/LineLength
+# rubocop:disable Layout/LineLength
 Gem::Specification.new do |spec|
   spec.name          = 'wcc-contentful-app'
   spec.version       = WCC::Contentful::App::VERSION
@@ -19,10 +19,11 @@ Gem::Specification.new do |spec|
   spec.license       = 'MIT'
 
   spec.metadata = {
-    'documentation_uri' => "https://watermarkchurch.github.io/wcc-contentful/#{doc_version}/wcc-contentful-app"
+    'documentation_uri' => "https://watermarkchurch.github.io/wcc-contentful/#{doc_version}/wcc-contentful-app",
+'rubygems_mfa_required' => 'true'
   }
 
-  spec.required_ruby_version = '>= 2.3'
+  spec.required_ruby_version = '>= 2.7'
 
   spec.files = Dir['app/**/*', 'config/**/*', 'lib/**/*'] +
     %w[Rakefile README.md wcc-contentful-app.gemspec]
@@ -38,7 +39,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rspec_junit_formatter', '~> 0.4.1'
-  spec.add_development_dependency 'rubocop', '0.68'
   spec.add_development_dependency 'simplecov', '~> 0.16.1'
   spec.add_development_dependency 'vcr', '~> 5.0'
   spec.add_development_dependency 'webmock', '~> 3.0'
@@ -62,4 +62,4 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'redcarpet', '~> 3.4'
   spec.add_dependency 'wcc-contentful', "~> #{WCC::Contentful::App::VERSION}"
 end
-# rubocop:enable Metrics/LineLength
+# rubocop:enable Layout/LineLength

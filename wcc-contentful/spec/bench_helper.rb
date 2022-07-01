@@ -41,7 +41,7 @@ module BenchHelper
         iterations.each do |n|
           if times.last.present? && (times.last.real * n) > (10 * 60)
             warn "Skipping iteration #{n} because it would take approx. " \
-              "#{(times.last.real * n) / 60} minutes"
+                 "#{(times.last.real * n) / 60} minutes"
             next
           end
 

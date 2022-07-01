@@ -295,7 +295,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       )
     end
 
-    # Note: see code comment inside model_builder.rb for why we do not parse DateTime objects
+    # NOTE: see code comment inside model_builder.rb for why we do not parse DateTime objects
     it 'does not parse date times' do
       @schema = subject.build_models
 
@@ -426,8 +426,10 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       expect(homepage.hero_image).to be_instance_of(WCC::Contentful::Model::Asset)
       expect(homepage.hero_image.file).to be_a(OpenStruct)
       expect(homepage.hero_image.title).to eq('worship')
-      expect(homepage.hero_image.file['url']).to eq("//images.contentful.com/#{contentful_space_id}/" \
-        '572YrsdGZGo0sw2Www2Si8/545f53511e362a78a8f34e1837868256/worship.jpg')
+      expect(homepage.hero_image.file['url']).to eq(
+        "//images.contentful.com/#{contentful_space_id}/" \
+        '572YrsdGZGo0sw2Www2Si8/545f53511e362a78a8f34e1837868256/worship.jpg'
+      )
       expect(homepage.hero_image.file['contentType']).to eq('image/jpeg')
 
       expect(homepage.favicons).to be_a(Array)
@@ -484,10 +486,10 @@ RSpec.describe WCC::Contentful::ModelBuilder do
           expect(block_text.rich_body['content'].length).to eq(12)
           node_types = block_text.rich_body['content'].map { |c| c['nodeType'] }
           expect(node_types).to eq(
-            [
-              'heading-2', 'heading-3', 'paragraph', 'blockquote', 'paragraph',
-              'embedded-asset-block', 'blockquote', 'embedded-entry-block',
-              'paragraph', 'paragraph', 'blockquote', 'paragraph'
+            %w[
+              heading-2 heading-3 paragraph blockquote paragraph
+              embedded-asset-block blockquote embedded-entry-block
+              paragraph paragraph blockquote paragraph
             ]
           )
           classes = block_text.rich_body['content'].map(&:class)
@@ -611,8 +613,8 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
       Object.send(:remove_const, :SUB_MENU) if defined?(SUB_MENU)
       Object.send(:remove_const, :SUB_MENU_BUTTON) if defined?(SUB_MENU_BUTTON)
-      Object.send(:remove_const, :SUB_MENU_BUTTON_2) if defined?(SUB_MENU_BUTTON_2)
-      Object.send(:remove_const, :SUB_MENU_BUTTON_3) if defined?(SUB_MENU_BUTTON_3)
+      Object.send(:remove_const, :SUB_MENU_BUTTON2) if defined?(SUB_MENU_BUTTON2)
+      Object.send(:remove_const, :SUB_MENU_BUTTON3) if defined?(SUB_MENU_BUTTON3)
       Object.send(:remove_const, :MenuButton) if defined?(MenuButton)
       Object.send(:remove_const, :MyButton) if defined?(MyButton)
     end
@@ -642,11 +644,11 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       SUB_MENU_BUTTON =
         Class.new(WCC::Contentful::Model::MenuButton) do
         end
-      SUB_MENU_BUTTON_2 =
+      SUB_MENU_BUTTON2 =
         Class.new(SUB_MENU_BUTTON) do
         end
 
-      SUB_MENU_BUTTON_3 =
+      SUB_MENU_BUTTON3 =
         Class.new(WCC::Contentful::Model::MenuButton) do
         end
 
@@ -662,12 +664,12 @@ RSpec.describe WCC::Contentful::ModelBuilder do
         Class.new(WCC::Contentful::Model::MenuButton) do
         end
 
-      SUB_MENU_BUTTON_2 =
+      SUB_MENU_BUTTON2 =
         Class.new(SUB_MENU_BUTTON) do
           register_for_content_type
         end
 
-      SUB_MENU_BUTTON_3 =
+      SUB_MENU_BUTTON3 =
         Class.new(WCC::Contentful::Model::MenuButton) do
         end
 
@@ -675,7 +677,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       button = WCC::Contentful::Model.find('5NBhDw3i2kUqSwqYok4YQO')
 
       # assert
-      expect(button).to be_a(SUB_MENU_BUTTON_2)
+      expect(button).to be_a(SUB_MENU_BUTTON2)
     end
 
     it 'loads app-defined constant using const_missing' do
@@ -696,8 +698,6 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       expect(Object).to receive(:const_missing) do
         MenuButton =
           Class.new do
-            def initialize(raw, context)
-            end
           end
       end.at_most(2).times
 

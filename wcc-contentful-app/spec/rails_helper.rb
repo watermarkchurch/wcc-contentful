@@ -10,7 +10,7 @@ require 'rails/all'
 require 'wcc/contentful/app/rails'
 
 WebMock.stub_request(:get, 'https://api.contentful.com/spaces/' \
-    "#{ENV['CONTENTFUL_SPACE_ID'] || 'test1xab'}/content_types")
+                           "#{ENV.fetch('CONTENTFUL_SPACE_ID', 'test1xab')}/content_types")
   .with(query: WebMock::API.hash_including({ limit: '1000' }))
   .to_return(body: File.read(
     File.expand_path('fixtures/contentful/content_types_mgmt_api.json', __dir__)

@@ -8,9 +8,7 @@ module WCC::Contentful::Test::Double
   # All attributes that are known to be required fields on the content type
   # will return a default value based on the field type.
   def contentful_double(const, **attrs)
-    unless const.respond_to?(:content_type_definition)
-      const = WCC::Contentful::Model.resolve_constant(const.to_s)
-    end
+    const = WCC::Contentful::Model.resolve_constant(const.to_s) unless const.respond_to?(:content_type_definition)
     attrs.symbolize_keys!
 
     bad_attrs = attrs.reject { |a| const.instance_methods.include?(a) }
@@ -45,7 +43,7 @@ module WCC::Contentful::Test::Double
           sys: {
             type: 'Link',
             linkType: 'Space',
-            id: ENV['CONTENTFUL_SPACE_ID']
+            id: ENV.fetch('CONTENTFUL_SPACE_ID', nil)
           }
         },
         id: SecureRandom.urlsafe_base64,
@@ -62,7 +60,7 @@ module WCC::Contentful::Test::Double
         revision: rand(100),
         locale: 'en-US'
       },
-      fields: attrs.each_with_object({}) { |(k, v), h| h[k] = { 'en-US' => v } }
+      fields: attrs.transform_values { |v| { 'en-US' => v } }
     }
 
     double(attrs)

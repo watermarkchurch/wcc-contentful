@@ -61,7 +61,7 @@ module WCC::Contentful
             ct = content_type_from_raw(raw)
             if ct != typedef.content_type
               raise ArgumentError, 'Wrong Content Type - ' \
-                "'#{raw.dig('sys', 'id')}' is a #{ct}, expected #{typedef.content_type}"
+                                   "'#{raw.dig('sys', 'id')}' is a #{ct}, expected #{typedef.content_type}"
             end
             @raw = raw.freeze
 
@@ -107,12 +107,13 @@ module WCC::Contentful
                 # array fields need to resolve to an empty array when nothing is there
                 raw_value = []
               end
-              instance_variable_set('@' + f.name, raw_value)
+              instance_variable_set("@#{f.name}", raw_value)
             end
           end
 
           attr_reader :sys
           attr_reader :raw
+
           delegate :id, to: :sys
           delegate :created_at, to: :sys
           delegate :updated_at, to: :sys
@@ -122,11 +123,11 @@ module WCC::Contentful
           # Make a field for each column:
           typedef.fields.each_value do |f|
             name = f.name
-            var_name = '@' + name
+            var_name = "@#{name}"
             case f.type
             when :Asset, :Link
               define_method(name) do
-                val = instance_variable_get(var_name + '_resolved')
+                val = instance_variable_get("#{var_name}_resolved")
                 return val if val.present?
 
                 _resolve_field(name)

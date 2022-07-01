@@ -90,7 +90,7 @@ module WCC::Contentful::Store
         next if m[0].respond_to?(:call)
 
         raise ArgumentError, "The middleware '#{m[0]&.try(:name) || m[0]}' cannot be applied!  " \
-          'It must respond to :call'
+                             'It must respond to :call'
       end
 
       validate_store!(store)

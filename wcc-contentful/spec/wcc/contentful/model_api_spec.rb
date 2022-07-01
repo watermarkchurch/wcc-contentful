@@ -110,7 +110,7 @@ RSpec.describe WCC::Contentful::ModelAPI do
       )
     end
 
-    # Note: see code comment inside model_builder.rb for why we do not parse DateTime objects
+    # NOTE: see code comment inside model_builder.rb for why we do not parse DateTime objects
     it 'does not parse date times' do
       # act
       post = TestNamespace::Model::BlogPost.new({
@@ -848,11 +848,9 @@ RSpec.describe WCC::Contentful::ModelAPI do
   def reset_test_namespace!
     consts = TestNamespace::Model.constants(false).map(&:to_s).uniq
     consts.each do |c|
-      begin
-        TestNamespace::Model.send(:remove_const, c.split(':').last)
-      rescue StandardError => e
-        warn e
-      end
+      TestNamespace::Model.send(:remove_const, c.split(':').last)
+    rescue StandardError => e
+      warn e
     end
     TestNamespace::Model.instance_variable_get('@registry').clear
     TestNamespace::Model.instance_variable_set('@schema', nil)

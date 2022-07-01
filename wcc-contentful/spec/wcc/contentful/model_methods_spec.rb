@@ -153,8 +153,8 @@ RSpec.describe WCC::Contentful::ModelMethods do
 
       expect(store).to receive(:find_by)
         .with(content_type: 'toJsonTest',
-              filter: { 'sys.id' => '1' },
-              options: { include: 1 }).once
+          filter: { 'sys.id' => '1' },
+          options: { include: 1 }).once
         .and_return(resolved)
 
       expect(WCC::Contentful::Model).to_not receive(:find)
@@ -173,8 +173,8 @@ RSpec.describe WCC::Contentful::ModelMethods do
 
       allow(store).to receive(:find_by)
         .with(content_type: 'toJsonTest',
-              filter: { 'sys.id' => '1' },
-              options: { include: 1 }).once
+          filter: { 'sys.id' => '1' },
+          options: { include: 1 }).once
         .and_return(resolved)
 
       expect {
@@ -188,8 +188,8 @@ RSpec.describe WCC::Contentful::ModelMethods do
       # This store's find_by doesn't respect the include parameter.
       allow(store).to receive(:find_by)
         .with(content_type: 'toJsonTest',
-              filter: { 'sys.id' => '1' },
-              options: { include: 1 }).once
+          filter: { 'sys.id' => '1' },
+          options: { include: 1 }).once
         .and_return(raw)
 
       allow(WCC::Contentful::Model).to receive(:find)
@@ -207,21 +207,23 @@ RSpec.describe WCC::Contentful::ModelMethods do
       deep_resolved['sys']['id'] = '1.2'
       deep_resolved['fields'].merge!({
         'items' => nil,
-        'someLink' => { 'en-US' => {
-          'sys' => { 'id' => 'deep1', 'type' => 'Entry', 'contentType' => content_type },
-          'fields' => { 'name' => { 'en-US' => 'number 11' } }
-        } }
+        'someLink' => {
+          'en-US' => {
+            'sys' => { 'id' => 'deep1', 'type' => 'Entry', 'contentType' => content_type },
+            'fields' => { 'name' => { 'en-US' => 'number 11' } }
+          }
+        }
       })
 
       expect(store).to receive(:find_by)
         .with(content_type: 'toJsonTest',
-              filter: { 'sys.id' => '1' },
-              options: { include: 10 }).once
+          filter: { 'sys.id' => '1' },
+          options: { include: 10 }).once
         .and_return(resolved)
       expect(store).to receive(:find_by)
         .with(content_type: 'toJsonTest',
-              filter: { 'sys.id' => '1.2' },
-              options: { include: 1 }).once
+          filter: { 'sys.id' => '1.2' },
+          options: { include: 1 }).once
         .and_return(deep_resolved)
 
       # act
@@ -258,10 +260,12 @@ RSpec.describe WCC::Contentful::ModelMethods do
       deep_resolved['sys']['id'] = '1.2'
       deep_resolved['fields'].merge!({
         'items' => nil,
-        'someLink' => { 'en-US' => {
-          'sys' => { 'id' => 'deep1', 'type' => 'Entry', 'contentType' => content_type },
-          'fields' => { 'name' => { 'en-US' => 'number 11' } }
-        } }
+        'someLink' => {
+          'en-US' => {
+            'sys' => { 'id' => 'deep1', 'type' => 'Entry', 'contentType' => content_type },
+            'fields' => { 'name' => { 'en-US' => 'number 11' } }
+          }
+        }
       })
 
       preview_store = double('preview_store')
@@ -271,13 +275,13 @@ RSpec.describe WCC::Contentful::ModelMethods do
       expect(store).to_not receive(:find_by)
       expect(preview_store).to receive(:find_by)
         .with(content_type: 'toJsonTest',
-              filter: { 'sys.id' => '1' },
-              options: { include: 10 }).once
+          filter: { 'sys.id' => '1' },
+          options: { include: 10 }).once
         .and_return(resolved)
       expect(preview_store).to receive(:find_by)
         .with(content_type: 'toJsonTest',
-              filter: { 'sys.id' => '1.2' },
-              options: { include: 1 }).once
+          filter: { 'sys.id' => '1.2' },
+          options: { include: 1 }).once
         .and_return(deep_resolved)
 
       # act
@@ -324,8 +328,8 @@ RSpec.describe WCC::Contentful::ModelMethods do
 
       expect(store).to receive(:find_by)
         .with(content_type: 'toJsonTest',
-              filter: { 'sys.id' => '1' },
-              options: { include: 10 }).once
+          filter: { 'sys.id' => '1' },
+          options: { include: 10 }).once
         .and_return(resolved)
 
       expect(WCC::Contentful::Model).to_not receive(:find)
@@ -352,8 +356,8 @@ RSpec.describe WCC::Contentful::ModelMethods do
 
       expect(store).to receive(:find_by)
         .with(content_type: 'toJsonTest',
-              filter: { 'sys.id' => '1' },
-              options: { include: 10 }).once
+          filter: { 'sys.id' => '1' },
+          options: { include: 10 }).once
         .and_return(resolved)
 
       expect(WCC::Contentful::Model).to_not receive(:find)
@@ -379,8 +383,8 @@ RSpec.describe WCC::Contentful::ModelMethods do
 
       expect(store).to receive(:find_by)
         .with(content_type: 'toJsonTest',
-              filter: { 'sys.id' => '1' },
-              options: { include: 10 }).once
+          filter: { 'sys.id' => '1' },
+          options: { include: 10 }).once
         .and_return(resolved)
 
       expect(WCC::Contentful::Model).to_not receive(:find)
@@ -454,15 +458,15 @@ RSpec.describe WCC::Contentful::ModelMethods do
       resolved = make_resolved(depth: 1, fields: 'someLink')
       expect(store).to receive(:find_by)
         .with(content_type: 'toJsonTest',
-              filter: { 'sys.id' => '1' },
-              options: { include: 1 }).once
+          filter: { 'sys.id' => '1' },
+          options: { include: 1 }).once
         .and_return(resolved)
 
       second_resolved = make_resolved(depth: 1, fields: 'someLink')
       expect(store).to receive(:find_by)
         .with(content_type: 'toJsonTest',
-              filter: { 'sys.id' => '1.2' },
-              options: { include: 1 }).once
+          filter: { 'sys.id' => '1.2' },
+          options: { include: 1 }).once
         .and_return(second_resolved)
 
       expect(WCC::Contentful::Model).to_not receive(:find)
@@ -512,7 +516,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
       # this happens in the call to #resolve on items[0]
       allow(store).to receive(:find_by)
         .with(hash_including(content_type: 'toJsonTest',
-                             filter: { 'sys.id' => '3' })).once
+          filter: { 'sys.id' => '3' })).once
         .and_return(resolved3)
 
       # this happens when the link from '2' => '4' gets resolved
@@ -521,7 +525,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
         { 'sys' => { 'type' => 'Entry', 'id' => '4', 'contentType' => content_type } }
       allow(store).to receive(:find_by)
         .with(hash_including(content_type: 'toJsonTest',
-                             filter: { 'sys.id' => '2' })).once
+          filter: { 'sys.id' => '2' })).once
         .and_return(resolved2)
 
       # act
@@ -542,8 +546,8 @@ RSpec.describe WCC::Contentful::ModelMethods do
 
       expect(store).to receive(:find_by)
         .with(content_type: 'toJsonTest',
-              filter: { 'sys.id' => '1' },
-              options: { include: 1 }).once
+          filter: { 'sys.id' => '1' },
+          options: { include: 1 }).once
         .and_return(resolved)
 
       expect(WCC::Contentful::Model).to_not receive(:find)
@@ -573,14 +577,16 @@ RSpec.describe WCC::Contentful::ModelMethods do
       raw['fields']['items'] = nil
 
       resolved2 = raw2.deep_dup
-      resolved2['fields']['items'] = { 'en-US' => [
-        raw.deep_dup
-      ] }
+      resolved2['fields']['items'] = {
+        'en-US' => [
+          raw.deep_dup
+        ]
+      }
 
       allow(store).to receive(:find_by)
         .with(content_type: 'toJsonTest',
-              filter: { 'sys.id' => '2' },
-              options: { include: 10 }).once
+          filter: { 'sys.id' => '2' },
+          options: { include: 10 }).once
         .and_return(resolved2)
 
       expect(WCC::Contentful::Model).to receive(:find) do |id, keyword_params|
@@ -610,14 +616,16 @@ RSpec.describe WCC::Contentful::ModelMethods do
       raw['fields']['items'] = nil
 
       resolved2 = raw2.deep_dup
-      resolved2['fields']['items'] = { 'en-US' => [
-        raw.deep_dup
-      ] }
+      resolved2['fields']['items'] = {
+        'en-US' => [
+          raw.deep_dup
+        ]
+      }
 
       allow(store).to receive(:find_by)
         .with(content_type: 'toJsonTest',
-              filter: { 'sys.id' => '2' },
-              options: { include: 10 }).once
+          filter: { 'sys.id' => '2' },
+          options: { include: 10 }).once
         .and_return(resolved2)
 
       expect(WCC::Contentful::Model).to receive(:find) do |id, keyword_params|
@@ -833,8 +841,8 @@ RSpec.describe WCC::Contentful::ModelMethods do
 
       expect(store).to receive(:find_by)
         .with(content_type: 'toJsonTest',
-              filter: { 'sys.id' => '1' },
-              options: { include: 1 }).once
+          filter: { 'sys.id' => '1' },
+          options: { include: 1 }).once
         .and_return(resolved)
 
       subject.resolve
@@ -874,8 +882,8 @@ RSpec.describe WCC::Contentful::ModelMethods do
 
       expect(store).to receive(:find_by)
         .with(content_type: 'toJsonTest',
-              filter: { 'sys.id' => '1' },
-              options: { include: 10 }).once
+          filter: { 'sys.id' => '1' },
+          options: { include: 10 }).once
         .and_return(resolved)
 
       subject.resolve(depth: 99)
@@ -893,8 +901,8 @@ RSpec.describe WCC::Contentful::ModelMethods do
 
       expect(store).to receive(:find_by)
         .with(content_type: 'toJsonTest',
-              filter: { 'sys.id' => '1' },
-              options: { include: 1 }).once
+          filter: { 'sys.id' => '1' },
+          options: { include: 1 }).once
         .and_return(resolved)
 
       subject.resolve
@@ -919,7 +927,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
       TO_H_TEST_1 =
         Class.new(WCC::Contentful::Model::ToJsonTest) do
           def name
-            'to-h-test-1:' + super
+            "to-h-test-1:#{super}"
           end
         end
 

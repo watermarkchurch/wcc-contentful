@@ -2,24 +2,24 @@
 
 class WCC::Contentful::Middleman::Extension < ::Middleman::Extension
   option :space,
-    ENV['CONTENTFUL_SPACE_ID'],
+    ENV.fetch('CONTENTFUL_SPACE_ID', nil),
     "Set the Contentful space ID (defaults to ENV['CONTENTFUL_SPACE_ID'])"
   option :access_token,
-    ENV['CONTENTFUL_ACCESS_TOKEN'],
+    ENV.fetch('CONTENTFUL_ACCESS_TOKEN', nil),
     "Set the Contentful CDN access key (defaults to ENV['CONTENTFUL_ACCESS_TOKEN'])"
   option :management_token,
-    ENV['CONTENTFUL_MANAGEMENT_TOKEN'],
+    ENV.fetch('CONTENTFUL_MANAGEMENT_TOKEN', nil),
     "Set the Contentful API access token (defaults to ENV['CONTENTFUL_MANAGEMENT_TOKEN'])"
   option :preview_token,
-    ENV['CONTENTFUL_PREVIEW_TOKEN'],
+    ENV.fetch('CONTENTFUL_PREVIEW_TOKEN', nil),
     "Set the Contentful Preview access token (defaults to ENV['CONTENTFUL_PREVIEW_TOKEN'])"
   option :environment,
-    ENV['CONTENTFUL_ENVIRONMENT'],
+    ENV.fetch('CONTENTFUL_ENVIRONMENT', nil),
     "Set the Contentful environment (defaults to ENV['CONTENTFUL_ENVIRONMENT'])"
 
   def initialize(app, options_hash = {}, &block)
     # don't pass block to super b/c we use it to configure WCC::Contentful
-    super(app, options_hash) {}
+    super(app, options_hash) {} # rubocop:disable Lint/EmptyBlock
 
     # Require libraries only when activated
     require 'wcc/contentful'

@@ -7,11 +7,12 @@ module WCC::Contentful
     def _instrumentation_event_prefix
       @_instrumentation_event_prefix ||=
         # WCC::Contentful => contentful.wcc
-        '.' + (is_a?(Class) || is_a?(Module) ? self : self.class)
+        '.' + (is_a?(Class) || is_a?(Module) ? self : self.class) # rubocop:disable Style/StringConcatenation
           .name.parameterize.split('-').reverse.join('.')
     end
 
     attr_writer :_instrumentation
+
     def _instrumentation
       # look for per-instance instrumentation then try class level
       @_instrumentation || self.class._instrumentation

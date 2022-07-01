@@ -36,6 +36,7 @@ module WCC::Contentful
     def authorize_contentful
       config = WCC::Contentful.configuration
 
+      # rubocop:disable Style/SoleNestedConditional
       if config.webhook_username.present? && config.webhook_password.present?
         unless authenticate_with_http_basic do |u, p|
                  u == config.webhook_username &&
@@ -45,6 +46,7 @@ module WCC::Contentful
           return
         end
       end
+      # rubocop:enable Style/SoleNestedConditional
 
       # 'application/vnd.contentful.management.v1+json' is an alias for the 'application/json'
       # content-type, so 'request.content_type' will give 'application/json'

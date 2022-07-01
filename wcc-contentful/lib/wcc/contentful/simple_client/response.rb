@@ -6,9 +6,7 @@ class WCC::Contentful::SimpleClient
   class Response
     include ::WCC::Contentful::Instrumentation
 
-    attr_reader :raw_response
-    attr_reader :client
-    attr_reader :request
+    attr_reader :raw_response, :client, :request
 
     delegate :status, to: :raw_response
     alias_method :code, :status
@@ -26,7 +24,7 @@ class WCC::Contentful::SimpleClient
     def error_message
       parsed_message =
         begin
-          raw.dig('message')
+          raw['message']
         rescue JSON::ParserError
           nil
         end
@@ -105,7 +103,7 @@ class WCC::Contentful::SimpleClient
 
     def includes
       @includes ||=
-        raw.dig('includes')&.each_with_object({}) do |(_t, entries), h|
+        raw['includes']&.each_with_object({}) do |(_t, entries), h|
           entries.each { |e| h[e.dig('sys', 'id')] = e }
         end || {}
     end

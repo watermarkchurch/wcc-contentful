@@ -481,14 +481,14 @@ RSpec.describe WCC::Contentful, :vcr do
       }
 
       it 'should call out to CDN for first calls only' do
-        stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
-          '/entries/6y9DftpiYoA4YiKg2CgoUU')
+        stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}" \
+                           '/entries/6y9DftpiYoA4YiKg2CgoUU')
           .with(query: hash_including({ locale: '*' }))
           .to_return(body: side_menu)
           .times(1)
           .then.to_raise('Should not hit the API a second time!')
-        stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}"\
-          '/entries/1IJEXB4AKEqQYEm4WuceG2')
+        stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}" \
+                           '/entries/1IJEXB4AKEqQYEm4WuceG2')
           .with(query: hash_including({ locale: '*' }))
           .to_return(body: about_button)
           .times(1)

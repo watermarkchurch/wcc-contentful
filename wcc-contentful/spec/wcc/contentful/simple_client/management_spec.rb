@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe WCC::Contentful::SimpleClient::Management do
-  WCC::Contentful::SimpleClient::ADAPTERS.keys.each do |adapter|
+  WCC::Contentful::SimpleClient::ADAPTERS.each_key do |adapter|
     context "with #{adapter} adapter" do
       let(:client) {
         WCC::Contentful::SimpleClient::Management.new(
@@ -125,10 +125,15 @@ RSpec.describe WCC::Contentful::SimpleClient::Management do
 
           # assert
           resp.assert_ok!
-          expect(resp.items.force).to eq([{
-            'url' => 'https://www.example.com/test',
-            'sys' => { 'type' => 'WebhookDefinition', 'id' => '5GvfGrfrshJT6g0kZIvph8' }
-          }])
+          expect(resp.items.force).to eq([
+                                           {
+                                             'url' => 'https://www.example.com/test',
+                                             'sys' => {
+                                               'type' => 'WebhookDefinition',
+                                               'id' => '5GvfGrfrshJT6g0kZIvph8'
+                                             }
+                                           }
+                                         ])
         end
 
         it 'posts a new definition to space root' do
@@ -159,9 +164,9 @@ RSpec.describe WCC::Contentful::SimpleClient::Management do
         it 'never retries a webhook post on 429' do
           stub_request(:post, 'https://api.contentful.com/spaces/testspace/webhook_definitions')
             .to_return(status: 429,
-                       headers: {
-                         'X-Contentful-RateLimit-Reset': 1
-                       })
+              headers: {
+                'X-Contentful-RateLimit-Reset': 1
+              })
             .then
             .to_raise(StandardError, 'Should have bailed!')
 

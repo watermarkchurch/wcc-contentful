@@ -36,12 +36,8 @@ module WCC::Contentful::Middleware::Store
     #  figure out how to cache the results of a find_by query, ex:
     #  `find_by('slug' => '/about')`
     def find_by(content_type:, filter: nil, options: nil)
-      if filter&.keys == ['sys.id']
-        # Direct ID lookup, like what we do in `WCC::Contentful::ModelMethods.resolve`
-        # We can return just this item.  Stores are not required to implement :include option.
-        if found = @cache.read(filter['sys.id'])
-          return found
-        end
+      if filter&.keys == ['sys.id'] && found = @cache.read(filter['sys.id'])
+        return found
       end
 
       store.find_by(content_type: content_type, filter: filter, options: options)
@@ -79,8 +75,8 @@ module WCC::Contentful::Middleware::Store
       prev = @cache.read(id)
       return if prev.nil? && LAZILY_CACHEABLE_TYPES.include?(type)
 
-      if (prev_rev = prev&.dig('sys', 'revision')) && (next_rev = json.dig('sys', 'revision'))
-        return prev if next_rev < prev_rev
+      if (prev_rev = prev&.dig('sys', 'revision')) && (next_rev = json.dig('sys', 'revision')) && (next_rev < prev_rev)
+        return prev
       end
 
       # we also set DeletedEntry objects in the cache - no need to go hit the API when we know

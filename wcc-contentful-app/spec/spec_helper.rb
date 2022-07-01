@@ -19,10 +19,10 @@ require 'wcc/contentful/rspec'
 Dir['./spec/support/**/*.rb'].sort.each { |f| require f }
 
 RSpec.shared_context 'Contentful config' do
-  let(:contentful_access_token) { ENV['CONTENTFUL_ACCESS_TOKEN'] || 'test1234' }
-  let(:contentful_management_token) { ENV['CONTENTFUL_MANAGEMENT_TOKEN'] || 'CFPAT-test1234' }
-  let(:contentful_preview_token) { ENV['CONTENTFUL_PREVIEW_TOKEN'] || 'test123456' }
-  let(:contentful_space_id) { ENV['CONTENTFUL_SPACE_ID'] || 'test1xab' }
+  let(:contentful_access_token) { ENV.fetch('CONTENTFUL_ACCESS_TOKEN', 'test1234') }
+  let(:contentful_management_token) { ENV.fetch('CONTENTFUL_MANAGEMENT_TOKEN', 'CFPAT-test1234') }
+  let(:contentful_preview_token) { ENV.fetch('CONTENTFUL_PREVIEW_TOKEN', 'test123456') }
+  let(:contentful_space_id) { ENV.fetch('CONTENTFUL_SPACE_ID', 'test1xab') }
 end
 
 RSpec.configure do |config|
@@ -47,10 +47,10 @@ VCR.configure do |c|
   c.ignore_localhost = true
   c.hook_into :webmock
   c.default_cassette_options = { record: :none }
-  c.filter_sensitive_data('<CONTENTFUL_ACCESS_TOKEN>') { ENV['CONTENTFUL_ACCESS_TOKEN'] || 'test1234' }
-  c.filter_sensitive_data('<CONTENTFUL_SPACE_ID>') { ENV['CONTENTFUL_SPACE_ID'] || 'test1xab' }
+  c.filter_sensitive_data('<CONTENTFUL_ACCESS_TOKEN>') { ENV.fetch('CONTENTFUL_ACCESS_TOKEN', 'test1234') }
+  c.filter_sensitive_data('<CONTENTFUL_SPACE_ID>') { ENV.fetch('CONTENTFUL_SPACE_ID', 'test1xab') }
   c.filter_sensitive_data('<CONTENTFUL_MANAGEMENT_TOKEN>') {
-    ENV['CONTENTFUL_MANAGEMENT_TOKEN'] || 'CFPAT-test1234'
+    ENV.fetch('CONTENTFUL_MANAGEMENT_TOKEN', 'CFPAT-test1234')
   }
   c.configure_rspec_metadata!
 end

@@ -19,7 +19,7 @@ class WCC::Contentful::App::Configuration
 
   def initialize(wcc_contentful_config)
     @wcc_contentful_config = wcc_contentful_config
-    @preview_password = ENV['CONTENTFUL_PREVIEW_PASSWORD']
+    @preview_password = ENV.fetch('CONTENTFUL_PREVIEW_PASSWORD', nil)
   end
 
   # Validates the configuration, raising ArgumentError if anything is wrong.  This
@@ -33,16 +33,12 @@ class WCC::Contentful::App::Configuration
   end
 
   class FrozenConfiguration
-    attr_reader(*ATTRIBUTES)
-
-    attr_reader :wcc_contentful_config
+    attr_reader(*ATTRIBUTES, :wcc_contentful_config)
 
     delegate(*WCC::Contentful::Configuration::ATTRIBUTES, to: :wcc_contentful_config)
 
     def initialize(configuration, frozen_wcc_contentful_config)
-      unless frozen_wcc_contentful_config.frozen?
-        raise ArgumentError, 'Please first freeze the wcc_contentful_config'
-      end
+      raise ArgumentError, 'Please first freeze the wcc_contentful_config' unless frozen_wcc_contentful_config.frozen?
 
       @wcc_contentful_config = frozen_wcc_contentful_config
 

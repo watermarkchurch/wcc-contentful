@@ -24,11 +24,11 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
   before do
     allow(WCC::Contentful::Services).to receive(:instance)
       .and_return(double(
-                    store: store,
-                    client: client,
-                    sync_engine: sync_engine,
-                    instrumentation: ActiveSupport::Notifications
-                  ))
+        store: store,
+        client: client,
+        sync_engine: sync_engine,
+        instrumentation: ActiveSupport::Notifications
+      ))
 
     described_class.instance_variable_set('@sync_engine', nil)
   end
@@ -38,9 +38,9 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
       it 'does nothing if no sync data available' do
         allow(client).to receive(:sync)
           .and_return(double(
-                        items: [],
-                        next_sync_token: 'test'
-                      ))
+            items: [],
+            next_sync_token: 'test'
+          ))
 
         expect(store).to receive(:index)
           .once
@@ -61,9 +61,9 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
         allow(client).to receive(:sync)
           .with(sync_token: 'test1')
           .and_return(double(
-                        items: next_sync['items'],
-                        next_sync_token: 'test2'
-                      ))
+            items: next_sync['items'],
+            next_sync_token: 'test2'
+          ))
 
         items = next_sync['items']
         expect(store).to receive(:index)
@@ -78,9 +78,9 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
       it 'emits each item returned by the sync' do
         allow(client).to receive(:sync)
           .and_return(double(
-                        items: next_sync['items'],
-                        next_sync_token: 'test2'
-                      ))
+            items: next_sync['items'],
+            next_sync_token: 'test2'
+          ))
 
         emitted_entries = []
         sync_engine.on('Entry') { |item| emitted_entries << item }
@@ -112,9 +112,9 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
       it 'emits sync complete event' do
         allow(client).to receive(:sync)
           .and_return(double(
-                        items: next_sync['items'],
-                        next_sync_token: 'test2'
-                      ))
+            items: next_sync['items'],
+            next_sync_token: 'test2'
+          ))
 
         sync_complete_events = []
         sync_engine.on('SyncComplete') { |item| sync_complete_events << item }
@@ -138,9 +138,9 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
       it 'does not drop a job if the ID comes back in the sync' do
         allow(client).to receive(:sync)
           .and_return(double(
-                        items: next_sync['items'],
-                        next_sync_token: 'test2'
-                      ))
+            items: next_sync['items'],
+            next_sync_token: 'test2'
+          ))
 
         expect(ActiveJob::Base.queue_adapter).to_not receive(:enqueue)
         expect(ActiveJob::Base.queue_adapter).to_not receive(:enqueue_at)
@@ -153,9 +153,9 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
     it 'Drops the job again if the ID still does not come back and told to go again' do
       allow(client).to receive(:sync)
         .and_return(double(
-                      items: next_sync['items'],
-                      next_sync_token: 'test2'
-                    ))
+          items: next_sync['items'],
+          next_sync_token: 'test2'
+        ))
 
       # expect
       expect(job).to receive(:sync_later!)
@@ -168,9 +168,9 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
     it 'does not drop a job if the ID is nil' do
       allow(client).to receive(:sync)
         .and_return(double(
-                      items: next_sync['items'],
-                      next_sync_token: 'test2'
-                    ))
+          items: next_sync['items'],
+          next_sync_token: 'test2'
+        ))
 
       expect(ActiveJob::Base.queue_adapter).to_not receive(:enqueue)
       expect(ActiveJob::Base.queue_adapter).to_not receive(:enqueue_at)
@@ -194,15 +194,15 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
         allow(client).to receive(:sync)
           .with({ sync_token: nil })
           .and_return(double(
-                        items: [],
-                        next_sync_token: 'test'
-                      ))
+            items: [],
+            next_sync_token: 'test'
+          ))
         expect(client).to receive(:sync)
           .with({ sync_token: 'test' })
           .and_return(double(
-                        items: [],
-                        next_sync_token: 'test2'
-                      ))
+            items: [],
+            next_sync_token: 'test2'
+          ))
 
         # act
         synced = job.sync!
@@ -219,9 +219,9 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
         expect(client).to receive(:sync)
           .with({ sync_token: nil })
           .and_return(double(
-                        items: [],
-                        next_sync_token: 'test'
-                      ))
+            items: [],
+            next_sync_token: 'test'
+          ))
 
         # act
         synced = job.sync!
@@ -245,9 +245,9 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
         allow(client).to receive(:sync)
           .with(sync_token: 'test1')
           .and_return(double(
-                        items: next_sync['items'],
-                        next_sync_token: 'test2'
-                      ))
+            items: next_sync['items'],
+            next_sync_token: 'test2'
+          ))
 
         # act
         job.sync!
@@ -256,9 +256,9 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
       it 'emits each item returned by the sync' do
         allow(client).to receive(:sync)
           .and_return(double(
-                        items: next_sync['items'],
-                        next_sync_token: 'test2'
-                      ))
+            items: next_sync['items'],
+            next_sync_token: 'test2'
+          ))
 
         emitted_entries = []
         sync_engine.on('Entry') { |item| emitted_entries << item }

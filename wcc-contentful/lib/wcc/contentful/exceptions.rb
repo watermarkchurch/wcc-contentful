@@ -12,8 +12,7 @@ module WCC::Contentful
   # Raised when an entry contains a circular reference and cannot be represented
   # as a flat tree.
   class CircularReferenceError < StandardError
-    attr_reader :stack
-    attr_reader :id
+    attr_reader :stack, :id
 
     def initialize(stack, id)
       @id = id
@@ -25,7 +24,7 @@ module WCC::Contentful
       return super unless stack
 
       super + "\n  " \
-        "#{stack.last} points to #{id} which is also it's ancestor\n  " +
+              "#{stack.last} points to #{id} which is also it's ancestor\n  " +
         stack.join('->')
     end
   end

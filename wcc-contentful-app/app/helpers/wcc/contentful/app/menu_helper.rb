@@ -69,7 +69,7 @@ module WCC::Contentful::App::MenuHelper
 
   def hash_only(href)
     url = URI(href)
-    '#' + url.fragment if url.fragment.present?
+    "##{url.fragment}" if url.fragment.present?
   end
 
   # An href is local if it points to a part of the page

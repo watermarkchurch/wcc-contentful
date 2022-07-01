@@ -6,7 +6,7 @@ require 'wcc/contentful/middleman/version'
 
 doc_version = Gem::Version.new(WCC::Contentful::Middleman::VERSION).release.to_s.sub(/\.\d+$/, '')
 
-# rubocop:disable Metrics/LineLength
+# rubocop:disable Layout/LineLength
 Gem::Specification.new do |spec|
   spec.name        = 'wcc-contentful-middleman'
   spec.version     = WCC::Contentful::Middleman::VERSION
@@ -18,15 +18,15 @@ Gem::Specification.new do |spec|
   spec.homepage      = 'https://github.com/watermarkchurch/wcc-contentful'
   spec.license       = 'MIT'
 
-  spec.required_ruby_version = '>= 2.3'
+  spec.required_ruby_version = '>= 2.7'
 
   spec.metadata = {
-    'documentation_uri' => "https://watermarkchurch.github.io/wcc-contentful/#{doc_version}/wcc-contentful-middleman"
+    'documentation_uri' => "https://watermarkchurch.github.io/wcc-contentful/#{doc_version}/wcc-contentful-middleman",
+'rubygems_mfa_required' => 'true'
   }
 
   spec.files = Dir['lib/**/*'] + %w[Rakefile README.md wcc-contentful-middleman.gemspec]
 
-  spec.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   spec.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
@@ -50,4 +50,4 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'guard-rubocop', '~> 1.3.0'
   spec.add_development_dependency 'guard-shell', '~> 0.7.1'
 end
-# rubocop:enable Metrics/LineLength
+# rubocop:enable Layout/LineLength

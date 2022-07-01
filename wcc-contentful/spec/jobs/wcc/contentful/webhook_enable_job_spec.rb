@@ -7,10 +7,12 @@ RSpec.describe 'WCC::Contentful::WebhookEnableJob', type: :job do
 
   describe '#enable_webhook' do
     it 'bails if webhook already exists' do
-      response = double(items: [{
-        'name' => 'test webhook',
-        'url' => 'https://test.url/webhook/receive'
-      }])
+      response = double(items: [
+                          {
+                            'name' => 'test webhook',
+                            'url' => 'https://test.url/webhook/receive'
+                          }
+                        ])
       client = double(webhook_definitions: response)
 
       # act
