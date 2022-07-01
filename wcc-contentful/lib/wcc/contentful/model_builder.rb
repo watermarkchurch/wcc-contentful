@@ -61,7 +61,7 @@ module WCC::Contentful
             ct = content_type_from_raw(raw)
             if ct != typedef.content_type
               raise ArgumentError, 'Wrong Content Type - ' \
-                "'#{raw.dig('sys', 'id')}' is a #{ct}, expected #{typedef.content_type}"
+                                   "'#{raw.dig('sys', 'id')}' is a #{ct}, expected #{typedef.content_type}"
             end
             @raw = raw.freeze
 
@@ -113,6 +113,7 @@ module WCC::Contentful
 
           attr_reader :sys
           attr_reader :raw
+
           delegate :id, to: :sys
           delegate :created_at, to: :sys
           delegate :updated_at, to: :sys

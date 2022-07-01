@@ -11,7 +11,6 @@ WCC::Contentful::Sys =
     :revision,
     :context
   ) do
-
     ATTRIBUTES = %i[
       id
       type

@@ -43,7 +43,7 @@ module WCC::Contentful::RichText
         EmbeddedEntryBlock
       when 'embedded-asset-block'
         EmbeddedAssetBlock
-      when /heading\-(\d+)/
+      when /heading-(\d+)/
         size = Regexp.last_match(1)
         const_get("Heading#{size}")
       else

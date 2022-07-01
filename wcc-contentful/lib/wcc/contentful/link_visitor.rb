@@ -4,9 +4,7 @@
 # It is used internally by the Store layer to compose the resulting resolved hashes.
 # But you can use it too!
 class WCC::Contentful::LinkVisitor
-  attr_reader :entry
-  attr_reader :fields
-  attr_reader :depth
+  attr_reader :entry, :fields, :depth
 
   # @param [Hash] entry The entry hash (resolved or unresolved) to walk
   # @param [Array<Symbol>] The type of fields to select from the entry tree.

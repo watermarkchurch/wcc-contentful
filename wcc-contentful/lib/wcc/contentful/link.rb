@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 class WCC::Contentful::Link
-  attr_reader :id
-  attr_reader :link_type
-  attr_reader :raw
+  attr_reader :id, :link_type, :raw
 
   LINK_TYPES = {
     Asset: 'Asset',

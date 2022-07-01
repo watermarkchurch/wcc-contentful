@@ -82,7 +82,7 @@ module WCC::Contentful
 
     if configuration.update_schema_file == :always ||
         (configuration.update_schema_file == :if_possible && Services.instance.management_client) ||
-        configuration.update_schema_file == :if_missing && !File.exist?(configuration.schema_file)
+        (configuration.update_schema_file == :if_missing && !File.exist?(configuration.schema_file))
 
       begin
         downloader = WCC::Contentful::DownloadsSchema.new
@@ -96,9 +96,7 @@ module WCC::Contentful
 
     content_types =
       begin
-        if File.exist?(configuration.schema_file)
-          JSON.parse(File.read(configuration.schema_file))['contentTypes']
-        end
+        JSON.parse(File.read(configuration.schema_file))['contentTypes'] if File.exist?(configuration.schema_file)
       rescue JSON::ParserError
         WCC::Contentful.logger.warn("Schema file invalid, ignoring it: #{configuration.schema_file}")
         nil
@@ -120,7 +118,7 @@ module WCC::Contentful
 
     unless content_types
       raise InitializationError, 'Unable to load content types from schema file or API!' \
-        ' Check your access token and space ID.'
+                                 ' Check your access token and space ID.'
     end
 
     # Set the schema on the default WCC::Contentful::Model

@@ -9,20 +9,18 @@ RSpec.describe WCC::Contentful::Store::PostgresStore do
 
   subject {
     WCC::Contentful::Store::PostgresStore.new(double('Configuration'),
-      ENV['POSTGRES_CONNECTION'], size: 5).tap do |store|
+      ENV.fetch('POSTGRES_CONNECTION', nil), size: 5).tap do |store|
         store.logger = Logger.new(STDOUT)
       end
   }
 
   before :each do
-    begin
-      conn = PG.connect(ENV['POSTGRES_CONNECTION'] || { dbname: 'postgres' })
+    conn = PG.connect(ENV.fetch('POSTGRES_CONNECTION') { { dbname: 'postgres' } })
 
-      conn.exec('DROP TABLE IF EXISTS wcc_contentful_schema_version CASCADE')
-      conn.exec('DROP TABLE IF EXISTS contentful_raw CASCADE')
-    ensure
-      conn.close
-    end
+    conn.exec('DROP TABLE IF EXISTS wcc_contentful_schema_version CASCADE')
+    conn.exec('DROP TABLE IF EXISTS contentful_raw CASCADE')
+  ensure
+    conn.close
   end
 
   it_behaves_like 'contentful store', {
@@ -268,7 +266,7 @@ RSpec.describe WCC::Contentful::Store::PostgresStore do
 
     def load_schema_version_file(version_num)
       File.read(File.join(__dir__, '../../../../lib/wcc/contentful/store/postgres_store/' \
-        "schema_#{version_num}.sql"))
+                                   "schema_#{version_num}.sql"))
     end
   end
 end

@@ -24,8 +24,7 @@ module WCC::Contentful
   class SimpleClient
     include WCC::Contentful::Instrumentation
 
-    attr_reader :api_url
-    attr_reader :space
+    attr_reader :api_url, :space
 
     # Creates a new SimpleClient with the given configuration.
     #
@@ -84,15 +83,13 @@ module WCC::Contentful
       case adapter
       when nil
         ADAPTERS.each do |a, spec|
-          begin
-            gem(*spec)
-            return load_adapter(a)
-          rescue Gem::LoadError
-            next
-          end
+          gem(*spec)
+          return load_adapter(a)
+        rescue Gem::LoadError
+          next
         end
-        raise ArgumentError, 'Unable to load adapter!  Please install one of '\
-          "#{ADAPTERS.values.map(&:join).join(',')}"
+        raise ArgumentError, 'Unable to load adapter!  Please install one of ' \
+                             "#{ADAPTERS.values.map(&:join).join(',')}"
       when :faraday
         require 'faraday'
         ::Faraday.new do |faraday|
@@ -104,8 +101,8 @@ module WCC::Contentful
         TyphoeusAdapter.new
       else
         unless adapter.respond_to?(:get)
-          raise ArgumentError, "Adapter #{adapter} is not invokeable!  Please "\
-            "pass use one of #{ADAPTERS.keys} or create a Faraday-compatible adapter"
+          raise ArgumentError, "Adapter #{adapter} is not invokeable!  Please " \
+                               "pass use one of #{ADAPTERS.keys} or create a Faraday-compatible adapter"
         end
         adapter
       end

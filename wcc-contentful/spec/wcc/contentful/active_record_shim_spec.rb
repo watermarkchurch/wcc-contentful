@@ -152,6 +152,7 @@ RSpec.describe 'WCC::Contentful::ActiveRecordShim', active_record: true do
 
         attr_reader :sys
         attr_reader :raw
+
         delegate :id, to: :sys
         delegate :created_at, to: :sys
         delegate :updated_at, to: :sys

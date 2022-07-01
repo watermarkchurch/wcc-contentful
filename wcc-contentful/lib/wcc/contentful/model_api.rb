@@ -51,9 +51,7 @@ module WCC::Contentful::ModelAPI
 
       file = configuration.schema_file
       schema_json = JSON.parse(File.read(file))['contentTypes']
-      unless schema_json
-        raise ArgumentError, 'Please give either a JSON array of content types or file to load from'
-      end
+      raise ArgumentError, 'Please give either a JSON array of content types or file to load from' unless schema_json
 
       @schema = WCC::Contentful::ContentTypeIndexer.from_json_schema(schema_json).types
     end

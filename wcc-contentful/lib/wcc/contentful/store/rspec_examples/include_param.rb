@@ -15,10 +15,12 @@ RSpec.shared_examples 'supports include param' do |feature_set|
         'fields' => {
           'name' => { 'en-US' => 'root' },
           'link' => { 'en-US' => make_link_to('deep1') },
-          'links' => { 'en-US' => [
-            make_link_to('shallow3'),
-            make_link_to('deep2')
-          ] }
+          'links' => {
+            'en-US' => [
+              make_link_to('shallow3'),
+              make_link_to('deep2')
+            ]
+          }
         }
       }
     end

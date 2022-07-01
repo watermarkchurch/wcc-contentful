@@ -6,9 +6,7 @@ module WCC::Contentful
       config = WCC::Contentful.configuration
 
       jobs = []
-      if WCC::Contentful::Services.instance.sync_engine&.should_sync?
-        jobs << WCC::Contentful::SyncEngine::Job
-      end
+      jobs << WCC::Contentful::SyncEngine::Job if WCC::Contentful::Services.instance.sync_engine&.should_sync?
       jobs.push(*WCC::Contentful.configuration.webhook_jobs)
 
       jobs.each do |job|
@@ -19,7 +17,7 @@ module WCC::Contentful
                 job.perform_later(event.to_h)
               else
                 Rails.logger.error "Misconfigured webhook job: #{job} does not respond to " \
-                  ':perform_later'
+                                   ':perform_later'
               end
             rescue StandardError => e
               warn "Error in job #{job}: #{e}"

@@ -19,7 +19,8 @@ Gem::Specification.new do |spec|
   spec.license       = 'MIT'
 
   spec.metadata = {
-    'documentation_uri' => "https://watermarkchurch.github.io/wcc-contentful/#{doc_version}/wcc-contentful-app"
+    'documentation_uri' => "https://watermarkchurch.github.io/wcc-contentful/#{doc_version}/wcc-contentful-app",
+'rubygems_mfa_required' => 'true'
   }
 
   spec.required_ruby_version = '>= 2.3'

@@ -23,9 +23,7 @@ module WCC::Contentful::Event
 
     def register(constant)
       name = constant.try(:type) || constant.name.demodulize
-      unless constant.respond_to?(:new)
-        raise ArgumentError, "Constant #{constant} does not define 'new'"
-      end
+      raise ArgumentError, "Constant #{constant} does not define 'new'" unless constant.respond_to?(:new)
 
       @event_types ||= {}
       @event_types[name] = constant
@@ -58,6 +56,7 @@ module WCC::Contentful::Event
     attr_reader :sys
     attr_reader :raw
     attr_reader :source
+
     delegate :id, to: :sys
     delegate :type, to: :sys
     delegate :created_at, to: :sys

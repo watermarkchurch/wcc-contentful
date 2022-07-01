@@ -75,14 +75,14 @@ RSpec.describe WCC::Contentful::Model, :bench do
     let!(:store_builder) {
       -> {
         begin
-          conn = PG.connect(ENV['POSTGRES_CONNECTION'] || { dbname: 'contentful' })
+          conn = PG.connect(ENV.fetch('POSTGRES_CONNECTION') { { dbname: 'contentful' } })
 
           conn.exec('DROP TABLE IF EXISTS contentful_raw')
         ensure
           conn.close
         end
         WCC::Contentful::Model.store =
-          WCC::Contentful::Store::PostgresStore.new(ENV['POSTGRES_CONNECTION'])
+          WCC::Contentful::Store::PostgresStore.new(ENV.fetch('POSTGRES_CONNECTION', nil))
       }
     }
 

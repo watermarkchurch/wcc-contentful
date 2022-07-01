@@ -6,9 +6,7 @@ class WCC::Contentful::SimpleClient
   class Response
     include ::WCC::Contentful::Instrumentation
 
-    attr_reader :raw_response
-    attr_reader :client
-    attr_reader :request
+    attr_reader :raw_response, :client, :request
 
     delegate :status, to: :raw_response
     alias_method :code, :status

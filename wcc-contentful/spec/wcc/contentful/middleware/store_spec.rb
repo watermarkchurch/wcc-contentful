@@ -69,12 +69,14 @@ RSpec.describe WCC::Contentful::Middleware::Store do
 
     result = result.take(2).to_a
     # critical - did it not iterate the third time?
-    expect(entries).to eq([{
-      'sys' => sys_arr[2],
-      'fields' => {
-        'a' => 3
-      }
-    }])
+    expect(entries).to eq([
+                            {
+                              'sys' => sys_arr[2],
+                              'fields' => {
+                                'a' => 3
+                              }
+                            }
+                          ])
     expect(result.length).to eq(2)
   end
 
@@ -211,8 +213,8 @@ RSpec.describe WCC::Contentful::Middleware::Store do
 
         # act
         found = instance.find_by(content_type: 'test',
-                                 filter: { 'sys.id' => '1234' },
-                                 options: { include: 1 })
+          filter: { 'sys.id' => '1234' },
+          options: { include: 1 })
 
         expect(found).to eq({
           'sys' => entry['sys'],
@@ -265,46 +267,50 @@ RSpec.describe WCC::Contentful::Middleware::Store do
       end
 
       it 'resolves as broken link for linked entry that doesnt match select?' do
-        entries = [{
-          'sys' => sys,
-          'fields' => {
-            'link' => {
-              'en-US' => {
-                'sys' => {
-                  'id' => '5678',
-                  'type' => 'Entry',
-                  'contentType' => content_type
-                },
-                'fields' => {
-                  'exclude' => { 'en-US' => true }
+        entries = [
+          {
+            'sys' => sys,
+            'fields' => {
+              'link' => {
+                'en-US' => {
+                  'sys' => {
+                    'id' => '5678',
+                    'type' => 'Entry',
+                    'contentType' => content_type
+                  },
+                  'fields' => {
+                    'exclude' => { 'en-US' => true }
+                  }
                 }
               }
             }
           }
-        }]
+        ]
         expect(next_store).to receive(:find_all)
           .with(content_type: 'test', filter: { 'sys.id' => '1234' }, options: { include: 1 })
           .and_return(entries)
 
         # act
         found = instance.find_all(content_type: 'test',
-                                  filter: { 'sys.id' => '1234' },
-                                  options: { include: 1 })
+          filter: { 'sys.id' => '1234' },
+          options: { include: 1 })
 
-        expect(found.to_a).to eq([{
-          'sys' => entries.dig(0, 'sys'),
-          'fields' => {
-            'link' => {
-              'en-US' => {
-                'sys' => {
-                  'id' => '5678',
-                  'type' => 'Link',
-                  'linkType' => 'Entry'
-                }
-              }
-            }
-          }
-        }])
+        expect(found.to_a).to eq([
+                                   {
+                                     'sys' => entries.dig(0, 'sys'),
+                                     'fields' => {
+                                       'link' => {
+                                         'en-US' => {
+                                           'sys' => {
+                                             'id' => '5678',
+                                             'type' => 'Link',
+                                             'linkType' => 'Entry'
+                                           }
+                                         }
+                                       }
+                                     }
+                                   }
+                                 ])
       end
 
       it 'can apply filter' do
@@ -438,8 +444,8 @@ RSpec.describe WCC::Contentful::Middleware::Store do
 
         # act
         found = instance.find_by(content_type: 'test',
-                                 filter: { 'sys.id' => '1234' },
-                                 options: { include: 1 })
+          filter: { 'sys.id' => '1234' },
+          options: { include: 1 })
 
         expect(found.dig('fields', 'link', 'en-US', 'fields', 'excluded', 'en-US'))
           .to eq 'no'
@@ -479,31 +485,33 @@ RSpec.describe WCC::Contentful::Middleware::Store do
       end
 
       it 'transforms resolved entries too' do
-        entries = [{
-          'sys' => sys,
-          'fields' => {
-            'link' => {
-              'en-US' => {
-                'sys' => {
-                  'id' => '5678',
-                  'type' => 'Entry',
-                  'contentType' => content_type
-                },
-                'fields' => {
-                  'exclude' => { 'en-US' => true }
+        entries = [
+          {
+            'sys' => sys,
+            'fields' => {
+              'link' => {
+                'en-US' => {
+                  'sys' => {
+                    'id' => '5678',
+                    'type' => 'Entry',
+                    'contentType' => content_type
+                  },
+                  'fields' => {
+                    'exclude' => { 'en-US' => true }
+                  }
                 }
               }
             }
           }
-        }]
+        ]
         expect(next_store).to receive(:find_all)
           .with(content_type: 'test', filter: { 'sys.id' => '1234' }, options: { include: 1 })
           .and_return(entries)
 
         # act
         found = instance.find_all(content_type: 'test',
-                                  filter: { 'sys.id' => '1234' },
-                                  options: { include: 1 })
+          filter: { 'sys.id' => '1234' },
+          options: { include: 1 })
 
         expect(found.to_a[0].dig('fields', 'link', 'en-US', 'fields', 'excluded', 'en-US'))
           .to eq 'no'

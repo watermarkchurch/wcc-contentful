@@ -61,11 +61,11 @@ module WCC::Contentful::Store
             set(json.dig('sys', 'id'), json)
           end
 
-        if (prev_rev = prev&.dig('sys', 'revision')) && (next_rev = json.dig('sys', 'revision'))
-          if next_rev < prev_rev
-            # Uh oh! we overwrote an entry with a prior revision.  Put the previous back.
-            return index(prev)
-          end
+        if (prev_rev = prev&.dig('sys', 'revision')) && 
+            (next_rev = json.dig('sys', 'revision')) &&
+            (next_rev < prev_rev)
+          # Uh oh! we overwrote an entry with a prior revision.  Put the previous back.
+          return index(prev)
         end
 
         case type

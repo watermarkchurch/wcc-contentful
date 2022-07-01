@@ -295,7 +295,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       )
     end
 
-    # Note: see code comment inside model_builder.rb for why we do not parse DateTime objects
+    # NOTE: see code comment inside model_builder.rb for why we do not parse DateTime objects
     it 'does not parse date times' do
       @schema = subject.build_models
 
@@ -427,7 +427,7 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       expect(homepage.hero_image.file).to be_a(OpenStruct)
       expect(homepage.hero_image.title).to eq('worship')
       expect(homepage.hero_image.file['url']).to eq("//images.contentful.com/#{contentful_space_id}/" \
-        '572YrsdGZGo0sw2Www2Si8/545f53511e362a78a8f34e1837868256/worship.jpg')
+                                                    '572YrsdGZGo0sw2Www2Si8/545f53511e362a78a8f34e1837868256/worship.jpg')
       expect(homepage.hero_image.file['contentType']).to eq('image/jpeg')
 
       expect(homepage.favicons).to be_a(Array)
@@ -484,10 +484,10 @@ RSpec.describe WCC::Contentful::ModelBuilder do
           expect(block_text.rich_body['content'].length).to eq(12)
           node_types = block_text.rich_body['content'].map { |c| c['nodeType'] }
           expect(node_types).to eq(
-            [
-              'heading-2', 'heading-3', 'paragraph', 'blockquote', 'paragraph',
-              'embedded-asset-block', 'blockquote', 'embedded-entry-block',
-              'paragraph', 'paragraph', 'blockquote', 'paragraph'
+            %w[
+              heading-2 heading-3 paragraph blockquote paragraph
+              embedded-asset-block blockquote embedded-entry-block
+              paragraph paragraph blockquote paragraph
             ]
           )
           classes = block_text.rich_body['content'].map(&:class)

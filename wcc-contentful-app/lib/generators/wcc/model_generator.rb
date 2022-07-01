@@ -28,15 +28,13 @@ module Wcc
 
         unless deps.try(:[], '@watermarkchurch/contentful-migration').present?
           run 'npm install --save @watermarkchurch/contentful-migration ts-node ' \
-            'typescript contentful-export'
+              'typescript contentful-export'
         end
       end
     end
 
     def ensure_wrapper_script_in_bin_dir
-      unless inside('bin') { File.exist?('contentful') }
-        copy_file 'contentful_shell_wrapper', 'bin/contentful'
-      end
+      copy_file 'contentful_shell_wrapper', 'bin/contentful' unless inside('bin') { File.exist?('contentful') }
 
       if inside('bin') { File.exist?('release') }
         release = inside('bin') { File.read('release') }

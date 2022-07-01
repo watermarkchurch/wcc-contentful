@@ -10,7 +10,7 @@ require 'wcc/contentful'
 
 namespace :app do
   desc "Imports a set of models from a space as a single template for the ModelGenerator.\n" \
-    'Usage: rake wcc:import_model[content-type-id,space-id?,extra-content-type-1,extra-content-type-2...]'
+       'Usage: rake wcc:import_model[content-type-id,space-id?,extra-content-type-1,extra-content-type-2...]'
   task :import_model, [:model, :space] do |_t, args|
     raise ArgumentError, 'Must give a content type' unless model = args[:model]
 
@@ -20,7 +20,7 @@ namespace :app do
     all_models = [model, *args.extras]
 
     unless space = args[:space].presence
-      space = ENV['CONTENTFUL_SPACE_ID']
+      space = ENV.fetch('CONTENTFUL_SPACE_ID', nil)
       space = "#{space}/#{ENV['CONTENTFUL_ENVIRONMENT']}" if ENV['CONTENTFUL_ENVIRONMENT']
     end
     raise ArgumentError, 'Must provide a space' unless space

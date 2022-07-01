@@ -74,7 +74,7 @@ RSpec.describe WCC::Contentful::Configuration do
     context 'eager sync' do
       it 'selects store from symbol' do
         # act
-        config.store :eager_sync, :postgres, ENV['POSTGRES_CONNECTION']
+        config.store :eager_sync, :postgres, ENV.fetch('POSTGRES_CONNECTION', nil)
 
         # assert
         stack = middleware_stack(services.store)

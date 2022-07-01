@@ -3,7 +3,7 @@
 module WCC::Contentful::Store
   class CDNAdapter
     include WCC::Contentful::Store::Interface
-    # Note: CDNAdapter should not instrument store events cause it's not a store.
+    # NOTE: CDNAdapter should not instrument store events cause it's not a store.
 
     attr_writer :client, :preview_client
 

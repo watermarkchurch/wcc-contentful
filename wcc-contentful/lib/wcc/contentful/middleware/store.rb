@@ -97,8 +97,8 @@ module WCC::Contentful::Middleware::Store
     def count
       if middleware.has_select?
         raise NameError, "Count cannot be determined because the middleware '#{middleware}'" \
-          " implements the #select? method.  Please use '.to_a.count' to count entries that" \
-          ' pass the #select? method.'
+                         " implements the #select? method.  Please use '.to_a.count' to count entries that" \
+                         ' pass the #select? method.'
       end
 
       # The wrapped query may get count from the "Total" field in the response,
@@ -112,9 +112,7 @@ module WCC::Contentful::Middleware::Store
       result = wrapped_query.to_enum
       result = result.select { |x| middleware.select?(x) } if middleware.has_select?
 
-      if options && options[:include]
-        result = result.map { |x| middleware.resolve_includes(x, options[:include]) }
-      end
+      result = result.map { |x| middleware.resolve_includes(x, options[:include]) } if options && options[:include]
 
       result.map { |x| middleware.transform(x) }
     end

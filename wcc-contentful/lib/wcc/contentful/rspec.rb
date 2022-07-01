@@ -13,9 +13,7 @@ module WCC::Contentful::RSpec
   # stubs the Model API to return that content type for `.find` and `.find_by`
   # query methods.
   def contentful_stub(const, **attrs)
-    unless const.respond_to?(:content_type_definition)
-      const = WCC::Contentful::Model.resolve_constant(const.to_s)
-    end
+    const = WCC::Contentful::Model.resolve_constant(const.to_s) unless const.respond_to?(:content_type_definition)
     instance = contentful_create(const, **attrs)
 
     # mimic what's going on inside model_singleton_methods.rb

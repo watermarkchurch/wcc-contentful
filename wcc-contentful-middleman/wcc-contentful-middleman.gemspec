@@ -21,12 +21,12 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 2.3'
 
   spec.metadata = {
-    'documentation_uri' => "https://watermarkchurch.github.io/wcc-contentful/#{doc_version}/wcc-contentful-middleman"
+    'documentation_uri' => "https://watermarkchurch.github.io/wcc-contentful/#{doc_version}/wcc-contentful-middleman",
+'rubygems_mfa_required' => 'true'
   }
 
   spec.files = Dir['lib/**/*'] + %w[Rakefile README.md wcc-contentful-middleman.gemspec]
 
-  spec.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   spec.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
   spec.require_paths = ['lib']
 

@@ -36,14 +36,12 @@ module WCC::Contentful
     def authorize_contentful
       config = WCC::Contentful.configuration
 
-      if config.webhook_username.present? && config.webhook_password.present?
-        unless authenticate_with_http_basic do |u, p|
-                 u == config.webhook_username &&
-                     p == config.webhook_password
-               end
-          request_http_basic_authentication
-          return
-        end
+      if config.webhook_username.present? && config.webhook_password.present? && !authenticate_with_http_basic do |u, p|
+           u == config.webhook_username &&
+               p == config.webhook_password
+         end
+        request_http_basic_authentication
+        return
       end
 
       # 'application/vnd.contentful.management.v1+json' is an alias for the 'application/json'

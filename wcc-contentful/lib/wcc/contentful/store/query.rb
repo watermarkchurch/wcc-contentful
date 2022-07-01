@@ -36,7 +36,7 @@ module WCC::Contentful::Store
 
     FALSE_VALUES = [
       false, 0,
-      '0', :"0",
+      '0', :'0',
       'f', :f,
       'F', :F,
       'false', :false, # rubocop:disable Lint/BooleanSymbol

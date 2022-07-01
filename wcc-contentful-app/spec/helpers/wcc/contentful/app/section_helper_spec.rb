@@ -275,7 +275,7 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
     context 'When given: [links with a newline]\n(https://www.test.com){: .newline }' do
       it 'will render the html hyperlink without using the class' do
         markdown_string =
-          "some before text [links with a newline]\n(https://www.test.com){: .newline }"\
+          "some before text [links with a newline]\n(https://www.test.com){: .newline }" \
           ' and some after text'
         html_to_render =
           helper.markdown(markdown_string)
@@ -286,7 +286,7 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
 
       it 'will render the class as plain text next to the hyperlink' do
         markdown_string =
-          "some before text [links with a newline]\n(https://www.test.com){: .newline }"\
+          "some before text [links with a newline]\n(https://www.test.com){: .newline }" \
           ' and some after text'
         html_to_render =
           helper.markdown(markdown_string)
@@ -299,7 +299,7 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
     context 'When given: [newline after the parens](http://www.google.com)\n{: .test }' do
       it 'will render the html hyperlink without using the class' do
         markdown_string =
-          "some before text [newline after the parens](http://www.google.com)\n{: .test }"\
+          "some before text [newline after the parens](http://www.google.com)\n{: .test }" \
           ' and some after text'
         html_to_render =
           helper.markdown(markdown_string)
@@ -310,13 +310,13 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
       end
       it 'will render <br>\n{: .test } after the converted hyperlink' do
         markdown_string =
-          "some before text [newline after the parens](http://www.google.com)\n{: .test }"\
+          "some before text [newline after the parens](http://www.google.com)\n{: .test }" \
           ' and some after text'
         html_to_render =
           helper.markdown(markdown_string)
 
         expect(html_to_render).to include(
-          "<a target=\"_blank\" href=\"http://www.google.com\">newline after the parens</a><br>\n"\
+          "<a target=\"_blank\" href=\"http://www.google.com\">newline after the parens</a><br>\n" \
           '{: .test }'
         )
       end

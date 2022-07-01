@@ -54,14 +54,12 @@ module WCC::Contentful::ModelMethods
         _instrument 'resolve', id: id, depth: depth, backlinks: backlinked_ids do
           # use include param to do resolution
           store.find_by(content_type: self.class.content_type,
-                        filter: { 'sys.id' => id },
-                        options: context.except(*MODEL_LAYER_CONTEXT_KEYS).merge!({
-                          include: [depth, 10].min
-                        }))
+            filter: { 'sys.id' => id },
+            options: context.except(*MODEL_LAYER_CONTEXT_KEYS).merge!({
+              include: [depth, 10].min
+            }))
         end
-      unless raw
-        raise WCC::Contentful::ResolveError, "Cannot find #{self.class.content_type} with ID #{id}"
-      end
+      raise WCC::Contentful::ResolveError, "Cannot find #{self.class.content_type} with ID #{id}" unless raw
 
       @raw = raw.freeze
       links.each { |f| instance_variable_set('@' + f, raw.dig('fields', f, sys.locale)) }

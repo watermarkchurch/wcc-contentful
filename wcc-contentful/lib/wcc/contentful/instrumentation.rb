@@ -12,6 +12,7 @@ module WCC::Contentful
     end
 
     attr_writer :_instrumentation
+
     def _instrumentation
       # look for per-instance instrumentation then try class level
       @_instrumentation || self.class._instrumentation

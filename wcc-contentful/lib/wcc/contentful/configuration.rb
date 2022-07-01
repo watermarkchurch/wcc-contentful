@@ -145,9 +145,7 @@ class WCC::Contentful::Configuration
   #           WCC::Contentful::InitializationError if the API cannot be reached.
   def update_schema_file=(sym)
     valid_syms = %i[never if_possible if_missing always]
-    unless valid_syms.include?(sym)
-      raise ArgumentError, "update_schema_file must be one of #{valid_syms}"
-    end
+    raise ArgumentError, "update_schema_file must be one of #{valid_syms}" unless valid_syms.include?(sym)
 
     @update_schema_file = sym
   end
@@ -172,16 +170,16 @@ class WCC::Contentful::Configuration
   attr_accessor :instrumentation_adapter
 
   def initialize
-    @access_token = ENV['CONTENTFUL_ACCESS_TOKEN']
-    @app_url = ENV['APP_URL']
+    @access_token = ENV.fetch('CONTENTFUL_ACCESS_TOKEN', nil)
+    @app_url = ENV.fetch('APP_URL', nil)
     @connection_options = {
       api_url: 'https://cdn.contentful.com/',
       preview_api_url: 'https://preview.contentful.com/',
       management_api_url: 'https://api.contentful.com'
     }
-    @management_token = ENV['CONTENTFUL_MANAGEMENT_TOKEN']
-    @preview_token = ENV['CONTENTFUL_PREVIEW_TOKEN']
-    @space = ENV['CONTENTFUL_SPACE_ID']
+    @management_token = ENV.fetch('CONTENTFUL_MANAGEMENT_TOKEN', nil)
+    @preview_token = ENV.fetch('CONTENTFUL_PREVIEW_TOKEN', nil)
+    @space = ENV.fetch('CONTENTFUL_SPACE_ID', nil)
     @default_locale = nil
     @middleware = []
     @update_schema_file = :if_possible
