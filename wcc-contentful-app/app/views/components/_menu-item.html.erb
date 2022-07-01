@@ -1,4 +1,4 @@
-<% return '' unless item
+<% return '' unless item # rubocop:disable Lint/TopLevelReturnWithArgument
 
    classes ||= ['nav-item']
    classes.push('active') if item_active?(item)
