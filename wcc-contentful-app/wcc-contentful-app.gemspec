@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
 'rubygems_mfa_required' => 'true'
   }
 
-  spec.required_ruby_version = '>= 2.3'
+  spec.required_ruby_version = '>= 2.7'
 
   spec.files = Dir['app/**/*', 'config/**/*', 'lib/**/*'] +
     %w[Rakefile README.md wcc-contentful-app.gemspec]

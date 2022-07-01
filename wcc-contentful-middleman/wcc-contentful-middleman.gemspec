@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
   spec.homepage      = 'https://github.com/watermarkchurch/wcc-contentful'
   spec.license       = 'MIT'
 
-  spec.required_ruby_version = '>= 2.3'
+  spec.required_ruby_version = '>= 2.7'
 
   spec.metadata = {
     'documentation_uri' => "https://watermarkchurch.github.io/wcc-contentful/#{doc_version}/wcc-contentful-middleman",
