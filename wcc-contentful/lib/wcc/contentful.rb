@@ -48,7 +48,7 @@ module WCC::Contentful
     def logger
       return Rails.logger if defined?(Rails)
 
-      @logger ||= Logger.new(STDERR)
+      @logger ||= Logger.new($stderr)
     end
   end
 

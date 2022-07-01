@@ -107,7 +107,7 @@ module WCC::Contentful
                 # array fields need to resolve to an empty array when nothing is there
                 raw_value = []
               end
-              instance_variable_set('@' + f.name, raw_value)
+              instance_variable_set("@#{f.name}", raw_value)
             end
           end
 
@@ -123,11 +123,11 @@ module WCC::Contentful
           # Make a field for each column:
           typedef.fields.each_value do |f|
             name = f.name
-            var_name = '@' + name
+            var_name = "@#{name}"
             case f.type
             when :Asset, :Link
               define_method(name) do
-                val = instance_variable_get(var_name + '_resolved')
+                val = instance_variable_get("#{var_name}_resolved")
                 return val if val.present?
 
                 _resolve_field(name)

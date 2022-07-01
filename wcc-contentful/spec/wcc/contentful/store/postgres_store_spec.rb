@@ -10,7 +10,7 @@ RSpec.describe WCC::Contentful::Store::PostgresStore do
   subject {
     WCC::Contentful::Store::PostgresStore.new(double('Configuration'),
       ENV.fetch('POSTGRES_CONNECTION', nil), size: 5).tap do |store|
-        store.logger = Logger.new(STDOUT)
+        store.logger = Logger.new($stdout)
       end
   }
 

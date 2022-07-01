@@ -40,7 +40,7 @@ module WCC::Contentful
     # @option options [Number] rate_limit_wait_timeout The maximum time to block the thread waiting
     #   on a rate limit response.  By default will wait for one 429 and then fail on the second 429.
     def initialize(api_url:, space:, access_token:, **options)
-      @api_url = URI.join(api_url, '/spaces/', space + '/')
+      @api_url = URI.join(api_url, '/spaces/', "#{space}/")
       @space = space
       @access_token = access_token
 
@@ -56,7 +56,7 @@ module WCC::Contentful
 
       return unless options[:environment].present?
 
-      @api_url = URI.join(@api_url, 'environments/', options[:environment] + '/')
+      @api_url = URI.join(@api_url, 'environments/', "#{options[:environment]}/")
     end
 
     # performs an HTTP GET request to the specified path within the configured

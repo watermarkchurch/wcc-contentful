@@ -18,7 +18,7 @@ module WCC::Contentful::App::SectionHelper
   end
 
   def section_styles(section)
-    section_styles = ['section-' + section_css_name(section)]
+    section_styles = ["section-#{section_css_name(section)}"]
     if styles = section.try(:styles)
       section_styles.push(styles.map { |style| style.downcase.gsub(/[^\w]/, '-') })
     elsif style = section.try(:style)

@@ -377,7 +377,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
         include WCC::Contentful::Middleware::Store
 
         def transform(entry)
-          entry.dig('fields')['excluded'] = { 'en-US' => 'no' }
+          entry['fields']['excluded'] = { 'en-US' => 'no' }
           entry
         end
       end

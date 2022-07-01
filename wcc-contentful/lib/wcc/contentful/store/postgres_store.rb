@@ -102,7 +102,7 @@ module WCC::Contentful::Store
         end
       end
 
-      logger&.debug('[PostgresStore] ' + statement + "\n" + params.inspect)
+      logger&.debug("[PostgresStore] #{statement}\n#{params.inspect}")
       _instrument 'exec' do
         @connection_pool.with { |conn| conn.exec(statement, params) }
       end
@@ -228,11 +228,7 @@ module WCC::Contentful::Store
         end
 
         statement =
-          select_statement +
-          " FROM #{table} AS t \n" +
-          joins.join("\n") + "\n" +
-          statement +
-          (limit_statement || '')
+          "#{select_statement} FROM #{table} AS t \n#{joins.join("\n")}\n#{statement}#{limit_statement || ''}"
 
         [statement, params]
       end

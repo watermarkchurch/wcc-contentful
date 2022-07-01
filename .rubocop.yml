@@ -39,11 +39,7 @@ Style/BlockDelimiters:
     - '**/rspec_examples/**/*.rb'
 
 Style/ClassAndModuleChildren:
-  EnforcedStyle: compact
-  Exclude:
-    - '**/version.rb'
-    # Generators need to define the "Wcc" module so it doesnt get underscored.
-    - '*/lib/generators/**/*.rb'
+  Enabled: false
 
 Style/FormatStringToken:
   EnforcedStyle: template

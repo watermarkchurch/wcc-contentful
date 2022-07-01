@@ -12,7 +12,7 @@ class WCC::Contentful::App::PagesController < ApplicationController
   end
 
   def show
-    slug = '/' + params[:slug]
+    slug = "/#{params[:slug]}"
     @page = page_model.find_by(slug: slug, options: { include: 3, preview: preview? })
 
     return render 'pages/show' if @page

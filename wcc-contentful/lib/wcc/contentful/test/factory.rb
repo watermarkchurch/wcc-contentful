@@ -84,8 +84,8 @@ module WCC::Contentful::Test::Factory
   end
 
   def contentful_fields(model)
-    WCC::Contentful::Test::Attributes.defaults(model).each_with_object({}) do |(k, v), h|
-      h[k] = { 'en-US' => v }
+    WCC::Contentful::Test::Attributes.defaults(model).transform_values do |v|
+      { 'en-US' => v }
     end
   end
 

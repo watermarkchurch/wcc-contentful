@@ -57,7 +57,7 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
     end
   end
 
-  WCC::Contentful::SimpleClient::ADAPTERS.keys.each do |adapter|
+  WCC::Contentful::SimpleClient::ADAPTERS.each_key do |adapter|
     context "with #{adapter} adapter" do
       subject(:client) {
         WCC::Contentful::SimpleClient.new(
@@ -70,7 +70,7 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
 
       describe 'get' do
         it 'gets entries with query params' do
-          stub_request(:get, cdn_base + '/entries?limit=2')
+          stub_request(:get, "#{cdn_base}/entries?limit=2")
             .to_return(body: load_fixture('contentful/simple_client/entries_limit_2.json'))
 
           # act
@@ -85,7 +85,7 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
         end
 
         it 'can query entries with query param' do
-          stub_request(:get, cdn_base + '/entries?content_type=menuButton&fields.text=Ministries')
+          stub_request(:get, "#{cdn_base}/entries?content_type=menuButton&fields.text=Ministries")
             .to_return(body: load_fixture('contentful/simple_client/menu_buttons_limit_1.json'))
 
           # act
@@ -129,13 +129,13 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
         end
 
         it 'paginates directly when block given' do
-          stub_request(:get, cdn_base + '/content_types?limit=5')
+          stub_request(:get, "#{cdn_base}/content_types?limit=5")
             .to_return(body: load_fixture('contentful/simple_client/content_types_first_page.json'))
-          stub_request(:get, cdn_base + '/content_types?limit=5&skip=5')
+          stub_request(:get, "#{cdn_base}/content_types?limit=5&skip=5")
             .to_return(body: load_fixture('contentful/simple_client/content_types_2nd_page.json'))
-          stub_request(:get, cdn_base + '/content_types?limit=5&skip=10')
+          stub_request(:get, "#{cdn_base}/content_types?limit=5&skip=10")
             .to_return(body: load_fixture('contentful/simple_client/content_types_3rd_page.json'))
-          stub_request(:get, cdn_base + '/content_types?limit=5&skip=15')
+          stub_request(:get, "#{cdn_base}/content_types?limit=5&skip=15")
             .to_return(body: load_fixture('contentful/simple_client/content_types_4th_page.json'))
 
           # act
@@ -152,13 +152,13 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
         end
 
         it 'does lazy pagination' do
-          stub_request(:get, cdn_base + '/content_types?limit=5')
+          stub_request(:get, "#{cdn_base}/content_types?limit=5")
             .to_return(body: load_fixture('contentful/simple_client/content_types_first_page.json'))
-          stub_request(:get, cdn_base + '/content_types?limit=5&skip=5')
+          stub_request(:get, "#{cdn_base}/content_types?limit=5&skip=5")
             .to_return(body: load_fixture('contentful/simple_client/content_types_2nd_page.json'))
-          stub_request(:get, cdn_base + '/content_types?limit=5&skip=10')
+          stub_request(:get, "#{cdn_base}/content_types?limit=5&skip=10")
             .to_return(body: load_fixture('contentful/simple_client/content_types_3rd_page.json'))
-          stub_request(:get, cdn_base + '/content_types?limit=5&skip=15')
+          stub_request(:get, "#{cdn_base}/content_types?limit=5&skip=15")
             .to_return(body: load_fixture('contentful/simple_client/content_types_4th_page.json'))
 
           # act
@@ -259,9 +259,9 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
         end
 
         it 'paginates all items when enumerable forced' do
-          stub_request(:get, cdn_base + '/entries?content_type=page&limit=5')
+          stub_request(:get, "#{cdn_base}/entries?content_type=page&limit=5")
             .to_return(body: load_fixture('contentful/simple_client/pages_first_page.json'))
-          stub_request(:get, cdn_base + '/entries?content_type=page&limit=5&skip=5')
+          stub_request(:get, "#{cdn_base}/entries?content_type=page&limit=5&skip=5")
             .to_return(body: load_fixture('contentful/simple_client/pages_2nd_page.json'))
 
           # act
@@ -287,9 +287,9 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
         end
 
         it 'builds a hash of included links by ID' do
-          stub_request(:get, cdn_base + '/entries?content_type=page&limit=5&include=2')
+          stub_request(:get, "#{cdn_base}/entries?content_type=page&limit=5&include=2")
             .to_return(body: load_fixture('contentful/simple_client/pages_with_includes_page_1.json'))
-          stub_request(:get, cdn_base + '/entries?content_type=page&limit=5&skip=5&include=2')
+          stub_request(:get, "#{cdn_base}/entries?content_type=page&limit=5&skip=5&include=2")
             .to_return(body: load_fixture('contentful/simple_client/pages_with_includes_page_2.json'))
           # act
           resp = client.get('entries', { content_type: 'page', limit: 5, include: 2 })
@@ -384,9 +384,9 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
         end
 
         it 'instruments pagination' do
-          stub_request(:get, cdn_base + '/content_types?limit=5')
+          stub_request(:get, "#{cdn_base}/content_types?limit=5")
             .to_return(body: load_fixture('contentful/simple_client/content_types_first_page.json'))
-          stub_request(:get, cdn_base + '/content_types?limit=5&skip=5')
+          stub_request(:get, "#{cdn_base}/content_types?limit=5&skip=5")
             .to_return(body: load_fixture('contentful/simple_client/content_types_2nd_page.json'))
 
           # act
@@ -403,7 +403,7 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
         end
 
         it 'retries GETs on 429 rate limit' do
-          stub_request(:get, cdn_base + '/entries?limit=2')
+          stub_request(:get, "#{cdn_base}/entries?limit=2")
             .to_return(status: 429,
               headers: {
                 # 20 per second
@@ -427,7 +427,7 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
         end
 
         it 'times out on a long 429 rate limit reset' do
-          stub_request(:get, cdn_base + '/entries?limit=2')
+          stub_request(:get, "#{cdn_base}/entries?limit=2")
             .to_return(status: 429,
               headers: {
                 # 7200 per hour for preview API
@@ -445,7 +445,7 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
 
         it 'times out on multiple rate limits' do
           # just keep returning rate limit error
-          stub_request(:get, cdn_base + '/entries?limit=2')
+          stub_request(:get, "#{cdn_base}/entries?limit=2")
             .to_return(status: 429,
               headers: {
                 'X-Contentful-RateLimit-Reset': 1
@@ -466,7 +466,7 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
         end
 
         it 'instruments rate limit' do
-          stub_request(:get, cdn_base + '/entries?limit=2')
+          stub_request(:get, "#{cdn_base}/entries?limit=2")
             .to_return(status: 429,
               headers: {
                 # 20 per second
@@ -493,7 +493,7 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
 
         it 'notifies' do
           fixture = JSON.parse(load_fixture('contentful/simple_client/entries_limit_2.json'))
-          stub_request(:get, cdn_base + '/entries?limit=2')
+          stub_request(:get, "#{cdn_base}/entries?limit=2")
             .to_return(body: fixture.to_json)
 
           expect {
@@ -507,7 +507,7 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
 
         describe 'sync' do
           it 'gets all sync items' do
-            stub_request(:get, cdn_base + '/sync?initial=true')
+            stub_request(:get, "#{cdn_base}/sync?initial=true")
               .to_return(body: load_fixture('contentful/simple_client/sync_initial.json'))
 
             # act
@@ -525,21 +525,21 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
           end
 
           it 'pages when theres a lot of items' do
-            stub_request(:get, cdn_base + '/sync?initial=true')
+            stub_request(:get, "#{cdn_base}/sync?initial=true")
               .to_return(body: load_fixture('contentful/simple_client/sync_paginated_initial.json'))
 
             sync_token = 'wonDrcKnRgcSOF4-wrDCgcKefWzCgsOxwrfCq8KOfMOdXUPCvEnChwEEO8KFwqHDj8KxwrzDmk' \
                          'TCrsKWUwnDiFczCULDs08Pw5LDj1DCr8KQwoEVw7dBdhPDi23DrsKlwoPDkcKESGfCt8Kyw5hnDcOEwrkMOjL' \
                          'CtsOZwqzDh8OAI3ZEW8K0fELDqMKAw73DoFo-RV_DsRVteRhXw7LDulU4worCgsOlRsOVworCtgrCpnkqTBdG' \
                          'w6PDt8OYOcOHDw'
-            stub_request(:get, cdn_base + '/sync?sync_token=' + sync_token)
+            stub_request(:get, "#{cdn_base}/sync?sync_token=#{sync_token}")
               .to_return(body: load_fixture('contentful/simple_client/sync_paginated_page_2.json'))
 
             sync_token = 'wonDrcKnRgcSOF4-wrDCgcKefWzCgsOxwrfCq8KOfMOdXUPCvEnChwEEO8KFwqHDj8KxwrzDmk' \
                          'TCrsKWUwnDiFczCULDs08Pw5LDj1DCr8KQwoEVw7dBdhPDi23DrsKlwoPDkcKESGfCt8Kyw5hnDcOEwrkMOjL' \
                          'CtsOZCiV0HMKKw4rDpcKXwpXCh1vDlVMPRcOLYMKzw7HDucOFbsKSZ3pqTcONwqxXw43CssKgP8Oqw7HCqnPC' \
                          'nsOpdXfCksO1fVfDsDM'
-            stub_request(:get, cdn_base + '/sync?sync_token=' + sync_token)
+            stub_request(:get, "#{cdn_base}/sync?sync_token=#{sync_token}")
               .to_return(body: load_fixture('contentful/simple_client/sync_paginated_page_3.json'))
 
             # act
@@ -552,7 +552,7 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
           end
 
           it 'returns next sync token' do
-            stub_request(:get, cdn_base + '/sync?initial=true')
+            stub_request(:get, "#{cdn_base}/sync?initial=true")
               .to_return(body: load_fixture('contentful/simple_client/sync_initial.json'))
 
             # act
@@ -570,13 +570,13 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
             sync_token = 'w5ZGw6JFwqZmVcKsE8Kow4grw45QdybCpsOKdcK_ZjDCpMOFwpXDq8' \
                          'KRUE1Fw613K8KyA8OIwqvCtDfChhbCpsO7CjfDssOKw7YtXMOnwobDjcKrw7XDjMK' \
                          'Hw7jCq8K1wrRRwpHCqMKIwr_DoMKSwrnCqS0qw47DkShzZ8K3V8KR'
-            stub_request(:get, cdn_base + '/sync?sync_token=' + sync_token)
+            stub_request(:get, "#{cdn_base}/sync?sync_token=#{sync_token}")
               .to_return(body: {
                 'sys' => {
                   'type' => 'Array'
                 },
                 'items' => [],
-                nextSyncUrl: cdn_base + '/sync?sync_token=another-sync-token'
+                nextSyncUrl: "#{cdn_base}/sync?sync_token=another-sync-token"
               }.to_json)
 
             # act
@@ -590,7 +590,7 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
           end
 
           it 'notifies' do
-            stub_request(:get, cdn_base + '/sync?initial=true')
+            stub_request(:get, "#{cdn_base}/sync?initial=true")
               .to_return(body: load_fixture('contentful/simple_client/sync_initial.json'))
 
             expect {
@@ -622,7 +622,7 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
               entry['sys']['environment'] = { 'sys' => { 'id' => 'specs' } }
             end
 
-            stub_request(:get, cdn_base + '/environments/specs/entries?limit=2')
+            stub_request(:get, "#{cdn_base}/environments/specs/entries?limit=2")
               .to_return(body: fixture.to_json)
 
             # act
@@ -640,10 +640,9 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
           end
 
           it 'paginates all items' do
-            stub_request(:get, cdn_base + '/environments/specs/entries?content_type=page&limit=5')
+            stub_request(:get, "#{cdn_base}/environments/specs/entries?content_type=page&limit=5")
               .to_return(body: load_fixture('contentful/simple_client/pages_first_page.json'))
-            stub_request(:get, cdn_base +
-                '/environments/specs/entries?content_type=page&limit=5&skip=5')
+            stub_request(:get, "#{cdn_base}/environments/specs/entries?content_type=page&limit=5&skip=5")
               .to_return(body: load_fixture('contentful/simple_client/pages_2nd_page.json'))
 
             # act

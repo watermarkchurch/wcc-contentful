@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe WCC::Contentful::SimpleClient::Management do
-  WCC::Contentful::SimpleClient::ADAPTERS.keys.each do |adapter|
+  WCC::Contentful::SimpleClient::ADAPTERS.each_key do |adapter|
     context "with #{adapter} adapter" do
       let(:client) {
         WCC::Contentful::SimpleClient::Management.new(

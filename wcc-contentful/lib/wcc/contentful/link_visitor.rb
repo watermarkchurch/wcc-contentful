@@ -64,7 +64,7 @@ class WCC::Contentful::LinkVisitor
 
   def each_field(field)
     each_locale(field) do |val, locale|
-      if val&.is_a?(Array)
+      if val.is_a?(Array)
         val.each_with_index do |v, index|
           yield(v, field, locale, index) unless v.nil?
         end

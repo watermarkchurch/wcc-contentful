@@ -61,7 +61,7 @@ module WCC::Contentful::Store
             set(json.dig('sys', 'id'), json)
           end
 
-        if (prev_rev = prev&.dig('sys', 'revision')) && 
+        if (prev_rev = prev&.dig('sys', 'revision')) &&
             (next_rev = json.dig('sys', 'revision')) &&
             (next_rev < prev_rev)
           # Uh oh! we overwrote an entry with a prior revision.  Put the previous back.

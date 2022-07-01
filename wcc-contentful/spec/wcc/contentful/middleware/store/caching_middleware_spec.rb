@@ -474,7 +474,7 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
 
       # assert
       got = store.find('sync:token')
-      expect(got.dig('token')).to eq('1234')
+      expect(got['token']).to eq('1234')
     end
 
     it 'updates the cache if the item was recently accessed' do

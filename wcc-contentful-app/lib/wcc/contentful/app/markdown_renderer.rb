@@ -89,7 +89,7 @@ class WCC::Contentful::App::MarkdownRenderer
   def combine_individual_classes_to_one_string(classes)
     class_string = ''
     classes.each do |klass|
-      class_string += klass.tr('.', '') + ' '
+      class_string += "#{klass.tr('.', '')} "
     end
     class_string
   end

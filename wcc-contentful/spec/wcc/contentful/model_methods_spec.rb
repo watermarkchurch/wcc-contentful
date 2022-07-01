@@ -927,7 +927,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
       TO_H_TEST_1 =
         Class.new(WCC::Contentful::Model::ToJsonTest) do
           def name
-            'to-h-test-1:' + super
+            "to-h-test-1:#{super}"
           end
         end
 

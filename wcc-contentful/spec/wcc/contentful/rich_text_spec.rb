@@ -54,7 +54,7 @@ RSpec.describe WCC::Contentful::RichText do
     end
 
     it 'responds to :dig method' do
-      expect(subject.dig('nodeType')).to eq(fixture['nodeType'])
+      expect(subject['nodeType']).to eq(fixture['nodeType'])
     end
 
     it 'as_json is equivalent to input' do

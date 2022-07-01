@@ -25,7 +25,7 @@ module WCC::Contentful::App
         hash.map do |k, v|
           if v.is_a?(Hash)
             msgs = join_msg_keys(v)
-            msgs.map { |msg| Message.new(k.to_s + '.' + msg.path, msg.error) }
+            msgs.map { |msg| Message.new("#{k}.#{msg.path}", msg.error) }
           else
             v.map { |msg| Message.new(k.to_s, msg) }
           end

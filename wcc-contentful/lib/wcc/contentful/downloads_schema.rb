@@ -83,13 +83,14 @@ class WCC::Contentful::DownloadsSchema
   end
 
   def deep_contains_all(expected, actual)
-    if expected.is_a? Array
+    case expected
+    when Array
       expected.each_with_index do |val, i|
         return false unless actual[i]
         return false unless deep_contains_all(val, actual[i])
       end
       true
-    elsif expected.is_a? Hash
+    when Hash
       expected.each do |(key, val)|
         return false unless actual.key?(key)
         return false unless deep_contains_all(val, actual[key])
@@ -107,6 +108,6 @@ class WCC::Contentful::DownloadsSchema
     # only in its treatment of empty arrays in the "validations" field.
     json_string = json_string.gsub(/\[\n\n\s+\]/, '[]')
     # contentful-shell also adds a newline at the end.
-    json_string + "\n"
+    "#{json_string}\n"
   end
 end

@@ -696,8 +696,6 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       expect(Object).to receive(:const_missing) do
         MenuButton =
           Class.new do
-            def initialize(raw, context)
-            end
           end
       end.at_most(2).times
 
