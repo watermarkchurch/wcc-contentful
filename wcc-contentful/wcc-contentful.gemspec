@@ -6,7 +6,7 @@ require 'wcc/contentful/version'
 
 doc_version = Gem::Version.new(WCC::Contentful::VERSION).release.to_s.sub(/\.\d+$/, '')
 
-# rubocop:disable Metrics/LineLength
+# rubocop:disable Layout/LineLength
 Gem::Specification.new do |spec|
   spec.name          = 'wcc-contentful'
   spec.version       = WCC::Contentful::VERSION
@@ -67,4 +67,4 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'wcc-base', '~> 0.3.1'
   spec.add_dependency 'wisper', '~> 2.0.0'
 end
-# rubocop:enable Metrics/LineLength
+# rubocop:enable Layout/LineLength

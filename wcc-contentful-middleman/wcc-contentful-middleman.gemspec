@@ -6,7 +6,7 @@ require 'wcc/contentful/middleman/version'
 
 doc_version = Gem::Version.new(WCC::Contentful::Middleman::VERSION).release.to_s.sub(/\.\d+$/, '')
 
-# rubocop:disable Metrics/LineLength
+# rubocop:disable Layout/LineLength
 Gem::Specification.new do |spec|
   spec.name        = 'wcc-contentful-middleman'
   spec.version     = WCC::Contentful::Middleman::VERSION
@@ -50,4 +50,4 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'guard-rubocop', '~> 1.3.0'
   spec.add_development_dependency 'guard-shell', '~> 0.7.1'
 end
-# rubocop:enable Metrics/LineLength
+# rubocop:enable Layout/LineLength

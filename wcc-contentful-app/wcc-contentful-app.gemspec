@@ -6,7 +6,7 @@ require 'wcc/contentful/app/version'
 
 doc_version = Gem::Version.new(WCC::Contentful::App::VERSION).release.to_s.sub(/\.\d+$/, '')
 
-# rubocop:disable Metrics/LineLength
+# rubocop:disable Layout/LineLength
 Gem::Specification.new do |spec|
   spec.name          = 'wcc-contentful-app'
   spec.version       = WCC::Contentful::App::VERSION
@@ -61,4 +61,4 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'redcarpet', '~> 3.4'
   spec.add_dependency 'wcc-contentful', "~> #{WCC::Contentful::App::VERSION}"
 end
-# rubocop:enable Metrics/LineLength
+# rubocop:enable Layout/LineLength

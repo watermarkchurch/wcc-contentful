@@ -5,7 +5,7 @@ require 'fileutils'
 
 require 'wcc/contentful'
 
-# rubocop:disable Metrics/LineLength
+# rubocop:disable Layout/LineLength
 # Disabling line length for contentful-schema-diff backtick execution
 
 namespace :app do
@@ -118,7 +118,7 @@ namespace :app do
   end
 end
 
-# rubocop:enable Metrics/LineLength
+# rubocop:enable Layout/LineLength
 
 task :release do
   raise StandardError, 'Please run rake release only from the root folder.'
