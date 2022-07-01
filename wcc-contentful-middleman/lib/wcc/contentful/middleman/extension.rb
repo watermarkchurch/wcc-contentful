@@ -19,7 +19,7 @@ class WCC::Contentful::Middleman::Extension < ::Middleman::Extension
 
   def initialize(app, options_hash = {}, &block)
     # don't pass block to super b/c we use it to configure WCC::Contentful
-    super(app, options_hash) {}
+    super(app, options_hash) {} # rubocop:disable Lint/EmptyBlock
 
     # Require libraries only when activated
     require 'wcc/contentful'

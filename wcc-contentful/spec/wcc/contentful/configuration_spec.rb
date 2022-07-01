@@ -60,14 +60,14 @@ RSpec.describe WCC::Contentful::Configuration do
         end
 
       # act
-      config.store = store_class, :param_1, 'param_2'
+      config.store = store_class, :param1, 'param2'
 
       # assert
       config.store.validate!
       stack = middleware_stack(services.store)
       store = stack.last
       expect(store).to be_a(store_class)
-      expect(store.params).to eq([:param_1, 'param_2'])
+      expect(store.params).to eq([:param1, 'param2'])
       expect(store.client).to eq(WCC::Contentful::Services.instance.client)
     end
 

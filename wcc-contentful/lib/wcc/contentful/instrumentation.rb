@@ -7,7 +7,7 @@ module WCC::Contentful
     def _instrumentation_event_prefix
       @_instrumentation_event_prefix ||=
         # WCC::Contentful => contentful.wcc
-        '.' + (is_a?(Class) || is_a?(Module) ? self : self.class)
+        '.' + (is_a?(Class) || is_a?(Module) ? self : self.class) # rubocop:disable Style/StringConcatenation
           .name.parameterize.split('-').reverse.join('.')
     end
 

@@ -237,7 +237,7 @@ module WCC::Contentful::Store
 
     Condition =
       Struct.new(:path, :op, :expected) do
-        LINK_KEYS = %w[id type linkType].freeze
+        LINK_KEYS = %w[id type linkType].freeze # rubocop:disable Lint/ConstantDefinitionInBlock
 
         def path_tuples
           @path_tuples ||=

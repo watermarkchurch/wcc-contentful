@@ -96,9 +96,9 @@ module WCC::Contentful::Middleware::Store
 
     def count
       if middleware.has_select?
-        raise NameError, "Count cannot be determined because the middleware '#{middleware}'" \
-                         " implements the #select? method.  Please use '.to_a.count' to count entries that" \
-                         ' pass the #select? method.'
+        raise NameError, "Count cannot be determined because the middleware '#{middleware}' " \
+                         "implements the #select? method.  Please use '.to_a.count' to count entries that " \
+                         'pass the #select? method.'
       end
 
       # The wrapped query may get count from the "Total" field in the response,

@@ -11,6 +11,7 @@ WCC::Contentful::Sys =
     :revision,
     :context
   ) do
+    # rubocop:disable Lint/ConstantDefinitionInBlock
     ATTRIBUTES = %i[
       id
       type
@@ -21,6 +22,7 @@ WCC::Contentful::Sys =
       revision
       context
     ].freeze
+    # rubocop:enable Lint/ConstantDefinitionInBlock
 
     undef []=
     ATTRIBUTES.each { |a| __send__(:undef_method, "#{a}=") }

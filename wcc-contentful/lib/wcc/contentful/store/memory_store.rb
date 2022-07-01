@@ -41,8 +41,8 @@ module WCC::Contentful::Store
     SUPPORTED_OPS = %i[eq ne in nin].freeze
 
     def execute(query)
-      (query.conditions.map(&:op) - SUPPORTED_OPS).each do |op|
-        raise ArgumentError, "Operator :#{op} not supported"
+      if bad_op = (query.conditions.map(&:op) - SUPPORTED_OPS).first
+        raise ArgumentError, "Operator :#{bad_op} not supported"
       end
 
       relation = mutex.with_read_lock { @hash.values }

@@ -36,7 +36,7 @@ class WCC::Contentful::DownloadsSchema
       begin
         JSON.parse(File.read(@file))
       rescue JSON::ParserError
-        return true
+        return true # rubocop:disable Lint/NoReturnInBeginEndBlocks
       end
 
     existing_cts = contents['contentTypes'].sort_by { |ct| ct.dig('sys', 'id') }

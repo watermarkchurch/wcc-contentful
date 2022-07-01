@@ -117,8 +117,8 @@ module WCC::Contentful
     end
 
     unless content_types
-      raise InitializationError, 'Unable to load content types from schema file or API!' \
-                                 ' Check your access token and space ID.'
+      raise InitializationError, 'Unable to load content types from schema file or API! ' \
+                                 'Check your access token and space ID.'
     end
 
     # Set the schema on the default WCC::Contentful::Model

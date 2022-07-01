@@ -233,7 +233,7 @@ module WCC::Contentful::Store
         [statement, params]
       end
 
-      def _eq(path, expected, params)
+      def _eq(path, expected, params) # rubocop:disable Layout/LineContinuationLeadingSpace
         return " AND t.id = $#{push_param(expected, params)}" if path == %w[sys id]
 
         if path[3] == 'sys'
@@ -245,8 +245,8 @@ module WCC::Contentful::Store
                  "jsonb_build_array($#{push_param(expected, params)}::jsonb)"
         end
 
-        " AND t.data->#{quote_parameter_path(path)}" \
-          " @> to_jsonb($#{push_param(expected, params)})"
+        " AND t.data->#{quote_parameter_path(path)} " \
+          "@> to_jsonb($#{push_param(expected, params)})"
       end
 
       PARAM_TYPES = {
@@ -319,8 +319,8 @@ module WCC::Contentful::Store
       end
 
       def schema_ensured?(conn)
-        result = conn.exec('SELECT version FROM wcc_contentful_schema_version' \
-                           ' ORDER BY version DESC LIMIT 1')
+        result = conn.exec('SELECT version FROM wcc_contentful_schema_version ' \
+                           'ORDER BY version DESC LIMIT 1')
         return false if result.num_tuples == 0
 
         result[0]['version'].to_i >= EXPECTED_VERSION
@@ -332,8 +332,8 @@ module WCC::Contentful::Store
       def ensure_schema(conn)
         result =
           begin
-            conn.exec('SELECT version FROM wcc_contentful_schema_version' \
-                      ' ORDER BY version DESC')
+            conn.exec('SELECT version FROM wcc_contentful_schema_version ' \
+                      'ORDER BY version DESC')
           rescue PG::UndefinedTable
             []
           end

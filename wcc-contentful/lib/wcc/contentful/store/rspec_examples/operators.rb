@@ -40,7 +40,7 @@ RSpec.shared_examples 'operators' do |feature_set|
     end
   end
 
-  supported_operators.each do |op, value|
+  supported_operators.each do |op, value| # rubocop:disable Style/CombinableLoops
     next unless value
 
     it_behaves_like "supports :#{op} operator" do
