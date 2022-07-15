@@ -80,8 +80,12 @@ module WCC::Contentful
               OpenStruct.new(context).freeze
             )
 
+            is_locale_star = raw.dig('sys', 'locale').blank?
+
             typedef.fields.each_value do |f|
-              raw_value = raw.dig('fields', f.name, @sys.locale)
+              raw_value = raw.dig('fields', f.name)
+              raw_value = raw_value[@sys.locale] if is_locale_star && raw_value.present?
+
               if raw_value.present?
                 case f.type
                 # DateTime is intentionally not parsed!
