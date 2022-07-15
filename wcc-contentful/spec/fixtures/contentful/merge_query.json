@@ -36,8 +36,12 @@
         }
       },
       "fields": {
-        "title": "Overview",
-        "slug": "/ministries/merge",
+        "title": {
+          "en-US": "Overview"
+        },
+        "slug": {
+          "en-US": "/ministries/merge"
+        },
         "header": {
           "en-US": {
             "sys": {
