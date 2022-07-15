@@ -33,12 +33,15 @@
             "linkType": "ContentType",
             "id": "page"
           }
-        },
-        "locale": "en-US"
+        }
       },
       "fields": {
-        "title": "Watermark Resources",
-        "slug": "/",
+        "title": {
+          "en-US": "Watermark Resources"
+        },
+        "slug": {
+          "en-US": "/"
+        },
         "sections": {
           "en-US": [
             {
