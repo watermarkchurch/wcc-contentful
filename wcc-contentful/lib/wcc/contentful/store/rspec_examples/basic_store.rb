@@ -105,7 +105,7 @@ RSpec.shared_examples 'basic store' do
           "type": "Asset",
           "createdAt": "2018-02-12T19:53:39.309Z",
           "updatedAt": "2018-02-12T19:53:39.309Z",
-          "revision": 1
+          "revision": 2
         },
         "fields": {
           "title": {
@@ -133,7 +133,10 @@ RSpec.shared_examples 'basic store' do
   describe '#set/#find' do
     describe 'ensures that the stored value is of type Hash' do
       it 'should not raise an error if value is a Hash' do
-        data = { token: 'jenny_8675309' }
+        data = {
+          'sys' => { 'id' => 'sync:token', 'type' => 'token' },
+          'token' => 'state'
+        }
 
         # assert
         expect { subject.set('sync:token', data) }.to_not raise_error
@@ -146,7 +149,11 @@ RSpec.shared_examples 'basic store' do
     end
 
     it 'stores and finds data by ID' do
-      data = { 'key' => 'val', '1' => { 'deep' => 9 } }
+      data = {
+        'sys' => { 'id' => '1234' },
+        'key' => 'val',
+        '1' => { 'deep' => 9 }
+      }
 
       # act
       subject.set('1234', data)
@@ -157,7 +164,11 @@ RSpec.shared_examples 'basic store' do
     end
 
     it 'find returns nil if key doesnt exist' do
-      data = { 'key' => 'val', '1' => { 'deep' => 9 } }
+      data = {
+        'sys' => { 'id' => '1234' },
+        'key' => 'val',
+        '1' => { 'deep' => 9 }
+      }
       subject.set('1234', data)
 
       # act
@@ -181,8 +192,16 @@ RSpec.shared_examples 'basic store' do
     end
 
     it 'set returns prior value if exists' do
-      data = { 'key' => 'val', '1' => { 'deep' => 9 } }
-      data2 = { 'key' => 'val', '2' => { 'deep' => 11 } }
+      data = {
+        'sys' => { 'id' => '1234', 'revision' => 1 },
+        'key' => 'val',
+        '1' => { 'deep' => 9 }
+      }
+      data2 = {
+        'sys' => { 'id' => '1234', 'revision' => 2 },
+        'key' => 'val',
+        '1' => { 'deep' => 11 }
+      }
 
       # act
       prior1 = subject.set('1234', data)
@@ -197,7 +216,11 @@ RSpec.shared_examples 'basic store' do
 
   describe '#delete' do
     it 'deletes an item out of the store' do
-      data = { 'key' => 'val', '1' => { 'deep' => 9 } }
+      data = {
+        'sys' => { 'id' => '1234' },
+        'key' => 'val',
+        '1' => { 'deep' => 9 }
+      }
       subject.set('9999', data)
 
       # act
@@ -209,7 +232,11 @@ RSpec.shared_examples 'basic store' do
     end
 
     it "returns nil if item doesn't exist" do
-      data = { 'key' => 'val', '1' => { 'deep' => 9 } }
+      data = {
+        'sys' => { 'id' => '9999' },
+        'key' => 'val',
+        '1' => { 'deep' => 9 }
+      }
       subject.set('9999', data)
 
       # act
@@ -327,7 +354,10 @@ RSpec.shared_examples 'basic store' do
     end
 
     it 'updates an "Asset" when exists' do
-      existing = { 'test' => { 'data' => 'asdf' } }
+      existing = {
+        'sys' => { 'id' => '3pWma8spR62aegAWAWacyA', 'revision' => 1 },
+        'test' => { 'data' => 'asdf' }
+      }
       subject.set('3pWma8spR62aegAWAWacyA', existing)
 
       # act
@@ -341,7 +371,7 @@ RSpec.shared_examples 'basic store' do
     it 'does not overwrite an asset if revision is lower' do
       initial = asset
       updated = asset.deep_dup
-      updated['sys']['revision'] = 2
+      updated['sys']['revision'] = 3
       updated['fields']['title']['en-US'] = 'test title'
 
       subject.index(updated)
@@ -355,7 +385,10 @@ RSpec.shared_examples 'basic store' do
     end
 
     it 'removes a "DeletedEntry"' do
-      existing = { 'test' => { 'data' => 'asdf' } }
+      existing = {
+        'sys' => { 'id' => '6HQsABhZDiWmi0ekCouUuy' },
+        'test' => { 'data' => 'asdf' }
+      }
       subject.set('6HQsABhZDiWmi0ekCouUuy', existing)
 
       # act
@@ -381,7 +414,10 @@ RSpec.shared_examples 'basic store' do
     end
 
     it 'removes a "DeletedAsset"' do
-      existing = { 'test' => { 'data' => 'asdf' } }
+      existing = {
+        'sys' => { 'id' => '3pWma8spR62aegAWAWacyA' },
+        'test' => { 'data' => 'asdf' }
+      }
       subject.set('3pWma8spR62aegAWAWacyA', existing)
 
       # act
