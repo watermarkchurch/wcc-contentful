@@ -4,91 +4,1472 @@
   },
   "total": 11,
   "skip": 10,
-  "limit": 1,
+  "limit": 5,
   "items": [
     {
+      "metadata": {
+        "tags": []
+      },
       "sys": {
         "space": {
           "sys": {
             "type": "Link",
             "linkType": "Space",
-            "id": "7yx6ovlj39n5"
+            "id": "hw5pse7y1ojx"
           }
         },
-        "id": "1oNqBiO8UYQkOUGQgCgcsM",
+        "id": "1EHm23J1MhzuztGHxbvYu1",
         "type": "Entry",
-        "createdAt": "2018-06-12T21:50:52.206Z",
-        "updatedAt": "2018-07-16T16:57:03.298Z",
+        "createdAt": "2020-02-05T20:32:46.081Z",
+        "updatedAt": "2022-04-13T19:22:53.978Z",
         "environment": {
           "sys": {
-            "id": "gburgett",
+            "id": "dev",
             "type": "Link",
             "linkType": "Environment"
           }
         },
-        "revision": 4,
+        "revision": 9,
         "contentType": {
           "sys": {
             "type": "Link",
             "linkType": "ContentType",
             "id": "page"
           }
-        }
+        },
+        "locale": "en-US"
       },
       "fields": {
-        "title": "Hotels and Parking",
-        "slug": "/conferences/yatc/hotels",
-        "sections": {
-          "en-US": [
-            {
-              "sys": {
-                "type": "Link",
-                "linkType": "Entry",
-                "id": "5olavbPVWo44KsGC8WgeCu"
-              }
+        "title": "Community Group Resources",
+        "slug": "/community/resources",
+        "breadcrumbs": "[Home](/)\n[Community Groups](/community) \nCommunity Group Resources",
+        "hideFromInternalSearch": false,
+        "sections": [
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "uslrYabrHpMpU1kdZjBNH"
             }
-          ]
-        }
+          },
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "5MMFlqb903PnZJpzOcGJBG"
+            }
+          },
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "4HpCWTqbgsNY4uX4cC1hDF"
+            }
+          },
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "7AZyIhLA88LQJC29DHefQQ"
+            }
+          },
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "kvTFITs2c7pWbsvkyoIJj"
+            }
+          },
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "4N1leczVRb8QALidzbKyN"
+            }
+          },
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "31IPPhIaqFlcE25o4KBoPk"
+            }
+          }
+        ]
       }
     }
   ],
   "includes": {
     "Entry": [
       {
+        "metadata": {
+          "tags": []
+        },
         "sys": {
           "space": {
             "sys": {
               "type": "Link",
               "linkType": "Space",
-              "id": "7yx6ovlj39n5"
+              "id": "hw5pse7y1ojx"
             }
           },
-          "id": "5olavbPVWo44KsGC8WgeCu",
+          "id": "1Z6mHDRCv6gyOc22kOucEA",
           "type": "Entry",
-          "createdAt": "2018-04-19T15:52:45.951Z",
-          "updatedAt": "2018-10-26T18:31:43.138Z",
+          "createdAt": "2018-11-09T22:06:03.865Z",
+          "updatedAt": "2020-01-20T16:53:11.950Z",
           "environment": {
             "sys": {
-              "id": "gburgett",
+              "id": "dev",
               "type": "Link",
               "linkType": "Environment"
             }
           },
-          "revision": 16,
+          "revision": 4,
           "contentType": {
             "sys": {
               "type": "Link",
               "linkType": "ContentType",
-              "id": "section-block-text"
+              "id": "formField"
             }
-          }
+          },
+          "locale": "en-US"
         },
         "fields": {
-          "internalTitle": {
-            "en-US": "MMTC - Dallas Hotels"
+          "title": "Name",
+          "inputType": "text"
+        }
+      },
+      {
+        "metadata": {
+          "tags": []
+        },
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "hw5pse7y1ojx"
+            }
           },
-          "body": {
-            "en-US": "# Hotels\nThe [Westin Park Central](http://www.westindallasparkcentral.com/) is within walking distance to the church. To make a reservation at the Westin for this conference, you can [book online](http://www.starwoodhotels.com/westin/rates/rate.html?propertyID=472&rp=SN:430499,,,&language=en_US&EM=oneclickURL_430499_SETWATWD_BOOK_WI_472_NAD).\n\nThe Residence Inn Park Central is also within walking distance to the church. To make a reservation at The Residence Inn, you can call (972) 503-1333."
+          "id": "1iIOkhD97Vm3tZUkYp7TnX",
+          "type": "Entry",
+          "createdAt": "2020-02-07T19:25:23.337Z",
+          "updatedAt": "2020-02-26T18:06:59.907Z",
+          "environment": {
+            "sys": {
+              "id": "dev",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 12,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "card"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "cardImage": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Asset",
+              "id": "4ECQbW7mRmuhswlVMTs9Qk"
+            }
+          },
+          "title": "Not in a Community Group?",
+          "description": "*Community* is our middle name.\n\n[learn about community](/community){: .btn .btn-info}",
+          "skin": "light"
+        }
+      },
+      {
+        "metadata": {
+          "tags": []
+        },
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "hw5pse7y1ojx"
+            }
+          },
+          "id": "2IvwEbBsTJou0fzHDhJKph",
+          "type": "Entry",
+          "createdAt": "2019-05-08T19:13:26.247Z",
+          "updatedAt": "2019-09-16T19:21:07.925Z",
+          "environment": {
+            "sys": {
+              "id": "dev",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "person"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "firstName": "Amy",
+          "lastName": "Stephenson",
+          "email": "astephenson@watermark.org",
+          "slug": "amy-stephenson",
+          "campus": "Dallas",
+          "onStaff": true,
+          "bio": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "5mnx6IUZdyfj3YM4FquwSg"
+            }
+          },
+          "title": "Women's Community Director",
+          "team": "Community",
+          "related": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "5oa6ZkBcEuvlsjsE9XbJFr"
+            }
+          },
+          "skin": "light",
+          "profileImage": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Asset",
+              "id": "2rYFPZLpDaZCE19IJozjIy"
+            }
+          }
+        }
+      },
+      {
+        "metadata": {
+          "tags": []
+        },
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "hw5pse7y1ojx"
+            }
+          },
+          "id": "2czg7AtDxnXJWbAdhOONg3",
+          "type": "Entry",
+          "createdAt": "2019-09-16T19:22:18.440Z",
+          "updatedAt": "2021-10-25T19:30:53.679Z",
+          "environment": {
+            "sys": {
+              "id": "dev",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 3,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "person"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "firstName": "Rachel",
+          "lastName": "Lane",
+          "email": "rlane@watermark.org",
+          "slug": "rachel-lane",
+          "campus": "Dallas",
+          "onStaff": true,
+          "bio": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "3nLTCF1jbjMm8Pl9FkeIGB"
+            }
+          },
+          "title": "Community Assistant",
+          "team": "Community Team",
+          "related": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "5oa6ZkBcEuvlsjsE9XbJFr"
+            }
+          },
+          "skin": "light",
+          "profileImage": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Asset",
+              "id": "5blzOYXNGIe7Qc6EoQBNPI"
+            }
+          }
+        }
+      },
+      {
+        "metadata": {
+          "tags": []
+        },
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "hw5pse7y1ojx"
+            }
+          },
+          "id": "2dkT9KK0587rZh8jYjRjLa",
+          "type": "Entry",
+          "createdAt": "2020-02-01T22:06:44.670Z",
+          "updatedAt": "2021-09-14T20:04:24.878Z",
+          "environment": {
+            "sys": {
+              "id": "dev",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 3,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "team"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "name": "Community Team",
+          "members": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "2IvwEbBsTJou0fzHDhJKph"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "3d9hkd5r71BCjoXjZSw6Eg"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "2czg7AtDxnXJWbAdhOONg3"
+              }
+            }
+          ],
+          "isListed": false
+        }
+      },
+      {
+        "metadata": {
+          "tags": []
+        },
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "hw5pse7y1ojx"
+            }
+          },
+          "id": "2kz9hs6wkmBceQVXQNS2CI",
+          "type": "Entry",
+          "createdAt": "2020-02-07T19:31:40.672Z",
+          "updatedAt": "2021-11-16T22:46:05.860Z",
+          "environment": {
+            "sys": {
+              "id": "dev",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 9,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "card"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "cardImage": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Asset",
+              "id": "4ECQbW7mRmuhswlVMTs9Qk"
+            }
+          },
+          "title": "Pursuing Membership?",
+          "description": "Check the Membership status page to see where you are in the process.\n\n[Check My Status](https://my.watermark.org/membershipstatus){: .btn .btn-info} \n",
+          "skin": "light"
+        }
+      },
+      {
+        "metadata": {
+          "tags": []
+        },
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "hw5pse7y1ojx"
+            }
+          },
+          "id": "31IPPhIaqFlcE25o4KBoPk",
+          "type": "Entry",
+          "createdAt": "2020-02-01T21:42:36.679Z",
+          "updatedAt": "2020-02-27T20:58:57.000Z",
+          "environment": {
+            "sys": {
+              "id": "dev",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 3,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "section-contact-form"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "internalTitle": "Community Group Resources Contact Form",
+          "text": "Contact Us",
+          "fields": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "1Z6mHDRCv6gyOc22kOucEA"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "4TiMi9USLYcc8waGE4Oucy"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "5970snRzbagMAEOGaQAiyu"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "3XDSmBGcXpdhEyE5Vuf9jA"
+              }
+            }
+          ],
+          "notificationEmail": "community@watermark.org",
+          "bookmarkTitle": "contact"
+        }
+      },
+      {
+        "metadata": {
+          "tags": []
+        },
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "hw5pse7y1ojx"
+            }
+          },
+          "id": "3XDSmBGcXpdhEyE5Vuf9jA",
+          "type": "Entry",
+          "createdAt": "2019-01-17T17:29:29.114Z",
+          "updatedAt": "2020-01-20T17:14:30.693Z",
+          "environment": {
+            "sys": {
+              "id": "dev",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 3,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "formField"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Type your question or comment...",
+          "inputType": "textarea"
+        }
+      },
+      {
+        "metadata": {
+          "tags": []
+        },
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "hw5pse7y1ojx"
+            }
+          },
+          "id": "3d9hkd5r71BCjoXjZSw6Eg",
+          "type": "Entry",
+          "createdAt": "2019-09-16T19:22:32.822Z",
+          "updatedAt": "2022-04-07T14:25:37.550Z",
+          "environment": {
+            "sys": {
+              "id": "dev",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 5,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "person"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "firstName": "Scott",
+          "lastName": "Michael",
+          "email": "smichael@watermark.org",
+          "slug": "scott-michael",
+          "campus": "Dallas",
+          "onStaff": true,
+          "bio": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "4C7fLCODw6gkt0IFZs7p65"
+            }
+          },
+          "title": "Married Community Director",
+          "team": "Community Team",
+          "related": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "5oa6ZkBcEuvlsjsE9XbJFr"
+            }
+          },
+          "skin": "light",
+          "profileImage": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Asset",
+              "id": "2IruK1vH8q1q9bc1CFUFkJ"
+            }
+          }
+        }
+      },
+      {
+        "metadata": {
+          "tags": []
+        },
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "hw5pse7y1ojx"
+            }
+          },
+          "id": "4HpCWTqbgsNY4uX4cC1hDF",
+          "type": "Entry",
+          "createdAt": "2020-02-01T21:09:35.422Z",
+          "updatedAt": "2022-04-13T19:22:51.050Z",
+          "environment": {
+            "sys": {
+              "id": "dev",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 8,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "section-resources"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "header": "## Community Group Studies\n\nUse one of the studies below, or sign up your community group for [Online Equipping courses](/ministries/equipping-online-courses/community-group-registration).",
+          "resources": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Asset",
+                "id": "3BpyEQETkc4TR6sCa1dEOO"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Asset",
+                "id": "1uB6b91OxUU64Dnun8rDQb"
+              }
+            }
+          ],
+          "bookmarkTitle": "group-studies"
+        }
+      },
+      {
+        "metadata": {
+          "tags": []
+        },
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "hw5pse7y1ojx"
+            }
+          },
+          "id": "4N1leczVRb8QALidzbKyN",
+          "type": "Entry",
+          "createdAt": "2020-02-01T22:07:16.532Z",
+          "updatedAt": "2021-03-08T23:39:41.800Z",
+          "environment": {
+            "sys": {
+              "id": "dev",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 3,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "section-team-preview"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Community Team",
+          "team": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "2dkT9KK0587rZh8jYjRjLa"
+            }
+          },
+          "bookmarkTitle": "team",
+          "view": "Preview"
+        }
+      },
+      {
+        "metadata": {
+          "tags": []
+        },
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "hw5pse7y1ojx"
+            }
+          },
+          "id": "4TiMi9USLYcc8waGE4Oucy",
+          "type": "Entry",
+          "createdAt": "2018-11-09T22:06:54.318Z",
+          "updatedAt": "2020-01-20T16:58:46.190Z",
+          "environment": {
+            "sys": {
+              "id": "dev",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "formField"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Email",
+          "inputType": "email"
+        }
+      },
+      {
+        "metadata": {
+          "tags": []
+        },
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "hw5pse7y1ojx"
+            }
+          },
+          "id": "5970snRzbagMAEOGaQAiyu",
+          "type": "Entry",
+          "createdAt": "2018-11-09T22:06:45.252Z",
+          "updatedAt": "2020-01-20T16:59:53.079Z",
+          "environment": {
+            "sys": {
+              "id": "dev",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 3,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "formField"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Phone",
+          "inputType": "tel"
+        }
+      },
+      {
+        "metadata": {
+          "tags": []
+        },
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "hw5pse7y1ojx"
+            }
+          },
+          "id": "5MMFlqb903PnZJpzOcGJBG",
+          "type": "Entry",
+          "createdAt": "2020-02-07T19:39:32.674Z",
+          "updatedAt": "2020-02-07T19:43:36.766Z",
+          "environment": {
+            "sys": {
+              "id": "dev",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 3,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "section-card-deck"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Community and Membership",
+          "cards": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "1iIOkhD97Vm3tZUkYp7TnX"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "6mzLdFuvRkvaXMYkGyz73b"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "2kz9hs6wkmBceQVXQNS2CI"
+              }
+            }
+          ],
+          "view": "horizontal",
+          "skin": "light"
+        }
+      },
+      {
+        "metadata": {
+          "tags": []
+        },
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "hw5pse7y1ojx"
+            }
+          },
+          "id": "6mzLdFuvRkvaXMYkGyz73b",
+          "type": "Entry",
+          "createdAt": "2020-02-07T19:27:11.843Z",
+          "updatedAt": "2021-11-16T22:45:41.111Z",
+          "environment": {
+            "sys": {
+              "id": "dev",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 9,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "card"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "cardImage": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Asset",
+              "id": "4ECQbW7mRmuhswlVMTs9Qk"
+            }
+          },
+          "title": "Community is Part of Membership",
+          "description": "Joining a community group is Step 4 in the Membership process.\n\n[learn about membership](/membership){: .btn .btn-info} ",
+          "skin": "light"
+        }
+      },
+      {
+        "metadata": {
+          "tags": []
+        },
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "hw5pse7y1ojx"
+            }
+          },
+          "id": "7AZyIhLA88LQJC29DHefQQ",
+          "type": "Entry",
+          "createdAt": "2020-02-01T21:13:50.680Z",
+          "updatedAt": "2021-03-31T22:07:47.394Z",
+          "environment": {
+            "sys": {
+              "id": "dev",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 8,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "section-resources"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "header": "## Community Group Tools",
+          "resources": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Asset",
+                "id": "6x38BEd9m81Q0PMvqOwen3"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Asset",
+                "id": "4WIBIJuQRQlIZ4BKE1AvX3"
+              }
+            }
+          ],
+          "bookmarkTitle": "tools"
+        }
+      },
+      {
+        "metadata": {
+          "tags": []
+        },
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "hw5pse7y1ojx"
+            }
+          },
+          "id": "kvTFITs2c7pWbsvkyoIJj",
+          "type": "Entry",
+          "createdAt": "2020-02-01T21:22:46.608Z",
+          "updatedAt": "2022-03-14T15:16:24.120Z",
+          "environment": {
+            "sys": {
+              "id": "dev",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 6,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "section-resources"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "header": "## Community Group Best Practices/How To",
+          "resources": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Asset",
+                "id": "7vKqNgjSXiwiuPWiHiLi4s"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Asset",
+                "id": "3YnZBaPI9TwUgAVRwsXgNm"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Asset",
+                "id": "493s91UmqXcclzx1gh8uFH"
+              }
+            }
+          ],
+          "bookmarkTitle": "best-practices"
+        }
+      },
+      {
+        "metadata": {
+          "tags": []
+        },
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "hw5pse7y1ojx"
+            }
+          },
+          "id": "uslrYabrHpMpU1kdZjBNH",
+          "type": "Entry",
+          "createdAt": "2020-02-01T20:49:52.517Z",
+          "updatedAt": "2020-02-07T19:09:38.347Z",
+          "environment": {
+            "sys": {
+              "id": "dev",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 4,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "section-hero"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Community Group Resources",
+          "summary": "Here are community group resources to equip your group to be and make disciples. Not sure where to start? Check out our [Six Community Core Values videos](#together-01)."
+        }
+      }
+    ],
+    "Asset": [
+      {
+        "metadata": {
+          "tags": []
+        },
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "hw5pse7y1ojx"
+            }
+          },
+          "id": "1uB6b91OxUU64Dnun8rDQb",
+          "type": "Asset",
+          "createdAt": "2021-03-31T22:08:17.278Z",
+          "updatedAt": "2022-03-21T15:53:33.118Z",
+          "environment": {
+            "sys": {
+              "id": "dev",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Community Group Launch Curriculum",
+          "file": {
+            "url": "//assets.ctfassets.net/hw5pse7y1ojx/1uB6b91OxUU64Dnun8rDQb/b71749de9c034d534da246cc7be616d0/CG_Launch_Curriculum.pdf",
+            "details": {
+              "size": 4261489
+            },
+            "fileName": "CG Launch Curriculum.pdf",
+            "contentType": "application/pdf"
+          }
+        }
+      },
+      {
+        "metadata": {
+          "tags": []
+        },
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "hw5pse7y1ojx"
+            }
+          },
+          "id": "2IruK1vH8q1q9bc1CFUFkJ",
+          "type": "Asset",
+          "createdAt": "2020-04-03T15:02:37.048Z",
+          "updatedAt": "2022-02-07T15:21:53.643Z",
+          "environment": {
+            "sys": {
+              "id": "dev",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "S Michael",
+          "file": {
+            "url": "//images.ctfassets.net/hw5pse7y1ojx/2IruK1vH8q1q9bc1CFUFkJ/1b6dc22081bd32c76d20df56c819fdf3/Scott_Michael_20200218_WCC_Staff_000719.jpg",
+            "details": {
+              "size": 198457,
+              "image": {
+                "width": 1080,
+                "height": 1080
+              }
+            },
+            "fileName": "Scott Michael 20200218_WCC_Staff_000719.jpg",
+            "contentType": "image/jpeg"
+          }
+        }
+      },
+      {
+        "metadata": {
+          "tags": []
+        },
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "hw5pse7y1ojx"
+            }
+          },
+          "id": "2rYFPZLpDaZCE19IJozjIy",
+          "type": "Asset",
+          "createdAt": "2019-05-08T19:08:20.415Z",
+          "updatedAt": "2019-05-08T19:08:20.415Z",
+          "environment": {
+            "sys": {
+              "id": "dev",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "20180807-3",
+          "file": {
+            "url": "//images.ctfassets.net/hw5pse7y1ojx/2rYFPZLpDaZCE19IJozjIy/1ede5dddac28a9157facb09381eca98f/20180807-3.jpg",
+            "details": {
+              "size": 2091968,
+              "image": {
+                "width": 3121,
+                "height": 3121
+              }
+            },
+            "fileName": "20180807-3.jpg",
+            "contentType": "image/jpeg"
+          }
+        }
+      },
+      {
+        "metadata": {
+          "tags": []
+        },
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "hw5pse7y1ojx"
+            }
+          },
+          "id": "3BpyEQETkc4TR6sCa1dEOO",
+          "type": "Asset",
+          "createdAt": "2020-02-01T21:02:44.873Z",
+          "updatedAt": "2020-02-01T21:02:44.873Z",
+          "environment": {
+            "sys": {
+              "id": "dev",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Resolve: A 6-Week Study on Biblical Conflict Resolution",
+          "file": {
+            "url": "//assets.ctfassets.net/hw5pse7y1ojx/3BpyEQETkc4TR6sCa1dEOO/9367c3905a8a00319da8012629b5d421/Resolve_Conflict_2016_Booklet.pdf",
+            "details": {
+              "size": 476236
+            },
+            "fileName": "Resolve_Conflict_2016_Booklet.pdf",
+            "contentType": "application/pdf"
+          }
+        }
+      },
+      {
+        "metadata": {
+          "tags": []
+        },
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "hw5pse7y1ojx"
+            }
+          },
+          "id": "3YnZBaPI9TwUgAVRwsXgNm",
+          "type": "Asset",
+          "createdAt": "2020-02-01T21:20:47.090Z",
+          "updatedAt": "2020-02-01T21:20:47.090Z",
+          "environment": {
+            "sys": {
+              "id": "dev",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "How to Have Hard Conversations",
+          "file": {
+            "url": "//assets.ctfassets.net/hw5pse7y1ojx/3YnZBaPI9TwUgAVRwsXgNm/29ba48c4ed60541f064a6dfcd5bdd560/How-to-Have-Hard-Conversations.pdf",
+            "details": {
+              "size": 126656
+            },
+            "fileName": "How-to-Have-Hard-Conversations.pdf",
+            "contentType": "application/pdf"
+          }
+        }
+      },
+      {
+        "metadata": {
+          "tags": []
+        },
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "hw5pse7y1ojx"
+            }
+          },
+          "id": "493s91UmqXcclzx1gh8uFH",
+          "type": "Asset",
+          "createdAt": "2020-07-22T20:48:31.818Z",
+          "updatedAt": "2020-07-22T21:11:15.810Z",
+          "environment": {
+            "sys": {
+              "id": "dev",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Engage Missionally Discussion Guide ",
+          "file": {
+            "url": "//assets.ctfassets.net/hw5pse7y1ojx/493s91UmqXcclzx1gh8uFH/32f08c06b8469045522d563e5b200eeb/Engaged_Missonally_Community.pdf",
+            "details": {
+              "size": 552165
+            },
+            "fileName": "Engaged Missonally Community.pdf",
+            "contentType": "application/pdf"
+          }
+        }
+      },
+      {
+        "metadata": {
+          "tags": []
+        },
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "hw5pse7y1ojx"
+            }
+          },
+          "id": "4ECQbW7mRmuhswlVMTs9Qk",
+          "type": "Asset",
+          "createdAt": "2020-01-16T19:54:41.986Z",
+          "updatedAt": "2020-01-16T19:54:48.362Z",
+          "environment": {
+            "sys": {
+              "id": "dev",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "shim-card-500x1",
+          "description": " ",
+          "file": {
+            "url": "//images.ctfassets.net/hw5pse7y1ojx/4ECQbW7mRmuhswlVMTs9Qk/775b33b5f884bf654512adac31ebe548/shim-card-500x12.png",
+            "details": {
+              "size": 194,
+              "image": {
+                "width": 500,
+                "height": 1
+              }
+            },
+            "fileName": "shim-card-500x12.png",
+            "contentType": "image/png"
+          }
+        }
+      },
+      {
+        "metadata": {
+          "tags": []
+        },
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "hw5pse7y1ojx"
+            }
+          },
+          "id": "4WIBIJuQRQlIZ4BKE1AvX3",
+          "type": "Asset",
+          "createdAt": "2021-03-31T22:07:40.820Z",
+          "updatedAt": "2021-03-31T22:07:40.821Z",
+          "environment": {
+            "sys": {
+              "id": "dev",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Guide for Sharing Life Maps",
+          "file": {
+            "url": "//assets.ctfassets.net/hw5pse7y1ojx/4WIBIJuQRQlIZ4BKE1AvX3/40d144948eb4e08f16db47cbfe07ba8d/Life_Maps.pdf",
+            "details": {
+              "size": 88178
+            },
+            "fileName": "Life Maps.pdf",
+            "contentType": "application/pdf"
+          }
+        }
+      },
+      {
+        "metadata": {
+          "tags": []
+        },
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "hw5pse7y1ojx"
+            }
+          },
+          "id": "5blzOYXNGIe7Qc6EoQBNPI",
+          "type": "Asset",
+          "createdAt": "2021-10-25T19:30:49.525Z",
+          "updatedAt": "2021-10-25T19:30:49.525Z",
+          "environment": {
+            "sys": {
+              "id": "dev",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "20210907 Headshot 1080x1080-3",
+          "description": "",
+          "file": {
+            "url": "//images.ctfassets.net/hw5pse7y1ojx/5blzOYXNGIe7Qc6EoQBNPI/652a764618c5c1b40488761d5a2eb2bb/20210907_Headshot_1080x1080-3.jpg",
+            "details": {
+              "size": 802351,
+              "image": {
+                "width": 1080,
+                "height": 1080
+              }
+            },
+            "fileName": "20210907_Headshot_1080x1080-3.jpg",
+            "contentType": "image/jpeg"
+          }
+        }
+      },
+      {
+        "metadata": {
+          "tags": []
+        },
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "hw5pse7y1ojx"
+            }
+          },
+          "id": "6x38BEd9m81Q0PMvqOwen3",
+          "type": "Asset",
+          "createdAt": "2020-02-01T21:15:11.026Z",
+          "updatedAt": "2020-02-01T21:15:11.026Z",
+          "environment": {
+            "sys": {
+              "id": "dev",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Keys to Effective Accountability",
+          "file": {
+            "url": "//assets.ctfassets.net/hw5pse7y1ojx/6x38BEd9m81Q0PMvqOwen3/d8706a6f5a84d8327c25f6a0685fdb9a/11-Keys-to-Effective-Accountability.pdf",
+            "details": {
+              "size": 105007
+            },
+            "fileName": "11-Keys-to-Effective-Accountability.pdf",
+            "contentType": "application/pdf"
+          }
+        }
+      },
+      {
+        "metadata": {
+          "tags": []
+        },
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "hw5pse7y1ojx"
+            }
+          },
+          "id": "7vKqNgjSXiwiuPWiHiLi4s",
+          "type": "Asset",
+          "createdAt": "2022-02-24T22:28:15.701Z",
+          "updatedAt": "2022-03-14T15:16:20.041Z",
+          "environment": {
+            "sys": {
+              "id": "dev",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Conflict Field Guide",
+          "description": "",
+          "file": {
+            "url": "//assets.ctfassets.net/hw5pse7y1ojx/7vKqNgjSXiwiuPWiHiLi4s/fccd5a75291524a6f31cb9b981d7abed/Conflict_Field_Guide_2021_12.pdf",
+            "details": {
+              "size": 132290
+            },
+            "fileName": "Conflict Field Guide 2021_12.pdf",
+            "contentType": "application/pdf"
           }
         }
       }

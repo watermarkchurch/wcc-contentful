@@ -397,56 +397,65 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       expect(items.count).to eq(11)
 
       page5 = items[5]
-      expect(page5.dig('sys', 'id')).to eq('MNL6HaLyWAAo4A2S2mkkk')
+      expect(page5.dig('sys', 'id')).to eq('WOy16KGdenz9uvcjOQj8B')
+
+      # depth 0
+      title = page5.dig('fields', 'title')
+      expect(title).to eq('Jobs at Watermark')
 
       # depth 1
-      header = page5.dig('fields', 'header')
-      expect(header.dig('sys', 'type')).to eq('Entry')
+      meta = page5.dig('fields', 'meta')
+      expect(meta.dig('sys', 'type')).to eq('Entry')
 
       # depth 2
-      domain_object = header.dig('fields', 'domainObject')
-      expect(domain_object.dig('sys', 'type')).to eq('Entry')
+      hero = page5.dig('fields', 'sections', 0, 'fields', 'heroImage')
+      expect(hero.dig('sys', 'type')).to eq('Asset')
+      expect(hero.dig('fields', 'title')).to eq('2020 Jobs hero web')
     end
 
     it 'stops resolving links at include depth' do
+      # NOTE: these fixtures were generated with include=3, but we set include:2 below
+      # This test indicates that the code stops resolving even if the response has the
+      # data to keep resolving further
+
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
-                         '?content_type=page&include=2&limit=5')
+                         '?content_type=page&include=1&limit=5')
         .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_1.json'))
         .then.to_raise(StandardError)
 
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
-                         '?content_type=page&include=2&limit=5&skip=5')
+                         '?content_type=page&include=1&limit=5&skip=5')
         .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_2.json'))
         .then.to_raise(StandardError)
 
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
-                         '?content_type=page&include=2&limit=5&skip=10')
+                         '?content_type=page&include=1&limit=5&skip=10')
         .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_3.json'))
         .then.to_raise(StandardError)
 
       # act
       found = adapter.find_all(content_type: 'page', options: {
         limit: 5,
-        include: 2
+        include: 1
       })
 
       # assert
       expect(found.to_enum).to be_a(Enumerator::Lazy)
       items = found.to_enum.force
-      expect(items.count).to eq(11)
-
       page5 = items[5]
-      expect(page5.dig('sys', 'id')).to eq('MNL6HaLyWAAo4A2S2mkkk')
+
+      # depth 0
+      title = page5.dig('fields', 'title')
+      expect(title).to eq('Jobs at Watermark')
 
       # depth 1
-      header = page5.dig('fields', 'header')
+      meta = page5.dig('fields', 'meta')
+      expect(meta.dig('sys', 'type')).to eq('Entry')
 
       # depth 2
-      domain_object = header.dig('fields', 'domainObject')
-
-      # depth 3
-      thumbnail = domain_object.dig('fields', 'thumbnail', 'en-US')
-      expect(thumbnail.dig('sys', 'type')).to eq('Link')
+      hero = page5.dig('fields', 'sections', 0, 'fields', 'heroImage')
+      expect(hero.dig('sys', 'type')).to eq('Link')
+      expect(hero.dig('sys', 'linkType')).to eq('Asset')
     end
 
     it 'ensures enumerator remains lazy when map applied at higher layer' do
