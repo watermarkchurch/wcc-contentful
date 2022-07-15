@@ -243,7 +243,7 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
           expect(page2).to have_been_requested.times(1)
 
           # Second pagination should not be memoized
-          expect(resp.items.map { |c| c.dig('fields', 'title', 'en-US') }.force)
+          expect(resp.items.map { |c| c.dig('fields', 'title') }.force)
             .to eq(%w[
                      goat-clip-art
                      favicon

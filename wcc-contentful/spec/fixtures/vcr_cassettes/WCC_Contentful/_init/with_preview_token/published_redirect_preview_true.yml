@@ -94,8 +94,8 @@ http_interactions:
                 "locale": "en-US"
               },
               "fields": {
-                "slug": "published-redirect"
-                "url": https://watermark.formstack.com/forms/theporch
+                "slug": "published-redirect",
+                "url": "https://watermark.formstack.com/forms/theporch"
               }
             }
           ]

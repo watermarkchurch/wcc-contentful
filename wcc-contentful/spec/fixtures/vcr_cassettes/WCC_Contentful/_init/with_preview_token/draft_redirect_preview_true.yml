@@ -94,8 +94,8 @@ http_interactions:
                 "locale": "en-US"
               },
               "fields": {
-                "slug": "draft-redirect"
-                "url": https://google.com
+                "slug": "draft-redirect",
+                "url": "https://google.com"
               }
             }
           ]
