@@ -186,9 +186,9 @@ module WCC::Contentful
 
         # Enqueues an ActiveJob job to invoke WCC::Contentful.sync! after a given amount
         # of time.
-        def sync_later!(event, wait: 10.seconds)
+        def sync_later!(up_to_id: nil, wait: 10.seconds)
           self.class.set(wait: wait)
-            .perform_later(event)
+            .perform_later(up_to_id: up_to_id)
         end
       end
     end
