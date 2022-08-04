@@ -3,22 +3,22 @@
 # This object contains all the configuration options for the `wcc-contentful` gem.
 class WCC::Contentful::Configuration
   ATTRIBUTES = %i[
-    space
     access_token
     app_url
-    management_token
-    environment
-    default_locale
-    preview_token
-    webhook_username
-    webhook_password
-    webhook_jobs
     connection
     connection_options
-    update_schema_file
-    schema_file
-    store
+    default_locale
+    environment
     instrumentation_adapter
+    management_token
+    preview_token
+    schema_file
+    space
+    store
+    update_schema_file
+    webhook_jobs
+    webhook_password
+    webhook_username
   ].freeze
 
   # (required) Sets the Contentful Space ID.
