@@ -31,14 +31,18 @@ module WCC::Contentful
       (@state&.dup || token_wrapper_factory(nil)).freeze
     end
 
-    attr_reader :store, :client
+    attr_reader :store, :client, :options
 
     def should_sync?
       store&.index?
     end
 
-    def initialize(state: nil, store: nil, client: nil, key: nil)
-      @state_key = key || "sync:#{object_id}"
+    def initialize(client: nil, store: nil, state: nil, **options)
+      @options = {
+        key: "sync:#{object_id}"
+      }.merge!(options).freeze
+
+      @state_key = @options[:key] || "sync:#{object_id}"
       @client = client || WCC::Contentful::Services.instance.client
       @mutex = Mutex.new
 
@@ -141,8 +145,12 @@ module WCC::Contentful
           return unless sync_engine&.should_sync?
 
           up_to_id = nil
-          up_to_id = event[:up_to_id] || event.dig('sys', 'id') if event
-          sync!(up_to_id: up_to_id)
+          retry_count = 0
+          if event
+            up_to_id = event[:up_to_id] || event.dig('sys', 'id')
+            retry_count = event[:retry_count] if event[:retry_count]
+          end
+          sync!(up_to_id: up_to_id, retry_count: retry_count)
         end
 
         # Calls the Contentful Sync API and updates the configured store with the returned
@@ -153,23 +161,34 @@ module WCC::Contentful
         #  If we don't find this ID in the sync data, then drop a job to try
         #  the sync again after a few minutes.
         #
-        def sync!(up_to_id: nil)
+        def sync!(up_to_id: nil, retry_count: 0)
           id_found, count = sync_engine.next(up_to_id: up_to_id)
 
           next_sync_token = sync_engine.state['token']
 
           logger.info "Synced #{count} entries.  Next sync token:\n  #{next_sync_token}"
-          logger.info "Should enqueue again? [#{!id_found}]"
-          # Passing nil to only enqueue the job 1 more time
-          sync_later!(up_to_id: nil) unless id_found
+          unless id_found
+            if retry_count >= configuration.sync_retry_limit
+              logger.error "Unable to find item with id '#{up_to_id}' on the Sync API.  " \
+                           "Abandoning after #{retry_count} retries."
+            else
+              wait = (2**retry_count) * configuration.sync_retry_wait.seconds
+              logger.info "Unable to find item with id '#{up_to_id}' on the Sync API.  " \
+                          "Retrying after #{wait.inspect} " \
+                          "(#{configuration.sync_retry_limit - retry_count} retries remaining)"
+
+              self.class.set(wait: wait)
+                .perform_later(up_to_id: up_to_id, retry_count: retry_count + 1)
+            end
+          end
           next_sync_token
         end
 
-        # Drops an ActiveJob job to invoke WCC::Contentful.sync! after a given amount
+        # Enqueues an ActiveJob job to invoke WCC::Contentful.sync! after a given amount
         # of time.
-        def sync_later!(up_to_id: nil, wait: 10.seconds)
+        def sync_later!(event, wait: 10.seconds)
           self.class.set(wait: wait)
-            .perform_later(up_to_id: up_to_id)
+            .perform_later(event)
         end
       end
     end

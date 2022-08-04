@@ -15,6 +15,8 @@ class WCC::Contentful::Configuration
     schema_file
     space
     store
+    sync_retry_limit
+    sync_retry_wait
     update_schema_file
     webhook_jobs
     webhook_password
@@ -56,6 +58,17 @@ class WCC::Contentful::Configuration
   # See the source code for WCC::Contentful::SyncEngine::Job for an example of how
   # to implement a webhook job.
   attr_accessor :webhook_jobs
+
+  # Sets the maximum number of times that the SyncEngine will retry synchronization
+  # when it detects that the Contentful CDN's cache has not been updated after a webhook.
+  # Default: 2
+  attr_accessor :sync_retry_limit
+
+  # Sets the base ActiveSupport::Duration that the SyncEngine will wait before retrying.
+  # Each subsequent retry uses an exponential backoff, so the second retry will be
+  # after (2 * sync_retry_wait), the third after (4 * sync_retry_wait), etc.
+  # Default: 2.seconds
+  attr_accessor :sync_retry_wait
 
   # Returns true if the currently configured environment is pointing at `master`.
   def master?
@@ -186,6 +199,8 @@ class WCC::Contentful::Configuration
     @schema_file = 'db/contentful-schema.json'
     @webhook_jobs = []
     @store_factory = WCC::Contentful::Store::Factory.new(self, :direct)
+    @sync_retry_limit = 3
+    @sync_retry_wait = 1.second
   end
 
   # Validates the configuration, raising ArgumentError if anything is wrong.  This
