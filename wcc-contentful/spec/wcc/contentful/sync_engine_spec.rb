@@ -317,7 +317,7 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
       configured_job = double
 
       expect(described_class).to receive(:set)
-        .with(wait: 10.minutes)
+        .with(wait: 10.seconds)
         .and_return(configured_job)
       expect(configured_job).to receive(:perform_later)
         .with(up_to_id: 'foobar')
