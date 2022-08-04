@@ -106,11 +106,11 @@ class WCC::Contentful::Configuration
   #           The block is executed in the context of a WCC::Contentful::Store::Factory.
   #           this can be used to apply middleware, etc.
   def store(*params, &block)
-    type, *params = params
-    if type
+    preset, *params = params
+    if preset
       @store_factory = WCC::Contentful::Store::Factory.new(
         self,
-        type,
+        preset,
         params
       )
     end

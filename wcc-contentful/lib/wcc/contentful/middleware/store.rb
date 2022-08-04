@@ -33,15 +33,15 @@ module WCC::Contentful::Middleware::Store
 
   def find(id, **options)
     found = store.find(id, **options)
-    return transform(found) if found && (!has_select? || select?(found))
+    return transform(found, **options) if found && (!has_select? || select?(found))
   end
 
   def find_by(options: nil, **args)
     result = store.find_by(**args.merge(options: options))
     return unless result && (!has_select? || select?(result))
 
-    result = resolve_includes(result, options[:include]) if options && options[:include]
-    transform(result)
+    result = resolve_includes(result, options[:include], options) if options && options[:include]
+    transform(result, **(options || {}))
   end
 
   def find_all(options: nil, **args)
@@ -52,20 +52,20 @@ module WCC::Contentful::Middleware::Store
     )
   end
 
-  def resolve_includes(entry, depth)
+  def resolve_includes(entry, depth, options)
     return entry unless entry && depth && depth > 0
 
     # We only care about entries (see #resolved_link?)
     WCC::Contentful::LinkVisitor.new(entry, :Entry, depth: depth).map! do |val|
-      resolve_link(val)
+      resolve_link(val, options)
     end
   end
 
-  def resolve_link(val)
+  def resolve_link(val, options)
     return val unless resolved_link?(val)
 
     if !has_select? || select?(val)
-      transform(val)
+      transform(val, **options)
     else
       # Pretend it's an unresolved link -
       # matches the behavior of a store when the link cannot be retrieved
@@ -83,7 +83,7 @@ module WCC::Contentful::Middleware::Store
 
   # The default version of `#transform` just returns the entry.
   # Override this with your own implementation.
-  def transform(entry)
+  def transform(entry, **_options)
     entry
   end
 
@@ -112,9 +112,11 @@ module WCC::Contentful::Middleware::Store
       result = wrapped_query.to_enum
       result = result.select { |x| middleware.select?(x) } if middleware.has_select?
 
-      result = result.map { |x| middleware.resolve_includes(x, options[:include]) } if options && options[:include]
+      if options && options[:include]
+        result = result.map { |x| middleware.resolve_includes(x, options[:include], options) }
+      end
 
-      result.map { |x| middleware.transform(x) }
+      result.map { |x| middleware.transform(x, **(options || {})) }
     end
 
     def apply(filter, context = nil)

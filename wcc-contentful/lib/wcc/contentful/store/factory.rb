@@ -5,6 +5,7 @@ require_relative 'memory_store'
 require_relative 'cdn_adapter'
 require_relative '../middleware/store'
 require_relative '../middleware/store/caching_middleware'
+require_relative '../middleware/store/locale_middleware'
 
 module WCC::Contentful::Store
   # This factory presents a DSL for configuring the store stack.  The store stack
@@ -46,6 +47,8 @@ module WCC::Contentful::Store
       self.middleware << [middleware, middleware_params, configure_proc]
     end
 
+    # Replaces a middleware in the chain.  The middleware to replace is selected
+    # by matching the class.
     def replace(middleware, *middleware_params, &block)
       idx = self.middleware.find_index { |m| m[0] == middleware }
       raise ArgumentError, "Middleware #{middleware} not present" if idx.nil?
@@ -54,6 +57,8 @@ module WCC::Contentful::Store
       self.middleware[idx] = [middleware, middleware_params, configure_proc]
     end
 
+    # Removes a middleware from the chain, finding it by matching the class
+    # constant.
     def unuse(middleware)
       idx = self.middleware.find_index { |m| m[0] == middleware }
       return if idx.nil?
@@ -101,6 +106,9 @@ module WCC::Contentful::Store
       store = options.shift || :memory
       store = SYNC_STORES[store]&.call(config, *options) if store.is_a?(Symbol)
       self.store = store
+
+      # Eager sync stores don't respect "locale=" param like CDN does
+      use(WCC::Contentful::Middleware::Store::LocaleMiddleware)
     end
 
     # Configures a "lazy sync" preset which caches direct lookups but hits Contentful
@@ -119,6 +127,9 @@ module WCC::Contentful::Store
 
     def preset_custom
       self.store = options.shift
+
+      # Custom stores might not respect "locale=" param like CDN does
+      use(WCC::Contentful::Middleware::Store::LocaleMiddleware)
     end
 
     private
