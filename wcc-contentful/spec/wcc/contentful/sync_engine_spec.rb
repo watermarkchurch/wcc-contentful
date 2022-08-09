@@ -21,9 +21,14 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
     )
   }
 
+  let(:configuration) {
+    WCC::Contentful::Configuration.new
+  }
+
   before do
     allow(WCC::Contentful::Services).to receive(:instance)
       .and_return(double(
+        configuration: configuration,
         store: store,
         client: client,
         sync_engine: sync_engine,
@@ -135,7 +140,7 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
     end
 
     context 'when ID given' do
-      it 'does not drop a job if the ID comes back in the sync' do
+      it 'does not enqueue a job if the ID comes back in the sync' do
         allow(client).to receive(:sync)
           .and_return(double(
             items: next_sync['items'],
@@ -150,7 +155,7 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
       end
     end
 
-    it 'Drops the job again if the ID still does not come back and told to go again' do
+    it 'Enqueues the job again if the ID still does not come back and told to go again' do
       allow(client).to receive(:sync)
         .and_return(double(
           items: next_sync['items'],
@@ -158,14 +163,55 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
         ))
 
       # expect
-      expect(job).to receive(:sync_later!)
-        .with(up_to_id: nil)
+      configured_job = double
+
+      expect(described_class).to receive(:set)
+        .with(wait: 1.second)
+        .and_return(configured_job)
+      expect(configured_job).to receive(:perform_later)
+        .with(up_to_id: 'foobar', retry_count: 1)
 
       # act
       job.sync!(up_to_id: 'foobar')
     end
 
-    it 'does not drop a job if the ID is nil' do
+    it 'Enqueues the job with exponential backoff if retry count is less than maximum' do
+      allow(client).to receive(:sync)
+        .and_return(double(
+          items: next_sync['items'],
+          next_sync_token: 'test2'
+        ))
+
+      # expect
+      configured_job = double
+
+      expect(described_class).to receive(:set)
+        .with(wait: 2.seconds)
+        .and_return(configured_job)
+      expect(configured_job).to receive(:perform_later)
+        .with(up_to_id: 'foobar', retry_count: 2)
+
+      # act
+      job.sync!(up_to_id: 'foobar', retry_count: 1)
+    end
+
+    it 'Does not reenqueue the job if retry_count is at the limit' do
+      allow(client).to receive(:sync)
+        .and_return(double(
+          items: next_sync['items'],
+          next_sync_token: 'test2'
+        ))
+
+      # expect
+      expect(ActiveJob::Base.queue_adapter).to_not receive(:enqueue)
+      expect(ActiveJob::Base.queue_adapter).to_not receive(:enqueue_at)
+      expect(described_class).to_not receive(:set)
+
+      # act
+      job.sync!(up_to_id: 'foobar', retry_count: 3)
+    end
+
+    it 'does not reenqueue a job if the ID is nil' do
       allow(client).to receive(:sync)
         .and_return(double(
           items: next_sync['items'],
@@ -174,9 +220,15 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
 
       expect(ActiveJob::Base.queue_adapter).to_not receive(:enqueue)
       expect(ActiveJob::Base.queue_adapter).to_not receive(:enqueue_at)
+      expect(described_class).to_not receive(:set)
+
+      emitted_entries = []
+      sync_engine.on('Entry') { |item| emitted_entries << item }
 
       # act
       job.sync!(up_to_id: nil)
+
+      expect(emitted_entries.count).to eq(2)
     end
 
     context 'with :lazy_cache' do
@@ -283,7 +335,7 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
     it 'calls into job.sync!' do
       expect(job)
         .to receive(:sync!)
-        .with(up_to_id: nil)
+        .with(up_to_id: nil, retry_count: 0)
 
       # act
       job.perform
@@ -292,16 +344,16 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
     it 'calls into job.sync! with explicit params' do
       expect(job)
         .to receive(:sync!)
-        .with(up_to_id: 'asdf')
+        .with(up_to_id: 'asdf', retry_count: 1)
 
       # act
-      job.perform(up_to_id: 'asdf')
+      job.perform(up_to_id: 'asdf', retry_count: 1)
     end
 
     it 'calls into job.sync! with webhook event' do
       expect(job)
         .to receive(:sync!)
-        .with(up_to_id: 'testId1')
+        .with(up_to_id: 'testId1', retry_count: 0)
 
       # act
       job.perform({
@@ -313,7 +365,7 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
   end
 
   describe 'sync_later!' do
-    it 'drops another job with the given ID in 10 minutes' do
+    it 'enqueues another job with the given ID in 10 seconds' do
       configured_job = double
 
       expect(described_class).to receive(:set)
