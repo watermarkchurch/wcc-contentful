@@ -79,6 +79,8 @@ class WCC::Contentful::SimpleClient::Cdn < WCC::Contentful::SimpleClient
   #    end
   #    storage.put('sync_token', my_sync_token)
   def sync(sync_token: nil, **query, &block)
+    return sync_old(sync_token: sync_token, **query) unless block_given?
+
     sync_token =
       if sync_token
         { sync_token: sync_token }
@@ -86,9 +88,6 @@ class WCC::Contentful::SimpleClient::Cdn < WCC::Contentful::SimpleClient
         { initial: true }
       end
     query = query.merge(sync_token)
-
-    return sync_old(query) unless block_given?
-
     resp =
       _instrument 'sync', sync_token: sync_token, query: query do
         get('sync', query)
