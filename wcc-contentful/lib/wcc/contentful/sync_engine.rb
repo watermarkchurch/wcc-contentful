@@ -76,21 +76,21 @@ module WCC::Contentful
 
       @mutex.synchronize do
         @state ||= read_state || token_wrapper_factory(nil)
-        next_sync_token = @state['token']
+        sync_token = @state['token']
 
-        sync_resp = client.sync(sync_token: next_sync_token)
-        sync_resp.items.each do |item|
-          id = item.dig('sys', 'id')
-          id_found ||= id == up_to_id
+        next_sync_token =
+          client.sync(sync_token: sync_token) do |item|
+            id = item.dig('sys', 'id')
+            id_found ||= id == up_to_id
 
-          store.index(item) if store&.index?
-          event = WCC::Contentful::Event.from_raw(item, source: self)
-          yield(event) if block_given?
-          emit_event(event)
-          all_events << event
-        end
+            store.index(item) if store&.index?
+            event = WCC::Contentful::Event.from_raw(item, source: self)
+            yield(event) if block_given?
+            emit_event(event)
+            all_events << event
+          end
 
-        @state = @state.merge('token' => sync_resp.next_sync_token)
+        @state = @state.merge('token' => next_sync_token)
         write_state
       end
 

@@ -42,10 +42,7 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
     context 'when no ID given' do
       it 'does nothing if no sync data available' do
         allow(client).to receive(:sync)
-          .and_return(double(
-            items: [],
-            next_sync_token: 'test'
-          ))
+          .and_return('test')
 
         expect(store).to receive(:index)
           .once
@@ -63,12 +60,12 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
           .with('sync:token')
           .and_return({ 'token' => 'test1' })
 
-        allow(client).to receive(:sync)
+        stub = allow(client).to receive(:sync)
           .with(sync_token: 'test1')
-          .and_return(double(
-            items: next_sync['items'],
-            next_sync_token: 'test2'
-          ))
+          .and_return('test2')
+        next_sync['items'].reduce(stub) do |s, item|
+          s.and_yield(item)
+        end
 
         items = next_sync['items']
         expect(store).to receive(:index)
@@ -81,11 +78,11 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
       end
 
       it 'emits each item returned by the sync' do
-        allow(client).to receive(:sync)
-          .and_return(double(
-            items: next_sync['items'],
-            next_sync_token: 'test2'
-          ))
+        stub = allow(client).to receive(:sync)
+          .and_return('test2')
+        next_sync['items'].reduce(stub) do |s, item|
+          s.and_yield(item)
+        end
 
         emitted_entries = []
         sync_engine.on('Entry') { |item| emitted_entries << item }
@@ -115,11 +112,11 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
       end
 
       it 'emits sync complete event' do
-        allow(client).to receive(:sync)
-          .and_return(double(
-            items: next_sync['items'],
-            next_sync_token: 'test2'
-          ))
+        stub = allow(client).to receive(:sync)
+          .and_return('test2')
+        next_sync['items'].reduce(stub) do |s, item|
+          s.and_yield(item)
+        end
 
         sync_complete_events = []
         sync_engine.on('SyncComplete') { |item| sync_complete_events << item }
@@ -141,11 +138,11 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
 
     context 'when ID given' do
       it 'does not enqueue a job if the ID comes back in the sync' do
-        allow(client).to receive(:sync)
-          .and_return(double(
-            items: next_sync['items'],
-            next_sync_token: 'test2'
-          ))
+        stub = allow(client).to receive(:sync)
+          .and_return('test2')
+        next_sync['items'].reduce(stub) do |s, item|
+          s.and_yield(item)
+        end
 
         expect(ActiveJob::Base.queue_adapter).to_not receive(:enqueue)
         expect(ActiveJob::Base.queue_adapter).to_not receive(:enqueue_at)
@@ -156,11 +153,11 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
     end
 
     it 'Enqueues the job again if the ID still does not come back and told to go again' do
-      allow(client).to receive(:sync)
-        .and_return(double(
-          items: next_sync['items'],
-          next_sync_token: 'test2'
-        ))
+      stub = allow(client).to receive(:sync)
+        .and_return('test2')
+      next_sync['items'].reduce(stub) do |s, item|
+        s.and_yield(item)
+      end
 
       # expect
       configured_job = double
@@ -176,11 +173,11 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
     end
 
     it 'Enqueues the job with exponential backoff if retry count is less than maximum' do
-      allow(client).to receive(:sync)
-        .and_return(double(
-          items: next_sync['items'],
-          next_sync_token: 'test2'
-        ))
+      stub = allow(client).to receive(:sync)
+        .and_return('test2')
+      next_sync['items'].reduce(stub) do |s, item|
+        s.and_yield(item)
+      end
 
       # expect
       configured_job = double
@@ -196,11 +193,11 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
     end
 
     it 'Does not reenqueue the job if retry_count is at the limit' do
-      allow(client).to receive(:sync)
-        .and_return(double(
-          items: next_sync['items'],
-          next_sync_token: 'test2'
-        ))
+      stub = allow(client).to receive(:sync)
+        .and_return('test2')
+      next_sync['items'].reduce(stub) do |s, item|
+        s.and_yield(item)
+      end
 
       # expect
       expect(ActiveJob::Base.queue_adapter).to_not receive(:enqueue)
@@ -212,11 +209,11 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
     end
 
     it 'does not reenqueue a job if the ID is nil' do
-      allow(client).to receive(:sync)
-        .and_return(double(
-          items: next_sync['items'],
-          next_sync_token: 'test2'
-        ))
+      stub = allow(client).to receive(:sync)
+        .and_return('test2')
+      next_sync['items'].reduce(stub) do |s, item|
+        s.and_yield(item)
+      end
 
       expect(ActiveJob::Base.queue_adapter).to_not receive(:enqueue)
       expect(ActiveJob::Base.queue_adapter).to_not receive(:enqueue_at)
@@ -245,16 +242,10 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
       it 'continues from prior sync token with CachingMiddleware' do
         allow(client).to receive(:sync)
           .with({ sync_token: nil })
-          .and_return(double(
-            items: [],
-            next_sync_token: 'test'
-          ))
+          .and_return('test')
         expect(client).to receive(:sync)
           .with({ sync_token: 'test' })
-          .and_return(double(
-            items: [],
-            next_sync_token: 'test2'
-          ))
+          .and_return('test2')
 
         # act
         synced = job.sync!
@@ -270,10 +261,7 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
 
         expect(client).to receive(:sync)
           .with({ sync_token: nil })
-          .and_return(double(
-            items: [],
-            next_sync_token: 'test'
-          ))
+          .and_return('test')
 
         # act
         synced = job.sync!
@@ -294,23 +282,24 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
         allow(store).to receive(:find)
           .with('sync:token')
           .and_return({ 'token' => 'test1' })
-        allow(client).to receive(:sync)
+
+        stub = allow(client).to receive(:sync)
           .with(sync_token: 'test1')
-          .and_return(double(
-            items: next_sync['items'],
-            next_sync_token: 'test2'
-          ))
+          .and_return('test2')
+        next_sync['items'].reduce(stub) do |s, item|
+          s.and_yield(item)
+        end
 
         # act
         job.sync!
       end
 
       it 'emits each item returned by the sync' do
-        allow(client).to receive(:sync)
-          .and_return(double(
-            items: next_sync['items'],
-            next_sync_token: 'test2'
-          ))
+        stub = allow(client).to receive(:sync)
+          .and_return('test2')
+        next_sync['items'].reduce(stub) do |s, item|
+          s.and_yield(item)
+        end
 
         emitted_entries = []
         sync_engine.on('Entry') { |item| emitted_entries << item }
