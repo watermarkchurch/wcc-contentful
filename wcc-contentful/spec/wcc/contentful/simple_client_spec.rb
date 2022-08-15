@@ -481,192 +481,190 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
           }.to instrument('rate_limit.simpleclient.contentful.wcc')
         end
       end
+    end
+  end
 
-      describe 'Cdn' do
-        subject(:client) {
-          WCC::Contentful::SimpleClient::Cdn.new(
-            access_token: contentful_access_token,
-            space: contentful_space_id,
-            connection: adapter
-          )
-        }
+  describe 'Cdn' do
+    subject(:client) {
+      WCC::Contentful::SimpleClient::Cdn.new(
+        access_token: contentful_access_token,
+        space: contentful_space_id
+      )
+    }
 
-        it 'notifies' do
-          fixture = JSON.parse(load_fixture('contentful/simple_client/entries_limit_2.json'))
-          stub_request(:get, "#{cdn_base}/entries?limit=2")
-            .to_return(body: fixture.to_json)
+    it 'notifies' do
+      fixture = JSON.parse(load_fixture('contentful/simple_client/entries_limit_2.json'))
+      stub_request(:get, "#{cdn_base}/entries?limit=2")
+        .to_return(body: fixture.to_json)
 
-          expect {
-            client.entries({ limit: 2 })
-          }.to instrument('get_http.simpleclient.contentful.wcc')
+      expect {
+        client.entries({ limit: 2 })
+      }.to instrument('get_http.simpleclient.contentful.wcc')
 
-          expect {
-            client.entries({ limit: 2 })
-          }.to instrument('entries.simpleclient.contentful.wcc')
+      expect {
+        client.entries({ limit: 2 })
+      }.to instrument('entries.simpleclient.contentful.wcc')
+    end
+
+    describe 'sync' do
+      it 'gets all sync items' do
+        stub_request(:get, "#{cdn_base}/sync?initial=true")
+          .to_return(body: load_fixture('contentful/simple_client/sync_initial.json'))
+
+        # act
+        resp = client.sync
+
+        # assert
+        resp.assert_ok!
+        items = resp.items.map { |i| i.dig('sys', 'id') }
+        expect(resp.items.count).to eq(34)
+        expect(items.sort.take(5))
+          .to eq(%w[
+                   1EjBdAgOOgAQKAggQoY2as 1IJEXB4AKEqQYEm4WuceG2 1MsOLBrDwEUAUIuMY8Ys6o
+                   1TikjmGeSIisEWoC4CwokQ 1UojJt7YoMiemCq2mGGUmQ
+                 ])
+      end
+
+      it 'pages when theres a lot of items' do
+        stub_request(:get, "#{cdn_base}/sync?initial=true")
+          .to_return(body: load_fixture('contentful/simple_client/sync_paginated_initial.json'))
+
+        sync_token = 'wonDrcKnRgcSOF4-wrDCgcKefWzCgsOxwrfCq8KOfMOdXUPCvEnChwEEO8KFwqHDj8KxwrzDmk' \
+                     'TCrsKWUwnDiFczCULDs08Pw5LDj1DCr8KQwoEVw7dBdhPDi23DrsKlwoPDkcKESGfCt8Kyw5hnDcOEwrkMOjL' \
+                     'CtsOZwqzDh8OAI3ZEW8K0fELDqMKAw73DoFo-RV_DsRVteRhXw7LDulU4worCgsOlRsOVworCtgrCpnkqTBdG' \
+                     'w6PDt8OYOcOHDw'
+        stub_request(:get, "#{cdn_base}/sync?sync_token=#{sync_token}")
+          .to_return(body: load_fixture('contentful/simple_client/sync_paginated_page_2.json'))
+
+        sync_token = 'wonDrcKnRgcSOF4-wrDCgcKefWzCgsOxwrfCq8KOfMOdXUPCvEnChwEEO8KFwqHDj8KxwrzDmk' \
+                     'TCrsKWUwnDiFczCULDs08Pw5LDj1DCr8KQwoEVw7dBdhPDi23DrsKlwoPDkcKESGfCt8Kyw5hnDcOEwrkMOjL' \
+                     'CtsOZCiV0HMKKw4rDpcKXwpXCh1vDlVMPRcOLYMKzw7HDucOFbsKSZ3pqTcONwqxXw43CssKgP8Oqw7HCqnPC' \
+                     'nsOpdXfCksO1fVfDsDM'
+        stub_request(:get, "#{cdn_base}/sync?sync_token=#{sync_token}")
+          .to_return(body: load_fixture('contentful/simple_client/sync_paginated_page_3.json'))
+
+        # act
+        resp = client.sync
+
+        # assert
+        resp.assert_ok!
+        items = resp.items.map { |i| i.dig('sys', 'id') }
+        expect(items.count).to be > 200
+      end
+
+      it 'returns next sync token' do
+        stub_request(:get, "#{cdn_base}/sync?initial=true")
+          .to_return(body: load_fixture('contentful/simple_client/sync_initial.json'))
+
+        # act
+        resp = client.sync
+
+        # assert
+        resp.assert_ok!
+        expect(resp.next_sync_token)
+          .to eq('w5ZGw6JFwqZmVcKsE8Kow4grw45QdybCpsOKdcK_ZjDCpMOFwpXDq8KRUE1Fw613K8KyA8OIwqv' \
+                 'CtDfChhbCpsO7CjfDssOKw7YtXMOnwobDjcKrw7XDjMKHw7jCq8K1wrRRwpHCqMKIwr_DoMKSwrnCqS0' \
+                 'qw47DkShzZ8K3V8KR')
+      end
+
+      it 'accepts sync token' do
+        sync_token = 'w5ZGw6JFwqZmVcKsE8Kow4grw45QdybCpsOKdcK_ZjDCpMOFwpXDq8' \
+                     'KRUE1Fw613K8KyA8OIwqvCtDfChhbCpsO7CjfDssOKw7YtXMOnwobDjcKrw7XDjMK' \
+                     'Hw7jCq8K1wrRRwpHCqMKIwr_DoMKSwrnCqS0qw47DkShzZ8K3V8KR'
+        stub_request(:get, "#{cdn_base}/sync?sync_token=#{sync_token}")
+          .to_return(body: {
+            'sys' => {
+              'type' => 'Array'
+            },
+            'items' => [],
+            nextSyncUrl: "#{cdn_base}/sync?sync_token=another-sync-token"
+          }.to_json)
+
+        # act
+        resp = client.sync(sync_token: sync_token)
+
+        # assert
+        resp.assert_ok!
+        items = resp.items.map { |i| i.dig('sys', 'id') }
+        expect(resp.items.count).to eq(0)
+        expect(items.force).to eq([])
+      end
+
+      it 'notifies' do
+        stub_request(:get, "#{cdn_base}/sync?initial=true")
+          .to_return(body: load_fixture('contentful/simple_client/sync_initial.json'))
+
+        expect {
+          client.sync
+        }.to instrument('get_http.simpleclient.contentful.wcc')
+
+        expect {
+          client.sync
+        }.to instrument('sync.simpleclient.contentful.wcc')
+      end
+    end
+  end
+
+  context 'with environment' do
+    subject(:client) {
+      WCC::Contentful::SimpleClient.new(
+        api_url: 'https://cdn.contentful.com',
+        access_token: contentful_access_token,
+        space: contentful_space_id,
+        environment: 'specs'
+      )
+    }
+
+    describe 'get' do
+      it 'gets entries with query params from environment' do
+        fixture = JSON.parse(load_fixture('contentful/simple_client/entries_limit_2.json'))
+        fixture['items'].each do |entry|
+          entry['sys']['environment'] = { 'sys' => { 'id' => 'specs' } }
         end
 
-        describe 'sync' do
-          it 'gets all sync items' do
-            stub_request(:get, "#{cdn_base}/sync?initial=true")
-              .to_return(body: load_fixture('contentful/simple_client/sync_initial.json'))
+        stub_request(:get, "#{cdn_base}/environments/specs/entries?limit=2")
+          .to_return(body: fixture.to_json)
 
-            # act
-            resp = client.sync
+        # act
+        resp = client.get('entries', { limit: 2 })
 
-            # assert
-            resp.assert_ok!
-            items = resp.items.map { |i| i.dig('sys', 'id') }
-            expect(resp.items.count).to eq(34)
-            expect(items.sort.take(5))
-              .to eq(%w[
-                       1EjBdAgOOgAQKAggQoY2as 1IJEXB4AKEqQYEm4WuceG2 1MsOLBrDwEUAUIuMY8Ys6o
-                       1TikjmGeSIisEWoC4CwokQ 1UojJt7YoMiemCq2mGGUmQ
-                     ])
-          end
-
-          it 'pages when theres a lot of items' do
-            stub_request(:get, "#{cdn_base}/sync?initial=true")
-              .to_return(body: load_fixture('contentful/simple_client/sync_paginated_initial.json'))
-
-            sync_token = 'wonDrcKnRgcSOF4-wrDCgcKefWzCgsOxwrfCq8KOfMOdXUPCvEnChwEEO8KFwqHDj8KxwrzDmk' \
-                         'TCrsKWUwnDiFczCULDs08Pw5LDj1DCr8KQwoEVw7dBdhPDi23DrsKlwoPDkcKESGfCt8Kyw5hnDcOEwrkMOjL' \
-                         'CtsOZwqzDh8OAI3ZEW8K0fELDqMKAw73DoFo-RV_DsRVteRhXw7LDulU4worCgsOlRsOVworCtgrCpnkqTBdG' \
-                         'w6PDt8OYOcOHDw'
-            stub_request(:get, "#{cdn_base}/sync?sync_token=#{sync_token}")
-              .to_return(body: load_fixture('contentful/simple_client/sync_paginated_page_2.json'))
-
-            sync_token = 'wonDrcKnRgcSOF4-wrDCgcKefWzCgsOxwrfCq8KOfMOdXUPCvEnChwEEO8KFwqHDj8KxwrzDmk' \
-                         'TCrsKWUwnDiFczCULDs08Pw5LDj1DCr8KQwoEVw7dBdhPDi23DrsKlwoPDkcKESGfCt8Kyw5hnDcOEwrkMOjL' \
-                         'CtsOZCiV0HMKKw4rDpcKXwpXCh1vDlVMPRcOLYMKzw7HDucOFbsKSZ3pqTcONwqxXw43CssKgP8Oqw7HCqnPC' \
-                         'nsOpdXfCksO1fVfDsDM'
-            stub_request(:get, "#{cdn_base}/sync?sync_token=#{sync_token}")
-              .to_return(body: load_fixture('contentful/simple_client/sync_paginated_page_3.json'))
-
-            # act
-            resp = client.sync
-
-            # assert
-            resp.assert_ok!
-            items = resp.items.map { |i| i.dig('sys', 'id') }
-            expect(items.count).to be > 200
-          end
-
-          it 'returns next sync token' do
-            stub_request(:get, "#{cdn_base}/sync?initial=true")
-              .to_return(body: load_fixture('contentful/simple_client/sync_initial.json'))
-
-            # act
-            resp = client.sync
-
-            # assert
-            resp.assert_ok!
-            expect(resp.next_sync_token)
-              .to eq('w5ZGw6JFwqZmVcKsE8Kow4grw45QdybCpsOKdcK_ZjDCpMOFwpXDq8KRUE1Fw613K8KyA8OIwqv' \
-                     'CtDfChhbCpsO7CjfDssOKw7YtXMOnwobDjcKrw7XDjMKHw7jCq8K1wrRRwpHCqMKIwr_DoMKSwrnCqS0' \
-                     'qw47DkShzZ8K3V8KR')
-          end
-
-          it 'accepts sync token' do
-            sync_token = 'w5ZGw6JFwqZmVcKsE8Kow4grw45QdybCpsOKdcK_ZjDCpMOFwpXDq8' \
-                         'KRUE1Fw613K8KyA8OIwqvCtDfChhbCpsO7CjfDssOKw7YtXMOnwobDjcKrw7XDjMK' \
-                         'Hw7jCq8K1wrRRwpHCqMKIwr_DoMKSwrnCqS0qw47DkShzZ8K3V8KR'
-            stub_request(:get, "#{cdn_base}/sync?sync_token=#{sync_token}")
-              .to_return(body: {
-                'sys' => {
-                  'type' => 'Array'
-                },
-                'items' => [],
-                nextSyncUrl: "#{cdn_base}/sync?sync_token=another-sync-token"
-              }.to_json)
-
-            # act
-            resp = client.sync(sync_token: sync_token)
-
-            # assert
-            resp.assert_ok!
-            items = resp.items.map { |i| i.dig('sys', 'id') }
-            expect(resp.items.count).to eq(0)
-            expect(items.force).to eq([])
-          end
-
-          it 'notifies' do
-            stub_request(:get, "#{cdn_base}/sync?initial=true")
-              .to_return(body: load_fixture('contentful/simple_client/sync_initial.json'))
-
-            expect {
-              client.sync
-            }.to instrument('get_http.simpleclient.contentful.wcc')
-
-            expect {
-              client.sync
-            }.to instrument('sync.simpleclient.contentful.wcc')
-          end
+        # assert
+        resp.assert_ok!
+        expect(resp.status).to eq(200)
+        expect(resp.to_json['items'].map { |i| i.dig('sys', 'id') }).to eq(
+          %w[1tPGouM76soIsM2e0uikgw 1IJEXB4AKEqQYEm4WuceG2]
+        )
+        resp.to_json['items'].each do |item|
+          expect(item.dig('sys', 'environment', 'sys', 'id')).to eq('specs')
         end
       end
 
-      context 'with environment' do
-        subject(:client) {
-          WCC::Contentful::SimpleClient.new(
-            api_url: 'https://cdn.contentful.com',
-            access_token: contentful_access_token,
-            space: contentful_space_id,
-            connection: adapter,
-            environment: 'specs'
-          )
-        }
+      it 'paginates all items' do
+        stub_request(:get, "#{cdn_base}/environments/specs/entries?content_type=page&limit=5")
+          .to_return(body: load_fixture('contentful/simple_client/pages_first_page.json'))
+        stub_request(:get, "#{cdn_base}/environments/specs/entries?content_type=page&limit=5&skip=5")
+          .to_return(body: load_fixture('contentful/simple_client/pages_2nd_page.json'))
 
-        describe 'get' do
-          it 'gets entries with query params from environment' do
-            fixture = JSON.parse(load_fixture('contentful/simple_client/entries_limit_2.json'))
-            fixture['items'].each do |entry|
-              entry['sys']['environment'] = { 'sys' => { 'id' => 'specs' } }
-            end
+        # act
+        resp = client.get('entries', { content_type: 'page', limit: 5 })
 
-            stub_request(:get, "#{cdn_base}/environments/specs/entries?limit=2")
-              .to_return(body: fixture.to_json)
-
-            # act
-            resp = client.get('entries', { limit: 2 })
-
-            # assert
-            resp.assert_ok!
-            expect(resp.status).to eq(200)
-            expect(resp.to_json['items'].map { |i| i.dig('sys', 'id') }).to eq(
-              %w[1tPGouM76soIsM2e0uikgw 1IJEXB4AKEqQYEm4WuceG2]
-            )
-            resp.to_json['items'].each do |item|
-              expect(item.dig('sys', 'environment', 'sys', 'id')).to eq('specs')
-            end
+        # assert
+        resp.assert_ok!
+        items =
+          resp.items.map do |item|
+            item.dig('sys', 'id')
           end
-
-          it 'paginates all items' do
-            stub_request(:get, "#{cdn_base}/environments/specs/entries?content_type=page&limit=5")
-              .to_return(body: load_fixture('contentful/simple_client/pages_first_page.json'))
-            stub_request(:get, "#{cdn_base}/environments/specs/entries?content_type=page&limit=5&skip=5")
-              .to_return(body: load_fixture('contentful/simple_client/pages_2nd_page.json'))
-
-            # act
-            resp = client.get('entries', { content_type: 'page', limit: 5 })
-
-            # assert
-            resp.assert_ok!
-            items =
-              resp.items.map do |item|
-                item.dig('sys', 'id')
-              end
-            expect(items.force)
-              .to eq(%w[
-                       47PsST8EicKgWIWwK2AsW6
-                       1loILDsvKYkmGWoiKOOgkE
-                       1UojJt7YoMiemCq2mGGUmQ
-                       3Azc4SjWSsYIuYO8m8qqQE
-                       4lD8cHrr0QSAcY0sguqmss
-                       1tPGouM76soIsM2e0uikgw
-                       32EYWhG184SgoiYo2e6iOo
-                       JhYhSfZPAOMqsaK8cYOUK
-                     ])
-          end
-        end
+        expect(items.force)
+          .to eq(%w[
+                   47PsST8EicKgWIWwK2AsW6
+                   1loILDsvKYkmGWoiKOOgkE
+                   1UojJt7YoMiemCq2mGGUmQ
+                   3Azc4SjWSsYIuYO8m8qqQE
+                   4lD8cHrr0QSAcY0sguqmss
+                   1tPGouM76soIsM2e0uikgw
+                   32EYWhG184SgoiYo2e6iOo
+                   JhYhSfZPAOMqsaK8cYOUK
+                 ])
       end
     end
   end
