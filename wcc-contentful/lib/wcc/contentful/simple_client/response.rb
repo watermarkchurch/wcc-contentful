@@ -110,8 +110,9 @@ class WCC::Contentful::SimpleClient
   end
 
   class SyncResponse < Response
-    def initialize(response)
+    def initialize(response, memoize: false)
       super(response.client, response.request, response.raw_response)
+      @memoize = memoize
     end
 
     def next_page?
@@ -120,6 +121,7 @@ class WCC::Contentful::SimpleClient
 
     def next_page
       return unless next_page?
+      return @next_page if @next_page
 
       url = raw['nextPageUrl']
       next_page =
@@ -129,6 +131,8 @@ class WCC::Contentful::SimpleClient
 
       next_page = SyncResponse.new(next_page)
       next_page.assert_ok!
+      @next_page = next_page if @memoize
+      next_page
     end
 
     def next_sync_token

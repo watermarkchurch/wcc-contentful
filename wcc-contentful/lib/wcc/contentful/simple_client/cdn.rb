@@ -66,12 +66,19 @@ class WCC::Contentful::SimpleClient::Cdn < WCC::Contentful::SimpleClient
   end
 
   # Accesses the Sync API to get a list of items that have changed since
-  # the last sync.
+  # the last sync.  Accepts a block that receives each changed item, and returns
+  # the next sync token.
   #
   # If `sync_token` is nil, an initial sync is performed.
-  # Returns a WCC::Contentful::SimpleClient::SyncResponse
-  # which handles paging automatically.
-  def sync(sync_token: nil, **query)
+  #
+  # @return String the next sync token parsed from nextSyncUrl
+  # @example
+  #    my_sync_token = storage.get('sync_token')
+  #    my_sync_token = client.sync(sync_token: my_sync_token) do |item|
+  #      storage.put(item.dig('sys', 'id'), item) }
+  #    end
+  #    storage.put('sync_token', my_sync_token)
+  def sync(sync_token: nil, **query, &block)
     sync_token =
       if sync_token
         { sync_token: sync_token }
@@ -79,11 +86,41 @@ class WCC::Contentful::SimpleClient::Cdn < WCC::Contentful::SimpleClient
         { initial: true }
       end
     query = query.merge(sync_token)
+
+    return sync_old(query) unless block_given?
+
     resp =
       _instrument 'sync', sync_token: sync_token, query: query do
         get('sync', query)
       end
     resp = SyncResponse.new(resp)
+    resp.assert_ok!
+
+    resp.each_page do |page|
+      page.page_items.each(&block)
+      sync_token = resp.next_sync_token
+    end
+    sync_token
+  end
+
+  private
+
+  def sync_old(sync_token: nil, **query)
+    ActiveSupport::Deprecation.warn('Sync without a block is deprecated, please use new block syntax instead')
+
+    sync_token =
+      if sync_token
+        { sync_token: sync_token }
+      else
+        { initial: true }
+      end
+    query = query.merge(sync_token)
+
+    resp =
+      _instrument 'sync', sync_token: sync_token, query: query do
+        get('sync', query)
+      end
+    resp = SyncResponse.new(resp, memoize: true)
     resp.assert_ok!
   end
 end
