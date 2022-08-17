@@ -9,13 +9,15 @@ module WCC::Contentful::Store
   class MemoryStore < Base
     def initialize
       super
+
+      @mutex = Concurrent::ReentrantReadWriteLock.new
       @hash = {}
     end
 
     def set(key, value)
       value = value.deep_dup.freeze
       ensure_hash value
-      mutex.with_write_lock do
+      @mutex.with_write_lock do
         old = @hash[key]
         @hash[key] = value
         old
@@ -23,17 +25,17 @@ module WCC::Contentful::Store
     end
 
     def delete(key)
-      mutex.with_write_lock do
+      @mutex.with_write_lock do
         @hash.delete(key)
       end
     end
 
     def keys
-      mutex.with_read_lock { @hash.keys }
+      @mutex.with_read_lock { @hash.keys }
     end
 
     def find(key, **_options)
-      mutex.with_read_lock do
+      @mutex.with_read_lock do
         @hash[key]
       end
     end
@@ -45,7 +47,8 @@ module WCC::Contentful::Store
         raise ArgumentError, "Operator :#{bad_op} not supported"
       end
 
-      relation = mutex.with_read_lock { @hash.values }
+      # Since @hash.values returns a new array, we only need to lock here
+      relation = @mutex.with_read_lock { @hash.values }
 
       # relation is an enumerable that we apply conditions to in the form of
       #  Enumerable#select and Enumerable#reject.
