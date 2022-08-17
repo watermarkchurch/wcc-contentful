@@ -29,13 +29,16 @@ module WCC::Contentful::Store
 
     def set(key, value)
       ensure_hash value
+
       result =
-        @connection_pool.with do |conn|
-          conn.exec_prepared('upsert_entry', [
-                               key,
-                               value.to_json,
-                               quote_array(extract_links(value))
-                             ])
+        _instrument 'upsert_entry' do
+          @connection_pool.with do |conn|
+            conn.exec_prepared('upsert_entry', [
+                                 key,
+                                 value.to_json,
+                                 quote_array(extract_links(value))
+                               ])
+          end
         end
 
       previous_value =
@@ -58,7 +61,11 @@ module WCC::Contentful::Store
     end
 
     def keys
-      result = @connection_pool.with { |conn| conn.exec_prepared('select_ids') }
+      result =
+        _instrument 'select_ids' do
+          @connection_pool.with { |conn| conn.exec_prepared('select_ids') }
+        end
+
       arr = []
       result.each { |r| arr << r['id'].strip }
       arr
@@ -67,21 +74,24 @@ module WCC::Contentful::Store
     end
 
     def delete(key)
-      _instrument 'delete_by_id', key: key do
-        result = @connection_pool.with { |conn| conn.exec_prepared('delete_by_id', [key]) }
-        return if result.num_tuples == 0
+      result =
+        _instrument 'delete_by_id', key: key do
+          @connection_pool.with { |conn| conn.exec_prepared('delete_by_id', [key]) }
+        end
 
-        JSON.parse(result.getvalue(0, 1))
-      end
+      return if result.num_tuples == 0
+
+      JSON.parse(result.getvalue(0, 1))
     end
 
     def find(key, **_options)
-      _instrument 'select_entry', key: key do
-        result = @connection_pool.with { |conn| conn.exec_prepared('select_entry', [key]) }
-        return if result.num_tuples == 0
+      result =
+        _instrument 'select_entry', key: key do
+          @connection_pool.with { |conn| conn.exec_prepared('select_entry', [key]) }
+        end
+      return if result.num_tuples == 0
 
-        JSON.parse(result.getvalue(0, 1))
-      end
+      JSON.parse(result.getvalue(0, 1))
     rescue PG::ConnectionBad
       nil
     end
