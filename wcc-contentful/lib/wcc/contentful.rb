@@ -46,9 +46,8 @@ module WCC::Contentful
     end
 
     def logger
-      return Rails.logger if defined?(Rails)
-
-      @logger ||= Logger.new($stderr)
+      ActiveSupport::Deprecation.warn('Use WCC::Contentful::Services.instance.logger instead')
+      WCC::Contentful::Services.instance.logger
     end
   end
 
@@ -90,7 +89,7 @@ module WCC::Contentful
       rescue WCC::Contentful::SimpleClient::ApiError => e
         raise InitializationError, e if configuration.update_schema_file == :always
 
-        WCC::Contentful.logger.warn("Unable to download schema from management API - #{e.message}")
+        Services.instance.logger.warn("Unable to download schema from management API - #{e.message}")
       end
     end
 
@@ -98,7 +97,7 @@ module WCC::Contentful
       begin
         JSON.parse(File.read(configuration.schema_file))['contentTypes'] if File.exist?(configuration.schema_file)
       rescue JSON::ParserError
-        WCC::Contentful.logger.warn("Schema file invalid, ignoring it: #{configuration.schema_file}")
+        Services.instance.warn("Schema file invalid, ignoring it: #{configuration.schema_file}")
         nil
       end
 
@@ -112,7 +111,7 @@ module WCC::Contentful
         content_types = client.content_types(limit: 1000).items if client
       rescue WCC::Contentful::SimpleClient::ApiError => e
         # indicates bad credentials
-        WCC::Contentful.logger.warn("Unable to load content types from API - #{e.message}")
+        Services.instance.logger.warn("Unable to load content types from API - #{e.message}")
       end
     end
 
