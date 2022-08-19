@@ -295,7 +295,7 @@ RSpec.describe WCC::Contentful::Configuration do
   end
 
   describe '#logger' do
-    it 'defaults to rails logger' do
+    it 'defaults to rails logger in rails context', rails: true do
       config.store :eager_sync, :postgres, ENV.fetch('POSTGRES_CONNECTION', nil)
 
       # act
@@ -308,6 +308,20 @@ RSpec.describe WCC::Contentful::Configuration do
 
       store = middleware_stack(store).find { |s| s.is_a?(WCC::Contentful::Store::PostgresStore) }
       expect(store.logger).to eq(Rails.logger)
+    end
+
+    it 'defaults to new logger in non-rails context', rails: false do
+      config.store :eager_sync, :postgres, ENV.fetch('POSTGRES_CONNECTION', nil)
+
+      # act
+      logger = services.logger
+      store = services.store
+
+      # assert
+      expect(logger).to be_a(Logger)
+
+      store = middleware_stack(store).find { |s| s.is_a?(WCC::Contentful::Store::PostgresStore) }
+      expect(store.logger).to eq(logger)
     end
 
     it 'injects custom logger into store' do
