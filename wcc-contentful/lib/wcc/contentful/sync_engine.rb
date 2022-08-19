@@ -87,7 +87,9 @@ module WCC::Contentful
             event = WCC::Contentful::Event.from_raw(item, source: self)
             yield(event) if block_given?
             emit_event(event)
-            all_events << event
+
+            # Only keep the "sys" not the content in case we have a large space
+            all_events << WCC::Contentful::Event.from_raw(item.slice('sys'), source: self)
           end
 
         @state = @state.merge('token' => next_sync_token)
