@@ -50,30 +50,30 @@ module WCC::Contentful::Store
     # implementation calls into #set and #delete to perform the appropriate
     # operations in the store.
     def index(json)
+      # This implementation assumes that #delete and #set are individually thread-safe.
+      # No mutex is needed so long as the revisions are accurate.
       # Subclasses can override to do this in a more performant thread-safe way.
       # Example: postgres_store could do this in a stored procedure for speed
-      mutex.with_write_lock do
-        prev =
-          case type = json.dig('sys', 'type')
-          when 'DeletedEntry', 'DeletedAsset'
-            delete(json.dig('sys', 'id'))
-          else
-            set(json.dig('sys', 'id'), json)
-          end
-
-        if (prev_rev = prev&.dig('sys', 'revision')) &&
-            (next_rev = json.dig('sys', 'revision')) &&
-            (next_rev < prev_rev)
-          # Uh oh! we overwrote an entry with a prior revision.  Put the previous back.
-          return index(prev)
-        end
-
-        case type
+      prev =
+        case type = json.dig('sys', 'type')
         when 'DeletedEntry', 'DeletedAsset'
-          nil
+          delete(json.dig('sys', 'id'))
         else
-          json
+          set(json.dig('sys', 'id'), json)
         end
+
+      if (prev_rev = prev&.dig('sys', 'revision')) &&
+          (next_rev = json.dig('sys', 'revision')) &&
+          (next_rev < prev_rev)
+        # Uh oh! we overwrote an entry with a prior revision.  Put the previous back.
+        return index(prev)
+      end
+
+      case type
+      when 'DeletedEntry', 'DeletedAsset'
+        nil
+      else
+        json
       end
     end
 
@@ -107,17 +107,9 @@ module WCC::Contentful::Store
       )
     end
 
-    def initialize
-      @mutex = Concurrent::ReentrantReadWriteLock.new
-    end
-
     def ensure_hash(val)
       raise ArgumentError, 'Value must be a Hash' unless val.is_a?(Hash)
     end
-
-    private
-
-    attr_reader :mutex
   end
 end
 

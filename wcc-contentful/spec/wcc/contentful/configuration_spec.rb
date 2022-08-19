@@ -13,11 +13,14 @@ RSpec.describe WCC::Contentful::Configuration do
     end
   }
 
-  let(:services) { WCC::Contentful::Services.instance }
+  let(:services) { WCC::Contentful::Services.new(config) }
 
   before do
     allow(WCC::Contentful).to receive(:configuration)
       .and_return(config)
+
+    allow(WCC::Contentful::Services).to receive(:instance)
+      .and_return(services)
   end
 
   describe '#store' do
@@ -288,6 +291,52 @@ RSpec.describe WCC::Contentful::Configuration do
 
       # act
       WCC::Contentful::Model.find('test')
+    end
+  end
+
+  describe '#logger' do
+    it 'defaults to rails logger in rails context', rails: true do
+      config.store :eager_sync, :postgres, ENV.fetch('POSTGRES_CONNECTION', nil)
+
+      # act
+      logger = services.logger
+      store = services.store
+
+      # assert
+      expect(Rails.logger).to be_present
+      expect(logger).to eq(Rails.logger)
+
+      store = middleware_stack(store).find { |s| s.is_a?(WCC::Contentful::Store::PostgresStore) }
+      expect(store.logger).to eq(Rails.logger)
+    end
+
+    it 'defaults to new logger in non-rails context', rails: false do
+      config.store :eager_sync, :postgres, ENV.fetch('POSTGRES_CONNECTION', nil)
+
+      # act
+      logger = services.logger
+      store = services.store
+
+      # assert
+      expect(logger).to be_a(Logger)
+
+      store = middleware_stack(store).find { |s| s.is_a?(WCC::Contentful::Store::PostgresStore) }
+      expect(store.logger).to eq(logger)
+    end
+
+    it 'injects custom logger into store' do
+      custom_logger = double('custom-logger')
+      config.logger = custom_logger
+      config.store :eager_sync, :postgres, ENV.fetch('POSTGRES_CONNECTION', nil)
+
+      # act
+      logger = services.logger
+      store = services.store
+
+      # assert
+      expect(logger).to eq(custom_logger)
+      store = middleware_stack(store).find { |s| s.is_a?(WCC::Contentful::Store::PostgresStore) }
+      expect(store.logger).to eq(custom_logger)
     end
   end
 

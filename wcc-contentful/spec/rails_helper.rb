@@ -48,6 +48,13 @@ if defined?(Rails)
       super
     end
   end)
+
+  RSpec.configure do |c|
+    # skip rspec-rails spec types
+    c.before(:each, rails: false) do
+      skip 'This test is for a non-rails context'
+    end
+  end
 else
   RSpec.configure do |c|
     # skip rspec-rails spec types

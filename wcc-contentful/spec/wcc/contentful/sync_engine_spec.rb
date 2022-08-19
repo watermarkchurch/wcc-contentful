@@ -35,6 +35,9 @@ RSpec.describe 'WCC::Contentful::SyncEngine::Job', type: :job do
         instrumentation: ActiveSupport::Notifications
       ))
 
+    allow(WCC::Contentful).to receive(:configuration)
+      .and_return(configuration)
+
     described_class.instance_variable_set('@sync_engine', nil)
   end
 

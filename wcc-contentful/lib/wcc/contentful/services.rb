@@ -132,6 +132,15 @@ module WCC::Contentful
     # Allow it to be injected into a store
     alias_method :_instrumentation, :instrumentation
 
+    # Gets the configured logger, defaulting to Rails.logger in a rails context,
+    # or logging to STDERR in a non-rails context.
+    def logger
+      @logger ||=
+        configuration.logger ||
+        (Rails.logger if defined?(Rails)) ||
+        Logger.new($stderr)
+    end
+
     ##
     # This method enables simple dependency injection -
     # If the target has a setter matching the name of one of the services,

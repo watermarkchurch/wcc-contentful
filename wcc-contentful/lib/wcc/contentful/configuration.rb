@@ -10,6 +10,7 @@ class WCC::Contentful::Configuration
     default_locale
     environment
     instrumentation_adapter
+    logger
     management_token
     preview_token
     schema_file
@@ -181,6 +182,11 @@ class WCC::Contentful::Configuration
   # emit instrumentation events.  The object or module provided here must respond
   # to :instrument like ActiveSupport::Notifications.instrument
   attr_accessor :instrumentation_adapter
+
+  # Sets the logger to be used by the wcc-contentful gem, including stores.
+  # Defaults to the rails logger if in a rails context, otherwise creates a new
+  # logger that writes to STDERR.
+  attr_accessor :logger
 
   def initialize
     @access_token = ENV.fetch('CONTENTFUL_ACCESS_TOKEN', nil)
