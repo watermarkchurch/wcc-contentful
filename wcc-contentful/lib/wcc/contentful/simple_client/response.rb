@@ -110,8 +110,9 @@ class WCC::Contentful::SimpleClient
   end
 
   class SyncResponse < Response
-    def initialize(response)
+    def initialize(response, memoize: false)
       super(response.client, response.request, response.raw_response)
+      @memoize = memoize
     end
 
     def next_page?
@@ -120,6 +121,7 @@ class WCC::Contentful::SimpleClient
 
     def next_page
       return unless next_page?
+      return @next_page if @next_page
 
       url = raw['nextPageUrl']
       next_page =
@@ -129,26 +131,31 @@ class WCC::Contentful::SimpleClient
 
       next_page = SyncResponse.new(next_page)
       next_page.assert_ok!
+      @next_page = next_page if @memoize
+      next_page
     end
 
     def next_sync_token
-      # If we haven't grabbed the next page yet, then our next "sync" will be getting
-      # the next page.  We could just as easily call sync again with that token.
-      @next_page&.next_sync_token ||
-        @next_sync_token ||= SyncResponse.parse_sync_token(
-          raw['nextPageUrl'] || raw['nextSyncUrl']
-        )
+      # If we have iterated some pages, return the sync token of the final
+      # page that was iterated.  Do this without maintaining a reference to
+      # all the pages.
+      return @last_sync_token if @last_sync_token
+
+      SyncResponse.parse_sync_token(raw['nextPageUrl'] || raw['nextSyncUrl'])
     end
 
-    def each_page
-      raise ArgumentError, 'Not a collection response' unless page_items
-
-      ret = PaginatingEnumerable.new(self)
-
+    def each_page(&block)
       if block_given?
-        ret.map(&block)
+        super do |page|
+          @last_sync_token = page.next_sync_token
+
+          yield page
+        end
       else
-        ret.lazy
+        super.map do |page|
+          @last_sync_token = page.next_sync_token
+          page
+        end
       end
     end
 

@@ -15,18 +15,13 @@ RSpec.describe WCC::Contentful::Events do
         .and_return(services)
 
       allow(client).to receive(:sync)
-        .and_return(
-          double('response',
-            items: [
-              {
-                'sys' => {
-                  'id' => '1234',
-                  'type' => 'DeletedEntry'
-                }
-              }
-            ],
-            next_sync_token: 'next-token')
-        )
+        .and_yield({
+          'sys' => {
+            'id' => '1234',
+            'type' => 'DeletedEntry'
+          }
+        })
+        .and_return('next-token')
 
       subscriber = double('subscriber')
       events = []

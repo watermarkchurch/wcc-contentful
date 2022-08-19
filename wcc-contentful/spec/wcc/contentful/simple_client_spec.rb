@@ -512,17 +512,32 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
           .to_return(body: load_fixture('contentful/simple_client/sync_initial.json'))
 
         # act
-        resp = client.sync
+        items = []
+        client.sync do |item|
+          items << item.dig('sys', 'id')
+        end
 
         # assert
-        resp.assert_ok!
-        items = resp.items.map { |i| i.dig('sys', 'id') }
-        expect(resp.items.count).to eq(34)
+        expect(items.count).to eq(34)
         expect(items.sort.take(5))
           .to eq(%w[
                    1EjBdAgOOgAQKAggQoY2as 1IJEXB4AKEqQYEm4WuceG2 1MsOLBrDwEUAUIuMY8Ys6o
                    1TikjmGeSIisEWoC4CwokQ 1UojJt7YoMiemCq2mGGUmQ
                  ])
+      end
+
+      it 'returns next sync token' do
+        stub_request(:get, "#{cdn_base}/sync?initial=true")
+          .to_return(body: load_fixture('contentful/simple_client/sync_initial.json'))
+
+        # act
+        next_sync_token = client.sync {}
+
+        # assert
+        expect(next_sync_token)
+          .to eq('w5ZGw6JFwqZmVcKsE8Kow4grw45QdybCpsOKdcK_ZjDCpMOFwpXDq8KRUE1Fw613K8KyA8OIwqv' \
+                 'CtDfChhbCpsO7CjfDssOKw7YtXMOnwobDjcKrw7XDjMKHw7jCq8K1wrRRwpHCqMKIwr_DoMKSwrnCqS0' \
+                 'qw47DkShzZ8K3V8KR')
       end
 
       it 'pages when theres a lot of items' do
@@ -544,27 +559,13 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
           .to_return(body: load_fixture('contentful/simple_client/sync_paginated_page_3.json'))
 
         # act
-        resp = client.sync
+        items = []
+        client.sync do |item|
+          items << item
+        end
 
         # assert
-        resp.assert_ok!
-        items = resp.items.map { |i| i.dig('sys', 'id') }
         expect(items.count).to be > 200
-      end
-
-      it 'returns next sync token' do
-        stub_request(:get, "#{cdn_base}/sync?initial=true")
-          .to_return(body: load_fixture('contentful/simple_client/sync_initial.json'))
-
-        # act
-        resp = client.sync
-
-        # assert
-        resp.assert_ok!
-        expect(resp.next_sync_token)
-          .to eq('w5ZGw6JFwqZmVcKsE8Kow4grw45QdybCpsOKdcK_ZjDCpMOFwpXDq8KRUE1Fw613K8KyA8OIwqv' \
-                 'CtDfChhbCpsO7CjfDssOKw7YtXMOnwobDjcKrw7XDjMKHw7jCq8K1wrRRwpHCqMKIwr_DoMKSwrnCqS0' \
-                 'qw47DkShzZ8K3V8KR')
       end
 
       it 'accepts sync token' do
@@ -581,13 +582,44 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
           }.to_json)
 
         # act
-        resp = client.sync(sync_token: sync_token)
+        items = []
+        client.sync(sync_token: sync_token) do |item|
+          items << item
+        end
 
         # assert
-        resp.assert_ok!
-        items = resp.items.map { |i| i.dig('sys', 'id') }
-        expect(resp.items.count).to eq(0)
-        expect(items.force).to eq([])
+        expect(items).to eq([])
+      end
+
+      context 'with deprecated response syntax' do
+        it 'gives sync token from end of pagination' do
+          stub_request(:get, "#{cdn_base}/sync?initial=true")
+            .to_return(body: load_fixture('contentful/simple_client/sync_paginated_initial.json'))
+
+          sync_token = 'wonDrcKnRgcSOF4-wrDCgcKefWzCgsOxwrfCq8KOfMOdXUPCvEnChwEEO8KFwqHDj8KxwrzDmk' \
+                       'TCrsKWUwnDiFczCULDs08Pw5LDj1DCr8KQwoEVw7dBdhPDi23DrsKlwoPDkcKESGfCt8Kyw5hnDcOEwrkMOjL' \
+                       'CtsOZwqzDh8OAI3ZEW8K0fELDqMKAw73DoFo-RV_DsRVteRhXw7LDulU4worCgsOlRsOVworCtgrCpnkqTBdG' \
+                       'w6PDt8OYOcOHDw'
+          stub_request(:get, "#{cdn_base}/sync?sync_token=#{sync_token}")
+            .to_return(body: load_fixture('contentful/simple_client/sync_paginated_page_2.json'))
+
+          sync_token = 'wonDrcKnRgcSOF4-wrDCgcKefWzCgsOxwrfCq8KOfMOdXUPCvEnChwEEO8KFwqHDj8KxwrzDmk' \
+                       'TCrsKWUwnDiFczCULDs08Pw5LDj1DCr8KQwoEVw7dBdhPDi23DrsKlwoPDkcKESGfCt8Kyw5hnDcOEwrkMOjL' \
+                       'CtsOZCiV0HMKKw4rDpcKXwpXCh1vDlVMPRcOLYMKzw7HDucOFbsKSZ3pqTcONwqxXw43CssKgP8Oqw7HCqnPC' \
+                       'nsOpdXfCksO1fVfDsDM'
+          stub_request(:get, "#{cdn_base}/sync?sync_token=#{sync_token}")
+            .to_return(body: load_fixture('contentful/simple_client/sync_paginated_page_3.json'))
+
+          # act
+          resp = client.sync
+
+          # assert
+          resp.assert_ok!
+          resp.items.force
+          expect(resp.next_sync_token)
+            .to eq('w5ZGw6JFwqZmVcKsE8Kow4grw45QdybCrcOgWcKuXTjCjsK2H8KwLwTDuHnDr1HCiybCuBTCi8O_w4Q3wpPDg2fCtx' \
+                   '5mWcOKwrMnFmxWcjjCmDbDj8KbYMOowozCkwfDncOEYCLDtMKaRcOIw4U8w5PCijLDsiMD')
+        end
       end
 
       it 'notifies' do
@@ -595,7 +627,7 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
           .to_return(body: load_fixture('contentful/simple_client/sync_initial.json'))
 
         expect {
-          client.sync
+          client.sync {}
         }.to instrument('get_http.simpleclient.contentful.wcc')
 
         expect {
