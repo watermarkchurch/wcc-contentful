@@ -136,13 +136,19 @@ module WCC::Contentful
       # This job uses the Contentful Sync API to update the configured store with
       # the latest data from Contentful.
       class Job < ActiveJob::Base
-        include WCC::Contentful::ServiceAccessors
-
         self.queue_adapter = :async
         queue_as :default
 
+        def configuration
+          @configuration ||= WCC::Contentful.configuration
+        end
+
+        def services
+          @services ||= WCC::Contentful::Services.instance
+        end
+
         def perform(event = nil)
-          return unless sync_engine&.should_sync?
+          return unless services.sync_engine&.should_sync?
 
           up_to_id = nil
           retry_count = 0
@@ -162,9 +168,9 @@ module WCC::Contentful
         #  the sync again after a few minutes.
         #
         def sync!(up_to_id: nil, retry_count: 0)
-          id_found, count = sync_engine.next(up_to_id: up_to_id)
+          id_found, count = services.sync_engine.next(up_to_id: up_to_id)
 
-          next_sync_token = sync_engine.state['token']
+          next_sync_token = services.sync_engine.state['token']
 
           logger.info "Synced #{count} entries.  Next sync token:\n  #{next_sync_token}"
           unless id_found
