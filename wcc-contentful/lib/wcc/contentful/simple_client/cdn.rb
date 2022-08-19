@@ -88,17 +88,18 @@ class WCC::Contentful::SimpleClient::Cdn < WCC::Contentful::SimpleClient
         { initial: true }
       end
     query = query.merge(sync_token)
-    resp =
-      _instrument 'sync', sync_token: sync_token, query: query do
-        get('sync', query)
-      end
-    resp = SyncResponse.new(resp)
-    resp.assert_ok!
 
-    resp.each_page do |page|
-      page.page_items.each(&block)
-      sync_token = resp.next_sync_token
+    _instrument 'sync', sync_token: sync_token, query: query do
+      resp = get('sync', query)
+      resp = SyncResponse.new(resp)
+      resp.assert_ok!
+
+      resp.each_page do |page|
+        page.page_items.each(&block)
+        sync_token = resp.next_sync_token
+      end
     end
+
     sync_token
   end
 
