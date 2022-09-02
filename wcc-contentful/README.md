@@ -565,7 +565,10 @@ to multiple spaces within the same ruby process!  You just have to create and in
 The {WCC::Contentful::ModelAPI} concern makes this straightforward.  Start by creating your Namespace
 and including the concern:
 ```ruby
-# app/models/my_second_space.rb
+# lib/my_second_space.rb
+
+# Note: This class must be in the "lib" folder in :zeitwerk mode, otherwise Rails 6+ will unload all your constants
+# that were created in the initializer.  Your models which subclass this namespace may reside in the app/models directory.
 class MySecondSpace
   include WCC::Contentful::ModelAPI
 end
@@ -586,6 +589,11 @@ MySecondSpace.configure do |config|
   config.preview_token = ENV['SECOND_CONTENTFUL_PREVIEW_ACCESS_TOKEN']
   config.space = ENV['SECOND_CONTENTFUL_SPACE_ID']
   config.environment = ENV['CONTENTFUL_ENVIRONMENT']
+end
+
+# Ensure that models are reloaded in Rails development mode
+Rails.application.config.to_prepare do
+  MySecondSpace.reload!
 end
 ```
 
@@ -613,6 +621,22 @@ sync_engine = MySecondSpace.services.sync_engine
 ```
 Note that the above services are not accessible on {WCC::Contentful::Services.instance}
 or via the {WCC::Contentful::ServiceAccessors}.
+
+#### Important Note when using Zeitwerk with Rails 6+
+When using Rails >= 6 with `config.autoloader = :zeitwerk`, Rails will remove any models defined in `app/models` after
+initialization and then load them again when they are referenced.  If you `include WCC::Contentful::ModelAPI` in a class
+defined inside the `app` directory, this will have the effect of deleting all configuration that was set in the initializer
+as well as the constants generated from your schema.
+This will result in one of two errors:
+
+* `NameError (uninitialized constant MySecondSpace::MyContentType)`  
+    if you try to reference a subclass such as `MyContentType < MySecondSpace::MyContentType`
+* `ArgumentError (Not yet configured!)`
+    if you try to `MySecondSpace.find('xxxx')` to load an Entry or Asset
+
+The solution is to have your secondary namespace in a folder which is not in the `autoload_paths`.
+We suggest using `lib`, which will work so long as you have not added the `lib` folder to the `autoload_paths` as some
+uninformed StackOverflow answers suggest you do.
 
 ### Using a sync store with a second space
 
