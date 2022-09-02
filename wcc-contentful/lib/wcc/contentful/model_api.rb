@@ -96,7 +96,7 @@ module WCC::Contentful::ModelAPI
       loop do
         begin
           # The app may have defined a model and we haven't loaded it yet
-          const = parent.const_missing(const_name)
+          const = parent.const_get(const_name)
           return const if const && const < self
         rescue NameError => e
           raise e unless e.message =~ /uninitialized constant (.+::)*#{const_name}$/
@@ -156,7 +156,7 @@ module WCC::Contentful::ModelAPI
         const_name = klass.name
         begin
           # the const_name is fully qualified so search from root
-          const = Object.const_missing(const_name)
+          const = Object.const_get(const_name)
           register_for_content_type(content_type, klass: const) if const
         rescue NameError => e
           msg = "Error when reloading constant #{const_name} - #{e}"

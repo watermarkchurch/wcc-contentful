@@ -643,7 +643,7 @@ RSpec.describe WCC::Contentful::ModelAPI do
           }
         })
 
-      expect(TestNamespace).to receive(:const_missing).with('BlogPost') do
+      expect(TestNamespace).to receive(:const_get).with('BlogPost') do
         TestNamespace::BlogPost =
           Class.new(TestNamespace::Model::BlogPost) do
           end
@@ -671,7 +671,7 @@ RSpec.describe WCC::Contentful::ModelAPI do
         })
 
       blog_post_class = nil
-      expect(Object).to receive(:const_missing).with('BlogPost') do
+      expect(Object).to receive(:const_get).with('BlogPost') do
         blog_post_class =
           Class.new(TestNamespace::Model::BlogPost) do
           end
