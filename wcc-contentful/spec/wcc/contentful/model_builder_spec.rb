@@ -680,8 +680,9 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       expect(button).to be_a(SUB_MENU_BUTTON2)
     end
 
-    it 'loads app-defined constant using const_missing' do
-      expect(Object).to receive(:const_missing).with('MenuButton') do
+    it 'loads app-defined constant using const_get' do
+      allow(Object).to receive(:const_get).and_call_original
+      expect(Object).to receive(:const_get).with('MenuButton') do
         MenuButton =
           Class.new(WCC::Contentful::Model::MenuButton) do
           end
@@ -695,11 +696,16 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     end
 
     it 'does not use loaded class if it does not inherit WCC::Contentful::Model' do
-      expect(Object).to receive(:const_missing) do
+      allow(Object).to receive(:const_get).and_call_original
+      expect(Object).to receive(:const_get).with('MenuButton') do
         MenuButton =
           Class.new do
+            def initialize(_raw, _context = nil)
+              raise ArgumentError, 'Should not have loaded this class!'
+            end
           end
-      end.at_most(2).times
+      end
+      allow(WCC::Contentful::Model).to receive(:const_get).and_call_original
 
       # act
       button = WCC::Contentful::Model.find('5NBhDw3i2kUqSwqYok4YQO')
@@ -709,9 +715,11 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     end
 
     it 'does not use loaded class if it does not exist' do
-      expect(Object).to receive(:const_missing).with('MenuButton')
+      allow(Object).to receive(:const_get).and_call_original
+      expect(Object).to receive(:const_get).with('MenuButton')
         .and_raise(NameError, 'uninitialized constant MenuButton')
         .at_most(3).times
+      allow(WCC::Contentful::Model).to receive(:const_get).and_call_original
 
       # act
       button = WCC::Contentful::Model.find('5NBhDw3i2kUqSwqYok4YQO')
@@ -721,7 +729,8 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     end
 
     it 're-raises NameError if the class def itself raises a name error' do
-      expect(Object).to receive(:const_missing).with('MenuButton')
+      allow(Object).to receive(:const_get).and_call_original
+      expect(Object).to receive(:const_get).with('MenuButton')
         .and_raise(NameError, 'uninitialized constant FooBar')
 
       # act
@@ -743,7 +752,8 @@ RSpec.describe WCC::Contentful::ModelBuilder do
 
         # ActiveSupport removes constants and triggers to_prepare
         Object.send(:remove_const, :MyButton)
-        expect(Object).to receive(:const_missing) do |name|
+        allow(Object).to receive(:const_get).and_call_original
+        expect(Object).to receive(:const_get) do |name|
           expect(name.to_s).to eq('MyButton')
           load(file.path)
           MyButton
