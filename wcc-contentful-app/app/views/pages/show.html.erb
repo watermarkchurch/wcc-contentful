@@ -2,3 +2,6 @@
   next if section.nil? %>
   <%= render_section(section, index) %>
 <% end %>
+<% if @page.floatingCta.present? %>
+  <%= render_button(@page.floatingCta, class: 'btn-primary floating-cta d-block d-sm-none') %>
+<% end %>
