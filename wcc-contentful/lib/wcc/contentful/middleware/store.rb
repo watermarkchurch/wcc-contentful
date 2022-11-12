@@ -33,18 +33,20 @@ module WCC::Contentful::Middleware::Store
 
   def find(id, **options)
     found = store.find(id, **options)
-    return transform(found, **options) if found && (!has_select? || select?(found))
+    return transform(found, options) if found && (!has_select? || select?(found, options))
   end
 
   def find_by(options: nil, **args)
+    options ||= {}
     result = store.find_by(**args.merge(options: options))
-    return unless result && (!has_select? || select?(result))
+    return unless result && (!has_select? || select?(result, options))
 
     result = resolve_includes(result, options[:include], options) if options && options[:include]
-    transform(result, **(options || {}))
+    transform(result, options || {})
   end
 
   def find_all(options: nil, **args)
+    options ||= {}
     DelegatingQuery.new(
       store.find_all(**args.merge(options: options)),
       middleware: self,
@@ -64,8 +66,8 @@ module WCC::Contentful::Middleware::Store
   def resolve_link(val, options)
     return val unless resolved_link?(val)
 
-    if !has_select? || select?(val)
-      transform(val, **options)
+    if !has_select? || select?(val, options)
+      transform(val, options)
     else
       # Pretend it's an unresolved link -
       # matches the behavior of a store when the link cannot be retrieved
@@ -83,7 +85,7 @@ module WCC::Contentful::Middleware::Store
 
   # The default version of `#transform` just returns the entry.
   # Override this with your own implementation.
-  def transform(entry, **_options)
+  def transform(entry, _options)
     entry
   end
 
@@ -110,13 +112,13 @@ module WCC::Contentful::Middleware::Store
 
     def to_enum
       result = wrapped_query.to_enum
-      result = result.select { |x| middleware.select?(x) } if middleware.has_select?
+      result = result.select { |x| middleware.select?(x, options) } if middleware.has_select?
 
       if options && options[:include]
         result = result.map { |x| middleware.resolve_includes(x, options[:include], options) }
       end
 
-      result.map { |x| middleware.transform(x, **(options || {})) }
+      result.map { |x| middleware.transform(x, options) }
     end
 
     def apply(filter, context = nil)
@@ -152,7 +154,7 @@ module WCC::Contentful::Middleware::Store
     def initialize(wrapped_query, middleware:, options: nil, **extra)
       @wrapped_query = wrapped_query
       @middleware = middleware
-      @options = options
+      @options = options || {}
       @extra = extra
     end
   end

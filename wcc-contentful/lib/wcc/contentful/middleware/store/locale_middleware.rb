@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module WCC::Contentful::Middleware::Store
   class LocaleMiddleware
     include WCC::Contentful::Middleware::Store
