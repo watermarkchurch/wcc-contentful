@@ -124,6 +124,7 @@ module WCC::Contentful
 
       q = @query_defaults.dup
       q = q.merge(query) if query
+      q.compact!
 
       start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
       loop do

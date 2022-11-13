@@ -36,4 +36,9 @@ module WCC::Contentful
 
   class InitializationError < StandardError
   end
+
+  # Raised by {WCC::Contentful::Middleware::Store::LocaleMiddleware} when the
+  # backing store loads an entry for the wrong locale.
+  class LocaleMismatchError < StandardError
+  end
 end
