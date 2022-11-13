@@ -110,7 +110,7 @@ RSpec.describe WCC::Contentful::Middleware::Store::LocaleMiddleware do
       store.index(entry)
 
       # act
-      localized_entry = store.find('2zKTmej544IakmIqoEu0y8')
+      localized_entry = store.find('2zKTmej544IakmIqoEu0y8', locale: '*')
 
       # assert
       expect(localized_entry.dig('fields', 'title', 'es-US')).to eq('Esta es una pagina')
@@ -121,8 +121,8 @@ RSpec.describe WCC::Contentful::Middleware::Store::LocaleMiddleware do
         '3pWma8spR62aegAWAWacyA'
       )
       expect(localized_entry.dig('fields', 'hero', 'es-US', 'sys', 'id')).to eq(
-      '3pWma8spR62aegAWAWacyA'
-    )
+        '2lxKGj91eW0zXj6NuZjj4y'
+      )
     end
   end
 end

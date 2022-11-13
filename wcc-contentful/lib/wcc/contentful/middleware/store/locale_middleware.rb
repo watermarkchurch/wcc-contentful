@@ -20,13 +20,21 @@ module WCC::Contentful::Middleware::Store
     end
 
     def transform_to_star(entry)
+      if entry_locale = entry.dig('sys', 'locale')
+        # locale=* entries have a nil sys.locale
+        raise WCC::Contentful::LocaleMismatchError, "expected locale: * but was #{entry_locale}"
+      end
+
       entry
     end
 
     def transform_to_locale(entry, locale)
       # If the backing store already returned a localized entry, nothing to do
       if entry_locale = entry.dig('sys', 'locale')
-        raise WCC::Contentful::LocaleMismatchError unless entry_locale == locale
+        unless entry_locale == locale
+          raise WCC::Contentful::LocaleMismatchError,
+            "expected #{locale} but was #{entry_locale}"
+        end
 
         return entry
       end
