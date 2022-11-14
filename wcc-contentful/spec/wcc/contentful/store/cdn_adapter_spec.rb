@@ -240,6 +240,58 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       expect(found.dig('fields', 'system')).to eq('One')
     end
 
+    it 'passes through locale-specific queries' do
+      stub_request(:get, /\/entries/)
+        .with(query: {
+          'content_type' => 'sectionHero',
+          'limit' => '1',
+          'locale' => 'es-US',
+          'subtitle.es-US' => 'Esta es la página principal'
+        })
+        .to_return(body: <<~JSON)
+            {
+            "sys": {
+              "type": "Array"
+            },
+            "total": 1,
+            "skip": 0,
+            "limit": 100,
+            "items": [
+              {
+                "metadata": {
+                  "tags": []
+                },
+                "sys": {
+                  "id": "58IzCq6qGPFelU77b4R8rP",
+                  "type": "Entry",
+                  "contentType": {
+                    "sys": {
+                      "type": "Link",
+                      "linkType": "ContentType",
+                      "id": "sectionHero"
+                    }
+                  },
+                  "locale": "es-US"
+                },
+                "fields": {
+                  "title": "Homepage Hero",
+                  "subtitle": "Esta es la página principal"
+                }
+              }
+            ]
+          }
+        JSON
+
+      # act
+      found = adapter.find_by(content_type: 'sectionHero',
+        filter: { 'subtitle.es-US' => 'Esta es la página principal' },
+        options: { locale: 'es-US' })
+
+      # assert
+      expect(found).to_not be_nil
+      expect(found.dig('fields', 'subtitle')).to eq('Esta es la página principal')
+    end
+
     it 'passes query params thru to client' do
       entry_stub = make_entry('test1', 'page')
       response = double('Response',
@@ -250,7 +302,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       expect(adapter.client).to receive(:entries)
         .with({
           content_type: 'page',
-          'fields.test.en-US' => 'junk',
+          'fields.test' => 'junk',
           limit: 2,
           skip: 10,
           include: 5
@@ -330,7 +382,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
     it 'defaults to :in if given an array' do
       stub = stub_request(:get,
         "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
-        '?content_type=conference&fields.tags.en-US%5Bin%5D=a,b')
+        '?content_type=conference&fields.tags%5Bin%5D=a,b')
         .to_return(body: {
           sys: { type: 'Array' },
           total: 2,
@@ -351,7 +403,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
     it 'handles nin with array' do
       stub = stub_request(:get,
         "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
-        '?content_type=conference&fields.tags.en-US%5Bnin%5D=a,b')
+        '?content_type=conference&fields.tags%5Bnin%5D=a,b')
         .to_return(body: {
           sys: { type: 'Array' },
           total: 1,

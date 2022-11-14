@@ -183,7 +183,7 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
         .with(query: hash_including({
           include: '2',
           content_type: 'menu',
-          'fields.name.en-US' => 'Main Menu'
+          'fields.name' => 'Main Menu'
         }))
         .to_return(body: load_fixture('contentful/lazy_cache_store/query_main_menu.json'))
         .times(2)
@@ -206,7 +206,7 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
         stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
           .with(query: hash_including({
             content_type: 'menu',
-            'fields.name.en-US' => 'Main Menu'
+            'fields.name' => 'Main Menu'
           }))
           .to_return(body: load_fixture('contentful/lazy_cache_store/query_main_menu.json'))
           .times(2)
@@ -272,7 +272,7 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
         .with(query: hash_including({
           content_type: 'page',
-          'fields.slug.en-US' => '/'
+          'fields.slug' => '/'
         }))
         .to_return(body: body)
 
@@ -289,7 +289,7 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
         .with(query: hash_including({
           content_type: 'page',
-          'fields.slug.en-US' => '/'
+          'fields.slug' => '/'
         }))
         .to_return(body: body)
 
@@ -315,7 +315,7 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
         .with(query: hash_including({
           content_type: 'page',
-          'fields.slug.en-US' => '/'
+          'fields.slug' => '/'
         }))
         .to_return(body: body_hash.to_json)
 

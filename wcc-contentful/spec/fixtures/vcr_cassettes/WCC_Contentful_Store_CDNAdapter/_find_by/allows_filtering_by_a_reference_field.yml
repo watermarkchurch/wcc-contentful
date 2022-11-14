@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=menuButton&fields.link.fields.slug.en-US=/conferences&fields.link.sys.contentType.sys.id=page&limit=1
+    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=menuButton&fields.link.fields.slug=/conferences&fields.link.sys.contentType.sys.id=page&limit=1
     body:
       encoding: US-ASCII
       string: ''
