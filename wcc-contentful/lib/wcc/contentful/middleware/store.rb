@@ -42,7 +42,7 @@ module WCC::Contentful::Middleware::Store
     return unless result && (!has_select? || select?(result, options))
 
     result = resolve_includes(result, options[:include], options) if options && options[:include]
-    transform(result, options || {})
+    transform(result, options)
   end
 
   def find_all(options: nil, **args)
