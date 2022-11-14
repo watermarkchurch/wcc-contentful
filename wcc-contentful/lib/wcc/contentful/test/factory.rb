@@ -24,7 +24,7 @@ module WCC::Contentful::Test::Factory
 
       raw_value = v
       raw_value = to_raw(v, field.type) if %i[Asset Link].include?(field.type)
-      raw['fields'][field.name][raw.dig('sys', 'locale')] = raw_value
+      raw['fields'][field.name] = raw_value
     end
 
     instance = const.new(raw, context)
@@ -84,9 +84,7 @@ module WCC::Contentful::Test::Factory
   end
 
   def contentful_fields(model)
-    WCC::Contentful::Test::Attributes.defaults(model).transform_values do |v|
-      { 'en-US' => v }
-    end
+    WCC::Contentful::Test::Attributes.defaults(model)
   end
 
   def to_raw(val, field_type)

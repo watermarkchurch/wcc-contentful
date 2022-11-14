@@ -60,7 +60,7 @@ module WCC::Contentful::Test::Double
         revision: rand(100),
         locale: 'en-US'
       },
-      fields: attrs.transform_values { |v| { 'en-US' => v } }
+      fields: attrs
     }
 
     double(attrs)
