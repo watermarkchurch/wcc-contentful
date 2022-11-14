@@ -19,12 +19,16 @@ module WCC::Contentful::Middleware::Store
       end
     end
 
+    private
+
     def transform_to_star(entry)
       if entry_locale = entry.dig('sys', 'locale')
         # locale=* entries have a nil sys.locale
         raise WCC::Contentful::LocaleMismatchError, "expected locale: * but was #{entry_locale}"
       end
 
+      # Do we want to transform { 'title' => 'foobar' } into { 'title' => { 'en-US' => 'foobar' } }?
+      # Lets see if this ever actually comes up.
       entry
     end
 
@@ -46,15 +50,20 @@ module WCC::Contentful::Middleware::Store
       entry = entry.dup
       entry['sys']['locale'] = locale
       entry['fields'] =
-        entry['fields'].transform_values do |v|
-          next if v.nil?
+        entry['fields'].transform_values do |value|
+          next if value.nil?
 
           # replace the all-locales value with the localized value
-          if v[locale].nil?
-            v[default_locale]
-          else
-            v[locale]
+          l = locale
+          v = nil
+          while l
+            v = value[l]
+            break if v
+
+            l = configuration.locale_fallbacks[l]
           end
+
+          v
         end
 
       entry

@@ -14,10 +14,18 @@ RSpec.describe WCC::Contentful::DownloadsSchema do
       fixture['editorInterfaces']
     }
 
+    let(:locales) {
+      fixture = JSON.parse(load_fixture('contentful/contentful-schema-from-export.json'))
+      fixture['locales']
+    }
+
     let(:management_client) {
       client = double(
         content_types: double(
           items: content_types.deep_dup
+        ),
+        locales: double(
+          items: locales.deep_dup
         )
       )
 

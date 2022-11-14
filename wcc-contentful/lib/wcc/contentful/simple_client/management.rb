@@ -34,6 +34,22 @@ class WCC::Contentful::SimpleClient::Management < WCC::Contentful::SimpleClient
     resp.assert_ok!
   end
 
+  def locales(**query)
+    resp =
+      _instrument 'locales', query: query do
+        get('locales', query)
+      end
+    resp.assert_ok!
+  end
+
+  def locale(key, query = {})
+    resp =
+      _instrument 'locales', content_type: key, query: query do
+        get("locales/#{key}", query)
+      end
+    resp.assert_ok!
+  end
+
   def editor_interface(content_type_id, query = {})
     resp =
       _instrument 'editor_interfaces', content_type: content_type_id, query: query do

@@ -4,6 +4,9 @@ RSpec.describe WCC::Contentful::Middleware::Store::LocaleMiddleware do
   let(:config) {
     WCC::Contentful::Configuration.new.tap do |c|
       c.default_locale = 'en-US'
+      c.locale_fallbacks = {
+        'es-US' => 'en-US'
+      }
       c.store :eager_sync, :memory do
         middleware.clear
         use WCC::Contentful::Middleware::Store::LocaleMiddleware
@@ -102,6 +105,58 @@ RSpec.describe WCC::Contentful::Middleware::Store::LocaleMiddleware do
       expect(localized_entry.dig('fields', 'hero', 'sys', 'id')).to eq(
         '2lxKGj91eW0zXj6NuZjj4y'
       )
+    end
+
+    it 'falls back to defined fallbackLocale' do
+      allow(config).to receive(:locale_fallbacks)
+        .and_return({
+          'es-MX' => 'es-ES',
+          'es-ES' => 'es-US'
+        })
+
+      # add in an es-ES translation to fall back to
+      entry['fields']['title']['es-ES'] = 'Esta es es-ES'
+      store.index(entry)
+
+      # act
+      localized_entry = store.find('2zKTmej544IakmIqoEu0y8', locale: 'es-MX')
+
+      # assert
+      expect(localized_entry.dig('fields', 'title')).to eq('Esta es es-ES')
+    end
+
+    it 'continues falling back until a translation found' do
+      allow(config).to receive(:locale_fallbacks)
+        .and_return({
+          'es-MX' => 'es-ES',
+          'es-ES' => 'es-US'
+        })
+
+      # no es-ES translation, fall back to es-US
+      store.index(entry)
+
+      # act
+      localized_entry = store.find('2zKTmej544IakmIqoEu0y8', locale: 'es-MX')
+
+      # assert
+      expect(localized_entry.dig('fields', 'title')).to eq('Esta es una pagina')
+    end
+
+    it 'stops falling back if no fallback found' do
+      allow(config).to receive(:locale_fallbacks)
+        .and_return({
+          'es-MX' => 'es-ES',
+          'es-ES' => nil
+        })
+
+      # no es-ES translation, fall back to es-US
+      store.index(entry)
+
+      # act
+      localized_entry = store.find('2zKTmej544IakmIqoEu0y8', locale: 'es-MX')
+
+      # assert
+      expect(localized_entry.dig('fields', 'title')).to eq(nil)
     end
   end
 

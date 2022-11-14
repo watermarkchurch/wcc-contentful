@@ -25,7 +25,8 @@ class WCC::Contentful::DownloadsSchema
 
     File.write(@file, format_json({
       'contentTypes' => content_types,
-      'editorInterfaces' => editor_interfaces
+      'editorInterfaces' => editor_interfaces,
+      'locales' => locales
     }))
   end
 
@@ -45,8 +46,11 @@ class WCC::Contentful::DownloadsSchema
 
     existing_eis = contents['editorInterfaces'].sort_by { |i| i.dig('sys', 'contentType', 'sys', 'id') }
     return true unless editor_interfaces.count == existing_eis.count
+    return true unless deep_contains_all(editor_interfaces, existing_eis)
 
-    !deep_contains_all(editor_interfaces, existing_eis)
+    existing_locales = contents['locales'].sort_by { |i| i.dig('sys', 'contentType', 'sys', 'id') }
+    return true unless locales.count == existing_locales.count
+    return true unless deep_contains_all(locales, existing_locales)
   end
 
   def content_types
@@ -63,6 +67,14 @@ class WCC::Contentful::DownloadsSchema
         .map { |ct| @client.editor_interface(ct.dig('sys', 'id')).raw }
         .map { |i| sort_controls(strip_sys(i)) }
         .sort_by { |i| i.dig('sys', 'contentType', 'sys', 'id') }
+  end
+
+  def locales
+    @locales ||=
+      @client.locales(limit: 1000)
+        .items
+        .map { |l| strip_sys(l) }
+        .sort_by { |l| l.dig('sys', 'code') }
   end
 
   private

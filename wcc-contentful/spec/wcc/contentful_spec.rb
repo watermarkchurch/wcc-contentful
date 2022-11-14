@@ -536,5 +536,39 @@ RSpec.describe WCC::Contentful, :vcr do
         WCC::Contentful.init!
       end
     end
+
+    describe 'locales' do
+      before(:each) do
+        WCC::Contentful.configure do |config|
+          config.schema_file = path_to_fixture('contentful/simple_space_content_types.json')
+        end
+      end
+
+      it 'fills out locale fallbacks' do
+        contentful_reset!
+        WCC::Contentful.init!
+
+        expect(WCC::Contentful.configuration.locale_fallbacks).to eq({
+          'en-US' => nil,
+          'es-US' => 'en-US'
+        })
+      end
+
+      it 'does not override configured fallbacks' do
+        WCC::Contentful.configure do |config|
+          config.locale_fallbacks = {
+            'es-US' => 'es'
+          }
+        end
+
+        contentful_reset!
+        WCC::Contentful.init!
+
+        expect(WCC::Contentful.configuration.locale_fallbacks).to eq({
+          'en-US' => nil,
+          'es-US' => 'es'
+        })
+      end
+    end
   end
 end
