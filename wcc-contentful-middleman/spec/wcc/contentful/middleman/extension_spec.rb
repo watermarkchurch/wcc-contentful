@@ -41,7 +41,8 @@ RSpec.describe WCC::Contentful::Middleman::Extension do
 
       # middleman uses memory store by default to sync all content over
       store = WCC::Contentful::Services.instance.store.store
-      expect(store).to be_a WCC::Contentful::Store::MemoryStore
+      expect(store).to be_a WCC::Contentful::Middleware::Store::LocaleMiddleware
+      expect(store.store).to be_a WCC::Contentful::Store::MemoryStore
     end
 
     it 'passes block' do
