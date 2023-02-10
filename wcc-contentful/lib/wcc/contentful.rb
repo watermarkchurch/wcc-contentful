@@ -10,6 +10,7 @@ require 'wcc/contentful/configuration'
 require 'wcc/contentful/downloads_schema'
 require 'wcc/contentful/exceptions'
 require 'wcc/contentful/helpers'
+require 'wcc/contentful/entry_locale_transformer'
 require 'wcc/contentful/link_visitor'
 require 'wcc/contentful/services'
 require 'wcc/contentful/simple_client'
@@ -40,9 +41,8 @@ module WCC::Contentful
     end
 
     # Gets all queryable locales.
-    # Reserved for future use.
     def locales
-      @locales ||= { 'en-US' => {} }.freeze
+      configuration.locale_fallbacks
     end
 
     def logger
