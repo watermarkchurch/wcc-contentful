@@ -32,7 +32,7 @@ Table of Contents:
 
 ## Why did you rewrite the Contentful ruby stack?
 
-We started working with Contentful almost 3 years ago.  Since that time, Contentful's ruby stack has improved, but there are still a number of pain points that we feel we have addressed better with our gem.  These are:
+We started working with Contentful almost 5 years ago.  Since that time, Contentful's ruby stack has improved, but there are still a number of pain points that we feel we have addressed better with our gem.  These are:
 
 * [Low-level caching](#low-level-caching)
 * [Better integration with Rails & Rails models](#better-rails-integration)
@@ -160,22 +160,34 @@ The following examples show how to use this API to find entries of the `page`
 content type:
 
 ```ruby
+# app/models/page.rb
+class Page < WCC::Contentful::Model::Page
+
+  # You can add additional methods here
+end
+
 # Find objects by id
-WCC::Contentful::Model::Page.find('1E2ucWSdacxxf233sfa3')
-# => #<WCC::Contentful::Model::Page:0x0000000005c71a78 @created_at=2018-04-16 18:41:17 UTC...>
+Page.find('1E2ucWSdacxxf233sfa3')
+# => #<Page:0x0000000005c71a78 @created_at=2018-04-16 18:41:17 UTC...>
 
 # Find objects by field
-WCC::Contentful::Model::Page.find_by(slug: '/some-slug')
-# => #<WCC::Contentful::Model::Page:0x0000000005c71a78 @created_at=2018-04-16 18:41:17 UTC...>
+Page.find_by(slug: '/some-slug')
+# => #<Page:0x0000000005c71a78 @created_at=2018-04-16 18:41:17 UTC...>
 
 # Use operators to filter by a field
 # must use full notation for sys attributes (except ID)
-WCC::Contentful::Model::Page.find_all('sys.created_at' => { lte: Date.today })
-# => [#<WCC::Contentful::Model::Page:0x0000000005c71a78 @created_at=2018-04-16 18:41:17 UTC...>, ... ]
+Page.find_all('sys.created_at' => { lte: Date.today })
+# => [#<Page:0x0000000005c71a78 @created_at=2018-04-16 18:41:17 UTC...>, ... ]
 
 # Nest queries to mimick joins
-WCC::Contentful::Model::Page.find_by(subpages: { slug: '/some-slug' })
-# => #<WCC::Contentful::Model::Page:0x0000000005c71a78 @created_at=2018-04-16 18:41:17 UTC...>
+Page.find_by(subpages: { slug: '/some-slug' })
+# => #<Page:0x0000000005c71a78 @created_at=2018-04-16 18:41:17 UTC...>
+
+# Fetch an entry in a different locale
+spanish_homepage = Page.find_by(slug: '/', options: { locale: 'es-US' })
+# => #<Page:0x0000000005c71a78 @created_at=2018-04-16 18:41:17 UTC...>
+spanish_homepage.title
+# => Esta es la página principal
 
 # Pass the preview flag to use the preview client (must have set preview_token config param)
 preview_redirect = WCC::Contentful::Model::Redirect.find_by({ slug: 'draft-redirect' }, preview: true)
