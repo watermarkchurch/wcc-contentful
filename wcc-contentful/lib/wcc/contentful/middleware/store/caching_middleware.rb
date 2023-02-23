@@ -22,22 +22,33 @@ module WCC::Contentful::Middleware::Store
           # Store a nil object if we can't find the object on the CDN.
           (store.find(key, **options) || nil_obj(key)) if key =~ /^\w+$/
         end
-      _instrument(event, key: key, options: options)
 
-      case found.try(:dig, 'sys', 'type')
-      when 'Nil', 'DeletedEntry', 'DeletedAsset'
-        nil
-      else
-        found
+      return found unless found.respond_to?(:dig)
+      return if %w[Nil DeletedEntry DeletedAsset].include?(found.dig('sys', 'type'))
+
+      # If what we found in the cache is for the wrong Locale, go hit the store directly.
+      # Now that the one locale is in the cache, when we index next time we'll index the
+      # all-locales version and we'll be fine.
+      if options[:locale] && found.dig('sys', 'locale') != options[:locale]
+        event = 'miss'
+        return store.find(key, **options)
       end
+
+      found
+    ensure
+      _instrument(event, key: key, options: options)
     end
 
     # TODO: https://github.com/watermarkchurch/wcc-contentful/issues/18
     #  figure out how to cache the results of a find_by query, ex:
     #  `find_by('slug' => '/about')`
     def find_by(content_type:, filter: nil, options: nil)
-      if filter&.keys == ['sys.id'] && found = @cache.read(filter['sys.id'])
-        return found
+      options ||= {}
+      if filter&.keys == ['sys.id']
+        # This is equivalent to a find, usually this is done by the resolver to
+        # try to include deeper relationships.  Since we already have this object,
+        # don't hit the API again.
+        return find(filter['sys.id'], options)
       end
 
       store.find_by(content_type: content_type, filter: filter, options: options)

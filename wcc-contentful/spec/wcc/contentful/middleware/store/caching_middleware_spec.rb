@@ -220,11 +220,8 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
   end
 
   describe '#find_by' do
-    let(:body) { load_fixture('contentful/lazy_cache_store/homepage_include_2.json') }
-    let(:body_hash) { JSON.parse(body) }
-    let(:page) { body_hash.dig('items', 0) }
-
     it 'returns a cached entry if looking up by sys.id' do
+      page = JSON.parse(load_fixture('contentful/lazy_cache_store/homepage_include_2.json')).dig('items', 0)
       cache.write(page.dig('sys', 'id'), page)
 
       # act
@@ -235,12 +232,11 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
     end
 
     it 'falls back to a query if sys.id does not exist in cache' do
-      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
-        .with(query: hash_including({
-          content_type: 'page',
-          'sys.id' => page.dig('sys', 'id')
-        }))
-        .to_return(body: body)
+      fixture = load_fixture('contentful/lazy_cache_store/page_about.json')
+      page = JSON.parse(fixture)
+
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries/#{page.dig('sys', 'id')}")
+        .to_return(body: fixture)
 
       # act
       queried_page = store.find_by(content_type: 'page', filter: { 'sys.id' => page.dig('sys', 'id') })
@@ -250,14 +246,13 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
     end
 
     it 'stores returned object in cache' do
+      fixture = load_fixture('contentful/lazy_cache_store/page_about.json')
+      page = JSON.parse(fixture)
+
       id = page.dig('sys', 'id')
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries/#{id}")
         .to_return(body: page.to_json)
-      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
-        .with(query: hash_including({
-          content_type: 'page',
-          'sys.id' => id
-        })).to_raise('Should not hit the API a second time!')
+        .then.to_raise('Should not hit the API a second time!')
 
       # act
       # store it in the cache and then query again
@@ -269,6 +264,9 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
     end
 
     it 'issues a query if looking up by any other field' do
+      body = load_fixture('contentful/lazy_cache_store/homepage_include_2.json')
+      page = JSON.parse(body).dig('items', 0)
+
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
         .with(query: hash_including({
           content_type: 'page',
@@ -286,6 +284,9 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
     end
 
     it 'grabs included values when include parameter supplied' do
+      body = load_fixture('contentful/lazy_cache_store/homepage_include_2.json')
+      _page = JSON.parse(body).dig('items', 0)
+
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
         .with(query: hash_including({
           content_type: 'page',
@@ -307,6 +308,10 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
     end
 
     it 'does not resolve a missing link' do
+      body = load_fixture('contentful/lazy_cache_store/homepage_include_2.json')
+      body_hash = JSON.parse(body)
+      page = body_hash.dig('items', 0)
+
       # Delete the section from the includes array - simulates it being unpublished
       section0_id = page.dig('fields', 'sections', 'en-US', 0, 'sys', 'id')
       includes_arr = body_hash.dig('includes', 'Entry')
@@ -329,6 +334,91 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
       expect(section0.dig('sys', 'type')).to eq('Link')
       section1 = queried_page.dig('fields', 'sections', 'en-US', 1)
       expect(section1.dig('sys', 'type')).to eq('Entry')
+    end
+
+    it 'maintains separate cache per locale' do
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries/58IzCq6qGPFelU77b4R8rP")
+        .to_return(body: <<~JSON)
+          {
+            "sys": {
+              "space": {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Space",
+                  "id": "4gyidsb2jx1u"
+                }
+              },
+              "id": "58IzCq6qGPFelU77b4R8rP",
+              "type": "Entry",
+              "contentType": {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "ContentType",
+                  "id": "sectionHero"
+                }
+              },
+              "locale": "en-US"
+            },
+            "fields": {
+              "title": "Homepage Hero",
+              "subtitle": "This is the Homepage",
+              "heroImage": {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Asset",
+                  "id": "5NlJ0zsfx7ugCgZoPNDDf2"
+                }
+              }
+            }
+          }
+        JSON
+
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries/58IzCq6qGPFelU77b4R8rP?locale=es-US")
+        .to_return(body: <<~JSON)
+          {
+            "sys": {
+              "space": {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Space",
+                  "id": "4gyidsb2jx1u"
+                }
+              },
+              "id": "58IzCq6qGPFelU77b4R8rP",
+              "type": "Entry",
+              "contentType": {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "ContentType",
+                  "id": "sectionHero"
+                }
+              },
+              "locale": "es-US"
+            },
+            "fields": {
+              "title": "Homepage Hero",
+              "subtitle": "Esta es la página principal",
+              "heroImage": {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Asset",
+                  "id": "5NlJ0zsfx7ugCgZoPNDDf2"
+                }
+              }
+            }
+          }
+        JSON
+
+      # prime the cache with the en-US entry
+      store.find('58IzCq6qGPFelU77b4R8rP')
+
+      # act
+      page = store.find('58IzCq6qGPFelU77b4R8rP', locale: 'es-US')
+
+      # assert
+      expect(page.dig('fields', 'subtitle')).to eq(
+        'Esta es la página principal'
+      )
     end
   end
 
