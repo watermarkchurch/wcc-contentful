@@ -15,12 +15,26 @@ module WCC::Contentful::EntryLocaleTransformer
   # Takes an entry which represents a specific 'sys.locale' and transforms it
   # to the 'locale=*' format
   def transform_to_star(entry)
-    if entry_locale = entry.dig('sys', 'locale')
-      # locale=* entries have a nil sys.locale
-      raise WCC::Contentful::LocaleMismatchError, "expected locale: * but was #{entry_locale}"
+    # locale=* entries have a nil sys.locale
+    unless entry_locale = entry.dig('sys', 'locale')
+      # nothing to do
+      return entry
     end
 
-    raise NotImplementedError, 'TODO'
+    sys = entry['sys'].except('locale').merge({
+      'WCC::Contentful::EntryLocaleTransformer:locales_included' => [entry_locale]
+    })
+    fields =
+      entry['fields'].transform_values do |value|
+        h = {}
+        h[entry_locale] = value
+        h
+      end
+
+    {
+      'sys' => sys,
+      'fields' => fields
+    }
   end
 
   ##
@@ -81,7 +95,7 @@ module WCC::Contentful::EntryLocaleTransformer
 
     entry['fields'].each do |key, value|
       memo_field = memo['fields'][key] ||= {}
-      memo_field[entry_locale] = value.dup
+      memo_field[entry_locale] = value
     end
 
     memo

@@ -134,7 +134,7 @@ RSpec.describe WCC::Contentful::EntryLocaleTransformer do
     end
   end
 
-  describe 'reduce_to_star' do
+  describe '.reduce_to_star' do
     let(:localized_entry) {
       JSON.parse(<<~JSON)
         {
@@ -176,6 +176,48 @@ RSpec.describe WCC::Contentful::EntryLocaleTransformer do
       # Merges in fallback value - this is OK
       expect(memo.dig('fields', 'slug', 'es-MX')).to eq('some-page')
       expect(memo.dig('fields', 'slug', 'en-US')).to eq('some-page')
+    end
+  end
+
+  describe '.transform_to_star' do
+    let(:localized_entry) {
+      JSON.parse(<<~JSON)
+        {
+          "sys": {
+            "id": "2zKTmej544IakmIqoEu0y8",
+            "type": "Entry",
+            "revision": 1,
+            "locale": "es-MX"
+          },
+          "fields": {
+            "title": "esta es es-MX",
+            "slug": "some-page",
+            "hero": {
+              "sys": {
+                "type": "Link",
+                "linkType": "Asset",
+                "id": "2lxKGj91eW0zXj6NuZjj4y"
+              }
+            }
+          }
+        }
+      JSON
+    }
+
+    it 'moves fields to locale=* format' do
+      # act
+      entry = subject.transform_to_star(localized_entry)
+
+      expect(entry.dig('sys', 'id')).to eq('2zKTmej544IakmIqoEu0y8')
+      # removes locale field
+      expect(entry.dig('sys', 'locale')).to be_nil
+
+      expect(entry.dig('fields', 'title')).to be_a Hash
+      expect(entry.dig('fields', 'title', 'es-MX')).to eq('esta es es-MX')
+      expect(entry.dig('fields', 'slug', 'es-MX')).to eq('some-page')
+      expect(entry.dig('fields', 'hero', 'es-MX', 'sys', 'id')).to eq(
+        '2lxKGj91eW0zXj6NuZjj4y'
+      )
     end
   end
 end
