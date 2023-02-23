@@ -12,7 +12,7 @@ module WCC::Contentful::Middleware::Store
     end
 
     def transform(entry, options)
-      locale = options[:locale]
+      locale = options[:locale] || default_locale
       if locale == '*'
         # Do we actually want to transform { 'title' => 'foobar' } into { 'title' => { 'en-US' => 'foobar' } }?
         # Lets see if this ever actually comes up.
