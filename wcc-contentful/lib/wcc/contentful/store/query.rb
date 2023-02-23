@@ -177,7 +177,7 @@ module WCC::Contentful::Store
       end
 
       def known_locales
-        @known_locales = WCC::Contentful.locales.keys
+        @known_locales = WCC::Contentful.locales&.keys || ['en-US']
       end
       RESERVED_NAMES = %w[fields sys].freeze
 

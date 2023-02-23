@@ -42,7 +42,7 @@ module WCC::Contentful
 
     # Gets all queryable locales.
     def locales
-      configuration.locale_fallbacks
+      configuration&.locale_fallbacks
     end
 
     def logger
