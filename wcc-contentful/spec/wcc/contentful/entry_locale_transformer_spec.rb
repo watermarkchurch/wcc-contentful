@@ -132,6 +132,15 @@ RSpec.describe WCC::Contentful::EntryLocaleTransformer do
       # assert
       expect(localized_entry.dig('fields', 'title')).to eq(nil)
     end
+
+    it 'does not modify the original entry' do
+      # act
+      _localized_entry = subject.transform_to_locale(entry, 'es-US')
+
+      # assert
+      expect(entry.dig('sys', 'locale')).to eq(nil)
+      expect(entry.dig('fields', 'title').keys).to eq(%w[en-US es-US])
+    end
   end
 
   describe '.reduce_to_star' do

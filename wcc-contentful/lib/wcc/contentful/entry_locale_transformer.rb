@@ -54,9 +54,9 @@ module WCC::Contentful::EntryLocaleTransformer
     # Transform the store's "locale=*" entry into a localized one
     locale ||= default_locale
 
-    entry = entry.dup
-    entry['sys']['locale'] = locale
-    entry['fields'] =
+    sys = entry['sys'].deep_dup
+    sys['locale'] = locale
+    fields =
       entry['fields'].transform_values do |value|
         next if value.nil?
 
@@ -73,7 +73,10 @@ module WCC::Contentful::EntryLocaleTransformer
         v
       end
 
-    entry
+    {
+      'sys' => sys,
+      'fields' => fields
+    }
   end
 
   ##
