@@ -236,6 +236,18 @@ query.result.force
 # => [{"sys"=> ...}, {"sys"=> ...}, ...]
 ```
 
+The store layer, while superficially similar to the Contentful API, tries to present a different "View" over the data
+which is more compatible with the Model layer.  It resolves includes by actually replacing the in-memory `Link` objects
+with their linked `Entry` representations.  This lets you traverse the links naturally using `#dig` or `#[]`:
+
+```ruby
+# Include to a depth of 3 to make sure it's included
+homepage = store.find_by(slug: '/', include: 3)
+# Traverse through the top nav menu => menu button 0 => about page
+about_page = homepage.dig('fields', 'nav_menu', 'fields', 'buttons', 0, 'fields', 'page')
+```
+
+
 See the {WCC::Contentful::Store} documentation for more details.
 
 ### Direct CDN API (SimpleClient)
@@ -406,10 +418,35 @@ newest version of an entry, or delete an entry out of the hash.
 #### Store Middleware
 
 The store layer is made up of a base store (which implements {WCC::Contentful::Store::Interface}),
-and optional middleware.  The middleware
-allows custom transformation of received entries via the `#select` and `#transform`
-methods.  To create your own middleware simply include {WCC::Contentful::Middleware::Store}
-and implement those methods, then call `use` when configuring the store:
+and some required middleware.  The list of default middleware applied to each store is found in
+{WCC::Contentful::Store::Factory.default_middleware}
+
+To create your own middleware simply include {WCC::Contentful::Middleware::Store}.  Then you can optionally implement
+the `#transform` and `#select?` methods:
+
+```ruby
+class MyMiddleware
+  include WCC::Contentful::Middleware::Store
+
+  # Called for each entry that is requested out of the backing store.  You can modify the entry and return it to the
+  # next layer.
+  def transform(entry, options)
+    # Do something with the entry...
+    # Make sure you return it at the end!
+    entry
+  end
+
+  def select?(entry, options)
+    # Choose whether this entry should exist or not.  If you return false here, then the entry will act as though it
+    # were archived in Contentful.
+    entry.dig('fields', 'hide_until') > Time.zone.now
+  end
+end
+```
+
+You can also override any of the standard Store methods.
+
+To apply the middleware, call `use` when configuring the store:
 
 ```ruby
 config.store :direct do
@@ -426,6 +463,24 @@ This is the global top layer where your Rails app looks up content similarly to
 ActiveModel.  The models are namespaced under the root class {WCC::Contentful::Model}.
 Each model's implementation of `.find`, `.find_by`, and `.find_all` simply call
 into the configured Store.
+
+Models can be initialized directly with the `.new` method, by passing in a hash:
+```ruby
+entry = { 'sys' => ..., 'fields' => ... }
+Page.new(entry)
+```
+
+**The initializer must receive a localized entry**.  An entry found using a `locale=*` query
+must be transformed to a localized entry using the {WCC::Contentful::EntryLocaleTransformer} before
+passing it to your model:
+
+```ruby
+entry = client.entry('1234', locale: '*').raw
+localized_entry = WCC::Contentful::EntryLocaleTransformer.transform_to_locale(entry, 'en-US')
+Page.new(localized_entry)
+```
+
+The Store layer ensures that localized entries are returned using the {WCC::Contentful::Middleware::Store::LocaleMiddleware}.
 
 The main benefit of the Model layer is lazy link resolution.  When a model's
 property is accessed, if that property is a link that has not been resolved

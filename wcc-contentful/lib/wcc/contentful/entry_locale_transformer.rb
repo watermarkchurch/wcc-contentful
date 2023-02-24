@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 ##
-# This class provides helper methods to transform Entry and Asset hashes
+# This class provides helper methods to transform Entry and Asset hashes from
+# the "locale=*" format to a specific locale, and vice versa.
 module WCC::Contentful::EntryLocaleTransformer
   extend self
 
