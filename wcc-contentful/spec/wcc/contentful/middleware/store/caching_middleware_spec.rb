@@ -232,10 +232,14 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
     end
 
     it 'falls back to a query if sys.id does not exist in cache' do
-      fixture = load_fixture('contentful/lazy_cache_store/page_about.json')
-      page = JSON.parse(fixture)
+      fixture = load_fixture('contentful/lazy_cache_store/homepage_include_2.json')
+      page = JSON.parse(fixture).dig('items', 0)
 
-      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries/#{page.dig('sys', 'id')}")
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
+        .with(query: hash_including({
+          content_type: 'page',
+          'sys.id' => page.dig('sys', 'id')
+        }))
         .to_return(body: fixture)
 
       # act

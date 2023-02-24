@@ -23,7 +23,7 @@ module WCC::Contentful::Middleware::Store
           (store.find(key, **options) || nil_obj(key)) if key =~ /^\w+$/
         end
 
-      return found unless found.respond_to?(:dig)
+      return unless found
       return if %w[Nil DeletedEntry DeletedAsset].include?(found.dig('sys', 'type'))
 
       # If what we found in the cache is for the wrong Locale, go hit the store directly.
@@ -44,11 +44,12 @@ module WCC::Contentful::Middleware::Store
     #  `find_by('slug' => '/about')`
     def find_by(content_type:, filter: nil, options: nil)
       options ||= {}
-      if filter&.keys == ['sys.id']
+      if filter&.keys == ['sys.id'] && found = @cache.read(filter['sys.id'])
         # This is equivalent to a find, usually this is done by the resolver to
         # try to include deeper relationships.  Since we already have this object,
         # don't hit the API again.
-        return find(filter['sys.id'], options)
+        return if %w[Nil DeletedEntry DeletedAsset].include?(found.dig('sys', 'type'))
+        return found if found.dig('sys', 'locale') == options[:locale]
       end
 
       store.find_by(content_type: content_type, filter: filter, options: options)
