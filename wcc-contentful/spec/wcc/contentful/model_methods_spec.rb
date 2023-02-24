@@ -199,7 +199,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
       deep_resolved['fields'].merge!({
         'items' => nil,
         'someLink' => {
-          'sys' => { 'id' => 'deep1', 'type' => 'Entry', 'contentType' => content_type },
+          'sys' => { 'id' => 'deep1', 'type' => 'Entry', 'contentType' => content_type, 'locale' => 'en-US' },
           'fields' => { 'name' =>  'number 11' }
         }
       })
@@ -250,7 +250,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
       deep_resolved['fields'].merge!({
         'items' => nil,
         'someLink' => {
-          'sys' => { 'id' => 'deep1', 'type' => 'Entry', 'contentType' => content_type },
+          'sys' => { 'id' => 'deep1', 'type' => 'Entry', 'contentType' => content_type, 'locale' => 'en-US' },
           'fields' => { 'name' => 'number 11' }
         }
       })
@@ -393,7 +393,8 @@ RSpec.describe WCC::Contentful::ModelMethods do
         'sys' => {
           'id' => '2',
           'type' => 'Entry',
-          'contentType' => { 'sys' => { 'id' => 'toJsonTest' } }
+          'contentType' => { 'sys' => { 'id' => 'toJsonTest' } },
+          'locale' => 'en-US'
         },
         'fields' => {
           'name' => 'raw2'
@@ -403,7 +404,8 @@ RSpec.describe WCC::Contentful::ModelMethods do
         'sys' => {
           'id' => '3',
           'type' => 'Entry',
-          'contentType' => { 'sys' => { 'id' => 'toJsonTest' } }
+          'contentType' => { 'sys' => { 'id' => 'toJsonTest' } },
+          'locale' => 'en-US'
         },
         'fields' => {
           'name' => 'raw3'
@@ -505,7 +507,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
       # this happens when the link from '2' => '4' gets resolved
       resolved2 = raw2.deep_dup
       raw2['fields']['someLink'] =
-        { 'sys' => { 'type' => 'Entry', 'id' => '4', 'contentType' => content_type } }
+        { 'sys' => { 'type' => 'Entry', 'id' => '4', 'contentType' => content_type, 'locale' => 'en-US' } }
       allow(store).to receive(:find_by)
         .with(hash_including(content_type: 'toJsonTest',
           filter: { 'sys.id' => '2' })).once
