@@ -60,7 +60,7 @@ module WCC::Contentful::Store
     #          Can be an array, symbol, or dotted-notation path specification.
     # @expected The expected value to compare the field's value against.
     # @context A context object optionally containing `context[:locale]`
-    def apply_operator(operator, field, expected, context = nil)
+    def apply_operator(operator, field, expected, _context = nil)
       operator ||= expected.is_a?(Array) ? :in : :eq
       raise ArgumentError, "Operator #{operator} not supported" unless respond_to?(operator)
       raise ArgumentError, 'value cannot be nil (try using exists: false)' if expected.nil?
@@ -75,7 +75,7 @@ module WCC::Contentful::Store
       field = field.to_s if field.is_a? Symbol
       path = field.is_a?(Array) ? field : field.split('.')
 
-      path = self.class.normalize_condition_path(path, context)
+      path = self.class.normalize_condition_path(path, @options)
 
       _append_condition(
         Condition.new(path, operator, expected)
@@ -177,15 +177,15 @@ module WCC::Contentful::Store
       end
 
       def known_locales
-        @known_locales = WCC::Contentful.locales&.keys || ['en-US']
+        @known_locales ||= WCC::Contentful.locales&.keys || ['en-US']
       end
       RESERVED_NAMES = %w[fields sys].freeze
 
       # Takes a path array in non-normal form and inserts 'sys', 'fields',
       # and the current locale as appropriate to normalize it.
       # rubocop:disable Metrics/BlockNesting
-      def normalize_condition_path(path, context = nil)
-        context_locale = context[:locale] if context.present?
+      def normalize_condition_path(path, options = nil)
+        context_locale = options[:locale] if options.present?
         context_locale ||= 'en-US'
 
         rev_path = path.reverse

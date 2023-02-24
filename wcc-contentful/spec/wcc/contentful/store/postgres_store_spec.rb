@@ -7,8 +7,12 @@ require 'concurrency_helper'
 RSpec.describe WCC::Contentful::Store::PostgresStore do
   include ConcurrencyHelper
 
+  let(:configuration) {
+    WCC::Contentful::Configuration.new
+  }
+
   subject {
-    WCC::Contentful::Store::PostgresStore.new(double('Configuration'),
+    WCC::Contentful::Store::PostgresStore.new(configuration,
       ENV.fetch('POSTGRES_CONNECTION', nil), size: 5).tap do |store|
         store.logger = Logger.new($stdout)
       end

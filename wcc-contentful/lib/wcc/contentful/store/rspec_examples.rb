@@ -4,6 +4,7 @@ require_relative './rspec_examples/basic_store'
 require_relative './rspec_examples/operators'
 require_relative './rspec_examples/nested_queries'
 require_relative './rspec_examples/include_param'
+require_relative './rspec_examples/locale_queries'
 
 # rubocop:disable Style/BlockDelimiters
 
@@ -24,6 +25,11 @@ require_relative './rspec_examples/include_param'
 #    all linked entries of an object in a single query.
 #    If your store does not respect the include parameter, then the Model layer
 #    will be calling #find a lot in order to resolve linked entries.
+# [:locale_queries] - This feature defines how the store respects the `locale: x`
+#    key in the Options hash.  If this option is set, then the store needs to
+#    compare the query to the appropriate localized value.
+#    If the store does not support this, then either the application should not
+#    use multiple locales OR should always query using the default locale.
 #
 # @example
 #   require 'wcc/contentful/store/rspec_examples'
@@ -38,13 +44,19 @@ require_relative './rspec_examples/include_param'
 RSpec.shared_examples 'contentful store' do |feature_set|
   feature_set = {
     nested_queries: 'pending',
-    include_param: 'pending'
+    include_param: 'pending',
+    locale_queries: 'pending'
   }.merge(feature_set&.symbolize_keys || {})
+
+  let(:configuration) {
+    WCC::Contentful::Configuration.new
+  }
 
   include_examples 'basic store'
   include_examples 'operators', feature_set[:operators]
   include_examples 'supports nested queries', feature_set[:nested_queries]
   include_examples 'supports include param', feature_set[:include_param]
+  include_examples 'supports locales in queries', feature_set[:locale_queries]
 end
 
 # rubocop:enable Style/BlockDelimiters
