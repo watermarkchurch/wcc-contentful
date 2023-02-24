@@ -2,6 +2,7 @@
 
 require_relative '../../contentful'
 require_relative './query/interface'
+require_relative './query/condition'
 
 module WCC::Contentful::Store
   # The default query object returned by Stores that extend WCC::Contentful::Store::Base.
@@ -26,11 +27,12 @@ module WCC::Contentful::Store
 
     attr_reader :store, :content_type, :conditions
 
-    def initialize(store, content_type:, conditions: nil, options: nil, **extra)
+    def initialize(store, content_type:, conditions: nil, options: nil, configuration: nil, **extra) # rubocop:disable Metrics/ParameterLists
       @store = store
       @content_type = content_type
       @conditions = conditions || []
       @options = options || {}
+      @configuration = configuration || WCC::Contentful.configuration
       @extra = extra
     end
 
@@ -78,7 +80,7 @@ module WCC::Contentful::Store
       path = self.class.normalize_condition_path(path, @options)
 
       _append_condition(
-        Condition.new(path, operator, expected)
+        Condition.new(path, operator, expected, @configuration&.locale_fallbacks || {})
       )
     end
 
@@ -234,33 +236,5 @@ module WCC::Contentful::Store
       end
       # rubocop:enable Metrics/BlockNesting
     end
-
-    Condition =
-      Struct.new(:path, :op, :expected) do
-        LINK_KEYS = %w[id type linkType].freeze # rubocop:disable Lint/ConstantDefinitionInBlock
-
-        def path_tuples
-          @path_tuples ||=
-            [].tap do |arr|
-              remaining = path.dup
-              until remaining.empty?
-                locale = nil
-                link_sys = nil
-                link_field = nil
-
-                sys_or_fields = remaining.shift
-                field = remaining.shift
-                locale = remaining.shift if sys_or_fields == 'fields'
-
-                if remaining[0] == 'sys' && LINK_KEYS.include?(remaining[1])
-                  link_sys = remaining.shift
-                  link_field = remaining.shift
-                end
-
-                arr << [sys_or_fields, field, locale, link_sys, link_field].compact
-              end
-            end
-        end
-      end
   end
 end

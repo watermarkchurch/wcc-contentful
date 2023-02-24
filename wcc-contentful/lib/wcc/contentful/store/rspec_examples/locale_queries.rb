@@ -95,7 +95,7 @@ RSpec.shared_examples 'supports locales in queries' do |feature_set|
         desired =
           4.upto(5).map do |i|
             {
-              'sys' => { 'id' => "k#{i}", 'contentType' => { 'sys' => { 'id' => 'test1' } } },
+              'sys' => { 'id' => "d#{i}", 'contentType' => { 'sys' => { 'id' => 'test1' } } },
               'fields' => {
                 'slug' => {
                   'en-US' => generator.call,
@@ -186,7 +186,7 @@ RSpec.shared_examples 'supports locales in queries' do |feature_set|
       it 'find_all can apply operator' do
         desired = [
           {
-            'sys' => { 'id' => "k#{i}", 'contentType' => { 'sys' => { 'id' => 'test1' } } },
+            'sys' => { 'id' => 'd1', 'contentType' => { 'sys' => { 'id' => 'test1' } } },
             'fields' => {
               'slug' => {
                 'en-US' => generator.call,
@@ -195,7 +195,7 @@ RSpec.shared_examples 'supports locales in queries' do |feature_set|
             }
           },
           {
-            'sys' => { 'id' => "k#{i}", 'contentType' => { 'sys' => { 'id' => 'test1' } } },
+            'sys' => { 'id' => 'd2', 'contentType' => { 'sys' => { 'id' => 'test1' } } },
             'fields' => {
               'slug' => {
                 'en-US' => desired_value

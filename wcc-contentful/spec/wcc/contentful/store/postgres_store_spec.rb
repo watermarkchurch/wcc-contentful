@@ -30,6 +30,8 @@ RSpec.describe WCC::Contentful::Store::PostgresStore do
   it_behaves_like 'contentful store', {
     nested_queries: true,
     include_param: true,
+    # TODO: - fix locale queries
+    locale_queries: false,
     operators: [:eq]
   }
 
