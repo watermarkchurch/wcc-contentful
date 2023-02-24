@@ -106,9 +106,6 @@ module WCC::Contentful::Store
       store = options.shift || :memory
       store = SYNC_STORES[store]&.call(config, *options) if store.is_a?(Symbol)
       self.store = store
-
-      # Eager sync stores don't respect "locale=" param like CDN does
-      use(WCC::Contentful::Middleware::Store::LocaleMiddleware)
     end
 
     # Configures a "lazy sync" preset which caches direct lookups but hits Contentful
@@ -127,9 +124,6 @@ module WCC::Contentful::Store
 
     def preset_custom
       self.store = options.shift
-
-      # Custom stores might not respect "locale=" param like CDN does
-      use(WCC::Contentful::Middleware::Store::LocaleMiddleware)
     end
 
     private
@@ -185,7 +179,9 @@ module WCC::Contentful::Store
       # The middleware that by default lives at the top of the middleware stack.
       def default_middleware
         [
-          [WCC::Contentful::Store::InstrumentationMiddleware]
+          [WCC::Contentful::Store::InstrumentationMiddleware],
+          # Stores do not guarantee that the entry is resolved to the locale
+          [WCC::Contentful::Middleware::Store::LocaleMiddleware]
         ].freeze
       end
     end

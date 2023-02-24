@@ -59,33 +59,32 @@ RSpec.describe WCC::Contentful::ModelAPI do
             'sys' => {
               'id' => 'migrationHistory'
             }
-          }
+          },
+          'locale' => 'en-US'
         },
         'fields' => {
-          'detail' => {
-            'en-US' => [
-              {
-                'intent' => {
-                  'intents' => [
-                    {
-                      'meta' => {
-                        'callsite' => {
-                          'file' =>
-                            './jtj-com/db/migrate/20180219160530_test_migration.ts',
-                          'line' => 3
-                        },
-                        'contentTypeInstanceId' => 'contentType/dog/0'
+          'detail' => [
+            {
+              'intent' => {
+                'intents' => [
+                  {
+                    'meta' => {
+                      'callsite' => {
+                        'file' =>
+                          './jtj-com/db/migrate/20180219160530_test_migration.ts',
+                        'line' => 3
                       },
-                      'type' => 'contentType/create',
-                      'payload' => {
-                        'contentTypeId' => 'dog'
-                      }
+                      'contentTypeInstanceId' => 'contentType/dog/0'
+                    },
+                    'type' => 'contentType/create',
+                    'payload' => {
+                      'contentTypeId' => 'dog'
                     }
-                  ]
-                }
+                  }
+                ]
               }
-            ]
-          }
+            }
+          ]
         }
       })
 
@@ -120,12 +119,11 @@ RSpec.describe WCC::Contentful::ModelAPI do
             'sys' => {
               'id' => 'blogPost'
             }
-          }
+          },
+          'locale' => 'en-US'
         },
         'fields' => {
-          'publishAt' => {
-            'en-US' => '2021-01-01'
-          }
+          'publishAt' => '2021-01-01'
         }
       })
 
@@ -143,28 +141,26 @@ RSpec.describe WCC::Contentful::ModelAPI do
             'sys' => {
               'id' => 'blogPost'
             }
-          }
+          },
+          'locale' => 'en-US'
         },
         'fields' => {
-          'sections' => {
-            'en-US' => [
-              {
-                'sys' => {
-                  'type' => 'Entry',
-                  'contentType' => {
-                    'sys' => {
-                      'id' => 'sectionBlockText'
-                    }
+          'sections' => [
+            {
+              'sys' => {
+                'type' => 'Entry',
+                'contentType' => {
+                  'sys' => {
+                    'id' => 'sectionBlockText'
                   }
                 },
-                'fields' => {
-                  'text' => {
-                    'en-US' => 'Lorem Ipsum Dolor Sit Amet'
-                  }
-                }
+                'locale' => 'en-US'
+              },
+              'fields' => {
+                'text' => 'Lorem Ipsum Dolor Sit Amet'
               }
-            ]
-          }
+            }
+          ]
         }
       })
 
@@ -188,28 +184,26 @@ RSpec.describe WCC::Contentful::ModelAPI do
             'sys' => {
               'id' => 'blogPost'
             }
-          }
+          },
+          'locale' => 'en-US'
         },
         'fields' => {
-          'sections' => {
-            'en-US' => [
-              {
-                'sys' => {
-                  'type' => 'Entry',
-                  'contentType' => {
-                    'sys' => {
-                      'id' => 'sectionBlockText'
-                    }
+          'sections' => [
+            {
+              'sys' => {
+                'type' => 'Entry',
+                'contentType' => {
+                  'sys' => {
+                    'id' => 'sectionBlockText'
                   }
                 },
-                'fields' => {
-                  'text' => {
-                    'en-US' => 'Lorem Ipsum Dolor Sit Amet'
-                  }
-                }
+                'locale' => 'en-US'
+              },
+              'fields' => {
+                'text' => 'Lorem Ipsum Dolor Sit Amet'
               }
-            ]
-          }
+            }
+          ]
         }
       })
 
@@ -229,12 +223,11 @@ RSpec.describe WCC::Contentful::ModelAPI do
               'sys' => {
                 'id' => 'blogPost'
               }
-            }
+            },
+            'locale' => 'en-US'
           },
           'fields' => {
-            'title' => {
-              'en-US' => 'Lorem Ipsum'
-            }
+            'title' => 'Lorem Ipsum'
           }
         })
 
@@ -258,12 +251,11 @@ RSpec.describe WCC::Contentful::ModelAPI do
               'sys' => {
                 'id' => 'blogPost'
               }
-            }
+            },
+            'locale' => 'en-US'
           },
           'fields' => {
-            'title' => {
-              'en-US' => 'Lorem Ipsum'
-            }
+            'title' => 'Lorem Ipsum'
           }
         })
 
@@ -287,12 +279,11 @@ RSpec.describe WCC::Contentful::ModelAPI do
               'sys' => {
                 'id' => 'blogPost'
               }
-            }
+            },
+            'locale' => 'en-US'
           },
           'fields' => {
-            'title' => {
-              'en-US' => 'Lorem Ipsum'
-            }
+            'title' => 'Lorem Ipsum'
           }
         })
 
@@ -344,7 +335,8 @@ RSpec.describe WCC::Contentful::ModelAPI do
                 'sys' => {
                   'id' => 'blogPost'
                 }
-              }
+              },
+              'locale' => 'en-US'
             }
           },
           {
@@ -355,7 +347,8 @@ RSpec.describe WCC::Contentful::ModelAPI do
                 'sys' => {
                   'id' => 'blogPost'
                 }
-              }
+              },
+              'locale' => 'en-US'
             }
           },
           {
@@ -366,7 +359,8 @@ RSpec.describe WCC::Contentful::ModelAPI do
                 'sys' => {
                   'id' => 'blogPost'
                 }
-              }
+              },
+              'locale' => 'en-US'
             }
           }
         ].lazy)
@@ -396,7 +390,8 @@ RSpec.describe WCC::Contentful::ModelAPI do
                 'sys' => {
                   'id' => 'blogPost'
                 }
-              }
+              },
+              'locale' => 'en-US'
             }
           }
         )
@@ -419,12 +414,11 @@ RSpec.describe WCC::Contentful::ModelAPI do
                 'sys' => {
                   'id' => 'sectionBlockText'
                 }
-              }
+              },
+              'locale' => 'en-US'
             },
             'fields' => {
-              'text' => {
-                'en-US' => 'Lorem Ipsum Dolor Sit Amet'
-              }
+              'text' => 'Lorem Ipsum Dolor Sit Amet'
             }
           }
         )
@@ -437,20 +431,19 @@ RSpec.describe WCC::Contentful::ModelAPI do
             'sys' => {
               'id' => 'blogPost'
             }
-          }
+          },
+          'locale' => 'en-US'
         },
         'fields' => {
-          'sections' => {
-            'en-US' => [
-              {
-                'sys' => {
-                  'type' => 'Link',
-                  'linkType' => 'Entry',
-                  'id' => 'blockText1234'
-                }
+          'sections' => [
+            {
+              'sys' => {
+                'type' => 'Link',
+                'linkType' => 'Entry',
+                'id' => 'blockText1234'
               }
-            ]
-          }
+            }
+          ]
         }
       })
 
@@ -473,12 +466,11 @@ RSpec.describe WCC::Contentful::ModelAPI do
                 'sys' => {
                   'id' => 'blogPost'
                 }
-              }
+              },
+              'locale' => 'en-US'
             },
           'fields' => {
-            'title' => {
-              'en-US' => 'Lorem Ipsum'
-            }
+            'title' => 'Lorem Ipsum'
           }
           })
 
@@ -505,7 +497,8 @@ RSpec.describe WCC::Contentful::ModelAPI do
                   'sys' => {
                     'id' => 'blogPost'
                   }
-                }
+                },
+                'locale' => 'en-US'
               }
             }
           )
@@ -531,7 +524,8 @@ RSpec.describe WCC::Contentful::ModelAPI do
                   'sys' => {
                     'id' => 'blogPost'
                   }
-                }
+                },
+                'locale' => 'en-US'
               }
             },
             {
@@ -542,7 +536,8 @@ RSpec.describe WCC::Contentful::ModelAPI do
                   'sys' => {
                     'id' => 'blogPost'
                   }
-                }
+                },
+                'locale' => 'en-US'
               }
             },
             {
@@ -553,7 +548,8 @@ RSpec.describe WCC::Contentful::ModelAPI do
                   'sys' => {
                     'id' => 'blogPost'
                   }
-                }
+                },
+                'locale' => 'en-US'
               }
             }
           ].lazy)
@@ -584,12 +580,11 @@ RSpec.describe WCC::Contentful::ModelAPI do
                   'sys' => {
                     'id' => 'sectionBlockText'
                   }
-                }
+                },
+                'locale' => 'en-US'
               },
               'fields' => {
-                'text' => {
-                  'en-US' => 'Lorem Ipsum Dolor Sit Amet'
-                }
+                'text' => 'Lorem Ipsum Dolor Sit Amet'
               }
             }
           )
@@ -603,20 +598,19 @@ RSpec.describe WCC::Contentful::ModelAPI do
                 'sys' => {
                   'id' => 'blogPost'
                 }
-              }
+              },
+              'locale' => 'en-US'
             },
             'fields' => {
-              'sections' => {
-                'en-US' => [
-                  {
-                    'sys' => {
-                      'type' => 'Link',
-                      'linkType' => 'Entry',
-                      'id' => 'blockText1234'
-                    }
+              'sections' => [
+                {
+                  'sys' => {
+                    'type' => 'Link',
+                    'linkType' => 'Entry',
+                    'id' => 'blockText1234'
                   }
-                ]
-              }
+                }
+              ]
             }
           })
 
@@ -639,7 +633,8 @@ RSpec.describe WCC::Contentful::ModelAPI do
               'sys' => {
                 'id' => 'blogPost'
               }
-            }
+            },
+            'locale' => 'en-US'
           }
         })
 
@@ -668,7 +663,8 @@ RSpec.describe WCC::Contentful::ModelAPI do
               'sys' => {
                 'id' => 'blogPost'
               }
-            }
+            },
+            'locale' => 'en-US'
           }
         })
 
@@ -763,19 +759,16 @@ RSpec.describe WCC::Contentful::ModelAPI do
                   "linkType": "ContentType",
                   "id": "blogPost"
                 }
-              }
+              },
+              "locale": "en-US"
             },
             "fields": {
-              "title": {
-                "en-US": "5 Characteristics Of A Godly Man"
-              },
+              "title": "5 Characteristics Of A Godly Man",
               "metadata": {
-                "en-US": {
-                  "sys": {
-                    "type": "Link",
-                    "linkType": "Entry",
-                    "id": "metadata-1"
-                  }
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Entry",
+                  "id": "metadata-1"
                 }
               }
             }
@@ -798,12 +791,11 @@ RSpec.describe WCC::Contentful::ModelAPI do
                   "linkType": "ContentType",
                   "id": "pageMetadata"
                 }
-              }
+              },
+              "locale": "en-US"
             },
             "fields": {
-              "metaDescription": {
-                "en-US": "How do I become a Godly man? Learn five characteristics of a Godly man and learn about how to become the man God created you to be."
-              }
+              "metaDescription": "How do I become a Godly man? Learn five characteristics of a Godly man and learn about how to become the man God created you to be."
             }
           }
         JSON

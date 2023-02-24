@@ -26,10 +26,21 @@ module FixturesHelper
   def load_store_from_sync(file_name: 'contentful/sync_initial.json', store: nil)
     sync_initial = JSON.parse(load_fixture(file_name).gsub(/343qxys30lid/, contentful_space_id))
 
-    store ||= WCC::Contentful::Store::MemoryStore.new
-    sync_initial.each do |_k, v|
-      store.index(v)
+    # We can no longer directly pass a store to the model layer, because the model layer
+    # does not accept locale=* entries.  The store must have the locale support middleware.
+    config = WCC::Contentful::Configuration.new
+    config.store =
+      if store.nil?
+        %i[eager_sync memory]
+      else
+        [:custom, store]
+      end
+    services = WCC::Contentful::Services.new(config)
+
+    services.store.tap do |s|
+      sync_initial.each do |_k, v|
+        s.index(v)
+      end
     end
-    store
   end
 end

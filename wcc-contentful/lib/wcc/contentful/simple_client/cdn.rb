@@ -82,7 +82,7 @@ class WCC::Contentful::SimpleClient::Cdn < WCC::Contentful::SimpleClient
     return sync_old(sync_token: sync_token, **query) unless block_given?
 
     query = {
-       # override default locale for sync queries
+      # override default locale for sync queries
       locale: nil
     }.merge(
       if sync_token

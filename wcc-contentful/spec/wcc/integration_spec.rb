@@ -29,13 +29,12 @@ RSpec.describe 'Full Stack Integration' do
 
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries")
         .with(query: hash_including({
-          'locale' => '*',
-          'fields.slug.en-US' => '/ministries/merge',
+          'fields.slug' => '/ministries/merge',
           'include' => '3'
         }))
         .to_return(body: load_fixture('contentful/merge_query.json'))
 
-      WCC::Contentful::Model::Page.find_by(slug: '/ministries/merge', options: { locale: '*', include: 3 })
+      WCC::Contentful::Model::Page.find_by(slug: '/ministries/merge', options: { include: 3 })
     end
   end
 

@@ -58,7 +58,7 @@ module WCC::Contentful::Middleware::Store
     return entry unless entry && depth && depth > 0
 
     # We only care about entries (see #resolved_link?)
-    WCC::Contentful::LinkVisitor.new(entry, :Entry, depth: depth).map! do |val|
+    WCC::Contentful::LinkVisitor.new(entry, :Entry, :Asset, depth: depth).map! do |val|
       resolve_link(val, options)
     end
   end
@@ -76,7 +76,7 @@ module WCC::Contentful::Middleware::Store
   end
 
   def resolved_link?(value)
-    value.is_a?(Hash) && value.dig('sys', 'type') == 'Entry'
+    value.is_a?(Hash) && %w[Entry Asset].include?(value.dig('sys', 'type'))
   end
 
   def has_select? # rubocop:disable Naming/PredicateName
