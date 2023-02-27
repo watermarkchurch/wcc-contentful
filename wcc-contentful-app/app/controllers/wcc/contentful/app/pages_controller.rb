@@ -43,6 +43,6 @@ class WCC::Contentful::App::PagesController < ApplicationController
   def global_site_config
     return unless model = site_config_model
 
-    @global_site_config ||= model.instance(preview?)
+    @global_site_config ||= model.instance(preview?, locale: I18n.locale)
   end
 end

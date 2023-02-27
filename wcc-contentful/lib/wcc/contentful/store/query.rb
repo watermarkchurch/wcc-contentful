@@ -187,7 +187,7 @@ module WCC::Contentful::Store
       # and the current locale as appropriate to normalize it.
       # rubocop:disable Metrics/BlockNesting
       def normalize_condition_path(path, options = nil)
-        context_locale = options[:locale] if options.present?
+        context_locale = options[:locale]&.to_s if options.present?
         context_locale ||= 'en-US'
 
         rev_path = path.reverse

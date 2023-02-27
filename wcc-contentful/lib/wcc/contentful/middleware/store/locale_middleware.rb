@@ -19,7 +19,7 @@ module WCC::Contentful::Middleware::Store
     end
 
     def transform(entry, options)
-      locale = options[:locale] || default_locale
+      locale = options[:locale]&.to_s || default_locale
       if locale == '*'
         transform_to_star(entry)
       else
