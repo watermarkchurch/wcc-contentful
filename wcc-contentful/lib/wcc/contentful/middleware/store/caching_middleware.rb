@@ -6,7 +6,11 @@ module WCC::Contentful::Middleware::Store
     # include instrumentation, but not specifically store stack instrumentation
     include WCC::Contentful::Instrumentation
 
-    attr_accessor :expires_in
+    attr_accessor :expires_in, :configuration
+
+    def default_locale
+      @default_locale ||= configuration&.default_locale&.to_s || 'en-US'
+    end
 
     def initialize(cache = nil)
       @cache = cache || ActiveSupport::Cache::MemoryStore.new
@@ -29,7 +33,8 @@ module WCC::Contentful::Middleware::Store
       # If what we found in the cache is for the wrong Locale, go hit the store directly.
       # Now that the one locale is in the cache, when we index next time we'll index the
       # all-locales version and we'll be fine.
-      if options[:locale] && found.dig('sys', 'locale') != options[:locale]
+      locale = options[:locale]&.to_s || default_locale
+      if found.dig('sys', 'locale') != locale
         event = 'miss'
         return store.find(key, **options)
       end

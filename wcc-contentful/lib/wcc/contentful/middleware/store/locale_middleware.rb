@@ -15,7 +15,7 @@ module WCC::Contentful::Middleware::Store
     attr_accessor :configuration
 
     def default_locale
-      @default_locale ||= configuration&.default_locale || 'en-US'
+      @default_locale ||= configuration&.default_locale&.to_s || 'en-US'
     end
 
     def transform(entry, options)

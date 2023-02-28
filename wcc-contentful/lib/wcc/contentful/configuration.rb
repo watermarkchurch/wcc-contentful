@@ -205,7 +205,7 @@ class WCC::Contentful::Configuration
     @management_token = ENV.fetch('CONTENTFUL_MANAGEMENT_TOKEN', nil)
     @preview_token = ENV.fetch('CONTENTFUL_PREVIEW_TOKEN', nil)
     @space = ENV.fetch('CONTENTFUL_SPACE_ID', nil)
-    @default_locale = defined?(I18n) ? I18n.default_locale : 'en-US'
+    @default_locale = 'en-US'
     @locale_fallbacks = {}
     @middleware = []
     @update_schema_file = :if_possible
