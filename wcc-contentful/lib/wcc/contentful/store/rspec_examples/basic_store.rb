@@ -212,6 +212,18 @@ RSpec.shared_examples 'basic store' do
       expect(prior2).to eq(data)
       expect(subject.find('1234')).to eq(data2)
     end
+
+    it 'modifying found entry does not modify underlying data' do
+      subject.index(entry)
+
+      # act
+      found = subject.find('1qLdW7i7g4Ycq6i4Cckg44')
+      found['fields']['slug']['en-US'] = 'new slug'
+
+      # assert
+      found2 = subject.find('1qLdW7i7g4Ycq6i4Cckg44')
+      expect(found2.dig('fields', 'slug', 'en-US')).to eq('redirect-with-slug-and-url')
+    end
   end
 
   describe '#delete' do
@@ -564,6 +576,18 @@ RSpec.shared_examples 'basic store' do
       expect(found.dig('sys', 'id')).to eq('idTwo')
       expect(found.dig('fields', 'system', 'en-US')).to eq('Two')
     end
+
+    it 'modifying found entry does not modify underlying data' do
+      subject.index(entry)
+
+      # act
+      found = subject.find_by(filter: { 'sys.id' => '1qLdW7i7g4Ycq6i4Cckg44' }, content_type: 'redirect')
+      found['fields']['slug']['en-US'] = 'new slug'
+
+      # assert
+      found2 = subject.find_by(filter: { 'sys.id' => '1qLdW7i7g4Ycq6i4Cckg44' }, content_type: 'redirect')
+      expect(found2.dig('fields', 'slug', 'en-US')).to eq('redirect-with-slug-and-url')
+    end
   end
 
   describe '#find_all' do
@@ -607,6 +631,18 @@ RSpec.shared_examples 'basic store' do
       expect(found.map { |d| d.dig('sys', 'id') }).to eq(
         %w[k1 k5 k9]
       )
+    end
+
+    it 'modifying found entry does not modify underlying data' do
+      subject.index(entry)
+
+      # act
+      found = subject.find_all(content_type: 'redirect').eq('sys.id', '1qLdW7i7g4Ycq6i4Cckg44').first
+      found['fields']['slug']['en-US'] = 'new slug'
+
+      # assert
+      found2 = subject.find_all(content_type: 'redirect').eq('sys.id', '1qLdW7i7g4Ycq6i4Cckg44').first
+      expect(found2.dig('fields', 'slug', 'en-US')).to eq('redirect-with-slug-and-url')
     end
   end
 

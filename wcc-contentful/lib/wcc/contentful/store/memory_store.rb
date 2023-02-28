@@ -39,7 +39,7 @@ module WCC::Contentful::Store
 
     def find(key, **_options)
       @mutex.with_read_lock do
-        @hash[key]
+        @hash[key].deep_dup
       end
     end
 
@@ -67,9 +67,12 @@ module WCC::Contentful::Store
 
       # For each condition, we apply a new Enumerable#select with a block that
       # enforces the condition.
-      query.conditions.reduce(relation) do |memo, condition|
-        __send__("apply_#{condition.op}", memo, condition)
-      end
+      relation =
+        query.conditions.reduce(relation) do |memo, condition|
+          __send__("apply_#{condition.op}", memo, condition)
+        end
+
+      relation.map(&:deep_dup)
     end
 
     private
