@@ -16,10 +16,10 @@ class WCC::Contentful::Model::MenuButton < WCC::Contentful::Model
     return external_link if external_link
 
     url = (link&.try(:slug) || link&.try(:url))
-    return url unless fragment.present?
-
     url = URI(url || '')
-    url.fragment = fragment
+
+    url.path = "/#{sys.locale}#{url.path}" if sys.locale != WCC::Contentful.configuration.default_locale
+    url.fragment = fragment if fragment.present?
     url.to_s
   end
 
