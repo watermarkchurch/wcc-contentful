@@ -34,7 +34,8 @@ module WCC::Contentful::Middleware::Store
       # Now that the one locale is in the cache, when we index next time we'll index the
       # all-locales version and we'll be fine.
       locale = options[:locale]&.to_s || default_locale
-      if found.dig('sys', 'locale') != locale
+      found_locale = found.dig('sys', 'locale')&.to_s
+      if found_locale && (found_locale != locale)
         event = 'miss'
         return store.find(key, **options)
       end

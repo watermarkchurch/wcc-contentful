@@ -1,6 +1,16 @@
 # frozen_string_literal: true
 
 RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
+  include WCC::Contentful::EntryLocaleTransformer
+
+  let(:configuration) {
+    WCC::Contentful::Configuration.new.tap do |config|
+      config.locale_fallbacks = {
+        'es' => 'en-US'
+      }
+    end
+  }
+
   let(:cache) {
     ActiveSupport::Cache::MemoryStore.new
   }
@@ -25,6 +35,8 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
     end
     allow(WCC::Contentful).to receive(:types)
       .and_return(indexer.types)
+    allow(WCC::Contentful).to receive(:configuration)
+      .and_return(configuration)
   end
 
   describe '#find' do
@@ -174,6 +186,34 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
 
       # assert
       expect(page.dig('fields', 'heroText', 'en-US')).to eq('Some test hero text')
+    end
+
+    it 'does not hit backing API if indexed for locale' do
+      entry = JSON.parse(load_fixture('contentful/lazy_cache_store/page_about.json'))
+      localized_entry = transform_to_locale(entry, 'en-US')
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}" \
+                         '/entries/47PsST8EicKgWIWwK2AsW6?locale=en-US')
+        .to_return(body: localized_entry.to_json)
+
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}" \
+                         '/entries/47PsST8EicKgWIWwK2AsW6?locale=es')
+        .to_raise('Should not hit the API a second time!')
+
+      # prime the cache w/ en-US version
+      _page = store.find('47PsST8EicKgWIWwK2AsW6', locale: 'en-US')
+      # we got an update!  Index the cache with the all-locales version
+      entry['sys']['revision'] = entry['sys']['revision'] + 1
+      entry['fields']['title']['en-US'] = 'About 2'
+      entry['fields']['title']['es'] = 'Sobre 2'
+
+      store.index(entry)
+
+      # act - get es version
+      page = store.find('47PsST8EicKgWIWwK2AsW6', locale: 'es')
+
+      # assert
+      page = transform_to_locale(page, 'es')
+      expect(page.dig('fields', 'heroText')).to eq('Algun texto de prueba')
     end
   end
 
@@ -377,7 +417,7 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
           }
         JSON
 
-      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries/58IzCq6qGPFelU77b4R8rP?locale=es-US")
+      stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries/58IzCq6qGPFelU77b4R8rP?locale=es")
         .to_return(body: <<~JSON)
           {
             "sys": {
@@ -397,7 +437,7 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
                   "id": "sectionHero"
                 }
               },
-              "locale": "es-US"
+              "locale": "es"
             },
             "fields": {
               "title": "Homepage Hero",
@@ -416,8 +456,8 @@ RSpec.describe WCC::Contentful::Middleware::Store::CachingMiddleware do
       # prime the cache with the en-US entry
       store.find('58IzCq6qGPFelU77b4R8rP')
 
-      # act
-      page = store.find('58IzCq6qGPFelU77b4R8rP', locale: 'es-US')
+      # act - go fetch the 'es' entry
+      page = store.find('58IzCq6qGPFelU77b4R8rP', locale: 'es')
 
       # assert
       expect(page.dig('fields', 'subtitle')).to eq(
