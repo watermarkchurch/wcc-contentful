@@ -374,7 +374,6 @@ WCC::Contentful::SimpleClient::Cdn.new(
   space: '1234',
   # optional
   environment: 'staging', # omit to use master
-  default_locale: '*',
   rate_limit_wait_timeout: 10,
   instrumentation: ActiveSupport::Notifications,
   connection: Faraday.new { |builder| ... },

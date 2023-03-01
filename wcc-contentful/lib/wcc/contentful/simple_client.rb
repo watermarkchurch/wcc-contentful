@@ -36,7 +36,6 @@ module WCC::Contentful
     # @param [Hash] options The remaining optional parameters, defined below
     # @option options [Symbol, Object] connection The Faraday connection to use to make requests.
     #   Auto-discovered based on what gems are installed if this is not provided.
-    # @option options [String] default_locale The locale query param to set by default.
     # @option options [String] environment The contentful environment to access. Defaults to 'master'.
     # @option options [Boolean] no_follow_redirects If true, do not follow 300 level redirects.
     # @option options [Number] rate_limit_wait_timeout The maximum time to block the thread waiting
@@ -51,7 +50,6 @@ module WCC::Contentful
       @options = options
       @_instrumentation = @options[:instrumentation]
       @query_defaults = {}
-      @query_defaults[:locale] = @options[:default_locale] if @options[:default_locale]
       # default 1.5 so that we retry one time then fail if still rate limited
       # https://www.contentful.com/developers/docs/references/content-preview-api/#/introduction/api-rate-limits
       @rate_limit_wait_timeout = @options[:rate_limit_wait_timeout] || 1.5

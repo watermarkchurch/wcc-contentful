@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'job_helper'
+require_relative '../../../../app/jobs/wcc/contentful/webhook_enable_job'
 
 RSpec.describe 'WCC::Contentful::WebhookEnableJob', type: :job do
   subject(:job) { WCC::Contentful::WebhookEnableJob.new }
@@ -107,7 +108,6 @@ RSpec.describe 'WCC::Contentful::WebhookEnableJob', type: :job do
         app_url: 'http://testurl',
         space: 'testspace',
         environment: 'testenv',
-        default_locale: 'testlocale',
         connection: :typhoeus,
         webhook_username: 'testwebhookusername',
         webhook_password: 'testwebhookpassword'
