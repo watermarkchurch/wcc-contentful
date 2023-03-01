@@ -51,7 +51,6 @@ module WCC::Contentful
         management_token: config.management_token,
         space: config.space,
         environment: config.environment,
-        default_locale: config.default_locale,
         connection: config.connection,
         webhook_username: config.webhook_username,
         webhook_password: config.webhook_password,

@@ -467,7 +467,10 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       }
       let(:fixture) { JSON.parse(load_fixture('contentful/block-text-with-rich-text.json')) }
       let(:block_text) {
-        fixture.dig('items', 0)
+        WCC::Contentful::EntryLocaleTransformer.transform_to_locale(
+          fixture.dig('items', 0),
+          'en-US'
+        )
       }
 
       before do

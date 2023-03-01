@@ -112,7 +112,7 @@ RSpec.describe WCC::Contentful::Configuration do
 
     context 'lazy sync' do
       it 'looks up cache from activesupport' do
-        cache = double(fetch: 'test data')
+        cache = double(fetch: { 'sys' => { 'id' => 'test data' } })
         expect(ActiveSupport::Cache).to receive(:lookup_store)
           .with(:file_store, '/tmp/cache')
           .and_return(cache)
@@ -123,11 +123,11 @@ RSpec.describe WCC::Contentful::Configuration do
         # assert
         stack = middleware_stack(services.store)
         expect(stack[stack.length - 2]).to be_a(WCC::Contentful::Middleware::Store::CachingMiddleware)
-        expect(services.store.find('test')).to eq('test data')
+        expect(services.store.find('test')).to eq({ 'sys' => { 'id' => 'test data' } })
       end
 
       it 'uses provided cache' do
-        cache = double(fetch: 'test data')
+        cache = double(fetch: { 'sys' => { 'id' => 'test data' } })
 
         # act
         config.store :lazy_sync, cache
@@ -135,7 +135,7 @@ RSpec.describe WCC::Contentful::Configuration do
         # assert
         stack = middleware_stack(services.store)
         expect(stack[stack.length - 2]).to be_a(WCC::Contentful::Middleware::Store::CachingMiddleware)
-        expect(services.store.find('test')).to eq('test data')
+        expect(services.store.find('test')).to eq({ 'sys' => { 'id' => 'test data' } })
       end
     end
 
@@ -227,12 +227,11 @@ RSpec.describe WCC::Contentful::Configuration do
       store = config.store.build
 
       stack = middleware_stack(store)
-      expect(stack.length).to eq(4)
-      expect(stack[0]).to be_a WCC::Contentful::Store::InstrumentationMiddleware
-      expect(stack[1]).to be_a Test_Middleware
+      expect(stack.length).to eq(5)
       expect(stack[2]).to be_a Test_Middleware
-      expect(stack[2].optional_param).to eq(3)
-      expect(stack[3]).to be_a WCC::Contentful::Store::CDNAdapter
+      expect(stack[3]).to be_a Test_Middleware
+      expect(stack[3].optional_param).to eq(3)
+      expect(stack[4]).to be_a WCC::Contentful::Store::CDNAdapter
     end
 
     it 'replaces a middleware in the stack' do
@@ -249,11 +248,10 @@ RSpec.describe WCC::Contentful::Configuration do
       store = config.store.build
 
       stack = middleware_stack(store)
-      expect(stack.length).to eq(3)
-      expect(stack[0]).to be_a WCC::Contentful::Store::InstrumentationMiddleware
-      expect(stack[1]).to be_a Test_Middleware
-      expect(stack[1].optional_param).to eq(1)
-      expect(stack[2]).to be_a WCC::Contentful::Store::CDNAdapter
+      expect(stack.length).to eq(4)
+      expect(stack[2]).to be_a Test_Middleware
+      expect(stack[2].optional_param).to eq(1)
+      expect(stack[3]).to be_a WCC::Contentful::Store::CDNAdapter
 
       expect(block_executed).to be true
     end
@@ -261,6 +259,7 @@ RSpec.describe WCC::Contentful::Configuration do
     it 'removes a middleware from the stack' do
       config.store :direct do
         unuse WCC::Contentful::Store::InstrumentationMiddleware
+        unuse WCC::Contentful::Middleware::Store::LocaleMiddleware
       end
 
       # act

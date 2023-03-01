@@ -3,7 +3,10 @@
 require 'job_helper'
 
 RSpec.describe 'WCC::Contentful::WebhookEnableJob', type: :job do
-  subject(:job) { WCC::Contentful::WebhookEnableJob.new }
+  subject(:job) {
+    require_relative '../../../../app/jobs/wcc/contentful/webhook_enable_job'
+    WCC::Contentful::WebhookEnableJob.new
+  }
 
   describe '#enable_webhook' do
     it 'bails if webhook already exists' do
@@ -107,7 +110,6 @@ RSpec.describe 'WCC::Contentful::WebhookEnableJob', type: :job do
         app_url: 'http://testurl',
         space: 'testspace',
         environment: 'testenv',
-        default_locale: 'testlocale',
         connection: :typhoeus,
         webhook_username: 'testwebhookusername',
         webhook_password: 'testwebhookpassword'

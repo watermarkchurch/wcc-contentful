@@ -287,5 +287,45 @@
         }
       ]
     }
+  ],
+  "locales": [
+    {
+      "name": "U.S. English",
+      "internal_code": "en-US",
+      "code": "en-US",
+      "fallbackCode": null,
+      "default": true,
+      "contentManagementApi": true,
+      "contentDeliveryApi": true,
+      "optional": false,
+      "sys": {
+        "type": "Locale",
+        "id": "3CQynzwRbyBGB3AKLfsnDE",
+        "version": 1,
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "7yx6ovlj39n5"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "createdAt": "2022-11-13T19:25:25Z",
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0SUbYs2vZlXjVR6bH6o83O"
+          }
+        },
+        "updatedAt": "2022-11-13T19:25:25Z"
+      }
+    }
   ]
 }

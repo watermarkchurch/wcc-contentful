@@ -17,8 +17,8 @@ module WCC::Contentful::Store
     attr_reader :connection_pool
     attr_accessor :logger
 
-    def initialize(_config = nil, connection_options = nil, pool_options = nil)
-      super()
+    def initialize(configuration = nil, connection_options = nil, pool_options = nil)
+      super(configuration)
       @schema_ensured = false
       connection_options ||= { dbname: 'postgres' }
       pool_options ||= {}
@@ -100,7 +100,8 @@ module WCC::Contentful::Store
       Query.new(
         self,
         content_type: content_type,
-        options: options
+        options: options,
+        configuration: @configuration
       )
     end
 

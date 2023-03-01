@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://preview.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=redirect2&fields.slug.en-US=published-redirect&limit=1&locale=*
+    uri: https://preview.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=redirect2&fields.slug=published-redirect&limit=1
     body:
       encoding: US-ASCII
       string: ''
@@ -90,15 +90,12 @@ http_interactions:
                     "type": "Link",
                     "linkType": "Environment"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "slug": {
-                  "en-US": "published-redirect"
-                },
-                "url": {
-                  "en-US": "https://watermark.formstack.com/forms/theporch"
-                }
+                "slug": "published-redirect",
+                "url": "https://watermark.formstack.com/forms/theporch"
               }
             }
           ]

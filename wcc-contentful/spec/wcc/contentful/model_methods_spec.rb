@@ -63,47 +63,38 @@ RSpec.describe WCC::Contentful::ModelMethods do
             'linkType' => 'ContentType',
             'id' => 'toJsonTest'
           }
-        }
+        },
+        'locale' => 'en-US'
       },
       'fields' => {
-        'name' => {
-          'en-US' => 'asdf'
-        },
+        'name' => 'asdf',
         'blob' => {
-          'en-US' => {
-            'some' => { 'data' => 3 }
+          'some' => { 'data' => 3 }
+        },
+        'tags' => %w[a b c],
+        'someLink' => {
+          'sys' => {
+            'type' => 'Link',
+            'linkType' => 'Entry',
+            'id' => '2'
           }
         },
-        'tags' => {
-          'en-US' => %w[a b c]
-        },
-        'someLink' => {
-          'en-US' => {
+        'items' => [
+          {
             'sys' => {
               'type' => 'Link',
               'linkType' => 'Entry',
-              'id' => '2'
+              'id' => '3'
+            }
+          },
+          {
+            'sys' => {
+              'type' => 'Link',
+              'linkType' => 'Entry',
+              'id' => '4'
             }
           }
-        },
-        'items' => {
-          'en-US' => [
-            {
-              'sys' => {
-                'type' => 'Link',
-                'linkType' => 'Entry',
-                'id' => '3'
-              }
-            },
-            {
-              'sys' => {
-                'type' => 'Link',
-                'linkType' => 'Entry',
-                'id' => '4'
-              }
-            }
-          ]
-        }
+        ]
       }
     }
   }
@@ -208,10 +199,8 @@ RSpec.describe WCC::Contentful::ModelMethods do
       deep_resolved['fields'].merge!({
         'items' => nil,
         'someLink' => {
-          'en-US' => {
-            'sys' => { 'id' => 'deep1', 'type' => 'Entry', 'contentType' => content_type },
-            'fields' => { 'name' => { 'en-US' => 'number 11' } }
-          }
+          'sys' => { 'id' => 'deep1', 'type' => 'Entry', 'contentType' => content_type, 'locale' => 'en-US' },
+          'fields' => { 'name' =>  'number 11' }
         }
       })
 
@@ -261,10 +250,8 @@ RSpec.describe WCC::Contentful::ModelMethods do
       deep_resolved['fields'].merge!({
         'items' => nil,
         'someLink' => {
-          'en-US' => {
-            'sys' => { 'id' => 'deep1', 'type' => 'Entry', 'contentType' => content_type },
-            'fields' => { 'name' => { 'en-US' => 'number 11' } }
-          }
+          'sys' => { 'id' => 'deep1', 'type' => 'Entry', 'contentType' => content_type, 'locale' => 'en-US' },
+          'fields' => { 'name' => 'number 11' }
         }
       })
 
@@ -319,12 +306,12 @@ RSpec.describe WCC::Contentful::ModelMethods do
       raw3 = raw.deep_dup
       raw3['sys']['id'] = '3'
       # circular back to 1
-      raw3['fields']['items']['en-US'] = [
+      raw3['fields']['items'] = [
         { 'sys' => { 'type' => 'Link', 'linkType' => 'Entry', 'id' => '1' } }
       ]
 
       resolved = raw.deep_dup
-      resolved['fields']['items'] = { 'en-US' => [raw3] }
+      resolved['fields']['items'] = [raw3]
 
       expect(store).to receive(:find_by)
         .with(content_type: 'toJsonTest',
@@ -347,12 +334,12 @@ RSpec.describe WCC::Contentful::ModelMethods do
       raw3 = raw.deep_dup
       raw3['sys']['id'] = '3'
       # circular back to 1
-      raw3['fields']['items']['en-US'] = [
+      raw3['fields']['items'] = [
         { 'sys' => { 'type' => 'Link', 'linkType' => 'Entry', 'id' => '1' } }
       ]
 
       resolved = raw.deep_dup
-      resolved['fields']['items'] = { 'en-US' => [raw3] }
+      resolved['fields']['items'] = [raw3]
 
       expect(store).to receive(:find_by)
         .with(content_type: 'toJsonTest',
@@ -374,12 +361,12 @@ RSpec.describe WCC::Contentful::ModelMethods do
       raw3 = raw.deep_dup
       raw3['sys']['id'] = '3'
       # circular back to 1
-      raw3['fields']['items']['en-US'] = [
+      raw3['fields']['items'] = [
         { 'sys' => { 'type' => 'Link', 'linkType' => 'Entry', 'id' => '1' } }
       ]
 
       resolved = raw.deep_dup
-      resolved['fields']['items'] = { 'en-US' => [raw3] }
+      resolved['fields']['items'] = [raw3]
 
       expect(store).to receive(:find_by)
         .with(content_type: 'toJsonTest',
@@ -406,29 +393,27 @@ RSpec.describe WCC::Contentful::ModelMethods do
         'sys' => {
           'id' => '2',
           'type' => 'Entry',
-          'contentType' => { 'sys' => { 'id' => 'toJsonTest' } }
+          'contentType' => { 'sys' => { 'id' => 'toJsonTest' } },
+          'locale' => 'en-US'
         },
         'fields' => {
-          'name' => {
-            'en-US' => 'raw2'
-          }
+          'name' => 'raw2'
         }
       }
       raw3 = {
         'sys' => {
           'id' => '3',
           'type' => 'Entry',
-          'contentType' => { 'sys' => { 'id' => 'toJsonTest' } }
+          'contentType' => { 'sys' => { 'id' => 'toJsonTest' } },
+          'locale' => 'en-US'
         },
         'fields' => {
-          'name' => {
-            'en-US' => 'raw3'
-          }
+          'name' => 'raw3'
         }
       }
 
-      raw['fields']['someLink']['en-US'] = raw2
-      raw['fields']['items']['en-US'] = [raw3, nil]
+      raw['fields']['someLink'] = raw2
+      raw['fields']['items'] = [raw3, nil]
 
       # act
       subject.resolve(depth: 2, fields: [:some_link])
@@ -488,17 +473,17 @@ RSpec.describe WCC::Contentful::ModelMethods do
       raw2 = raw.deep_dup
       raw2['sys']['id'] = '2'
       raw2['fields']['items'] = nil
-      raw2['fields']['someLink']['en-US'] = { 'sys' => { 'type' => 'Link', 'id' => '4' } }
-      resolved1['fields']['someLink']['en-US'] = raw2
+      raw2['fields']['someLink'] = { 'sys' => { 'type' => 'Link', 'id' => '4' } }
+      resolved1['fields']['someLink'] = raw2
 
       raw3 = raw.deep_dup
       raw3['sys']['id'] = '3'
       raw3['fields']['someLink'] = nil
       # circular back to 1
-      raw3['fields']['items']['en-US'] = [
+      raw3['fields']['items'] = [
         { 'sys' => { 'type' => 'Link', 'linkType' => 'Entry', 'id' => '1' } }
       ]
-      resolved1['fields']['items'] = { 'en-US' => [raw3] }
+      resolved1['fields']['items'] = [raw3]
 
       # subject now has two children:
       #   someLink => '2'
@@ -509,7 +494,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
 
       resolved3 = raw3.deep_dup
       # a resolved circular ref back to '1'
-      raw3['fields']['items']['en-US'] = [
+      raw3['fields']['items'] = [
         resolved1
       ]
 
@@ -521,8 +506,8 @@ RSpec.describe WCC::Contentful::ModelMethods do
 
       # this happens when the link from '2' => '4' gets resolved
       resolved2 = raw2.deep_dup
-      raw2['fields']['someLink']['en-US'] =
-        { 'sys' => { 'type' => 'Entry', 'id' => '4', 'contentType' => content_type } }
+      raw2['fields']['someLink'] =
+        { 'sys' => { 'type' => 'Entry', 'id' => '4', 'contentType' => content_type, 'locale' => 'en-US' } }
       allow(store).to receive(:find_by)
         .with(hash_including(content_type: 'toJsonTest',
           filter: { 'sys.id' => '2' })).once
@@ -570,18 +555,16 @@ RSpec.describe WCC::Contentful::ModelMethods do
       raw2['fields']['someLink'] = nil
       raw2['sys']['id'] = '2'
       # circular back to 1
-      raw2['fields']['items']['en-US'] = [
+      raw2['fields']['items'] = [
         { 'sys' => { 'type' => 'Link', 'linkType' => 'Entry', 'id' => '1' } }
       ]
 
       raw['fields']['items'] = nil
 
       resolved2 = raw2.deep_dup
-      resolved2['fields']['items'] = {
-        'en-US' => [
-          raw.deep_dup
-        ]
-      }
+      resolved2['fields']['items'] = [
+        raw.deep_dup
+      ]
 
       allow(store).to receive(:find_by)
         .with(content_type: 'toJsonTest',
@@ -609,18 +592,16 @@ RSpec.describe WCC::Contentful::ModelMethods do
       raw2['fields']['someLink'] = nil
       raw2['sys']['id'] = '2'
       # circular back to 1
-      raw2['fields']['items']['en-US'] = [
+      raw2['fields']['items'] = [
         { 'sys' => { 'type' => 'Link', 'linkType' => 'Entry', 'id' => '1' } }
       ]
 
       raw['fields']['items'] = nil
 
       resolved2 = raw2.deep_dup
-      resolved2['fields']['items'] = {
-        'en-US' => [
-          raw.deep_dup
-        ]
-      }
+      resolved2['fields']['items'] = [
+        raw.deep_dup
+      ]
 
       allow(store).to receive(:find_by)
         .with(content_type: 'toJsonTest',
@@ -649,7 +630,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
         ->(id) {
           linked = raw.deep_dup
           linked['sys']['id'] = id
-          linked['fields']['someLink']['en-US']['sys']['id'] = (id.to_i + 1).to_s
+          linked['fields']['someLink']['sys']['id'] = (id.to_i + 1).to_s
           linked
         }
 
@@ -713,8 +694,8 @@ RSpec.describe WCC::Contentful::ModelMethods do
     end
 
     it 'returns true when broken links are nil' do
-      raw['fields']['someLink']['en-US'] = nil
-      raw['fields']['items']['en-US'] = [nil, nil]
+      raw['fields']['someLink'] = nil
+      raw['fields']['items'] = [nil, nil]
 
       # act
       result = subject.resolved?
@@ -724,8 +705,8 @@ RSpec.describe WCC::Contentful::ModelMethods do
     end
 
     it 'returns true when no links in array' do
-      raw['fields']['someLink']['en-US'] = nil
-      raw['fields']['items']['en-US'] = []
+      raw['fields']['someLink'] = nil
+      raw['fields']['items'] = []
 
       # act
       result = subject.resolved?
@@ -873,12 +854,12 @@ RSpec.describe WCC::Contentful::ModelMethods do
       raw3 = raw.deep_dup
       raw3['sys']['id'] = '3'
       # circular back to 1
-      raw3['fields']['items']['en-US'] = [
+      raw3['fields']['items'] = [
         { 'sys' => { 'type' => 'Link', 'linkType' => 'Entry', 'id' => '1' } }
       ]
 
       resolved = raw.deep_dup
-      resolved['fields']['items'] = { 'en-US' => [raw3] }
+      resolved['fields']['items'] = [raw3]
 
       expect(store).to receive(:find_by)
         .with(content_type: 'toJsonTest',
@@ -977,7 +958,7 @@ RSpec.describe WCC::Contentful::ModelMethods do
     end
 
     it 'handles json arrays' do
-      raw['fields']['blob']['en-US'] = [
+      raw['fields']['blob'] = [
         { 'data' => 1 },
         { 'data' => 2 }
       ]
@@ -1013,9 +994,9 @@ RSpec.describe WCC::Contentful::ModelMethods do
     end
 
     resolved['fields'].merge!({
-      'name' => { 'en-US' => "resolved#{depth}" },
-      'someLink' => { 'en-US' => link },
-      'items' => { 'en-US' => items }
+      'name' => "resolved#{depth}",
+      'someLink' => link,
+      'items' => items
     })
     resolved
   end
@@ -1023,8 +1004,8 @@ RSpec.describe WCC::Contentful::ModelMethods do
   def unresolved(id)
     fake = raw.deep_dup
     fake['sys']['id'] = id
-    fake['fields']['name']['en-US'] = "unresolved#{id}"
-    fake['fields']['items']['en-US'] = nil
+    fake['fields']['name'] = "unresolved#{id}"
+    fake['fields']['items'] = nil
     fake
   end
 end

@@ -483,13 +483,11 @@ RSpec.describe WCC::Contentful, :vcr do
       it 'should call out to CDN for first calls only' do
         stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}" \
                            '/entries/6y9DftpiYoA4YiKg2CgoUU')
-          .with(query: hash_including({ locale: '*' }))
           .to_return(body: side_menu)
           .times(1)
           .then.to_raise('Should not hit the API a second time!')
         stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}" \
                            '/entries/1IJEXB4AKEqQYEm4WuceG2')
-          .with(query: hash_including({ locale: '*' }))
           .to_return(body: about_button)
           .times(1)
           .then.to_raise('Should not hit the API a second time!')
@@ -536,6 +534,40 @@ RSpec.describe WCC::Contentful, :vcr do
         # act
         contentful_reset!
         WCC::Contentful.init!
+      end
+    end
+
+    describe 'locales' do
+      before(:each) do
+        WCC::Contentful.configure do |config|
+          config.schema_file = path_to_fixture('contentful/simple_space_content_types.json')
+        end
+      end
+
+      it 'fills out locale fallbacks' do
+        contentful_reset!
+        WCC::Contentful.init!
+
+        expect(WCC::Contentful.configuration.locale_fallbacks).to eq({
+          'en-US' => nil,
+          'es-US' => 'en-US'
+        })
+      end
+
+      it 'does not override configured fallbacks' do
+        WCC::Contentful.configure do |config|
+          config.locale_fallbacks = {
+            'es-US' => 'es'
+          }
+        end
+
+        contentful_reset!
+        WCC::Contentful.init!
+
+        expect(WCC::Contentful.configuration.locale_fallbacks).to eq({
+          'en-US' => nil,
+          'es-US' => 'es'
+        })
       end
     end
   end

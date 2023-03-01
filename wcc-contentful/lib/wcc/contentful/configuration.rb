@@ -8,6 +8,7 @@ class WCC::Contentful::Configuration
     connection
     connection_options
     default_locale
+    locale_fallbacks
     environment
     instrumentation_adapter
     logger
@@ -40,6 +41,11 @@ class WCC::Contentful::Configuration
   attr_accessor :environment
   # Sets the default locale.  Defaults to 'en-US'.
   attr_accessor :default_locale
+  # Sets up locale fallbacks.  This is a Ruby hash which maps locale codes to fallback locale codes.
+  # Defaults are loaded from contentful-schema.json but can be overridden here.
+  # If data is missing for one locale, we will use data in the "fallback locale".
+  # See https://www.contentful.com/developers/docs/tutorials/general/setting-locales/#custom-fallback-locales
+  attr_accessor :locale_fallbacks
   # Sets the Content Preview API access token.  Only required if you use the
   # preview flag.
   attr_accessor :preview_token
@@ -106,11 +112,11 @@ class WCC::Contentful::Configuration
   #           The block is executed in the context of a WCC::Contentful::Store::Factory.
   #           this can be used to apply middleware, etc.
   def store(*params, &block)
-    type, *params = params
-    if type
+    preset, *params = params
+    if preset
       @store_factory = WCC::Contentful::Store::Factory.new(
         self,
-        type,
+        preset,
         params
       )
     end
@@ -199,7 +205,8 @@ class WCC::Contentful::Configuration
     @management_token = ENV.fetch('CONTENTFUL_MANAGEMENT_TOKEN', nil)
     @preview_token = ENV.fetch('CONTENTFUL_PREVIEW_TOKEN', nil)
     @space = ENV.fetch('CONTENTFUL_SPACE_ID', nil)
-    @default_locale = nil
+    @default_locale = 'en-US'
+    @locale_fallbacks = {}
     @middleware = []
     @update_schema_file = :if_possible
     @schema_file = 'db/contentful-schema.json'
@@ -242,7 +249,7 @@ class WCC::Contentful::Configuration
     def initialize(configuration)
       ATTRIBUTES.each do |att|
         val = configuration.public_send(att)
-        val.freeze if val.is_a?(Hash) || val.is_a?(Array)
+        val = val.dup.freeze if val.is_a?(Hash) || val.is_a?(Array)
         instance_variable_set("@#{att}", val)
       end
     end

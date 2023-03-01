@@ -98,7 +98,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
       Class.new do
         include WCC::Contentful::Middleware::Store
 
-        def select?(entry)
+        def select?(entry, _options)
           entry.dig('fields', 'exclude', 'en-US') != true
         end
       end
@@ -164,7 +164,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
           }
         }
         expect(next_store).to receive(:find_by)
-          .with(content_type: 'test', filter: { 'sys.id' => '1234' }, options: nil)
+          .with(content_type: 'test', filter: { 'sys.id' => '1234' }, options: {})
           .and_return(entry)
 
         # act
@@ -180,7 +180,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
           }
         }
         expect(next_store).to receive(:find_by)
-          .with(content_type: 'test', filter: { 'sys.id' => '1234' }, options: nil)
+          .with(content_type: 'test', filter: { 'sys.id' => '1234' }, options: {})
           .and_return(entry)
 
         # act
@@ -254,7 +254,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
           }
         ]
         expect(next_store).to receive(:find_all)
-          .with(content_type: 'test', filter: { 'test' => 'ok' }, options: nil)
+          .with(content_type: 'test', filter: { 'test' => 'ok' }, options: {})
           .and_return(entries)
 
         # act
@@ -334,7 +334,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
         ]
         query_double = double('query')
         expect(next_store).to receive(:find_all)
-          .with(content_type: 'test', options: nil)
+          .with(content_type: 'test', options: {})
           .and_return(query_double)
 
         expect(query_double).to receive(:apply)
@@ -376,7 +376,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
       Class.new do
         include WCC::Contentful::Middleware::Store
 
-        def transform(entry)
+        def transform(entry, _options)
           entry['fields']['excluded'] = { 'en-US' => 'no' }
           entry
         end
@@ -411,7 +411,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
           }
         }
         expect(next_store).to receive(:find_by)
-          .with(content_type: 'test', filter: { 'sys.id' => '1234' }, options: nil)
+          .with(content_type: 'test', filter: { 'sys.id' => '1234' }, options: {})
           .and_return(entry)
 
         # act
@@ -473,7 +473,7 @@ RSpec.describe WCC::Contentful::Middleware::Store do
           }
         ]
         expect(next_store).to receive(:find_all)
-          .with(content_type: 'test', filter: { 'test' => 'ok' }, options: nil)
+          .with(content_type: 'test', filter: { 'test' => 'ok' }, options: {})
           .and_return(entries)
 
         # act

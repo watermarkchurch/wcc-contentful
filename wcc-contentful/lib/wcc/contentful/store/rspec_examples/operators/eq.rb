@@ -46,7 +46,7 @@ RSpec.shared_examples 'supports :eq operator' do
                 'id' => "k#{i}",
                 'contentType' => { 'sys' => { 'id' => 'test1' } }
               },
-              'fields' => { 'name' => { 'en-US' => [generator.call, generator.call] } }
+              'fields' => { type.to_s => { 'en-US' => [generator.call, generator.call] } }
             }
           end
 

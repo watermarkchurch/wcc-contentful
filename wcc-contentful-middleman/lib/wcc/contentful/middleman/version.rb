@@ -3,7 +3,7 @@
 module WCC
   module Contentful
     module Middleman
-      VERSION = '1.3.1'
+      VERSION = '1.4.0.rc1'
     end
   end
 end

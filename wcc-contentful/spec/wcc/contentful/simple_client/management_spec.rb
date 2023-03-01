@@ -11,6 +11,7 @@ RSpec.describe WCC::Contentful::SimpleClient::Management do
           connection: adapter
         )
       }
+
       describe '#content_types' do
         it 'uses environment' do
           stub_request(:get, 'https://api.contentful.com/spaces/testspace/environments/testenv/content_types?limit=1000')
@@ -94,6 +95,80 @@ RSpec.describe WCC::Contentful::SimpleClient::Management do
           # act
           expect {
             client.content_type('test1234')
+          }.to raise_error(WCC::Contentful::SimpleClient::NotFoundError)
+        end
+      end
+
+      describe '#locales' do
+        it 'uses environment' do
+          stub_request(:get, 'https://api.contentful.com/spaces/testspace/environments/testenv/locales?limit=1000')
+            .with(headers: { Authorization: 'Bearer testtoken' })
+            .to_return(body: load_fixture('contentful/simple_client/locales.json'))
+
+          # act
+          resp = client.locales(limit: 1000)
+
+          # assert
+          resp.assert_ok!
+          items = resp.items.force
+          expect(items.count).to eq(2)
+          expect(items.dig(0, 'code')).to eq('en-US')
+          expect(items.dig(1, 'name')).to eq('Spanish (United States)')
+        end
+
+        it 'notifies' do
+          stub_request(:get, 'https://api.contentful.com/spaces/testspace/environments/testenv/locales?limit=1000')
+            .with(headers: { Authorization: 'Bearer testtoken' })
+            .to_return(body: '{ "skip": 0, "total": 0, "items": [] }')
+
+          expect {
+            client.locales(limit: 1000)
+          }.to instrument('get_http.simpleclient.contentful.wcc')
+
+          expect {
+            client.locales(limit: 1000)
+          }.to instrument('locales.simpleclient.contentful.wcc')
+        end
+      end
+
+      describe '#locale' do
+        it 'uses environment' do
+          stub_request(:get, 'https://api.contentful.com/spaces/testspace/environments/testenv/locales/6gf9SW2So4IhpW8SGzoHeW')
+            .with(headers: { Authorization: 'Bearer testtoken' })
+            .to_return(body: <<~JSON)
+              {
+                "name": "Spanish (United States)",
+                "internal_code": "es-US",
+                "code": "es-US",
+                "fallbackCode": "en-US",
+                "default": false,
+                "contentManagementApi": true,
+                "contentDeliveryApi": true,
+                "optional": true,
+                "sys": {
+                  "type": "Locale",
+                  "id": "6gf9SW2So4IhpW8SGzoHeW"
+                }
+              }
+            JSON
+
+          # act
+          resp = client.locale('6gf9SW2So4IhpW8SGzoHeW')
+
+          # assert
+          resp.assert_ok!
+          expect(resp.raw.dig('sys', 'id')).to eq('6gf9SW2So4IhpW8SGzoHeW')
+          expect(resp.raw['code']).to eq('es-US')
+        end
+
+        it 'raises error on 404' do
+          stub_request(:get, 'https://api.contentful.com/spaces/testspace/environments/testenv/locales/test1234')
+            .with(headers: { Authorization: 'Bearer testtoken' })
+            .to_return(status: 404, body: '')
+
+          # act
+          expect {
+            client.locale('test1234')
           }.to raise_error(WCC::Contentful::SimpleClient::NotFoundError)
         end
       end

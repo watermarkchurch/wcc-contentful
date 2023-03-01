@@ -81,13 +81,16 @@ class WCC::Contentful::SimpleClient::Cdn < WCC::Contentful::SimpleClient
   def sync(sync_token: nil, **query, &block)
     return sync_old(sync_token: sync_token, **query) unless block_given?
 
-    sync_token =
+    query = {
+      # override default locale for sync queries
+      locale: nil
+    }.merge(
       if sync_token
         { sync_token: sync_token }
       else
         { initial: true }
       end
-    query = query.merge(sync_token)
+    ).merge(query)
 
     _instrument 'sync', sync_token: sync_token, query: query do
       resp = get('sync', query)

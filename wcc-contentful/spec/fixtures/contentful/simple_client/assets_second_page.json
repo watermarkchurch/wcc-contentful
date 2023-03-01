@@ -19,14 +19,12 @@
         "type": "Asset",
         "createdAt": "2018-02-12T19:53:25.296Z",
         "updatedAt": "2018-02-12T19:53:25.296Z",
-        "revision": 1
+        "revision": 1,
+        "locale": "en-US"
       },
       "fields": {
-        "title": {
-          "en-US": "favicon-32x32"
-        },
+        "title": "favicon-32x32",
         "file": {
-          "en-US": {
             "url": "//images.ctfassets.net/<CONTENTFUL_SPACE_ID>/6MbzYciSPKkcWIUUS2UGSw/856f4217b3aded5dab8ab10182e96f16/favicon-32x32.png",
             "details": {
               "size": 2817,
@@ -38,7 +36,6 @@
             "fileName": "favicon-32x32.png",
             "contentType": "image/png"
           }
-        }
       }
     }
   ]

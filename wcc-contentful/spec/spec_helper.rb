@@ -70,6 +70,8 @@ RSpec.configure do |config|
   config.include_context 'Contentful config'
   config.include(Wisper::RSpec::BroadcastMatcher)
 
+  WCC::Contentful::SyncEngine::Job.queue_adapter = :test if defined?(WCC::Contentful::SyncEngine::Job)
+
   config.before(:each) do
     WCC::Contentful.instance_variable_set('@configuration', nil)
 

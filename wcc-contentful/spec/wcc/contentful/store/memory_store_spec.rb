@@ -3,12 +3,17 @@
 require 'wcc/contentful/store/rspec_examples'
 
 RSpec.describe WCC::Contentful::Store::MemoryStore do
-  subject { WCC::Contentful::Store::MemoryStore.new }
+  subject { WCC::Contentful::Store::MemoryStore.new(configuration) }
+
+  let(:configuration) {
+    WCC::Contentful::Configuration.new
+  }
 
   it_behaves_like 'contentful store', {
     nested_queries: false,
+    locale_queries: true,
     include_param: 0,
-    operators: %i[eq ne in nin]
+    operators: described_class::SUPPORTED_OPS
   }
 
   it 'returns all keys' do

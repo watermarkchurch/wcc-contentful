@@ -29,7 +29,7 @@ module WCC::Contentful::Store
     end
 
     def find(key, hint: nil, **options)
-      options = { locale: '*' }.merge!(options || {})
+      options = options&.dup || {}
       entry =
         if hint
           client.public_send(hint.underscore, key, options)
@@ -114,7 +114,7 @@ module WCC::Contentful::Store
           op = :in if op.nil?
         end
 
-        param = parameter(field, operator: op, context: context, locale: true)
+        param = parameter(field, operator: op, context: context, locale: false)
 
         self.class.new(
           @store,
@@ -157,10 +157,10 @@ module WCC::Contentful::Store
         @response ||=
           if @relation[:content_type] == 'Asset'
             @client.assets(
-              { locale: '*' }.merge!(@relation.reject { |k| k == :content_type }).merge!(@options)
+              @relation.reject { |k| k == :content_type }.merge(@options)
             )
           else
-            @client.entries({ locale: '*' }.merge!(@relation).merge!(@options))
+            @client.entries(@relation.merge(@options))
           end
       end
 
@@ -180,6 +180,15 @@ module WCC::Contentful::Store
         included
       end
 
+      # Constructs the CDN query parameter from a structured field definition and
+      # operator.
+      # Notes:
+      #  * "eq" can be omitted, e.g. 'fields.slug=/' is equivalent to 'fields.slug[eq]=/'
+      #  * If "locale" is specified in the query, matching is done against that locale,
+      #      unless the query explicitly specifies the locale.  Examples:
+      #      'locale=es-US&fields.title=página principal' matches on the es locale
+      #      'locale=en-US&fields.title=página principal' returns nothing
+      #      'locale=en-US&fields.title.es-US=página principal' returns the page, but in the english locale.
       def parameter(field, operator: nil, context: nil, locale: false)
         if sys?(field)
           "#{field}#{op_param(operator)}"

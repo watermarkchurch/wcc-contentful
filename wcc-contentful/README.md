@@ -32,7 +32,7 @@ Table of Contents:
 
 ## Why did you rewrite the Contentful ruby stack?
 
-We started working with Contentful almost 3 years ago.  Since that time, Contentful's ruby stack has improved, but there are still a number of pain points that we feel we have addressed better with our gem.  These are:
+We started working with Contentful almost 5 years ago.  Since that time, Contentful's ruby stack has improved, but there are still a number of pain points that we feel we have addressed better with our gem.  These are:
 
 * [Low-level caching](#low-level-caching)
 * [Better integration with Rails & Rails models](#better-rails-integration)
@@ -160,22 +160,34 @@ The following examples show how to use this API to find entries of the `page`
 content type:
 
 ```ruby
+# app/models/page.rb
+class Page < WCC::Contentful::Model::Page
+
+  # You can add additional methods here
+end
+
 # Find objects by id
-WCC::Contentful::Model::Page.find('1E2ucWSdacxxf233sfa3')
-# => #<WCC::Contentful::Model::Page:0x0000000005c71a78 @created_at=2018-04-16 18:41:17 UTC...>
+Page.find('1E2ucWSdacxxf233sfa3')
+# => #<Page:0x0000000005c71a78 @created_at=2018-04-16 18:41:17 UTC...>
 
 # Find objects by field
-WCC::Contentful::Model::Page.find_by(slug: '/some-slug')
-# => #<WCC::Contentful::Model::Page:0x0000000005c71a78 @created_at=2018-04-16 18:41:17 UTC...>
+Page.find_by(slug: '/some-slug')
+# => #<Page:0x0000000005c71a78 @created_at=2018-04-16 18:41:17 UTC...>
 
 # Use operators to filter by a field
 # must use full notation for sys attributes (except ID)
-WCC::Contentful::Model::Page.find_all('sys.created_at' => { lte: Date.today })
-# => [#<WCC::Contentful::Model::Page:0x0000000005c71a78 @created_at=2018-04-16 18:41:17 UTC...>, ... ]
+Page.find_all('sys.created_at' => { lte: Date.today })
+# => [#<Page:0x0000000005c71a78 @created_at=2018-04-16 18:41:17 UTC...>, ... ]
 
 # Nest queries to mimick joins
-WCC::Contentful::Model::Page.find_by(subpages: { slug: '/some-slug' })
-# => #<WCC::Contentful::Model::Page:0x0000000005c71a78 @created_at=2018-04-16 18:41:17 UTC...>
+Page.find_by(subpages: { slug: '/some-slug' })
+# => #<Page:0x0000000005c71a78 @created_at=2018-04-16 18:41:17 UTC...>
+
+# Fetch an entry in a different locale
+spanish_homepage = Page.find_by(slug: '/', options: { locale: 'es-US' })
+# => #<Page:0x0000000005c71a78 @created_at=2018-04-16 18:41:17 UTC...>
+spanish_homepage.title
+# => Esta es la página principal
 
 # Pass the preview flag to use the preview client (must have set preview_token config param)
 preview_redirect = WCC::Contentful::Model::Redirect.find_by({ slug: 'draft-redirect' }, preview: true)
@@ -223,6 +235,18 @@ query.result
 query.result.force
 # => [{"sys"=> ...}, {"sys"=> ...}, ...]
 ```
+
+The store layer, while superficially similar to the Contentful API, tries to present a different "View" over the data
+which is more compatible with the Model layer.  It resolves includes by actually replacing the in-memory `Link` objects
+with their linked `Entry` representations.  This lets you traverse the links naturally using `#dig` or `#[]`:
+
+```ruby
+# Include to a depth of 3 to make sure it's included
+homepage = store.find_by(slug: '/', include: 3)
+# Traverse through the top nav menu => menu button 0 => about page
+about_page = homepage.dig('fields', 'nav_menu', 'fields', 'buttons', 0, 'fields', 'page')
+```
+
 
 See the {WCC::Contentful::Store} documentation for more details.
 
@@ -350,7 +374,6 @@ WCC::Contentful::SimpleClient::Cdn.new(
   space: '1234',
   # optional
   environment: 'staging', # omit to use master
-  default_locale: '*',
   rate_limit_wait_timeout: 10,
   instrumentation: ActiveSupport::Notifications,
   connection: Faraday.new { |builder| ... },
@@ -394,10 +417,35 @@ newest version of an entry, or delete an entry out of the hash.
 #### Store Middleware
 
 The store layer is made up of a base store (which implements {WCC::Contentful::Store::Interface}),
-and optional middleware.  The middleware
-allows custom transformation of received entries via the `#select` and `#transform`
-methods.  To create your own middleware simply include {WCC::Contentful::Middleware::Store}
-and implement those methods, then call `use` when configuring the store:
+and some required middleware.  The list of default middleware applied to each store is found in
+{WCC::Contentful::Store::Factory.default_middleware}
+
+To create your own middleware simply include {WCC::Contentful::Middleware::Store}.  Then you can optionally implement
+the `#transform` and `#select?` methods:
+
+```ruby
+class MyMiddleware
+  include WCC::Contentful::Middleware::Store
+
+  # Called for each entry that is requested out of the backing store.  You can modify the entry and return it to the
+  # next layer.
+  def transform(entry, options)
+    # Do something with the entry...
+    # Make sure you return it at the end!
+    entry
+  end
+
+  def select?(entry, options)
+    # Choose whether this entry should exist or not.  If you return false here, then the entry will act as though it
+    # were archived in Contentful.
+    entry.dig('fields', 'hide_until') > Time.zone.now
+  end
+end
+```
+
+You can also override any of the standard Store methods.
+
+To apply the middleware, call `use` when configuring the store:
 
 ```ruby
 config.store :direct do
@@ -414,6 +462,24 @@ This is the global top layer where your Rails app looks up content similarly to
 ActiveModel.  The models are namespaced under the root class {WCC::Contentful::Model}.
 Each model's implementation of `.find`, `.find_by`, and `.find_all` simply call
 into the configured Store.
+
+Models can be initialized directly with the `.new` method, by passing in a hash:
+```ruby
+entry = { 'sys' => ..., 'fields' => ... }
+Page.new(entry)
+```
+
+**The initializer must receive a localized entry**.  An entry found using a `locale=*` query
+must be transformed to a localized entry using the {WCC::Contentful::EntryLocaleTransformer} before
+passing it to your model:
+
+```ruby
+entry = client.entry('1234', locale: '*').raw
+localized_entry = WCC::Contentful::EntryLocaleTransformer.transform_to_locale(entry, 'en-US')
+Page.new(localized_entry)
+```
+
+The Store layer ensures that localized entries are returned using the {WCC::Contentful::Middleware::Store::LocaleMiddleware}.
 
 The main benefit of the Model layer is lazy link resolution.  When a model's
 property is accessed, if that property is a link that has not been resolved

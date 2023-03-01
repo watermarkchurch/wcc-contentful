@@ -41,7 +41,7 @@ module WCC::Contentful::ModelMethods
     store = context[:preview] ? self.class.services.preview_store : self.class.services.store
 
     raw_link_ids =
-      links.map { |field_name| raw.dig('fields', field_name, sys.locale) }
+      links.map { |field_name| raw.dig('fields', field_name) }
         .flat_map do |raw_value|
           _try_map(raw_value) { |v| v.dig('sys', 'id') if v.dig('sys', 'type') == 'Link' }
         end
@@ -62,7 +62,7 @@ module WCC::Contentful::ModelMethods
       raise WCC::Contentful::ResolveError, "Cannot find #{self.class.content_type} with ID #{id}" unless raw
 
       @raw = raw.freeze
-      links.each { |f| instance_variable_set("@#{f}", raw.dig('fields', f, sys.locale)) }
+      links.each { |f| instance_variable_set("@#{f}", raw.dig('fields', f)) }
     end
 
     links.each { |f| _resolve_field(f, depth, context, options) }
@@ -85,9 +85,7 @@ module WCC::Contentful::ModelMethods
   # the Contentful API.
   #
   # This differs from `#raw` in that it recursively includes the `#to_h`
-  # of resolved links.  It also sets the fields to the value for the entry's `#sys.locale`,
-  # as though the entry had been retrieved from the API with `locale={#sys.locale}` rather
-  # than `locale=*`.
+  # of resolved links.
   def to_h(stack = nil)
     raise WCC::Contentful::CircularReferenceError.new(stack, id) if stack&.include?(id)
 
@@ -122,7 +120,7 @@ module WCC::Contentful::ModelMethods
       end
 
     {
-      'sys' => { 'locale' => @sys.locale }.merge!(@raw['sys']),
+      'sys' => @raw['sys'].dup,
       'fields' => fields
     }
   end

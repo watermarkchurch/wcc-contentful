@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=menuButton&fields.link.sys.id=1UojJt7YoMiemCq2mGGUmQ&limit=1&locale=*
+    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=menuButton&fields.link.sys.id=1UojJt7YoMiemCq2mGGUmQ&limit=1
     body:
       encoding: US-ASCII
       string: ''
@@ -102,19 +102,16 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "menuButton"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "text": {
-                  "en-US": "Conferences"
-                },
+                "text": "Conferences",
                 "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "1UojJt7YoMiemCq2mGGUmQ"
-                    }
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Entry",
+                    "id": "1UojJt7YoMiemCq2mGGUmQ"
                   }
                 }
               }
@@ -149,15 +146,12 @@ http_interactions:
                       "linkType": "ContentType",
                       "id": "page"
                     }
-                  }
+                  },
+                  "locale": "en-US"
                 },
                 "fields": {
-                  "title": {
-                    "en-US": "Conferences"
-                  },
-                  "slug": {
-                    "en-US": "/conferences"
-                  }
+                  "title": "Conferences",
+                  "slug": "/conferences"
                 }
               }
             ]

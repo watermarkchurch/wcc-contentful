@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=menuButton&locale=*
+    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=menuButton
     body:
       encoding: US-ASCII
       string: ''
@@ -95,19 +95,16 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "menuButton"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "text": {
-                  "en-US": "About"
-                },
+                "text": "About",
                 "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "47PsST8EicKgWIWwK2AsW6"
-                    }
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Entry",
+                    "id": "47PsST8EicKgWIWwK2AsW6"
                   }
                 }
               }
@@ -132,29 +129,25 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "menuButton"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "text": {
-                  "en-US": "Cart"
-                },
-                "iconFA": {
-                  "en-US": "fa-shopping-cart"
-                },
+                "text": "Cart",
+                "iconFA": "fa-shopping-cart",
                 "buttonStyle": {
                   "en-US": [
                     "rounded"
                   ]
                 },
                 "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "3Azc4SjWSsYIuYO8m8qqQE"
-                    }
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Entry",
+                    "id": "3Azc4SjWSsYIuYO8m8qqQE"
                   }
-                }
+                },
+                "locale": "en-US"
               }
             },
             {
@@ -177,19 +170,16 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "menuButton"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "text": {
-                  "en-US": "Mission"
-                },
+                "text": "Mission",
                 "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "4lD8cHrr0QSAcY0sguqmss"
-                    }
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Entry",
+                    "id": "4lD8cHrr0QSAcY0sguqmss"
                   }
                 }
               }
@@ -214,19 +204,16 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "menuButton"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "text": {
-                  "en-US": "About Watermark Resources"
-                },
+                "text": "About Watermark Resources",
                 "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "47PsST8EicKgWIWwK2AsW6"
-                    }
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Entry",
+                    "id": "47PsST8EicKgWIWwK2AsW6"
                   }
                 }
               }
@@ -251,19 +238,16 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "menuButton"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "text": {
-                  "en-US": "Login"
-                },
+                "text": "Login",
                 "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "32EYWhG184SgoiYo2e6iOo"
-                    }
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Entry",
+                    "id": "32EYWhG184SgoiYo2e6iOo"
                   }
                 }
               }
@@ -288,15 +272,12 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "menuButton"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "text": {
-                  "en-US": "Ministries"
-                },
-                "iconFA": {
-                  "en-US": "fa-file-alt"
-                },
+                "text": "Ministries",
+                "iconFA": "fa-file-alt",
                 "buttonStyle": {
                   "en-US": [
                     "rounded",
@@ -309,12 +290,10 @@ http_interactions:
                   ]
                 },
                 "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "JhYhSfZPAOMqsaK8cYOUK"
-                    }
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Entry",
+                    "id": "JhYhSfZPAOMqsaK8cYOUK"
                   }
                 }
               }
@@ -339,12 +318,11 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "menuButton"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "text": {
-                  "en-US": "Watermark.org"
-                },
+                "text": "Watermark.org",
                 "buttonStyle": {
                   "en-US": [
                     "external",
@@ -357,9 +335,7 @@ http_interactions:
                     "color: brown;"
                   ]
                 },
-                "externalLink": {
-                  "en-US": "https://www.watermark.org"
-                }
+                "externalLink": "https://www.watermark.org"
               }
             },
             {
@@ -382,19 +358,16 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "menuButton"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "text": {
-                  "en-US": "Privacy Policy"
-                },
+                "text": "Privacy Policy",
                 "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "1tPGouM76soIsM2e0uikgw"
-                    }
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Entry",
+                    "id": "1tPGouM76soIsM2e0uikgw"
                   }
                 }
               }
@@ -419,22 +392,17 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "menuButton"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "text": {
-                  "en-US": "Conferences"
-                },
-                "iconFA": {
-                  "en-US": "fa-calendar-alt"
-                },
+                "text": "Conferences",
+                "iconFA": "fa-calendar-alt",
                 "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "1UojJt7YoMiemCq2mGGUmQ"
-                    }
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Entry",
+                    "id": "1UojJt7YoMiemCq2mGGUmQ"
                   }
                 }
               }
@@ -459,19 +427,16 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "menuButton"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "text": {
-                  "en-US": "Terms & Conditions"
-                },
+                "text": "Terms & Conditions",
                 "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "1loILDsvKYkmGWoiKOOgkE"
-                    }
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Entry",
+                    "id": "1loILDsvKYkmGWoiKOOgkE"
                   }
                 }
               }
@@ -496,27 +461,22 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "menuButton"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "text": {
-                  "en-US": "Find A Ministry for Your Church"
-                },
-                "iconFA": {
-                  "en-US": "fa-list-alt"
-                },
+                "text": "Find A Ministry for Your Church",
+                "iconFA": "fa-list-alt",
                 "buttonStyle": {
                   "en-US": [
                     "rounded"
                   ]
                 },
                 "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "JhYhSfZPAOMqsaK8cYOUK"
-                    }
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Entry",
+                    "id": "JhYhSfZPAOMqsaK8cYOUK"
                   }
                 }
               }
@@ -544,15 +504,12 @@ http_interactions:
                       "linkType": "ContentType",
                       "id": "page"
                     }
-                  }
+                  },
+                  "locale": "en-US"
                 },
                 "fields": {
-                  "title": {
-                    "en-US": "Conferences"
-                  },
-                  "slug": {
-                    "en-US": "/conferences"
-                  }
+                  "title": "Conferences",
+                  "slug": "/conferences"
                 }
               },
               {
@@ -575,15 +532,12 @@ http_interactions:
                       "linkType": "ContentType",
                       "id": "page"
                     }
-                  }
+                  },
+                  "locale": "en-US"
                 },
                 "fields": {
-                  "title": {
-                    "en-US": "Terms & Conditions"
-                  },
-                  "slug": {
-                    "en-US": "terms-and-conditions"
-                  }
+                  "title": "Terms & Conditions",
+                  "slug": "terms-and-conditions"
                 }
               },
               {
@@ -606,15 +560,12 @@ http_interactions:
                       "linkType": "ContentType",
                       "id": "page"
                     }
-                  }
+                  },
+                  "locale": "en-US"
                 },
                 "fields": {
-                  "title": {
-                    "en-US": "Privacy Policy"
-                  },
-                  "slug": {
-                    "en-US": "privacy-policy"
-                  }
+                  "title": "Privacy Policy",
+                  "slug": "privacy-policy"
                 }
               },
               {
@@ -637,15 +588,12 @@ http_interactions:
                       "linkType": "ContentType",
                       "id": "page"
                     }
-                  }
+                  },
+                  "locale": "en-US"
                 },
                 "fields": {
-                  "title": {
-                    "en-US": "Login"
-                  },
-                  "slug": {
-                    "en-US": "login"
-                  }
+                  "title": "Login",
+                  "slug": "login"
                 }
               },
               {
@@ -668,15 +616,12 @@ http_interactions:
                       "linkType": "ContentType",
                       "id": "page"
                     }
-                  }
+                  },
+                  "locale": "en-US"
                 },
                 "fields": {
-                  "title": {
-                    "en-US": "My Cart"
-                  },
-                  "slug": {
-                    "en-US": "my-cart"
-                  }
+                  "title": "My Cart",
+                  "slug": "my-cart"
                 }
               },
               {
@@ -699,15 +644,12 @@ http_interactions:
                       "linkType": "ContentType",
                       "id": "page"
                     }
-                  }
+                  },
+                  "locale": "en-US"
                 },
                 "fields": {
-                  "title": {
-                    "en-US": "About"
-                  },
-                  "slug": {
-                    "en-US": "about"
-                  }
+                  "title": "About",
+                  "slug": "about"
                 }
               },
               {
@@ -730,15 +672,12 @@ http_interactions:
                       "linkType": "ContentType",
                       "id": "page"
                     }
-                  }
+                  },
+                  "locale": "en-US"
                 },
                 "fields": {
-                  "title": {
-                    "en-US": "Mission"
-                  },
-                  "slug": {
-                    "en-US": "mission"
-                  }
+                  "title": "Mission",
+                  "slug": "mission"
                 }
               },
               {
@@ -761,18 +700,13 @@ http_interactions:
                       "linkType": "ContentType",
                       "id": "page"
                     }
-                  }
+                  },
+                  "locale": "en-US"
                 },
                 "fields": {
-                  "title": {
-                    "en-US": "Ministries"
-                  },
-                  "slug": {
-                    "en-US": "/ministries"
-                  },
-                  "heroText": {
-                    "en-US": "Test Test 123"
-                  }
+                  "title": "Ministries",
+                  "slug": "/ministries",
+                  "heroText": "Test Test 123"
                 }
               }
             ]
@@ -782,7 +716,7 @@ http_interactions:
   recorded_at: Fri, 09 Mar 2018 22:10:36 GMT
 - request:
     method: get
-    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=menuButton&locale=*
+    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=menuButton
     body:
       encoding: US-ASCII
       string: ''
@@ -875,19 +809,16 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "menuButton"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "text": {
-                  "en-US": "About"
-                },
+                "text": "About",
                 "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "47PsST8EicKgWIWwK2AsW6"
-                    }
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Entry",
+                    "id": "47PsST8EicKgWIWwK2AsW6"
                   }
                 }
               }
@@ -912,27 +843,22 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "menuButton"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "text": {
-                  "en-US": "Cart"
-                },
-                "iconFA": {
-                  "en-US": "fa-shopping-cart"
-                },
+                "text": "Cart",
+                "iconFA": "fa-shopping-cart",
                 "buttonStyle": {
                   "en-US": [
                     "rounded"
                   ]
                 },
                 "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "3Azc4SjWSsYIuYO8m8qqQE"
-                    }
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Entry",
+                    "id": "3Azc4SjWSsYIuYO8m8qqQE"
                   }
                 }
               }
@@ -957,19 +883,16 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "menuButton"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "text": {
-                  "en-US": "Mission"
-                },
+                "text": "Mission",
                 "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "4lD8cHrr0QSAcY0sguqmss"
-                    }
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Entry",
+                    "id": "4lD8cHrr0QSAcY0sguqmss"
                   }
                 }
               }
@@ -994,19 +917,16 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "menuButton"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "text": {
-                  "en-US": "About Watermark Resources"
-                },
+                "text": "About Watermark Resources",
                 "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "47PsST8EicKgWIWwK2AsW6"
-                    }
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Entry",
+                    "id": "47PsST8EicKgWIWwK2AsW6"
                   }
                 }
               }
@@ -1031,19 +951,16 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "menuButton"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "text": {
-                  "en-US": "Login"
-                },
+                "text": "Login",
                 "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "32EYWhG184SgoiYo2e6iOo"
-                    }
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Entry",
+                    "id": "32EYWhG184SgoiYo2e6iOo"
                   }
                 }
               }
@@ -1068,15 +985,12 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "menuButton"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "text": {
-                  "en-US": "Ministries"
-                },
-                "iconFA": {
-                  "en-US": "fa-file-alt"
-                },
+                "text": "Ministries",
+                "iconFA": "fa-file-alt",
                 "buttonStyle": {
                   "en-US": [
                     "rounded",
@@ -1089,12 +1003,10 @@ http_interactions:
                   ]
                 },
                 "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "JhYhSfZPAOMqsaK8cYOUK"
-                    }
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Entry",
+                    "id": "JhYhSfZPAOMqsaK8cYOUK"
                   }
                 }
               }
@@ -1119,12 +1031,11 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "menuButton"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "text": {
-                  "en-US": "Watermark.org"
-                },
+                "text": "Watermark.org",
                 "buttonStyle": {
                   "en-US": [
                     "external",
@@ -1137,9 +1048,7 @@ http_interactions:
                     "color: brown;"
                   ]
                 },
-                "externalLink": {
-                  "en-US": "https://www.watermark.org"
-                }
+                "externalLink": "https://www.watermark.org"
               }
             },
             {
@@ -1162,19 +1071,16 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "menuButton"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "text": {
-                  "en-US": "Privacy Policy"
-                },
+                "text": "Privacy Policy",
                 "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "1tPGouM76soIsM2e0uikgw"
-                    }
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Entry",
+                    "id": "1tPGouM76soIsM2e0uikgw"
                   }
                 }
               }
@@ -1199,22 +1105,17 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "menuButton"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "text": {
-                  "en-US": "Conferences"
-                },
-                "iconFA": {
-                  "en-US": "fa-calendar-alt"
-                },
+                "text": "Conferences",
+                "iconFA": "fa-calendar-alt",
                 "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "1UojJt7YoMiemCq2mGGUmQ"
-                    }
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Entry",
+                    "id": "1UojJt7YoMiemCq2mGGUmQ"
                   }
                 }
               }
@@ -1239,19 +1140,16 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "menuButton"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "text": {
-                  "en-US": "Terms & Conditions"
-                },
+                "text": "Terms & Conditions",
                 "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "1loILDsvKYkmGWoiKOOgkE"
-                    }
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Entry",
+                    "id": "1loILDsvKYkmGWoiKOOgkE"
                   }
                 }
               }
@@ -1276,27 +1174,22 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "menuButton"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "text": {
-                  "en-US": "Find A Ministry for Your Church"
-                },
-                "iconFA": {
-                  "en-US": "fa-list-alt"
-                },
+                "text": "Find A Ministry for Your Church",
+                "iconFA": "fa-list-alt",
                 "buttonStyle": {
                   "en-US": [
                     "rounded"
                   ]
                 },
                 "link": {
-                  "en-US": {
-                    "sys": {
-                      "type": "Link",
-                      "linkType": "Entry",
-                      "id": "JhYhSfZPAOMqsaK8cYOUK"
-                    }
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Entry",
+                    "id": "JhYhSfZPAOMqsaK8cYOUK"
                   }
                 }
               }
@@ -1324,15 +1217,12 @@ http_interactions:
                       "linkType": "ContentType",
                       "id": "page"
                     }
-                  }
+                  },
+                  "locale": "en-US"
                 },
                 "fields": {
-                  "title": {
-                    "en-US": "Conferences"
-                  },
-                  "slug": {
-                    "en-US": "/conferences"
-                  }
+                  "title": "Conferences",
+                  "slug": "/conferences"
                 }
               },
               {
@@ -1355,15 +1245,12 @@ http_interactions:
                       "linkType": "ContentType",
                       "id": "page"
                     }
-                  }
+                  },
+                  "locale": "en-US"
                 },
                 "fields": {
-                  "title": {
-                    "en-US": "Terms & Conditions"
-                  },
-                  "slug": {
-                    "en-US": "terms-and-conditions"
-                  }
+                  "title": "Terms & Conditions",
+                  "slug": "terms-and-conditions"
                 }
               },
               {
@@ -1386,15 +1273,12 @@ http_interactions:
                       "linkType": "ContentType",
                       "id": "page"
                     }
-                  }
+                  },
+                  "locale": "en-US"
                 },
                 "fields": {
-                  "title": {
-                    "en-US": "Privacy Policy"
-                  },
-                  "slug": {
-                    "en-US": "privacy-policy"
-                  }
+                  "title": "Privacy Policy",
+                  "slug": "privacy-policy"
                 }
               },
               {
@@ -1417,15 +1301,12 @@ http_interactions:
                       "linkType": "ContentType",
                       "id": "page"
                     }
-                  }
+                  },
+                  "locale": "en-US"
                 },
                 "fields": {
-                  "title": {
-                    "en-US": "Login"
-                  },
-                  "slug": {
-                    "en-US": "login"
-                  }
+                  "title": "Login",
+                  "slug": "login"
                 }
               },
               {
@@ -1448,15 +1329,12 @@ http_interactions:
                       "linkType": "ContentType",
                       "id": "page"
                     }
-                  }
+                  },
+                  "locale": "en-US"
                 },
                 "fields": {
-                  "title": {
-                    "en-US": "My Cart"
-                  },
-                  "slug": {
-                    "en-US": "my-cart"
-                  }
+                  "title": "My Cart",
+                  "slug": "my-cart"
                 }
               },
               {
@@ -1479,15 +1357,12 @@ http_interactions:
                       "linkType": "ContentType",
                       "id": "page"
                     }
-                  }
+                  },
+                  "locale": "en-US"
                 },
                 "fields": {
-                  "title": {
-                    "en-US": "About"
-                  },
-                  "slug": {
-                    "en-US": "about"
-                  }
+                  "title": "About",
+                  "slug": "about"
                 }
               },
               {
@@ -1510,15 +1385,12 @@ http_interactions:
                       "linkType": "ContentType",
                       "id": "page"
                     }
-                  }
+                  },
+                  "locale": "en-US"
                 },
                 "fields": {
-                  "title": {
-                    "en-US": "Mission"
-                  },
-                  "slug": {
-                    "en-US": "mission"
-                  }
+                  "title": "Mission",
+                  "slug": "mission"
                 }
               },
               {
@@ -1541,18 +1413,13 @@ http_interactions:
                       "linkType": "ContentType",
                       "id": "page"
                     }
-                  }
+                  },
+                  "locale": "en-US"
                 },
                 "fields": {
-                  "title": {
-                    "en-US": "Ministries"
-                  },
-                  "slug": {
-                    "en-US": "/ministries"
-                  },
-                  "heroText": {
-                    "en-US": "Test Test 123"
-                  }
+                  "title": "Ministries",
+                  "slug": "/ministries",
+                  "heroText": "Test Test 123"
                 }
               }
             ]

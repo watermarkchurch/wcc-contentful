@@ -83,6 +83,7 @@ class WCC::Contentful::LinkVisitor
       end
       yield(raw_value, locale)
     else
+      # yield each locale in turn
       raw_value&.each_with_object({}) do |(l, val), h|
         h[l] = yield(val, l)
       end
@@ -105,8 +106,18 @@ class WCC::Contentful::LinkVisitor
   end
 
   def set_field(field, locale, index, val)
-    current_field = (entry['fields'][field] ||= {})
+    # default entry
+    if locale == entry.dig('sys', 'locale')
+      if index.nil?
+        entry['fields'][field] = val
+      else
+        (entry['fields'][field] ||= [])[index] = val
+      end
+      return
+    end
 
+    # locale=* entry
+    current_field = (entry['fields'][field] ||= {})
     if index.nil?
       current_field[locale] = val
     else

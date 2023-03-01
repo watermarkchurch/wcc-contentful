@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=page&fields.slug.en-US=/conferences&limit=1&locale=*
+    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries?content_type=page&fields.slug=/conferences&limit=1
     body:
       encoding: US-ASCII
       string: ''
@@ -102,15 +102,12 @@ http_interactions:
                     "linkType": "ContentType",
                     "id": "page"
                   }
-                }
+                },
+                "locale": "en-US"
               },
               "fields": {
-                "title": {
-                  "en-US": "Conferences"
-                },
-                "slug": {
-                  "en-US": "/conferences"
-                }
+                "title": "Conferences",
+                "slug": "/conferences"
               }
             }
           ]

@@ -25,25 +25,22 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
           "type": "Asset",
           "createdAt": "2018-02-12T19:53:39.309Z",
           "updatedAt": "2018-02-12T19:53:39.309Z",
-          "revision": 1
+          "revision": 1,
+          "locale": "en-US"
         },
         "fields": {
-          "title": {
-            "en-US": "apple-touch-icon"
-          },
+          "title": "apple-touch-icon",
           "file": {
-            "en-US": {
-              "url": "//images.contentful.com/343qxys30lid/3pWma8spR62aegAWAWacyA/1beaebf5b66d2405ff9c9769a74db709/apple-touch-icon.png",
-              "details": {
-                "size": 40832,
-                "image": {
-                  "width": 180,
-                  "height": 180
-                }
-              },
-              "fileName": "apple-touch-icon.png",
-              "contentType": "image/png"
-            }
+            "url": "//images.contentful.com/343qxys30lid/3pWma8spR62aegAWAWacyA/1beaebf5b66d2405ff9c9769a74db709/apple-touch-icon.png",
+            "details": {
+              "size": 40832,
+              "image": {
+                "width": 180,
+                "height": 180
+              }
+            },
+            "fileName": "apple-touch-icon.png",
+            "contentType": "image/png"
           }
         }
       }
@@ -71,30 +68,20 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
         'type' => 'Entry'
       })
       expect(found['fields']).to include({
-        'text' => {
-          'en-US' => 'Ministries'
-        },
-        'iconFA' => {
-          'en-US' => 'fa-file-alt'
-        },
-        'buttonStyle' => {
-          'en-US' => %w[
-            rounded
-            custom
-          ]
-        },
-        'customButtonCss' => {
-          'en-US' => [
-            'border-color: green;'
-          ]
-        },
+        'text' => 'Ministries',
+        'iconFA' => 'fa-file-alt',
+        'buttonStyle' => %w[
+          rounded
+          custom
+        ],
+        'customButtonCss' => [
+          'border-color: green;'
+        ],
         'link' => {
-          'en-US' => {
-            'sys' => {
-              'type' => 'Link',
-              'linkType' => 'Entry',
-              'id' => 'JhYhSfZPAOMqsaK8cYOUK'
-            }
+          'sys' => {
+            'type' => 'Link',
+            'linkType' => 'Entry',
+            'id' => 'JhYhSfZPAOMqsaK8cYOUK'
           }
         }
       })
@@ -111,23 +98,19 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       })
 
       expect(found['fields']).to eq({
-        'title' => {
-          'en-US' => 'goat-clip-art'
-        },
+        'title' => 'goat-clip-art',
         'file' => {
-          'en-US' => {
-            'url' => "//images.ctfassets.net/#{contentful_space_id}/" \
-                     '4JV2MbQVoAeEUQGUmYGQGY/1f0e377e665d2ab94fb86b0c88e75b06/goat-clip-art.png',
-            'details' => {
-              'size' => 62_310,
-              'image' => {
-                'width' => 219,
-                'height' => 203
-              }
-            },
-            'fileName' => 'goat-clip-art.png',
-            'contentType' => 'image/png'
-          }
+          'url' => "//images.ctfassets.net/#{contentful_space_id}/" \
+                   '4JV2MbQVoAeEUQGUmYGQGY/1f0e377e665d2ab94fb86b0c88e75b06/goat-clip-art.png',
+          'details' => {
+            'size' => 62_310,
+            'image' => {
+              'width' => 219,
+              'height' => 203
+            }
+          },
+          'fileName' => 'goat-clip-art.png',
+          'contentType' => 'image/png'
         }
       })
     end
@@ -135,12 +118,10 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
     it 'follows hint for assets' do
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}" \
                          '/entries/3pWma8spR62aegAWAWacyA')
-        .with(query: hash_including(locale: '*'))
         .to_raise('Should not hit the Entries endpoint')
 
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}" \
                          '/assets/3pWma8spR62aegAWAWacyA')
-        .with(query: hash_including(locale: '*'))
         .to_return(status: 200, body: asset)
 
       # act
@@ -149,7 +130,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       # assert
       expect(found).to be_present
       expect(found.dig('sys', 'id')).to eq('3pWma8spR62aegAWAWacyA')
-      expect(found.dig('fields', 'title', 'en-US')).to eq('apple-touch-icon')
+      expect(found.dig('fields', 'title')).to eq('apple-touch-icon')
     end
 
     it 'returns nil when not found' do
@@ -177,7 +158,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
 
       # assert
       expect(found).to_not be_nil
-      expect(found.dig('fields', 'title', 'en-US')).to eq('goat-clip-art')
+      expect(found.dig('fields', 'title')).to eq('goat-clip-art')
     end
 
     it 'can apply filter object' do
@@ -187,7 +168,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       # assert
       expect(found).to_not be_nil
       expect(found.dig('sys', 'id')).to eq('1UojJt7YoMiemCq2mGGUmQ')
-      expect(found.dig('fields', 'title', 'en-US')).to eq('Conferences')
+      expect(found.dig('fields', 'title')).to eq('Conferences')
     end
 
     it 'allows filtering by a reference field' do
@@ -246,7 +227,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       # assert
       expect(found).to_not be_nil
       expect(found.dig('sys', 'id')).to eq('1UojJt7YoMiemCq2mGGUmQ')
-      expect(found.dig('fields', 'slug', 'en-US')).to eq('/conferences')
+      expect(found.dig('fields', 'slug')).to eq('/conferences')
     end
 
     it 'does allows properties named `*sys*`' do
@@ -256,7 +237,59 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       # assert
       expect(found).to_not be_nil
       expect(found.dig('sys', 'id')).to eq('2eXv0N3vUkIOWAauGg4q8a')
-      expect(found.dig('fields', 'system', 'en-US')).to eq('One')
+      expect(found.dig('fields', 'system')).to eq('One')
+    end
+
+    it 'passes through locale-specific queries' do
+      stub_request(:get, /\/entries/)
+        .with(query: {
+          'content_type' => 'sectionHero',
+          'limit' => '1',
+          'locale' => 'es-US',
+          'subtitle.es-US' => 'Esta es la página principal'
+        })
+        .to_return(body: <<~JSON)
+            {
+            "sys": {
+              "type": "Array"
+            },
+            "total": 1,
+            "skip": 0,
+            "limit": 100,
+            "items": [
+              {
+                "metadata": {
+                  "tags": []
+                },
+                "sys": {
+                  "id": "58IzCq6qGPFelU77b4R8rP",
+                  "type": "Entry",
+                  "contentType": {
+                    "sys": {
+                      "type": "Link",
+                      "linkType": "ContentType",
+                      "id": "sectionHero"
+                    }
+                  },
+                  "locale": "es-US"
+                },
+                "fields": {
+                  "title": "Homepage Hero",
+                  "subtitle": "Esta es la página principal"
+                }
+              }
+            ]
+          }
+        JSON
+
+      # act
+      found = adapter.find_by(content_type: 'sectionHero',
+        filter: { 'subtitle.es-US' => 'Esta es la página principal' },
+        options: { locale: 'es-US' })
+
+      # assert
+      expect(found).to_not be_nil
+      expect(found.dig('fields', 'subtitle')).to eq('Esta es la página principal')
     end
 
     it 'passes query params thru to client' do
@@ -268,9 +301,8 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
 
       expect(adapter.client).to receive(:entries)
         .with({
-          locale: '*',
           content_type: 'page',
-          'fields.test.en-US' => 'junk',
+          'fields.test' => 'junk',
           limit: 2,
           skip: 10,
           include: 5
@@ -300,7 +332,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
 
       # assert
       expect(found.count).to eq(11)
-      expect(found.map { |i| i.dig('fields', 'text', 'en-US') }.sort).to eq(
+      expect(found.map { |i| i.dig('fields', 'text') }.sort).to eq(
         [
           'About',
           'About Watermark Resources',
@@ -323,7 +355,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
 
       # assert
       expect(found.count).to eq(6)
-      expect(found.map { |i| i.dig('fields', 'title', 'en-US') }.sort).to eq(
+      expect(found.map { |i| i.dig('fields', 'title') }.sort).to eq(
         %w[
           apple-touch-icon
           favicon
@@ -344,13 +376,13 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       expect(found.count).to eq(1)
       page = found.first
       expect(page.dig('sys', 'id')).to eq('1UojJt7YoMiemCq2mGGUmQ')
-      expect(page.dig('fields', 'title', 'en-US')).to eq('Conferences')
+      expect(page.dig('fields', 'title')).to eq('Conferences')
     end
 
     it 'defaults to :in if given an array' do
       stub = stub_request(:get,
         "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
-        '?content_type=conference&fields.tags.en-US%5Bin%5D=a,b&locale=*')
+        '?content_type=conference&fields.tags%5Bin%5D=a,b')
         .to_return(body: {
           sys: { type: 'Array' },
           total: 2,
@@ -371,7 +403,7 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
     it 'handles nin with array' do
       stub = stub_request(:get,
         "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
-        '?content_type=conference&fields.tags.en-US%5Bnin%5D=a,b&locale=*')
+        '?content_type=conference&fields.tags%5Bnin%5D=a,b')
         .to_return(body: {
           sys: { type: 'Array' },
           total: 1,
@@ -390,17 +422,17 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
 
     it 'recursively resolves links if include > 0' do
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
-                         '?content_type=page&include=2&limit=5&locale=*')
+                         '?content_type=page&include=2&limit=5')
         .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_1.json'))
         .then.to_raise(StandardError.new('Should not hit page 1 a second time!'))
 
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
-                         '?content_type=page&include=2&limit=5&locale=*&skip=5')
+                         '?content_type=page&include=2&limit=5&skip=5')
         .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_2.json'))
         .then.to_raise(StandardError.new('Should not hit page 2 a second time!'))
 
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
-                         '?content_type=page&include=2&limit=5&locale=*&skip=10')
+                         '?content_type=page&include=2&limit=5&skip=10')
         .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_3.json'))
         .then.to_raise(StandardError.new('Should not hit page 3 a second time!'))
 
@@ -417,66 +449,75 @@ RSpec.describe WCC::Contentful::Store::CDNAdapter, :vcr do
       expect(items.count).to eq(11)
 
       page5 = items[5]
-      expect(page5.dig('sys', 'id')).to eq('MNL6HaLyWAAo4A2S2mkkk')
+      expect(page5.dig('sys', 'id')).to eq('WOy16KGdenz9uvcjOQj8B')
+
+      # depth 0
+      title = page5.dig('fields', 'title')
+      expect(title).to eq('Jobs at Watermark')
 
       # depth 1
-      header = page5.dig('fields', 'header', 'en-US')
-      expect(header.dig('sys', 'type')).to eq('Entry')
+      meta = page5.dig('fields', 'meta')
+      expect(meta.dig('sys', 'type')).to eq('Entry')
 
       # depth 2
-      domain_object = header.dig('fields', 'domainObject', 'en-US')
-      expect(domain_object.dig('sys', 'type')).to eq('Entry')
+      hero = page5.dig('fields', 'sections', 0, 'fields', 'heroImage')
+      expect(hero.dig('sys', 'type')).to eq('Asset')
+      expect(hero.dig('fields', 'title')).to eq('2020 Jobs hero web')
     end
 
     it 'stops resolving links at include depth' do
+      # NOTE: these fixtures were generated with include=3, but we set include:2 below
+      # This test indicates that the code stops resolving even if the response has the
+      # data to keep resolving further
+
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
-                         '?content_type=page&include=2&limit=5&locale=*')
+                         '?content_type=page&include=1&limit=5')
         .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_1.json'))
         .then.to_raise(StandardError)
 
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
-                         '?content_type=page&include=2&limit=5&locale=*&skip=5')
+                         '?content_type=page&include=1&limit=5&skip=5')
         .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_2.json'))
         .then.to_raise(StandardError)
 
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
-                         '?content_type=page&include=2&limit=5&locale=*&skip=10')
+                         '?content_type=page&include=1&limit=5&skip=10')
         .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_3.json'))
         .then.to_raise(StandardError)
 
       # act
       found = adapter.find_all(content_type: 'page', options: {
         limit: 5,
-        include: 2
+        include: 1
       })
 
       # assert
       expect(found.to_enum).to be_a(Enumerator::Lazy)
       items = found.to_enum.force
-      expect(items.count).to eq(11)
-
       page5 = items[5]
-      expect(page5.dig('sys', 'id')).to eq('MNL6HaLyWAAo4A2S2mkkk')
+
+      # depth 0
+      title = page5.dig('fields', 'title')
+      expect(title).to eq('Jobs at Watermark')
 
       # depth 1
-      header = page5.dig('fields', 'header', 'en-US')
+      meta = page5.dig('fields', 'meta')
+      expect(meta.dig('sys', 'type')).to eq('Entry')
 
       # depth 2
-      domain_object = header.dig('fields', 'domainObject', 'en-US')
-
-      # depth 3
-      thumbnail = domain_object.dig('fields', 'thumbnail', 'en-US')
-      expect(thumbnail.dig('sys', 'type')).to eq('Link')
+      hero = page5.dig('fields', 'sections', 0, 'fields', 'heroImage')
+      expect(hero.dig('sys', 'type')).to eq('Link')
+      expect(hero.dig('sys', 'linkType')).to eq('Asset')
     end
 
     it 'ensures enumerator remains lazy when map applied at higher layer' do
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
-                         '?content_type=page&include=2&limit=5&locale=*')
+                         '?content_type=page&include=2&limit=5')
         .to_return(body: load_fixture('contentful/cdn_adapter_spec/page_find_all_1.json'))
         .then.to_raise(StandardError)
 
       stub_request(:get, "https://cdn.contentful.com/spaces/#{contentful_space_id}/entries" \
-                         '?content_type=page&include=2&limit=5&locale=*&skip=5')
+                         '?content_type=page&include=2&limit=5&skip=5')
         .to_raise(StandardError.new('Should not call second page'))
 
       # act

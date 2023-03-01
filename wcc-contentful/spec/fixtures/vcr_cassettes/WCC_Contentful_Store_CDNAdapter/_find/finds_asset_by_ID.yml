@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries/4JV2MbQVoAeEUQGUmYGQGY?locale=*
+    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/entries/4JV2MbQVoAeEUQGUmYGQGY
     body:
       encoding: US-ASCII
       string: ''
@@ -82,7 +82,7 @@ http_interactions:
   recorded_at: Fri, 09 Mar 2018 22:10:36 GMT
 - request:
     method: get
-    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/assets/4JV2MbQVoAeEUQGUmYGQGY?locale=*
+    uri: https://cdn.contentful.com/spaces/<CONTENTFUL_SPACE_ID>/assets/4JV2MbQVoAeEUQGUmYGQGY
     body:
       encoding: US-ASCII
       string: ''
@@ -160,25 +160,22 @@ http_interactions:
             "type": "Asset",
             "createdAt": "2018-02-12T21:59:33.792Z",
             "updatedAt": "2018-02-12T21:59:33.792Z",
-            "revision": 1
+            "revision": 1,
+            "locale": "en-US"
           },
           "fields": {
-            "title": {
-              "en-US": "goat-clip-art"
-            },
+            "title": "goat-clip-art",
             "file": {
-              "en-US": {
-                "url": "//images.ctfassets.net/<CONTENTFUL_SPACE_ID>/4JV2MbQVoAeEUQGUmYGQGY/1f0e377e665d2ab94fb86b0c88e75b06/goat-clip-art.png",
-                "details": {
-                  "size": 62310,
-                  "image": {
-                    "width": 219,
-                    "height": 203
-                  }
-                },
-                "fileName": "goat-clip-art.png",
-                "contentType": "image/png"
-              }
+              "url": "//images.ctfassets.net/<CONTENTFUL_SPACE_ID>/4JV2MbQVoAeEUQGUmYGQGY/1f0e377e665d2ab94fb86b0c88e75b06/goat-clip-art.png",
+              "details": {
+                "size": 62310,
+                "image": {
+                  "width": 219,
+                  "height": 203
+                }
+              },
+              "fileName": "goat-clip-art.png",
+              "contentType": "image/png"
             }
           }
         }

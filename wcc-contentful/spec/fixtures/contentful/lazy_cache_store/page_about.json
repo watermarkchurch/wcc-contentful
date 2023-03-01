@@ -22,7 +22,8 @@
   },
   "fields": {
     "title": {
-      "en-US": "About"
+      "en-US": "About",
+      "es": "Sobre nosotros"
     },
     "slug": {
       "en-US": "about"
@@ -37,7 +38,8 @@
       }
     },
     "heroText": {
-      "en-US": "Some test hero text"
+      "en-US": "Some test hero text",
+      "es": "Algun texto de prueba"
     },
     "subMenu": {
       "en-US": {

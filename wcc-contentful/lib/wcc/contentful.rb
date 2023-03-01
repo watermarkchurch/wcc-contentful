@@ -10,6 +10,7 @@ require 'wcc/contentful/configuration'
 require 'wcc/contentful/downloads_schema'
 require 'wcc/contentful/exceptions'
 require 'wcc/contentful/helpers'
+require 'wcc/contentful/entry_locale_transformer'
 require 'wcc/contentful/link_visitor'
 require 'wcc/contentful/services'
 require 'wcc/contentful/simple_client'
@@ -40,9 +41,8 @@ module WCC::Contentful
     end
 
     # Gets all queryable locales.
-    # Reserved for future use.
     def locales
-      @locales ||= { 'en-US' => {} }.freeze
+      configuration&.locale_fallbacks
     end
 
     def logger
@@ -93,15 +93,18 @@ module WCC::Contentful
       end
     end
 
-    content_types =
+    schema =
       begin
-        JSON.parse(File.read(configuration.schema_file))['contentTypes'] if File.exist?(configuration.schema_file)
+        JSON.parse(File.read(configuration.schema_file)) if File.exist?(configuration.schema_file)
       rescue JSON::ParserError
         Services.instance.warn("Schema file invalid, ignoring it: #{configuration.schema_file}")
         nil
       end
 
-    if !content_types && %i[if_possible never].include?(configuration.update_schema_file)
+    content_types = schema['contentTypes'] if schema
+    locales = schema['locales'] if schema
+
+    if !schema && %i[if_possible never].include?(configuration.update_schema_file)
       # Final fallback - try to grab content types from CDN.  We can't update the file
       # because the CDN doesn't have all the field validation info, but we can at least
       # build the WCC::Contentful::Model instances.
@@ -127,7 +130,15 @@ module WCC::Contentful
       services: WCC::Contentful::Services.instance
     )
 
-    # Drop an initial sync
+    # Update the locale fallbacks from the schema file, unless they have already
+    # been configured.
+    locales&.each do |locale_hash|
+      next if @configuration.locale_fallbacks[locale_hash['code']]
+
+      @configuration.locale_fallbacks[locale_hash['code']] = locale_hash['fallbackCode']
+    end
+
+    # Enqueue an initial sync
     WCC::Contentful::SyncEngine::Job.perform_later if defined?(WCC::Contentful::SyncEngine::Job)
 
     @configuration = @configuration.freeze

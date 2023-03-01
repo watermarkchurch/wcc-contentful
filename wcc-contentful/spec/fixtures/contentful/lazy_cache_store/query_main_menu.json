@@ -26,64 +26,55 @@
             "linkType": "ContentType",
             "id": "menu"
           }
-        }
+        },
+        "locale": "en-US"
       },
       "fields": {
-        "name": {
-          "en-US": "Main Menu"
-        },
+        "name": "Main Menu",
         "icon": {
-          "en-US": {
-            "sys": {
-              "type": "Link",
-              "linkType": "Asset",
-              "id": "4JV2MbQVoAeEUQGUmYGQGY"
-            }
+          "sys": {
+            "type": "Link",
+            "linkType": "Asset",
+            "id": "4JV2MbQVoAeEUQGUmYGQGY"
           }
         },
-        "secondGroup": {
-          "en-US": [
-            {
-              "sys": {
-                "type": "Link",
-                "linkType": "Entry",
-                "id": "3bZRv5ISCkui6kguIwM2U0"
-              }
-            },
-            {
-              "sys": {
-                "type": "Link",
-                "linkType": "Entry",
-                "id": "1EjBdAgOOgAQKAggQoY2as"
-              }
-            }
-          ]
-        },
-        "thirdGroup": {
-          "en-US": [
-            {
-              "sys": {
-                "type": "Link",
-                "linkType": "Entry",
-                "id": "2X7Pm2VQmQyAWK0y2wy8me"
-              }
-            },
-            {
-              "sys": {
-                "type": "Link",
-                "linkType": "Entry",
-                "id": "4Gye0ybf2EiWCgSyEg0cyE"
-              }
-            }
-          ]
-        },
-        "hamburger": {
-          "en-US": {
+        "secondGroup": [
+          {
             "sys": {
               "type": "Link",
               "linkType": "Entry",
-              "id": "6y9DftpiYoA4YiKg2CgoUU"
+              "id": "3bZRv5ISCkui6kguIwM2U0"
             }
+          },
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "1EjBdAgOOgAQKAggQoY2as"
+            }
+          }
+        ],
+        "thirdGroup": [
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "2X7Pm2VQmQyAWK0y2wy8me"
+            }
+          },
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "4Gye0ybf2EiWCgSyEg0cyE"
+            }
+          }
+        ],
+        "hamburger": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "6y9DftpiYoA4YiKg2CgoUU"
           }
         }
       }
@@ -157,30 +148,27 @@
               "linkType": "ContentType",
               "id": "menu"
             }
-          }
+          },
+          "locale": "en-US"
         },
         "fields": {
-          "name": {
-            "en-US": "Side Menu"
-          },
-          "secondGroup": {
-            "en-US": [
-              {
-                "sys": {
-                  "type": "Link",
-                  "linkType": "Entry",
-                  "id": "1TikjmGeSIisEWoC4CwokQ"
-                }
-              },
-              {
-                "sys": {
-                  "type": "Link",
-                  "linkType": "Entry",
-                  "id": "ZosJIuGfgkky0cA2GsymW"
-                }
+          "name": "Side Menu",
+          "secondGroup": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "1TikjmGeSIisEWoC4CwokQ"
               }
-            ]
-          }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "ZosJIuGfgkky0cA2GsymW"
+              }
+            }
+          ]
         }
       }
     ],
@@ -198,25 +186,22 @@
           "type": "Asset",
           "createdAt": "2018-02-12T21:59:33.792Z",
           "updatedAt": "2018-02-12T21:59:33.792Z",
-          "revision": 1
+          "revision": 1,
+          "locale": "en-US"
         },
         "fields": {
-          "title": {
-            "en-US": "goat-clip-art"
-          },
+          "title": "goat-clip-art",
           "file": {
-            "en-US": {
-              "url": "//images.ctfassets.net/343qxys30lid/4JV2MbQVoAeEUQGUmYGQGY/1f0e377e665d2ab94fb86b0c88e75b06/goat-clip-art.png",
-              "details": {
-                "size": 62310,
-                "image": {
-                  "width": 219,
-                  "height": 203
-                }
-              },
-              "fileName": "goat-clip-art.png",
-              "contentType": "image/png"
-            }
+            "url": "//images.ctfassets.net/343qxys30lid/4JV2MbQVoAeEUQGUmYGQGY/1f0e377e665d2ab94fb86b0c88e75b06/goat-clip-art.png",
+            "details": {
+              "size": 62310,
+              "image": {
+                "width": 219,
+                "height": 203
+              }
+            },
+            "fileName": "goat-clip-art.png",
+            "contentType": "image/png"
           }
         }
       }

@@ -17,6 +17,10 @@ module WCC::Contentful::Store
   class Base
     include WCC::Contentful::Store::Interface
 
+    def initialize(configuration = nil)
+      @configuration = configuration || WCC::Contentful.configuration
+    end
+
     # Sets the value of the entry with the given ID in the store.
     # @abstract
     def set(_id, _value)
@@ -103,7 +107,8 @@ module WCC::Contentful::Store
       Query.new(
         self,
         content_type: content_type,
-        options: options
+        options: options,
+        configuration: @configuration
       )
     end
 

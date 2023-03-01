@@ -63,6 +63,12 @@ module WCC::Contentful
               raise ArgumentError, 'Wrong Content Type - ' \
                                    "'#{raw.dig('sys', 'id')}' is a #{ct}, expected #{typedef.content_type}"
             end
+            if raw.dig('sys', 'locale').blank?
+              raise ArgumentError, 'Model layer cannot represent "locale=*" entries. ' \
+                                   "Please use a specific locale in your query.  \n" \
+                                   "(Error occurred with entry id: #{raw.dig('sys', 'id')})"
+            end
+
             @raw = raw.freeze
 
             created_at = raw.dig('sys', 'createdAt')
@@ -72,7 +78,7 @@ module WCC::Contentful
             @sys = WCC::Contentful::Sys.new(
               raw.dig('sys', 'id'),
               raw.dig('sys', 'type'),
-              raw.dig('sys', 'locale') || context.try(:[], :locale) || 'en-US',
+              raw.dig('sys', 'locale'),
               raw.dig('sys', 'space', 'sys', 'id'),
               created_at,
               updated_at,
@@ -81,7 +87,8 @@ module WCC::Contentful
             )
 
             typedef.fields.each_value do |f|
-              raw_value = raw.dig('fields', f.name, @sys.locale)
+              raw_value = raw.dig('fields', f.name)
+
               if raw_value.present?
                 case f.type
                 # DateTime is intentionally not parsed!

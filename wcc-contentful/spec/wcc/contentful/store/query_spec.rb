@@ -87,6 +87,15 @@ RSpec.describe WCC::Contentful::Store::Query do
       expect(cond.expected).to eq('test')
       expect(query.conditions.length).to eq(2)
     end
+
+    it 'uses locale from options' do
+      subject = described_class.new(store, content_type: 'test', options: { locale: 'es-MX' })
+
+      query = subject.public_send(op, 'f', 'test')
+
+      cond = query.conditions[0]
+      expect(cond&.path).to eq(%w[fields f es-MX])
+    end
   end
 
   ARRAY_OPS = %i[in nin all].freeze
