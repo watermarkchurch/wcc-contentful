@@ -91,15 +91,21 @@ module WCC::Contentful::Middleware::Store
       id = json.dig('sys', 'id')
       type = json.dig('sys', 'type')
       prev = @cache.read(id)
-      return if prev.nil? && LAZILY_CACHEABLE_TYPES.include?(type)
+      if prev.nil? && LAZILY_CACHEABLE_TYPES.include?(type)
+        _instrument('miss.index', key: id, type: type, prev: nil, next: nil)
+        return
+      end
 
       if (prev_rev = prev&.dig('sys', 'revision')) && (next_rev = json.dig('sys', 'revision')) && (next_rev < prev_rev)
+        _instrument('miss.index', key: id, type: type, prev: prev_rev, next: next_rev)
         return prev
       end
 
       # we also set DeletedEntry objects in the cache - no need to go hit the API when we know
       # this is a nil object
-      @cache.write(id, json, expires_in: expires_in)
+      _instrument('write.index', key: id, type: type, prev: prev_rev, next: next_rev) do
+        @cache.write(id, json, expires_in: expires_in)
+      end
 
       case type
       when 'DeletedEntry', 'DeletedAsset'
