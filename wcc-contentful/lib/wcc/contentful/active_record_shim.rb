@@ -33,7 +33,7 @@ module WCC::Contentful::ActiveRecordShim
 
   class_methods do
     def model_name
-      WCC::Contentful::Helpers.constant_from_content_type(content_type)
+      ActiveModel::Name.new(self, nil, WCC::Contentful::Helpers.constant_from_content_type(content_type))
     end
 
     def const_get(name)
@@ -46,7 +46,7 @@ module WCC::Contentful::ActiveRecordShim
     end
 
     def table_name
-      model_name.tableize
+      model_name.plural.tableize
     end
 
     def unscoped
