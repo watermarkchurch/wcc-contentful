@@ -56,6 +56,36 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     expect(WCC::Contentful::Model.constants(false)).to include(:Page)
   end
 
+  it 'can represent a DeletedEntry' do
+    deleted_page_raw = {
+      'sys' => {
+        'type' => 'DeletedEntry',
+        'id' => '123',
+        'space' => { 'sys' => { 'type' => 'Link', 'linkType' => 'Space', 'id' => 'space123' } },
+        'revision' => 1,
+        'createdAt' => '2018-02-12T20:09:38.819Z',
+        'updatedAt' => '2018-02-12T21:59:43.653Z',
+        'deletedAt' => '2018-02-12T21:59:43.653Z',
+        'environment' => { 'sys' => { 'id' => 'master', 'type' => 'Link', 'linkType' => 'Environment' } },
+        'contentType' => {
+          'sys' => {
+            'type' => 'Link',
+            'linkType' => 'ContentType',
+            'id' => 'page'
+          }
+        }
+      }
+    }
+    @schema = subject.build_models
+
+    # act
+    deleted_page = WCC::Contentful::Model::Page.new(deleted_page_raw)
+
+    # assert
+    expect(deleted_page).to be_instance_of(WCC::Contentful::Model::Page)
+    expect(deleted_page.sys.type).to eq('DeletedEntry')
+  end
+
   describe 'static methods' do
     it 'finds types by ID' do
       @schema = subject.build_models

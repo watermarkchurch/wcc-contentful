@@ -59,11 +59,11 @@ module WCC::Contentful
 
           define_method(:initialize) do |raw, context = nil|
             ct = content_type_from_raw(raw)
-            if ct != typedef.content_type
+            if ct.present? && ct != typedef.content_type
               raise ArgumentError, 'Wrong Content Type - ' \
                                    "'#{raw.dig('sys', 'id')}' is a #{ct}, expected #{typedef.content_type}"
             end
-            if raw.dig('sys', 'locale').blank?
+            if raw.dig('sys', 'locale').blank? && %w[Entry Asset].include?(raw.dig('sys', 'type'))
               raise ArgumentError, 'Model layer cannot represent "locale=*" entries. ' \
                                    "Please use a specific locale in your query.  \n" \
                                    "(Error occurred with entry id: #{raw.dig('sys', 'id')})"
