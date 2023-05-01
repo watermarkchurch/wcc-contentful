@@ -16,6 +16,8 @@ class WCC::Contentful::Model::MenuButton < WCC::Contentful::Model
     return external_link if external_link
 
     url = (link&.try(:slug) || link&.try(:url))
+    return if url.blank? && fragment.blank?
+
     url = URI(url || '')
 
     url = rewrite_to_locale(url, sys.locale) if default_locale && sys.locale != default_locale
