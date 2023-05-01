@@ -141,6 +141,17 @@ RSpec.describe WCC::Contentful::EntryLocaleTransformer do
       expect(entry.dig('sys', 'locale')).to eq(nil)
       expect(entry.dig('fields', 'title').keys).to eq(%w[en-US es-US])
     end
+
+    it 'handles when entry has no fields' do
+      # Sometimes for testing purposes we like to construct Entry fixtures that only have a "sys".
+      entry['fields'] = nil
+
+      # act
+      localized_entry = subject.transform_to_locale(entry, 'es-US')
+
+      # assert
+      expect(localized_entry.dig('sys', 'locale')).to eq('es-US')
+    end
   end
 
   describe '.reduce_to_star' do

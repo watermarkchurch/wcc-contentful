@@ -26,7 +26,7 @@ module WCC::Contentful::EntryLocaleTransformer
       'WCC::Contentful::EntryLocaleTransformer:locales_included' => [entry_locale]
     })
     fields =
-      entry['fields'].transform_values do |value|
+      entry['fields']&.transform_values do |value|
         h = {}
         h[entry_locale] = value
         h
@@ -50,7 +50,6 @@ module WCC::Contentful::EntryLocaleTransformer
 
       return entry
     end
-    return entry unless entry['fields']
 
     # Transform the store's "locale=*" entry into a localized one
     locale ||= default_locale
@@ -58,7 +57,7 @@ module WCC::Contentful::EntryLocaleTransformer
     sys = entry['sys'].deep_dup
     sys['locale'] = locale
     fields =
-      entry['fields'].transform_values do |value|
+      entry['fields']&.transform_values do |value|
         next if value.nil?
 
         # replace the all-locales value with the localized value
