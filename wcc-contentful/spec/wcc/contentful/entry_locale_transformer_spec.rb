@@ -144,13 +144,14 @@ RSpec.describe WCC::Contentful::EntryLocaleTransformer do
 
     it 'handles when entry has no fields' do
       # Sometimes for testing purposes we like to construct Entry fixtures that only have a "sys".
-      entry['fields'] = nil
+      e = entry.except('fields')
 
       # act
-      localized_entry = subject.transform_to_locale(entry, 'es-US')
+      localized_entry = subject.transform_to_locale(e, 'es-US')
 
       # assert
       expect(localized_entry.dig('sys', 'locale')).to eq('es-US')
+      expect(localized_entry.key?('fields')).to be false
     end
   end
 

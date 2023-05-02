@@ -22,20 +22,21 @@ module WCC::Contentful::EntryLocaleTransformer
       return entry
     end
 
-    sys = entry['sys'].except('locale').merge({
+    new_entry = entry.dup
+
+    new_entry['sys'] = entry['sys'].except('locale').merge({
       'WCC::Contentful::EntryLocaleTransformer:locales_included' => [entry_locale]
     })
-    fields =
-      entry['fields']&.transform_values do |value|
-        h = {}
-        h[entry_locale] = value
-        h
-      end
+    if entry.key?('fields')
+      new_entry['fields'] =
+        entry['fields'].transform_values do |value|
+          h = {}
+          h[entry_locale] = value
+          h
+        end
+    end
 
-    {
-      'sys' => sys,
-      'fields' => fields
-    }
+    new_entry
   end
 
   ##
@@ -54,29 +55,29 @@ module WCC::Contentful::EntryLocaleTransformer
     # Transform the store's "locale=*" entry into a localized one
     locale ||= default_locale
 
-    sys = entry['sys'].deep_dup
-    sys['locale'] = locale
-    fields =
-      entry['fields']&.transform_values do |value|
-        next if value.nil?
+    new_entry = entry.dup
+    new_entry['sys'] = entry['sys'].deep_dup
+    new_entry['sys']['locale'] = locale
+    if entry.key?('fields')
+      new_entry['fields'] =
+        entry['fields']&.transform_values do |value|
+          next if value.nil?
 
-        # replace the all-locales value with the localized value
-        l = locale
-        v = nil
-        while l
-          v = value[l]
-          break if v
+          # replace the all-locales value with the localized value
+          l = locale
+          v = nil
+          while l
+            v = value[l]
+            break if v
 
-          l = configuration.locale_fallbacks[l]
+            l = configuration.locale_fallbacks[l]
+          end
+
+          v
         end
+    end
 
-        v
-      end
-
-    {
-      'sys' => sys,
-      'fields' => fields
-    }
+    new_entry
   end
 
   ##
