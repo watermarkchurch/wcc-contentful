@@ -123,7 +123,7 @@ RSpec.describe WCC::Contentful::Configuration do
         # assert
         stack = middleware_stack(services.store)
         expect(stack[stack.length - 2]).to be_a(WCC::Contentful::Middleware::Store::CachingMiddleware)
-        expect(services.store.find('test')).to eq({ 'sys' => { 'id' => 'test data' } })
+        expect(services.store.find('test')).to eq({ 'sys' => { 'id' => 'test data', 'locale' => 'en-US' } })
       end
 
       it 'uses provided cache' do
@@ -135,7 +135,7 @@ RSpec.describe WCC::Contentful::Configuration do
         # assert
         stack = middleware_stack(services.store)
         expect(stack[stack.length - 2]).to be_a(WCC::Contentful::Middleware::Store::CachingMiddleware)
-        expect(services.store.find('test')).to eq({ 'sys' => { 'id' => 'test data' } })
+        expect(services.store.find('test')).to eq({ 'sys' => { 'id' => 'test data', 'locale' => 'en-US' } })
       end
     end
 
