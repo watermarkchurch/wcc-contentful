@@ -3,7 +3,7 @@
 module WCC
   module Contentful
     module App
-      VERSION = '1.4.0.rc3'
+      VERSION = '1.4.0'
     end
   end
 end
