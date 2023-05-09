@@ -138,7 +138,8 @@ module WCC::Contentful
       # This job uses the Contentful Sync API to update the configured store with
       # the latest data from Contentful.
       class Job < ActiveJob::Base
-        self.queue_adapter ||= :async
+        # This should always be "async", because the configured store could be an in-memory store.
+        self.queue_adapter = :async
         queue_as :default
 
         def configuration
