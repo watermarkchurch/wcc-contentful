@@ -22,9 +22,11 @@ module WCC::Contentful::Middleware::Store
       found =
         @cache.fetch(key, expires_in: expires_in) do
           event = 'miss'
-          # if it's not a contentful ID don't hit the API.
+          # if it's from the sync engine don't hit the API.
+          next if key =~ /^sync:/
+
           # Store a nil object if we can't find the object on the CDN.
-          (store.find(key, **options) || nil_obj(key)) if key =~ /^\w+$/
+          (store.find(key, **options) || nil_obj(key))
         end
 
       return unless found
