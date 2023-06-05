@@ -36,8 +36,12 @@ module WCC::Contentful::RichText
         name.demodulize.underscore.dasherize
       end
 
+      def matches?(node_type)
+        self.node_type == node_type
+      end
+
       def tokenize(raw, context = nil)
-        raise ArgumentError, "Expected '#{node_type}', got '#{raw['nodeType']}'" unless raw['nodeType'] == node_type
+        raise ArgumentError, "Expected '#{node_type}', got '#{raw['nodeType']}'" unless matches?(raw['nodeType'])
 
         values =
           members.map do |symbol|

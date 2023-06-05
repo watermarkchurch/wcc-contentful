@@ -101,5 +101,10 @@ module WCC::Contentful::RichText
   Unknown =
     Struct.new(:nodeType, :data, :content) do
       include WCC::Contentful::RichText::Node
+
+      # Unknown nodes are the catch all, so they always match anything that made it to the else case of the switch.
+      def self.matches?(_node_type)
+        true
+      end
     end
 end
