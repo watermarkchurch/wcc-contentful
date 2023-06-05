@@ -33,10 +33,26 @@ module WCC::Contentful::RichText
         Document
       when 'paragraph'
         Paragraph
+      when 'hr'
+        HR
       when 'blockquote'
         Blockquote
       when 'text'
         Text
+      when 'ordered-list'
+        OrderedList
+      when 'unordered-list'
+        UnorderedList
+      when 'list-item'
+        ListItem
+      when 'table'
+        Table
+      when 'table-row'
+        TableRow
+      when 'table-cell'
+        TableCell
+      when 'table-header-cell'
+        TableHeaderCell
       when 'embedded-entry-inline'
         EmbeddedEntryInline
       when 'embedded-entry-block'
@@ -47,6 +63,9 @@ module WCC::Contentful::RichText
         size = Regexp.last_match(1)
         const_get("Heading#{size}")
       else
+        # Future proofing for new node types introduced by Contentful.
+        # The best list of node types maintained by Contentful is here:
+        # https://github.com/contentful/rich-text/blob/master/packages/rich-text-types/src/blocks.ts
         Unknown
       end
 
@@ -63,6 +82,11 @@ module WCC::Contentful::RichText
       include WCC::Contentful::RichText::Node
     end
 
+  HR =
+    Struct.new(:nodeType, :data, :content) do
+      include WCC::Contentful::RichText::Node
+    end
+
   Blockquote =
     Struct.new(:nodeType, :data, :content) do
       include WCC::Contentful::RichText::Node
@@ -70,6 +94,41 @@ module WCC::Contentful::RichText
 
   Text =
     Struct.new(:nodeType, :value, :marks, :data) do
+      include WCC::Contentful::RichText::Node
+    end
+
+  OrderedList =
+    Struct.new(:nodeType, :data, :content) do
+      include WCC::Contentful::RichText::Node
+    end
+
+  UnorderedList =
+    Struct.new(:nodeType, :data, :content) do
+      include WCC::Contentful::RichText::Node
+    end
+
+  ListItem =
+    Struct.new(:nodeType, :data, :content) do
+      include WCC::Contentful::RichText::Node
+    end
+
+  Table =
+    Struct.new(:nodeType, :data, :content) do
+      include WCC::Contentful::RichText::Node
+    end
+
+  TableRow =
+    Struct.new(:nodeType, :data, :content) do
+      include WCC::Contentful::RichText::Node
+    end
+
+  TableCell =
+    Struct.new(:nodeType, :data, :content) do
+      include WCC::Contentful::RichText::Node
+    end
+
+  TableHeaderCell =
+    Struct.new(:nodeType, :data, :content) do
       include WCC::Contentful::RichText::Node
     end
 
@@ -84,6 +143,11 @@ module WCC::Contentful::RichText
     end
 
   EmbeddedAssetBlock =
+    Struct.new(:nodeType, :data, :content) do
+      include WCC::Contentful::RichText::Node
+    end
+
+  EmbeddedResourceBlock =
     Struct.new(:nodeType, :data, :content) do
       include WCC::Contentful::RichText::Node
     end

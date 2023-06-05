@@ -230,6 +230,100 @@ RSpec.describe WCC::Contentful::RichText do
 
     it_behaves_like 'WCC::Contentful::RichText::Node'
   end
+
+  describe WCC::Contentful::RichText::UnorderedList do
+    let(:fixture) {
+      {
+        'nodeType' => 'unordered-list',
+        'data' => {},
+        'content' => [
+          {
+            'nodeType' => 'list-item',
+            'data' => {},
+            'content' => [
+              {
+                'nodeType' => 'paragraph',
+                'data' => {},
+                'content' => [
+                  {
+                    'nodeType' => 'text',
+                    'value' => 'Deepen our theology of God and His church',
+                    'marks' => [],
+                    'data' => {}
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            'nodeType' => 'list-item',
+            'data' => {},
+            'content' => [
+              {
+                'nodeType' => 'paragraph',
+                'data' => {},
+                'content' => [
+                  {
+                    'nodeType' => 'text',
+                    'value' => 'Make a big church feel smaller',
+                    'marks' => [],
+                    'data' => {}
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            'nodeType' => 'list-item',
+            'data' => {},
+            'content' => [
+              {
+                'nodeType' => 'paragraph',
+                'data' => {},
+                'content' => [
+                  {
+                    'nodeType' => 'text',
+                    'value' => 'Strengthen families',
+                    'marks' => [],
+                    'data' => {}
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            'nodeType' => 'list-item',
+            'data' => {},
+            'content' => [
+              {
+                'nodeType' => 'paragraph',
+                'data' => {},
+                'content' => [
+                  {
+                    'nodeType' => 'text',
+                    'value' => 'Love our city',
+                    'marks' => [],
+                    'data' => {}
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+
+    it { is_expected.to be_a WCC::Contentful::RichText::UnorderedList }
+    it { is_expected.to have_node_type('unordered-list') }
+
+    it_behaves_like 'WCC::Contentful::RichText::Node'
+
+    it 'can deep dig' do
+      expect(
+        subject.dig('content', 1, 'content', 0, 'content', 0, 'value')
+      ).to eq('Make a big church feel smaller')
+    end
+  end
 end
 
 RSpec::Matchers.define :have_node_type do |expected|
