@@ -92,5 +92,102 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
         HTML
       end
     end
+
+    context 'with a list' do
+      let(:content) {
+        [
+          {
+            'nodeType' => 'unordered-list',
+            'content' => [
+              {
+                'nodeType' => 'list-item',
+                'content' => [
+                  {
+                    'nodeType' => 'paragraph',
+                    'content' => [
+                      {
+                        'nodeType' => 'text',
+                        'value' => 'Deepen our theology of God and His church'
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                'nodeType' => 'list-item',
+                'content' => [
+                  {
+                    'nodeType' => 'paragraph',
+                    'content' => [
+                      {
+                        'nodeType' => 'text',
+                        'value' => 'Make a big church feel smaller'
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                'nodeType' => 'list-item',
+                'content' => [
+                  {
+                    'nodeType' => 'paragraph',
+                    'content' => [
+                      {
+                        'nodeType' => 'text',
+                        'value' => 'Strengthen families'
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                'nodeType' => 'list-item',
+                'content' => [
+                  {
+                    'nodeType' => 'paragraph',
+                    'content' => [
+                      {
+                        'nodeType' => 'text',
+                        'value' => 'Love our city'
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+
+      it 'renders a <ul>' do
+        expect(subject.to_html).to match_inline_html_snapshot <<~HTML
+          <div class="contentful-rich-text">
+            <ul>
+              <li>
+                <p>
+                  <span>Deepen our theology of God and His church</span>
+                </p>
+              </li>
+              <li>
+                <p>
+                  <span>Make a big church feel smaller</span>
+                </p>
+              </li>
+              <li>
+                <p>
+                  <span>Strengthen families</span>
+                </p>
+              </li>
+              <li>
+                <p>
+                  <span>Love our city</span>
+                </p>
+              </li>
+            </ul>
+          </div>
+        HTML
+      end
+    end
   end
 end

@@ -82,6 +82,30 @@ class WCC::Contentful::RichTextRenderer
     end
   end
 
+  def render_unordered_list(node)
+    content_tag(:ul) do
+      node.content.each do |child|
+        concat render_node(child)
+      end
+    end
+  end
+
+  def render_ordered_list(node)
+    content_tag(:ol) do
+      node.content.each do |child|
+        concat render_node(child)
+      end
+    end
+  end
+
+  def render_list_item(node)
+    content_tag(:li) do
+      node.content.each do |child|
+        concat render_node(child)
+      end
+    end
+  end
+
   def to_html
     render.to_s
   end
