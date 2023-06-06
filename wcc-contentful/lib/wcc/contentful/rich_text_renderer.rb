@@ -49,10 +49,15 @@ class WCC::Contentful::RichTextRenderer
     @config ||= WCC::Contentful.configuration
   end
 
-  def initialize(document, config: nil, store: nil)
+  def model_api
+    @model_api ||= WCC::Contentful::Model
+  end
+
+  def initialize(document, config: nil, store: nil, model_api: nil)
     @document = document
     @config = config
     @store = store
+    @model_api = model_api
   end
 
   def render
@@ -143,21 +148,40 @@ class WCC::Contentful::RichTextRenderer
     target = resolve_target(node.data['target'])
     url = target&.dig('fields', 'file', 'url')
 
-    new_hyperlink_node =
+    render_hyperlink(
       WCC::Contentful::RichText::Hyperlink.tokenize(
         node.as_json.merge(
           'nodeType' => 'hyperlink',
-          'data' => node['data'].merge({ 'uri' => url })
+          'data' => node['data'].merge({
+            'uri' => url,
+            'target' => target.as_json
+          })
         )
       )
-
-    render_hyperlink(new_hyperlink_node)
+    )
   end
 
   def render_entry_hyperlink(node)
-    raise NotImplementedError,
-      'Entry hyperlinks are not supported.  Where would it link to?  Which field represents the href? ' \
-      'Please override this in your app-specific RichTextRenderer implementation.'
+    target = resolve_target(node.data['target'])
+    model_instance = model_api.new_from_raw(target)
+    unless model_instance.respond_to?(:href)
+      raise NotImplementedError,
+        "Entry hyperlinks are not supported for #{model_instance.class}.  " \
+        'Please ensure your model defines an #href method, or override the ' \
+        '#render_entry_hyperlink method in your app-specific RichTextRenderer implementation.'
+    end
+
+    render_hyperlink(
+      WCC::Contentful::RichText::Hyperlink.tokenize(
+        node.as_json.merge(
+          'nodeType' => 'hyperlink',
+          'data' => node['data'].merge({
+            'uri' => model_instance.href,
+            'target' => target.as_json
+          })
+        )
+      )
+    )
   end
 
   def render_embedded_asset_block(node)

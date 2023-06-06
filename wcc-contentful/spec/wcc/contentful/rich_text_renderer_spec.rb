@@ -331,6 +331,65 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
       end
     end
 
+    context 'with an entry-hyperlink' do
+      let(:content) {
+        [
+          {
+            'nodeType' => 'paragraph',
+            'content' => [
+              {
+                'nodeType' => 'text',
+                'value' => 'This is an '
+              },
+              {
+                'nodeType' => 'entry-hyperlink',
+                'data' => {
+                  'target' => {
+                    'sys' => {
+                      'id' => '6mbnFhDqoOWFFAaE5O1HD9',
+                      'type' => 'Link',
+                      'linkType' => 'Entry'
+                    }
+                  }
+                },
+                'content' => [
+                  {
+                    'nodeType' => 'text',
+                    'value' => 'entry link'
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+
+      it 'renders an <a> tag if the model has #href' do
+        store = double('store', find: {
+          'sys' => {
+            'id' => '6mbnFhDqoOWFFAaE5O1HD9',
+            'type' => 'Asset'
+          },
+          'fields' => {
+            'file' => {
+              'url' => '//images.ctfassets.net/abc123/asset.jpg'
+            }
+          }
+        })
+
+        allow(subject).to receive(:store).and_return(store)
+
+        allow(WCC::Contentful::Model).to receive(:new_from_raw)
+          .and_return(double('page-model', href: '/some-page'))
+
+        expect(subject.to_html).to match_inline_html_snapshot <<~HTML
+          <div class="contentful-rich-text">
+            <p>This is an <a href="/some-page">entry link</a></p>
+          </div>
+        HTML
+      end
+    end
+
     context 'with an embedded-asset-block' do
       let(:content) {
         [
