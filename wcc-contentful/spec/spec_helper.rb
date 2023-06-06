@@ -67,6 +67,7 @@ RSpec.configure do |config|
   config.filter_run_excluding bench: true
 
   config.include FixturesHelper
+  config.include WCC::Contentful::SnapshotHelper
   config.include_context 'Contentful config'
   config.include(Wisper::RSpec::BroadcastMatcher)
 

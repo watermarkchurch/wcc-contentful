@@ -14,6 +14,7 @@ class WCC::Contentful::Configuration
     logger
     management_token
     preview_token
+    rich_text_renderer
     schema_file
     space
     store
@@ -76,6 +77,12 @@ class WCC::Contentful::Configuration
   # after (2 * sync_retry_wait), the third after (4 * sync_retry_wait), etc.
   # Default: 2.seconds
   attr_accessor :sync_retry_wait
+
+  # Sets the rich text renderer implementation.  This can be any object that responds
+  # to `:call` and returns a string.  The object will be passed a WCC::Contentful::RichText::Document.
+  # The default implementation is WCC::Contentful::ActionViewRichTextRenderer, which
+  # requires the `actionview` gem.
+  attr_accessor :rich_text_renderer
 
   # Returns true if the currently configured environment is pointing at `master`.
   def master?

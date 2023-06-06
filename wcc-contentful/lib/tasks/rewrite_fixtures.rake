@@ -4,7 +4,7 @@ require 'wcc/contentful'
 
 namespace :wcc_contentful do
   desc 'Rewrites JSON fixtures from locale=* to locale=en-US'
-  task :rewrite_fixtures, [:glob, :locale] => :environment do |t, args|
+  task :rewrite_fixtures, %i[glob locale] => :environment do |_t, args|
     glob = args[:glob] || 'spec/fixtures/**/*.json'
     locale = args[:locale] || 'en-US'
 
@@ -15,7 +15,7 @@ namespace :wcc_contentful do
       next unless contents.is_a?(Hash) && contents['sys']
 
       rewritten_contents =
-        case type = contents['sys']['type']
+        case contents['sys']['type']
         when 'Array'
           rewrite_array(contents, locale: locale)
         when 'Entry', 'Asset'
