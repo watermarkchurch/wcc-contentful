@@ -63,7 +63,28 @@ class WCC::Contentful::RichTextRenderer
   end
 
   def render_text(node)
-    content_tag(:span, node.value)
+    return node.value unless node.marks&.any?
+
+    node.marks.reduce(node.value) do |value, mark|
+      next value unless type = mark['type']&.underscore
+
+      render_mark(type, value)
+    end
+  end
+
+  DEFAULT_MARKS = {
+    'bold' => 'strong',
+    'italic' => 'em',
+    'underline' => 'u',
+    'code' => 'code',
+    'superscript' => 'sup',
+    'subscript' => 'sub'
+  }.freeze
+
+  def render_mark(type, value)
+    return value unless tag = DEFAULT_MARKS[type]
+
+    content_tag(tag, value)
   end
 
   def render_paragraph(node)

@@ -28,6 +28,69 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
   end
 
   describe '#to_html' do
+    context 'with text' do
+      let(:content) {
+        [
+          {
+            'nodeType' => 'text',
+            'value' => 'Hello, world!'
+          }
+        ]
+      }
+
+      it 'renders without a tag' do
+        expect(subject.to_html).to match_inline_html_snapshot <<~HTML
+          <div class="contentful-rich-text">Hello, world!</div>
+        HTML
+      end
+
+      [
+        %w[bold strong],
+        %w[italic em],
+        %w[underline u],
+        %w[code code],
+        %w[superscript sup],
+        %w[subscript sub]
+      ].each do |(type, tag)|
+        it "renders #{type} mark as <#{tag}>" do
+          content[0]['value'] = 'This is '
+          content << {
+            'nodeType' => 'text',
+            'value' => type,
+            'marks' => [
+              {
+                'type' => type
+              }
+            ]
+          }
+
+          expect(subject.to_html.strip).to eq <<~HTML.strip
+            <div class="contentful-rich-text">This is <#{tag}>#{type}</#{tag}></div>
+          HTML
+        end
+      end
+
+      it 'renders multiple marks' do
+        content[0]['value'] = 'This is '
+        content << {
+          'nodeType' => 'text',
+          'value' => 'bold and italic',
+          'marks' => [
+            {
+              'type' => 'bold'
+            },
+            {
+              'type' => 'italic'
+            }
+          ]
+        }
+
+        expect(subject.to_html.strip).to eq <<~HTML.strip
+          <div class="contentful-rich-text">This is <em><strong>bold and italic</strong></em></div>
+        HTML
+      end
+    end
+
     context 'with a paragraph' do
       let(:content) {
         [
@@ -46,9 +109,7 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
       it 'renders a <p> tag' do
         expect(subject.to_html).to match_inline_html_snapshot <<~HTML
           <div class="contentful-rich-text">
-            <p>
-              <span>This year, we concentrated our efforts around four strategic priorities:</span>
-            </p>
+            <p>This year, we concentrated our efforts around four strategic priorities:</p>
           </div>
         HTML
       end
@@ -82,12 +143,8 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
       it 'renders header tags' do
         expect(subject.to_html).to match_inline_html_snapshot <<~HTML
           <div class="contentful-rich-text">
-            <h1>
-              <span>Dear Watermark Family,</span>
-            </h1>
-            <h2>
-              <span>2020 was a year like no other.</span>
-            </h2>
+            <h1>Dear Watermark Family,</h1>
+            <h2>2020 was a year like no other.</h2>
           </div>
         HTML
       end
@@ -165,24 +222,16 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
           <div class="contentful-rich-text">
             <ul>
               <li>
-                <p>
-                  <span>Deepen our theology of God and His church</span>
-                </p>
+                <p>Deepen our theology of God and His church</p>
               </li>
               <li>
-                <p>
-                  <span>Make a big church feel smaller</span>
-                </p>
+                <p>Make a big church feel smaller</p>
               </li>
               <li>
-                <p>
-                  <span>Strengthen families</span>
-                </p>
+                <p>Strengthen families</p>
               </li>
               <li>
-                <p>
-                  <span>Love our city</span>
-                </p>
+                <p>Love our city</p>
               </li>
             </ul>
           </div>
