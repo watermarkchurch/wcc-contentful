@@ -330,5 +330,47 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
         HTML
       end
     end
+
+    context 'with an embedded-asset-block' do
+      let(:content) {
+        [
+          {
+            'nodeType' => 'embedded-asset-block',
+            'data' => {
+              'target' => {
+                'sys' => {
+                  'id' => '6mbnFhDqoOWFFAaE5O1HD9',
+                  'type' => 'Link',
+                  'linkType' => 'Asset'
+                }
+              }
+            }
+          }
+        ]
+      }
+
+      it 'renders an <img> tag' do
+        store = double('store', find: {
+          'sys' => {
+            'id' => '6mbnFhDqoOWFFAaE5O1HD9',
+            'type' => 'Asset'
+          },
+          'fields' => {
+            'title' => 'John Smith, Sr Pastor',
+            'file' => {
+              'url' => '//images.ctfassets.net/abc123/asset.jpg'
+            }
+          }
+        })
+
+        allow(subject).to receive(:store).and_return(store)
+
+        expect(subject.to_html).to match_inline_html_snapshot <<~HTML
+          <div class="contentful-rich-text">
+            <img src="//images.ctfassets.net/abc123/asset.jpg" alt="John Smith, Sr Pastor">
+          </div>
+        HTML
+      end
+    end
   end
 end

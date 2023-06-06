@@ -62,7 +62,7 @@ class WCC::Contentful::RichTextRenderer
   end
 
   def render_content(content)
-    content.each do |node|
+    content&.each do |node|
       concat render_node(node)
     end
   end
@@ -140,11 +140,8 @@ class WCC::Contentful::RichTextRenderer
   end
 
   def render_asset_hyperlink(node)
-    target = node.data['target']
-    if target.dig('sys', 'type') == 'Link'
-      target = store.find(target.dig('sys', 'id'), hint: target.dig('sys', 'linkType'))
-    end
-    url = target.dig('fields', 'file', 'url')
+    target = resolve_target(node.data['target'])
+    url = target&.dig('fields', 'file', 'url')
 
     new_hyperlink_node =
       WCC::Contentful::RichText::Hyperlink.tokenize(
@@ -157,11 +154,46 @@ class WCC::Contentful::RichTextRenderer
     render_hyperlink(new_hyperlink_node)
   end
 
+  def render_entry_hyperlink(node)
+    raise NotImplementedError,
+      'Entry hyperlinks are not supported.  Where would it link to?  Which field represents the href? ' \
+      'Please override this in your app-specific RichTextRenderer implementation.'
+  end
+
+  def render_embedded_asset_block(node)
+    target = resolve_target(node.data['target'])
+    title = target&.dig('fields', 'title')
+    url = target&.dig('fields', 'file', 'url')
+
+    content_tag(:img, src: url, alt: title) do
+      render_content(node.content)
+    end
+  end
+
+  def render_embedded_entry_block(node)
+    raise NotImplementedError,
+      'Entry embeds are not supported.  What should it look like? ' \
+      'Please override this in your app-specific RichTextRenderer implementation.'
+  end
+
+  def render_embedded_entry_inline(node)
+    raise NotImplementedError,
+      'Inline Entry embeds are not supported.  What should it look like? ' \
+      'Please override this in your app-specific RichTextRenderer implementation.'
+  end
+
   def to_html
     render.to_s
   end
 
   private
+
+  def resolve_target(target)
+    if target&.dig('sys', 'type') == 'Link'
+      target = store.find(target.dig('sys', 'id'), hint: target.dig('sys', 'linkType'))
+    end
+    target
+  end
 
   def url_is_external?(url)
     return false unless url.present?
