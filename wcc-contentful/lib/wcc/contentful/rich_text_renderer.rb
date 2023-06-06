@@ -117,6 +117,16 @@ class WCC::Contentful::RichTextRenderer
     end
   end
 
+  def render_blockquote(node)
+    content_tag(:blockquote) do
+      render_content(node.content)
+    end
+  end
+
+  def render_hr(_node)
+    content_tag(:hr)
+  end
+
   def render_unordered_list(node)
     content_tag(:ul) do
       render_content(node.content)
@@ -131,6 +141,30 @@ class WCC::Contentful::RichTextRenderer
 
   def render_list_item(node)
     content_tag(:li) do
+      render_content(node.content)
+    end
+  end
+
+  def render_table(node)
+    content_tag(:table) do
+      render_content(node.content)
+    end
+  end
+
+  def render_table_row(node)
+    content_tag(:tr) do
+      render_content(node.content)
+    end
+  end
+
+  def render_table_cell(node)
+    content_tag(:td) do
+      render_content(node.content)
+    end
+  end
+
+  def render_table_header_cell(node)
+    content_tag(:th) do
       render_content(node.content)
     end
   end

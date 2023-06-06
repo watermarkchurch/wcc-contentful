@@ -115,6 +115,65 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
       end
     end
 
+    context 'with a blockquote' do
+      let(:content) {
+        [
+          {
+            'nodeType' => 'blockquote',
+            'content' => [
+              {
+                'nodeType' => 'paragraph',
+                'content' => [
+                  {
+                    'nodeType' => 'text',
+                    'value' => "If you confess with your mouth that Jesus is Lord and believe in your heart that God raised him from the dead, you will be saved.\n" # rubocop:disable Layout/LineLength
+                  },
+                  {
+                    'nodeType' => 'text',
+                    'value' => 'Romans 10:9',
+                    'marks' => [
+                      {
+                        'type' => 'subscript'
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+
+      it 'renders a <blockquote> tag' do
+        expect(subject.to_html).to match_inline_html_snapshot <<~HTML
+          <div class="contentful-rich-text">
+            <blockquote>
+              <p>If you confess with your mouth that Jesus is Lord and believe in your heart that God raised him from the dead, you will be saved.
+          <sub>Romans 10:9</sub></p>
+            </blockquote>
+          </div>
+        HTML
+      end
+    end
+
+    context 'with a horizontal rule' do
+      let(:content) {
+        [
+          {
+            'nodeType' => 'hr'
+          }
+        ]
+      }
+
+      it 'renders a <hr> tag' do
+        expect(subject.to_html).to match_inline_html_snapshot <<~HTML
+          <div class="contentful-rich-text">
+            <hr>
+          </div>
+        HTML
+      end
+    end
+
     context 'with a heading' do
       let(:content) {
         [
@@ -127,7 +186,6 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
               }
             ]
           },
-
           {
             'nodeType' => 'heading-2',
             'content' => [
@@ -234,6 +292,217 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
                 <p>Love our city</p>
               </li>
             </ul>
+          </div>
+        HTML
+      end
+    end
+
+    context 'with a table' do
+      let(:content) {
+        [
+          {
+            'nodeType' => 'table',
+            'content' => [
+              {
+                'nodeType' => 'table-row',
+                'content' => [
+                  {
+                    'nodeType' => 'table-header-cell',
+                    'content' => [
+                      {
+                        'nodeType' => 'paragraph',
+                        'content' => [
+                          {
+                            'nodeType' => 'text',
+                            'value' => 'Star Wars Movie'
+
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    'nodeType' => 'table-header-cell',
+                    'content' => [
+                      {
+                        'nodeType' => 'paragraph',
+                        'content' => [
+                          {
+                            'nodeType' => 'text',
+                            'value' => 'Rating'
+
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                'nodeType' => 'table-row',
+                'content' => [
+                  {
+                    'nodeType' => 'table-cell',
+                    'content' => [
+                      {
+                        'nodeType' => 'paragraph',
+                        'content' => [
+                          {
+                            'nodeType' => 'text',
+                            'value' => 'Episode 4'
+
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    'nodeType' => 'table-cell',
+                    'content' => [
+                      {
+                        'nodeType' => 'paragraph',
+                        'content' => [
+                          {
+                            'nodeType' => 'text',
+                            'value' => '8'
+
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                'nodeType' => 'table-row',
+                'content' => [
+                  {
+                    'nodeType' => 'table-cell',
+                    'content' => [
+                      {
+                        'nodeType' => 'paragraph',
+                        'content' => [
+                          {
+                            'nodeType' => 'text',
+                            'value' => 'Episode 5'
+
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    'nodeType' => 'table-cell',
+                    'content' => [
+                      {
+                        'nodeType' => 'paragraph',
+                        'content' => [
+                          {
+                            'nodeType' => 'text',
+                            'value' => '10'
+
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                'nodeType' => 'table-row',
+                'content' => [
+                  {
+                    'nodeType' => 'table-cell',
+                    'content' => [
+                      {
+                        'nodeType' => 'paragraph',
+                        'content' => [
+                          {
+                            'nodeType' => 'text',
+                            'value' => 'Episode 6'
+
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    'nodeType' => 'table-cell',
+                    'content' => [
+                      {
+                        'nodeType' => 'paragraph',
+                        'content' => [
+                          {
+                            'nodeType' => 'text',
+                            'value' => '5'
+
+                          }
+                        ]
+                      },
+                      {
+                        'nodeType' => 'paragraph',
+                        'content' => [
+                          {
+                            'nodeType' => 'text',
+                            'value' => '(because of the ewoks duh)',
+                            'marks' => [
+                              {
+                                'type' => 'subscript'
+                              }
+                            ]
+
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+
+      it 'renders a <table>' do
+        expect(subject.to_html).to match_inline_html_snapshot <<~HTML
+          <div class="contentful-rich-text">
+            <table>
+              <tr>
+                <th>
+                  <p>Star Wars Movie</p>
+                </th>
+                <th>
+                  <p>Rating</p>
+                </th>
+              </tr>
+              <tr>
+                <td>
+                  <p>Episode 4</p>
+                </td>
+                <td>
+                  <p>8</p>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <p>Episode 5</p>
+                </td>
+                <td>
+                  <p>10</p>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <p>Episode 6</p>
+                </td>
+                <td>
+                  <p>5</p>
+                  <p>
+                    <sub>(because of the ewoks duh)</sub>
+                  </p>
+                </td>
+              </tr>
+            </table>
           </div>
         HTML
       end
