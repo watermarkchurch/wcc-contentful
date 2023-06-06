@@ -238,5 +238,97 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
         HTML
       end
     end
+
+    context 'with a hyperlink' do
+      let(:content) {
+        [
+          {
+            'nodeType' => 'paragraph',
+            'content' => [
+              {
+                'nodeType' => 'text',
+                'value' => 'This is a '
+              },
+              {
+                'nodeType' => 'hyperlink',
+                'data' => {
+                  'uri' => '/some-page'
+                },
+                'content' => [
+                  {
+                    'nodeType' => 'text',
+                    'value' => 'Hyperlink'
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+
+      it 'renders an <a> tag' do
+        expect(subject.to_html).to match_inline_html_snapshot <<~HTML
+          <div class="contentful-rich-text">
+            <p>This is a <a href="/some-page">Hyperlink</a></p>
+          </div>
+        HTML
+      end
+    end
+
+    context 'with an asset-hyperlink' do
+      let(:content) {
+        [
+          {
+            'nodeType' => 'paragraph',
+            'content' => [
+              {
+                'nodeType' => 'text',
+                'value' => 'This is a '
+              },
+              {
+                'nodeType' => 'asset-hyperlink',
+                'data' => {
+                  'target' => {
+                    'sys' => {
+                      'id' => '6mbnFhDqoOWFFAaE5O1HD9',
+                      'type' => 'Link',
+                      'linkType' => 'Asset'
+                    }
+                  }
+                },
+                'content' => [
+                  {
+                    'nodeType' => 'text',
+                    'value' => 'asset link'
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+
+      it 'renders an <a> tag' do
+        store = double('store', find: {
+          'sys' => {
+            'id' => '6mbnFhDqoOWFFAaE5O1HD9',
+            'type' => 'Asset'
+          },
+          'fields' => {
+            'file' => {
+              'url' => '//images.ctfassets.net/abc123/asset.jpg'
+            }
+          }
+        })
+
+        allow(subject).to receive(:store).and_return(store)
+
+        expect(subject.to_html).to match_inline_html_snapshot <<~HTML
+          <div class="contentful-rich-text">
+            <p>This is a <a href="//images.ctfassets.net/abc123/asset.jpg" target="_blank">asset link</a></p>
+          </div>
+        HTML
+      end
+    end
   end
 end

@@ -528,8 +528,8 @@ RSpec.describe WCC::Contentful::ModelBuilder do
           classes = block_text.rich_body['content'].map(&:class)
           expect(classes).to eq(
             [
-              WCC::Contentful::RichText::Heading2,
-              WCC::Contentful::RichText::Heading3,
+              WCC::Contentful::RichText::Heading,
+              WCC::Contentful::RichText::Heading,
               WCC::Contentful::RichText::Paragraph,
               WCC::Contentful::RichText::Blockquote,
               WCC::Contentful::RichText::Paragraph,

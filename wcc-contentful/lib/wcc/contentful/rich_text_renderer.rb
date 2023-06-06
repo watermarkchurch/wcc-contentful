@@ -10,7 +10,7 @@ class WCC::Contentful::RichTextRenderer
         load_implementation_class
     end
 
-    def new(document)
+    def new(*args, **kwargs)
       return super unless self == WCC::Contentful::RichTextRenderer
 
       unless implementation_class
@@ -20,7 +20,7 @@ class WCC::Contentful::RichTextRenderer
           'or set WCC::Contentful.configuration.rich_text_renderer to a custom implementation.'
       end
 
-      implementation_class.new(document)
+      implementation_class.new(*args, **kwargs)
     end
 
     def call(document)
@@ -41,21 +41,34 @@ class WCC::Contentful::RichTextRenderer
 
   attr_reader :document
 
-  def initialize(document)
+  def store
+    @store ||= WCC::Contentful::Services.instance.store
+  end
+
+  def config
+    @config ||= WCC::Contentful.configuration
+  end
+
+  def initialize(document, config: nil, store: nil)
     @document = document
+    @config = config
+    @store = store
   end
 
   def render
     content_tag(:div, class: 'contentful-rich-text') do
-      document.content.each do |node|
-        concat render_node(node)
-      end
+      render_content(document.content)
+    end
+  end
+
+  def render_content(content)
+    content.each do |node|
+      concat render_node(node)
     end
   end
 
   def render_node(node)
-    case node.node_type
-    when /heading-(\d+)/
+    if WCC::Contentful::RichText::Heading.matches?(node.node_type)
       render_heading(node)
     else
       public_send(:"render_#{node.node_type.underscore}", node)
@@ -89,42 +102,59 @@ class WCC::Contentful::RichTextRenderer
 
   def render_paragraph(node)
     content_tag(:p) do
-      node.content.each do |child|
-        concat render_node(child)
-      end
+      render_content(node.content)
     end
   end
 
   def render_heading(node)
     content_tag(:"h#{node.size}") do
-      node.content.each do |child|
-        concat render_node(child)
-      end
+      render_content(node.content)
     end
   end
 
   def render_unordered_list(node)
     content_tag(:ul) do
-      node.content.each do |child|
-        concat render_node(child)
-      end
+      render_content(node.content)
     end
   end
 
   def render_ordered_list(node)
     content_tag(:ol) do
-      node.content.each do |child|
-        concat render_node(child)
-      end
+      render_content(node.content)
     end
   end
 
   def render_list_item(node)
     content_tag(:li) do
-      node.content.each do |child|
-        concat render_node(child)
-      end
+      render_content(node.content)
     end
+  end
+
+  def render_hyperlink(node)
+    content_tag(:a,
+      href: node.data['uri'],
+      # External links should be target="_blank" by default
+      target: ('_blank' if url_is_external?(node.data['uri']))) do
+      render_content(node.content)
+    end
+  end
+
+  def render_asset_hyperlink(node)
+    target = node.data['target']
+    if target.dig('sys', 'type') == 'Link'
+      target = store.find(target.dig('sys', 'id'), hint: target.dig('sys', 'linkType'))
+    end
+    url = target.dig('fields', 'file', 'url')
+
+    new_hyperlink_node =
+      WCC::Contentful::RichText::Hyperlink.tokenize(
+        node.as_json.merge(
+          'nodeType' => 'hyperlink',
+          'data' => node['data'].merge({ 'uri' => url })
+        )
+      )
+
+    render_hyperlink(new_hyperlink_node)
   end
 
   def to_html
@@ -132,6 +162,26 @@ class WCC::Contentful::RichTextRenderer
   end
 
   private
+
+  def url_is_external?(url)
+    return false unless url.present?
+
+    uri =
+      begin
+        URI(url)
+      rescue StandardError
+        nil
+      end
+    return false unless uri&.host.present?
+
+    app_uri =
+      begin
+        URI(config.app_url)
+      rescue StandardError
+        nil
+      end
+    uri.host != app_uri&.host
+  end
 
   def content_tag(*_args)
     raise NotImplementedError, 'RichTextRenderer is an abstract class, please use an implementation subclass'

@@ -61,6 +61,8 @@ module WCC::Contentful::RichText
         EmbeddedAssetBlock
       when /heading-(\d+)/
         Heading
+      when /(\w+-)?hyperlink/
+        Hyperlink
       else
         # Future proofing for new node types introduced by Contentful.
         # The best list of node types maintained by Contentful is here:
@@ -155,16 +157,21 @@ module WCC::Contentful::RichText
     Struct.new(:nodeType, :data, :content) do
       include WCC::Contentful::RichText::Node
 
-      def self.tokenize(raw, context = nil)
-        new(raw['nodeType'], raw['data'], WCC::Contentful::RichText.tokenize(raw['content'], context))
-      end
-
       def self.matches?(node_type)
         node_type =~ /heading-(\d+)/
       end
 
       def size
         @size ||= /heading-(\d+)/.match(nodeType)[1]&.to_i
+      end
+    end
+
+  Hyperlink =
+    Struct.new(:nodeType, :data, :content) do
+      include WCC::Contentful::RichText::Node
+
+      def self.matches?(node_type)
+        node_type =~ /(\w+-)?hyperlink/
       end
     end
 
