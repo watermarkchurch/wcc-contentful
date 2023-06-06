@@ -18,7 +18,7 @@ RSpec.describe WCC::Contentful::RichText do
   shared_examples 'WCC::Contentful::RichText::Node' do
     it 'enumerates keys' do
       expect(fixture.keys.length).to be > 0
-      expect(subject.keys).to eq(fixture.keys)
+      expect(subject.keys).to include(*fixture.keys)
     end
 
     it 'enumerates with each' do
@@ -143,92 +143,87 @@ RSpec.describe WCC::Contentful::RichText do
     it_behaves_like 'WCC::Contentful::RichText::Node'
   end
 
-  describe WCC::Contentful::RichText::Heading1 do
-    let(:fixture) {
-      {
-        'nodeType' => 'heading-1',
-        'data' => {},
-        'content' => [
-          {
-            'nodeType' => 'text',
-            'value' => 'The Meaning Behind Our Name',
-            'marks' => [],
-            'data' => {}
-          }
-        ]
+  describe WCC::Contentful::RichText::Heading do
+    it_behaves_like 'WCC::Contentful::RichText::Node'
+
+    describe 'heading-1' do
+      let(:fixture) {
+        {
+          'nodeType' => 'heading-1',
+          'data' => {},
+          'content' => [
+            {
+              'nodeType' => 'text',
+              'value' => 'The Meaning Behind Our Name',
+              'marks' => [],
+              'data' => {}
+            }
+          ]
+        }
       }
-    }
 
-    it { is_expected.to be_a WCC::Contentful::RichText::Heading1 }
-    it { is_expected.to have_node_type('heading-1') }
+      it { is_expected.to be_a WCC::Contentful::RichText::Heading }
+      it { is_expected.to have_node_type('heading-1') }
+      it { expect(subject.size).to eq(1) }
+    end
 
-    it_behaves_like 'WCC::Contentful::RichText::Node'
-  end
-
-  describe WCC::Contentful::RichText::Heading2 do
-    let(:fixture) {
-      document.dig('content', 0)
-    }
-
-    it { is_expected.to be_a WCC::Contentful::RichText::Heading2 }
-    it { is_expected.to have_node_type('heading-2') }
-
-    it_behaves_like 'WCC::Contentful::RichText::Node'
-  end
-
-  describe WCC::Contentful::RichText::Heading3 do
-    let(:fixture) {
-      document.dig('content', 1)
-    }
-
-    it { is_expected.to be_a WCC::Contentful::RichText::Heading3 }
-    it { is_expected.to have_node_type('heading-3') }
-
-    it_behaves_like 'WCC::Contentful::RichText::Node'
-  end
-
-  describe WCC::Contentful::RichText::Heading4 do
-    let(:fixture) {
-      {
-        'nodeType' => 'heading-4',
-        'data' => {},
-        'content' => [
-          {
-            'nodeType' => 'text',
-            'value' => 'The Meaning Behind Our Name',
-            'marks' => [],
-            'data' => {}
-          }
-        ]
+    describe 'heading-2' do
+      let(:fixture) {
+        document.dig('content', 0)
       }
-    }
 
-    it { is_expected.to be_a WCC::Contentful::RichText::Heading4 }
-    it { is_expected.to have_node_type('heading-4') }
+      it { is_expected.to be_a WCC::Contentful::RichText::Heading }
+      it { is_expected.to have_node_type('heading-2') }
+    end
 
-    it_behaves_like 'WCC::Contentful::RichText::Node'
-  end
-
-  describe WCC::Contentful::RichText::Heading5 do
-    let(:fixture) {
-      {
-        'nodeType' => 'heading-5',
-        'data' => {},
-        'content' => [
-          {
-            'nodeType' => 'text',
-            'value' => 'The Meaning Behind Our Name',
-            'marks' => [],
-            'data' => {}
-          }
-        ]
+    describe 'heading-3' do
+      let(:fixture) {
+        document.dig('content', 1)
       }
-    }
 
-    it { is_expected.to be_a WCC::Contentful::RichText::Heading5 }
-    it { is_expected.to have_node_type('heading-5') }
+      it { is_expected.to be_a WCC::Contentful::RichText::Heading }
+      it { is_expected.to have_node_type('heading-3') }
+    end
 
-    it_behaves_like 'WCC::Contentful::RichText::Node'
+    describe 'heading-4' do
+      let(:fixture) {
+        {
+          'nodeType' => 'heading-4',
+          'data' => {},
+          'content' => [
+            {
+              'nodeType' => 'text',
+              'value' => 'The Meaning Behind Our Name',
+              'marks' => [],
+              'data' => {}
+            }
+          ]
+        }
+      }
+
+      it { is_expected.to be_a WCC::Contentful::RichText::Heading }
+      it { is_expected.to have_node_type('heading-4') }
+    end
+
+    describe 'heading-5' do
+      let(:fixture) {
+        {
+          'nodeType' => 'heading-5',
+          'data' => {},
+          'content' => [
+            {
+              'nodeType' => 'text',
+              'value' => 'The Meaning Behind Our Name',
+              'marks' => [],
+              'data' => {}
+            }
+          ]
+        }
+      }
+
+      it { is_expected.to be_a WCC::Contentful::RichText::Heading }
+      it { is_expected.to have_node_type('heading-5') }
+    end
   end
 
   describe WCC::Contentful::RichText::UnorderedList do

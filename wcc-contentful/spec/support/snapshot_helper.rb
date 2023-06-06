@@ -58,7 +58,7 @@ module WCC::Contentful::SnapshotHelper
     failure_message do |_actual|
       [
         'Expected to match inline snapshot',
-        '(delete inline snapshot heredoc including <<~SNAP and SNAP tags to regenerate)',
+        '(delete inline snapshot heredoc including <<~HTML and HTML tags to regenerate)',
         "Diff:#{differ.diff_as_string(@actual, @expected)}"
       ].join("\n")
     end
@@ -93,7 +93,7 @@ module WCC::Contentful::SnapshotHelper
     File.write(file, actual)
   end
 
-  MATCH_INLINE_SNAPSHOT_REGEXP = /match_inline_snapshot(\((['"\s]+|<<~\w+)?\))?\s*$/.freeze
+  MATCH_INLINE_SNAPSHOT_REGEXP = /match_inline_html_snapshot(\((['"\s]+|<<~\w+)?\))?\s*$/.freeze
 
   def queue_write_inline_snapshot(filename, line_num, actual)
     to_insert = actual.split("\n")
@@ -112,8 +112,8 @@ module WCC::Contentful::SnapshotHelper
       queue.each do |line_num, to_insert|
         # rewrite the lines
         idx = line_num - 1
-        lines[idx] = lines[idx].sub(MATCH_INLINE_SNAPSHOT_REGEXP, 'match_inline_snapshot <<~SNAP')
-        lines = lines[0..idx] + to_insert + ['SNAP'] + lines[line_num..]
+        lines[idx] = lines[idx].sub(MATCH_INLINE_SNAPSHOT_REGEXP, 'match_inline_html_snapshot <<~HTML')
+        lines = lines[0..idx] + to_insert + ['HTML'] + lines[line_num..]
       end
 
       puts "SnapshotHelper: Writing new inline snapshot in #{filename}"

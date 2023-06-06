@@ -54,7 +54,12 @@ class WCC::Contentful::RichTextRenderer
   end
 
   def render_node(node)
-    public_send(:"render_#{node.node_type.underscore}", node)
+    case node.node_type
+    when /heading-(\d+)/
+      render_heading(node)
+    else
+      public_send(:"render_#{node.node_type.underscore}", node)
+    end
   end
 
   def render_text(node)
@@ -63,6 +68,14 @@ class WCC::Contentful::RichTextRenderer
 
   def render_paragraph(node)
     content_tag(:p) do
+      node.content.each do |child|
+        concat render_node(child)
+      end
+    end
+  end
+
+  def render_heading(node)
+    content_tag(:"h#{node.size}") do
       node.content.each do |child|
         concat render_node(child)
       end

@@ -53,5 +53,44 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
         HTML
       end
     end
+
+    context 'with a heading' do
+      let(:content) {
+        [
+          {
+            'nodeType' => 'heading-1',
+            'content' => [
+              {
+                'nodeType' => 'text',
+                'value' => 'Dear Watermark Family,'
+              }
+            ]
+          },
+
+          {
+            'nodeType' => 'heading-2',
+            'content' => [
+              {
+                'nodeType' => 'text',
+                'value' => '2020 was a year like no other.'
+              }
+            ]
+          }
+        ]
+      }
+
+      it 'renders header tags' do
+        expect(subject.to_html).to match_inline_html_snapshot <<~HTML
+          <div class="contentful-rich-text">
+            <h1>
+              <span>Dear Watermark Family,</span>
+            </h1>
+            <h2>
+              <span>2020 was a year like no other.</span>
+            </h2>
+          </div>
+        HTML
+      end
+    end
   end
 end

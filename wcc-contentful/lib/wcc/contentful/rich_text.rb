@@ -60,8 +60,7 @@ module WCC::Contentful::RichText
       when 'embedded-asset-block'
         EmbeddedAssetBlock
       when /heading-(\d+)/
-        size = Regexp.last_match(1)
-        const_get("Heading#{size}")
+        Heading
       else
         # Future proofing for new node types introduced by Contentful.
         # The best list of node types maintained by Contentful is here:
@@ -152,15 +151,22 @@ module WCC::Contentful::RichText
       include WCC::Contentful::RichText::Node
     end
 
-  (1..5).each do |i|
-    struct =
-      Struct.new(:nodeType, :data, :content) do
-        include WCC::Contentful::RichText::Node
+  Heading =
+    Struct.new(:nodeType, :data, :content) do
+      include WCC::Contentful::RichText::Node
+
+      def self.tokenize(raw, context = nil)
+        new(raw['nodeType'], raw['data'], WCC::Contentful::RichText.tokenize(raw['content'], context))
       end
-    sz = i
-    struct.define_singleton_method(:node_type) { "heading-#{sz}" }
-    const_set("Heading#{sz}", struct)
-  end
+
+      def self.matches?(node_type)
+        node_type =~ /heading-(\d+)/
+      end
+
+      def size
+        @size ||= /heading-(\d+)/.match(nodeType)[1]&.to_i
+      end
+    end
 
   Unknown =
     Struct.new(:nodeType, :data, :content) do
