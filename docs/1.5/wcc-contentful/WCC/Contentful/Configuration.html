@@ -1,0 +1,2273 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: WCC::Contentful::Configuration
+  
+    &mdash; Documentation by YARD 0.9.28
+  
+</title>
+
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "WCC::Contentful::Configuration";
+  relpath = '../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../_index.html">Index (C)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../WCC.html" title="WCC (module)">WCC</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Contentful.html" title="WCC::Contentful (module)">Contentful</a></span></span>
+     &raquo; 
+    <span class="title">Configuration</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: WCC::Contentful::Configuration
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">WCC::Contentful::Configuration</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/wcc/contentful/configuration.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>This object contains all the configuration options for the ‘wcc-contentful` gem.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><h2>Defined Under Namespace</h2>
+<p class="children">
+  
+    
+  
+    
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Configuration/FrozenConfiguration.html" title="WCC::Contentful::Configuration::FrozenConfiguration (class)">FrozenConfiguration</a></span>
+    
+  
+</p>
+
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="ATTRIBUTES-constant" class="">ATTRIBUTES =
+          
+        </dt>
+        <dd><pre class="code"><span class='qsymbols_beg'>%i[</span><span class='words_sep'>
+  </span><span class='tstring_content'>access_token</span><span class='words_sep'>
+  </span><span class='tstring_content'>app_url</span><span class='words_sep'>
+  </span><span class='tstring_content'>connection</span><span class='words_sep'>
+  </span><span class='tstring_content'>connection_options</span><span class='words_sep'>
+  </span><span class='tstring_content'>default_locale</span><span class='words_sep'>
+  </span><span class='tstring_content'>locale_fallbacks</span><span class='words_sep'>
+  </span><span class='tstring_content'>environment</span><span class='words_sep'>
+  </span><span class='tstring_content'>instrumentation_adapter</span><span class='words_sep'>
+  </span><span class='tstring_content'>logger</span><span class='words_sep'>
+  </span><span class='tstring_content'>management_token</span><span class='words_sep'>
+  </span><span class='tstring_content'>preview_token</span><span class='words_sep'>
+  </span><span class='tstring_content'>rich_text_renderer</span><span class='words_sep'>
+  </span><span class='tstring_content'>schema_file</span><span class='words_sep'>
+  </span><span class='tstring_content'>space</span><span class='words_sep'>
+  </span><span class='tstring_content'>store</span><span class='words_sep'>
+  </span><span class='tstring_content'>sync_retry_limit</span><span class='words_sep'>
+  </span><span class='tstring_content'>sync_retry_wait</span><span class='words_sep'>
+  </span><span class='tstring_content'>update_schema_file</span><span class='words_sep'>
+  </span><span class='tstring_content'>webhook_jobs</span><span class='words_sep'>
+  </span><span class='tstring_content'>webhook_password</span><span class='words_sep'>
+  </span><span class='tstring_content'>webhook_username</span><span class='words_sep'>
+</span><span class='tstring_end'>]</span></span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#access_token-instance_method" title="#access_token (instance method)">#<strong>access_token</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>(required) Sets the Content Delivery API access token.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#app_url-instance_method" title="#app_url (instance method)">#<strong>app_url</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Sets the app’s root URL for a Rails app.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#connection-instance_method" title="#connection (instance method)">#<strong>connection</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Sets the connection which is used to make HTTP requests.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#connection_options-instance_method" title="#connection_options (instance method)">#<strong>connection_options</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Sets the connection options which are given to the client.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#default_locale-instance_method" title="#default_locale (instance method)">#<strong>default_locale</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Sets the default locale.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#environment-instance_method" title="#environment (instance method)">#<strong>environment</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Sets the Environment ID.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#instrumentation_adapter-instance_method" title="#instrumentation_adapter (instance method)">#<strong>instrumentation_adapter</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Overrides the use of ActiveSupport::Notifications throughout this library to emit instrumentation events.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#locale_fallbacks-instance_method" title="#locale_fallbacks (instance method)">#<strong>locale_fallbacks</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Sets up locale fallbacks.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#logger-instance_method" title="#logger (instance method)">#<strong>logger</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Sets the logger to be used by the wcc-contentful gem, including stores.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#management_token-instance_method" title="#management_token (instance method)">#<strong>management_token</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Sets the Content Management Token used to communicate with the Management API.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#preview_token-instance_method" title="#preview_token (instance method)">#<strong>preview_token</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Sets the Content Preview API access token.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#rich_text_renderer-instance_method" title="#rich_text_renderer (instance method)">#<strong>rich_text_renderer</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Sets the rich text renderer implementation.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#schema_file-instance_method" title="#schema_file (instance method)">#<strong>schema_file</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#space-instance_method" title="#space (instance method)">#<strong>space</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>(required) Sets the Contentful Space ID.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#store_factory-instance_method" title="#store_factory (instance method)">#<strong>store_factory</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Explicitly read the store factory.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#sync_retry_limit-instance_method" title="#sync_retry_limit (instance method)">#<strong>sync_retry_limit</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Sets the maximum number of times that the SyncEngine will retry synchronization when it detects that the Contentful CDN’s cache has not been updated after a webhook.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#sync_retry_wait-instance_method" title="#sync_retry_wait (instance method)">#<strong>sync_retry_wait</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Sets the base ActiveSupport::Duration that the SyncEngine will wait before retrying.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#update_schema_file-instance_method" title="#update_schema_file (instance method)">#<strong>update_schema_file</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute update_schema_file.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#webhook_jobs-instance_method" title="#webhook_jobs (instance method)">#<strong>webhook_jobs</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>An array of jobs that are run whenever a webhook is received by the webhook controller.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#webhook_password-instance_method" title="#webhook_password (instance method)">#<strong>webhook_password</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Sets an optional basic auth password that will be validated by the webhook controller.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#webhook_username-instance_method" title="#webhook_username (instance method)">#<strong>webhook_username</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Sets an optional basic auth username that will be validated by the webhook controller.</p>
+</div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#freeze-instance_method" title="#freeze (instance method)">#<strong>freeze</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#frozen%3F-instance_method" title="#frozen? (instance method)">#<strong>frozen?</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>  &#x21d2; Configuration </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>A new instance of Configuration.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#master%3F-instance_method" title="#master? (instance method)">#<strong>master?</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns true if the currently configured environment is pointing at ‘master`.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#store-instance_method" title="#store (instance method)">#<strong>store</strong>(*params, &amp;block)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Defines the method by which content is downloaded from the Contentful CDN.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#store=-instance_method" title="#store= (instance method)">#<strong>store=</strong>(param_array)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Convenience for setting store without a block.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#validate!-instance_method" title="#validate! (instance method)">#<strong>validate!</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Validates the configuration, raising ArgumentError if anything is wrong.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+<div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    #<strong>initialize</strong>  &#x21d2; <tt><span class='object_link'><a href="" title="WCC::Contentful::Configuration (class)">Configuration</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns a new instance of Configuration.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/configuration.rb', line 204</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span>
+  <span class='ivar'>@access_token</span> <span class='op'>=</span> <span class='const'>ENV</span><span class='period'>.</span><span class='id identifier rubyid_fetch'>fetch</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>CONTENTFUL_ACCESS_TOKEN</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='ivar'>@app_url</span> <span class='op'>=</span> <span class='const'>ENV</span><span class='period'>.</span><span class='id identifier rubyid_fetch'>fetch</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>APP_URL</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='ivar'>@connection_options</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+    <span class='label'>api_url:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>https://cdn.contentful.com/</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+    <span class='label'>preview_api_url:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>https://preview.contentful.com/</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+    <span class='label'>management_api_url:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>https://api.contentful.com</span><span class='tstring_end'>&#39;</span></span>
+  <span class='rbrace'>}</span>
+  <span class='ivar'>@management_token</span> <span class='op'>=</span> <span class='const'>ENV</span><span class='period'>.</span><span class='id identifier rubyid_fetch'>fetch</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>CONTENTFUL_MANAGEMENT_TOKEN</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='ivar'>@preview_token</span> <span class='op'>=</span> <span class='const'>ENV</span><span class='period'>.</span><span class='id identifier rubyid_fetch'>fetch</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>CONTENTFUL_PREVIEW_TOKEN</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+
+  <span class='kw'>if</span> <span class='kw'>defined?</span><span class='lparen'>(</span><span class='const'>ActionView</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>wcc/contentful/action_view_rich_text_renderer</span><span class='tstring_end'>&#39;</span></span>
+    <span class='ivar'>@rich_text_renderer</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../WCC.html" title="WCC (module)">WCC</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Contentful.html" title="WCC::Contentful (module)">Contentful</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="ActionViewRichTextRenderer.html" title="WCC::Contentful::ActionViewRichTextRenderer (class)">ActionViewRichTextRenderer</a></span></span>
+  <span class='kw'>end</span>
+
+  <span class='ivar'>@space</span> <span class='op'>=</span> <span class='const'>ENV</span><span class='period'>.</span><span class='id identifier rubyid_fetch'>fetch</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>CONTENTFUL_SPACE_ID</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='ivar'>@default_locale</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>en-US</span><span class='tstring_end'>&#39;</span></span>
+  <span class='ivar'>@locale_fallbacks</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+  <span class='ivar'>@middleware</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='ivar'>@update_schema_file</span> <span class='op'>=</span> <span class='symbol'>:if_possible</span>
+  <span class='ivar'>@schema_file</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>db/contentful-schema.json</span><span class='tstring_end'>&#39;</span></span>
+  <span class='ivar'>@webhook_jobs</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='ivar'>@store_factory</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../WCC.html" title="WCC (module)">WCC</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Contentful.html" title="WCC::Contentful (module)">Contentful</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Store.html" title="WCC::Contentful::Store (module)">Store</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Store/Factory.html" title="WCC::Contentful::Store::Factory (class)">Factory</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Store/Factory.html#initialize-instance_method" title="WCC::Contentful::Store::Factory#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='kw'>self</span><span class='comma'>,</span> <span class='symbol'>:direct</span><span class='rparen'>)</span>
+  <span class='ivar'>@sync_retry_limit</span> <span class='op'>=</span> <span class='int'>3</span>
+  <span class='ivar'>@sync_retry_wait</span> <span class='op'>=</span> <span class='int'>1</span><span class='period'>.</span><span class='id identifier rubyid_second'>second</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id="access_token=-instance_method"></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="access_token-instance_method">
+  
+    #<strong>access_token</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>(required) Sets the Content Delivery API access token.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+32
+33
+34</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/configuration.rb', line 32</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_access_token'>access_token</span>
+  <span class='ivar'>@access_token</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="app_url=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="app_url-instance_method">
+  
+    #<strong>app_url</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Sets the app’s root URL for a Rails app.  Used by the WCC::Contentful::Engine to automatically set up webhooks to point at the WCC::Contentful::WebhookController</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+36
+37
+38</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/configuration.rb', line 36</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_app_url'>app_url</span>
+  <span class='ivar'>@app_url</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="connection=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="connection-instance_method">
+  
+    #<strong>connection</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Sets the connection which is used to make HTTP requests. If left unset, the gem attempts to load ‘faraday’ or ‘typhoeus’. You can pass your own adapter which responds to ‘get’ and ‘post’, and returns a response that quacks like Faraday.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+147
+148
+149</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/configuration.rb', line 147</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_connection'>connection</span>
+  <span class='ivar'>@connection</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="connection_options=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="connection_options-instance_method">
+  
+    #<strong>connection_options</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Sets the connection options which are given to the client.  This can include an alternative Cdn API URL, timeouts, etc. See WCC::Contentful::SimpleClient constructor for details.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+152
+153
+154</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/configuration.rb', line 152</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_connection_options'>connection_options</span>
+  <span class='ivar'>@connection_options</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="default_locale=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="default_locale-instance_method">
+  
+    #<strong>default_locale</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Sets the default locale.  Defaults to ‘en-US’.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+44
+45
+46</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/configuration.rb', line 44</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_default_locale'>default_locale</span>
+  <span class='ivar'>@default_locale</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="environment=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="environment-instance_method">
+  
+    #<strong>environment</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Sets the Environment ID.  Leave blank to use master.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+42
+43
+44</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/configuration.rb', line 42</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_environment'>environment</span>
+  <span class='ivar'>@environment</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="instrumentation_adapter=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="instrumentation_adapter-instance_method">
+  
+    #<strong>instrumentation_adapter</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Overrides the use of ActiveSupport::Notifications throughout this library to emit instrumentation events.  The object or module provided here must respond to :instrument like ActiveSupport::Notifications.instrument</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+197
+198
+199</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/configuration.rb', line 197</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_instrumentation_adapter'>instrumentation_adapter</span>
+  <span class='ivar'>@instrumentation_adapter</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="locale_fallbacks=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="locale_fallbacks-instance_method">
+  
+    #<strong>locale_fallbacks</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Sets up locale fallbacks.  This is a Ruby hash which maps locale codes to fallback locale codes. Defaults are loaded from contentful-schema.json but can be overridden here. If data is missing for one locale, we will use data in the “fallback locale”. See <a href="https://www.contentful.com/developers/docs/tutorials/general/setting-locales/#custom-fallback-locales">www.contentful.com/developers/docs/tutorials/general/setting-locales/#custom-fallback-locales</a></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+49
+50
+51</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/configuration.rb', line 49</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_locale_fallbacks'>locale_fallbacks</span>
+  <span class='ivar'>@locale_fallbacks</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="logger=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="logger-instance_method">
+  
+    #<strong>logger</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Sets the logger to be used by the wcc-contentful gem, including stores. Defaults to the rails logger if in a rails context, otherwise creates a new logger that writes to STDERR.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+202
+203
+204</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/configuration.rb', line 202</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_logger'>logger</span>
+  <span class='ivar'>@logger</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="management_token=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="management_token-instance_method">
+  
+    #<strong>management_token</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Sets the Content Management Token used to communicate with the Management API. This is required for automatically setting up webhooks, and to create the WCC::Contentful::Services#management_client.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+40
+41
+42</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/configuration.rb', line 40</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_management_token'>management_token</span>
+  <span class='ivar'>@management_token</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="preview_token=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="preview_token-instance_method">
+  
+    #<strong>preview_token</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Sets the Content Preview API access token.  Only required if you use the preview flag.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+52
+53
+54</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/configuration.rb', line 52</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_preview_token'>preview_token</span>
+  <span class='ivar'>@preview_token</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="rich_text_renderer=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="rich_text_renderer-instance_method">
+  
+    #<strong>rich_text_renderer</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Sets the rich text renderer implementation.  This must be a class that accepts a WCC::Contentful::RichText::Document in the constructor, and responds to ‘:call` with a string containing the HTML. In a Rails context, the implementation defaults to WCC::Contentful::ActionViewRichTextRenderer. In a non-Rails context, you must provide your own implementation.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+85
+86
+87</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/configuration.rb', line 85</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_rich_text_renderer'>rich_text_renderer</span>
+  <span class='ivar'>@rich_text_renderer</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="schema_file=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="schema_file-instance_method">
+  
+    #<strong>schema_file</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+186
+187
+188
+189
+190
+191
+192</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/configuration.rb', line 186</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_schema_file'>schema_file</span>
+  <span class='kw'>if</span> <span class='kw'>defined?</span><span class='lparen'>(</span><span class='const'>Rails</span><span class='rparen'>)</span>
+    <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_root'>root</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='ivar'>@schema_file</span><span class='rparen'>)</span>
+  <span class='kw'>else</span>
+    <span class='ivar'>@schema_file</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="space=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="space-instance_method">
+  
+    #<strong>space</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>(required) Sets the Contentful Space ID.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+30
+31
+32</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/configuration.rb', line 30</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_space'>space</span>
+  <span class='ivar'>@space</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="store_factory-instance_method">
+  
+    #<strong>store_factory</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Explicitly read the store factory</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+141
+142
+143</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/configuration.rb', line 141</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_store_factory'>store_factory</span>
+  <span class='ivar'>@store_factory</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="sync_retry_limit=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="sync_retry_limit-instance_method">
+  
+    #<strong>sync_retry_limit</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Sets the maximum number of times that the SyncEngine will retry synchronization when it detects that the Contentful CDN’s cache has not been updated after a webhook. Default: 2</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+73
+74
+75</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/configuration.rb', line 73</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_sync_retry_limit'>sync_retry_limit</span>
+  <span class='ivar'>@sync_retry_limit</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="sync_retry_wait=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="sync_retry_wait-instance_method">
+  
+    #<strong>sync_retry_wait</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Sets the base ActiveSupport::Duration that the SyncEngine will wait before retrying. Each subsequent retry uses an exponential backoff, so the second retry will be after (2 * sync_retry_wait), the third after (4 * sync_retry_wait), etc. Default: 2.seconds</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+79
+80
+81</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/configuration.rb', line 79</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_sync_retry_wait'>sync_retry_wait</span>
+  <span class='ivar'>@sync_retry_wait</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="update_schema_file=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="update_schema_file-instance_method">
+  
+    #<strong>update_schema_file</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute update_schema_file.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+179
+180
+181</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/configuration.rb', line 179</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_update_schema_file'>update_schema_file</span>
+  <span class='ivar'>@update_schema_file</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="webhook_jobs=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="webhook_jobs-instance_method">
+  
+    #<strong>webhook_jobs</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>An array of jobs that are run whenever a webhook is received by the webhook controller. The job can be an ActiveJob class which responds to ‘:perform_later`, or a lambda or other object that responds to `:call`. Example:</p>
+
+<pre class="code ruby"><code class="ruby">config.webhook_jobs &lt;&lt; MyJobClass
+config.webhook_jobs &lt;&lt; -&gt;(event) { ... }
+</code></pre>
+
+<p>See the source code for WCC::Contentful::SyncEngine::Job for an example of how to implement a webhook job.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+68
+69
+70</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/configuration.rb', line 68</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_webhook_jobs'>webhook_jobs</span>
+  <span class='ivar'>@webhook_jobs</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="webhook_password=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="webhook_password-instance_method">
+  
+    #<strong>webhook_password</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Sets an optional basic auth password that will be validated by the webhook controller. You must ensure the configured webhook sets the “HTTP Basic Auth password”</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+58
+59
+60</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/configuration.rb', line 58</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_webhook_password'>webhook_password</span>
+  <span class='ivar'>@webhook_password</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="webhook_username=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="webhook_username-instance_method">
+  
+    #<strong>webhook_username</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Sets an optional basic auth username that will be validated by the webhook controller. You must ensure the configured webhook sets the “HTTP Basic Auth username”</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+55
+56
+57</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/configuration.rb', line 55</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_webhook_username'>webhook_username</span>
+  <span class='ivar'>@webhook_username</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="freeze-instance_method">
+  
+    #<strong>freeze</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+255
+256
+257</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/configuration.rb', line 255</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_freeze'>freeze</span>
+  <span class='const'><span class='object_link'><a href="Configuration/FrozenConfiguration.html" title="WCC::Contentful::Configuration::FrozenConfiguration (class)">FrozenConfiguration</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Configuration/FrozenConfiguration.html#initialize-instance_method" title="WCC::Contentful::Configuration::FrozenConfiguration#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='kw'>self</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="frozen?-instance_method">
+  
+    #<strong>frozen?</strong>  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+251
+252
+253</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/configuration.rb', line 251</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_frozen?'>frozen?</span>
+  <span class='kw'>false</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="master?-instance_method">
+  
+    #<strong>master?</strong>  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns true if the currently configured environment is pointing at ‘master`.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+88
+89
+90</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/configuration.rb', line 88</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_master?'>master?</span>
+  <span class='op'>!</span><span class='id identifier rubyid_environment'>environment</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="store-instance_method">
+  
+    #<strong>store</strong>(*params, &amp;block)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Defines the method by which content is downloaded from the Contentful CDN.</p>
+<dl class="rdoc-list label-list"><dt>:direct
+<dd>
+<p>‘config.store :direct` with the `:direct` method, all queries result in web requests to ’<a href="https://cdn.contentful.com">cdn.contentful.com</a>’ via the <span class='object_link'><a href="SimpleClient/Cdn.html" title="WCC::Contentful::SimpleClient::Cdn (class)">SimpleClient</a></span></p>
+</dd><dt>:eager_sync
+<dd>
+<p>‘config.store :eager_sync, [sync_store], [options]` with the `:eager_sync` method, the entire content of the Contentful space is downloaded locally and stored in the <span class='object_link'><a href="Services.html#store-instance_method" title="WCC::Contentful::Services#store (method)">configured store</a></span>.  The application is responsible to periodically call the WCC::Contentful::SyncEngine#next to keep the store updated. Alternatively, the provided <span class='object_link'><a href="Engine.html" title="WCC::Contentful::Engine (class)">Engine</a></span> can be mounted to automatically call WCC::Contentful::SyncEngine#next on webhook events. In `routes.rb` add the following:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_mount'>mount</span> <span class='const'><span class='object_link'><a href="../../WCC.html" title="WCC (module)">WCC</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Contentful.html" title="WCC::Contentful (module)">Contentful</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Engine.html" title="WCC::Contentful::Engine (class)">Engine</a></span></span><span class='comma'>,</span> <span class='label'>at:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>/</span><span class='tstring_end'>&#39;</span></span>
+</code></pre>
+</dd><dt>:lazy_sync
+<dd>
+<p>‘config.store :lazy_sync, [cache]` The `:lazy_sync` method is a hybrid between the other two methods. Frequently accessed data is stored in an ActiveSupport::Cache implementation and is kept up-to-date via the Sync API.  Any data that is not present in the cache is fetched from the CDN like in the `:direct` method. The application is still responsible to periodically call `sync!` or to mount the provided Engine.</p>
+</dd><dt>:custom
+<dd>
+<p>‘config.store :custom, do … end` The block is executed in the context of a WCC::Contentful::Store::Factory. this can be used to apply middleware, etc.</p>
+</dd></dl>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/configuration.rb', line 121</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_store'>store</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_params'>params</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_preset'>preset</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_params'>params</span> <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_preset'>preset</span>
+    <span class='ivar'>@store_factory</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../WCC.html" title="WCC (module)">WCC</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Contentful.html" title="WCC::Contentful (module)">Contentful</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Store.html" title="WCC::Contentful::Store (module)">Store</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Store/Factory.html" title="WCC::Contentful::Store::Factory (class)">Factory</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Store/Factory.html#initialize-instance_method" title="WCC::Contentful::Store::Factory#initialize (method)">new</a></span></span><span class='lparen'>(</span>
+      <span class='kw'>self</span><span class='comma'>,</span>
+      <span class='id identifier rubyid_preset'>preset</span><span class='comma'>,</span>
+      <span class='id identifier rubyid_params'>params</span>
+    <span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='ivar'>@store_factory</span><span class='period'>.</span><span class='id identifier rubyid_instance_exec'>instance_exec</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
+  <span class='ivar'>@store_factory</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="store=-instance_method">
+  
+    #<strong>store=</strong>(param_array)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Convenience for setting store without a block</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+136
+137
+138</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/configuration.rb', line 136</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_store='>store=</span><span class='lparen'>(</span><span class='id identifier rubyid_param_array'>param_array</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_store'>store</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_param_array'>param_array</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="validate!-instance_method">
+  
+    #<strong>validate!</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Validates the configuration, raising ArgumentError if anything is wrong.  This is called by WCC::Contentful.init!</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>ArgumentError</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/wcc/contentful/configuration.rb', line 234</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_validate!'>validate!</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Please provide &quot;space&quot;</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_space'>space</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Please provide &quot;access_token&quot;</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_access_token'>access_token</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+
+  <span class='id identifier rubyid_store_factory'>store_factory</span><span class='period'>.</span><span class='id identifier rubyid_validate!'>validate!</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_update_schema_file'>update_schema_file</span> <span class='op'>==</span> <span class='symbol'>:always</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_management_token'>management_token</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span>
+    <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>A management_token is required in order to update the schema file.</span><span class='tstring_end'>&#39;</span></span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_webhook_jobs'>webhook_jobs</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_job'>job</span><span class='op'>|</span>
+    <span class='kw'>next</span> <span class='kw'>if</span> <span class='id identifier rubyid_job'>job</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:call</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_job'>job</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:perform_later</span><span class='rparen'>)</span>
+
+    <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>The job &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_job'>job</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39; must be an instance of ActiveJob::Base or respond to :call</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.28 (ruby-3.1.1).
+</div>
+
+    </div>
+  </body>
+</html>
