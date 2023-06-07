@@ -657,7 +657,7 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
 
         allow(subject).to receive(:store).and_return(store)
 
-        allow(subject).to receive(:model_api).and_return(
+        allow(subject).to receive(:model_namespace).and_return(
           double('model-api', new_from_raw:
             double('page-model', href: '/some-page'))
         )

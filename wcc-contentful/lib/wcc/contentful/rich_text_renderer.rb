@@ -163,14 +163,14 @@ class WCC::Contentful::RichTextRenderer
   end
 
   def render_entry_hyperlink(node)
-    unless model_api.present?
+    unless model_namespace.present?
       raise NotConnectedError,
         'Rendering linked entries requires a connected RichTextRenderer.  Please use the one configured in ' \
-        'WCC::Contentful::Services.instance or pass a model_api to the RichTextRenderer constructor.'
+        'WCC::Contentful::Services.instance or pass a model_namespace to the RichTextRenderer constructor.'
     end
 
     target = resolve_target(node.data['target'])
-    model_instance = model_api.new_from_raw(target)
+    model_instance = model_namespace.new_from_raw(target)
     unless model_instance.respond_to?(:href)
       raise NotConnectedError,
         "Entry hyperlinks are not supported for #{model_instance.class}.  " \
