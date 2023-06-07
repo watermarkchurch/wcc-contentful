@@ -2,62 +2,16 @@
 
 class WCC::Contentful::RichTextRenderer
   class << self
-    attr_writer :implementation_class
-
-    def implementation_class
-      @implementation_class ||
-        WCC::Contentful.configuration&.rich_text_renderer ||
-        load_implementation_class
-    end
-
-    def new(*args, **kwargs)
-      return super unless self == WCC::Contentful::RichTextRenderer
-
-      unless implementation_class
-        raise NotImplementedError,
-          'No rich text renderer implementation has been configured.  ' \
-          'Please install a supported implementation such as ActionView, ' \
-          'or set WCC::Contentful.configuration.rich_text_renderer to a custom implementation.'
-      end
-
-      implementation_class.new(*args, **kwargs)
-    end
-
-    def call(document)
-      new(document).to_html
-    end
-
-    private
-
-    def load_implementation_class
-      # More implementations?
-
-      require 'wcc/contentful/rich_text_renderer/action_view_rich_text_renderer'
-      WCC::Contentful::ActionViewRichTextRenderer
-    rescue LoadError
-      nil
+    def call(document, *args, **kwargs)
+      new(document, *args, **kwargs).to_html
     end
   end
 
   attr_reader :document
+  attr_accessor :config, :store, :model_namespace
 
-  def store
-    @store ||= WCC::Contentful::Services.instance.store
-  end
-
-  def config
-    @config ||= WCC::Contentful.configuration
-  end
-
-  def model_api
-    @model_api ||= WCC::Contentful::Model
-  end
-
-  def initialize(document, config: nil, store: nil, model_api: nil)
+  def initialize(document)
     @document = document
-    @config = config
-    @store = store
-    @model_api = model_api
   end
 
   def render
@@ -65,6 +19,7 @@ class WCC::Contentful::RichTextRenderer
       render_content(document.content)
     end
   end
+  alias_method :call, :render
 
   def render_content(content)
     content&.each do |node|
@@ -196,10 +151,16 @@ class WCC::Contentful::RichTextRenderer
   end
 
   def render_entry_hyperlink(node)
+    unless model_api.present?
+      raise NotConnectedError,
+        'Rendering linked entries requires a connected RichTextRenderer.  Please use the one configured in ' \
+        'WCC::Contentful::Services.instance or pass a model_api to the RichTextRenderer constructor.'
+    end
+
     target = resolve_target(node.data['target'])
     model_instance = model_api.new_from_raw(target)
     unless model_instance.respond_to?(:href)
-      raise NotImplementedError,
+      raise NotConnectedError,
         "Entry hyperlinks are not supported for #{model_instance.class}.  " \
         'Please ensure your model defines an #href method, or override the ' \
         '#render_entry_hyperlink method in your app-specific RichTextRenderer implementation.'
@@ -228,14 +189,14 @@ class WCC::Contentful::RichTextRenderer
     end
   end
 
-  def render_embedded_entry_block(node)
-    raise NotImplementedError,
+  def render_embedded_entry_block(_node)
+    raise AbstractRendererError,
       'Entry embeds are not supported.  What should it look like? ' \
       'Please override this in your app-specific RichTextRenderer implementation.'
   end
 
-  def render_embedded_entry_inline(node)
-    raise NotImplementedError,
+  def render_embedded_entry_inline(_node)
+    raise AbstractRendererError,
       'Inline Entry embeds are not supported.  What should it look like? ' \
       'Please override this in your app-specific RichTextRenderer implementation.'
   end
@@ -247,6 +208,12 @@ class WCC::Contentful::RichTextRenderer
   private
 
   def resolve_target(target)
+    unless store.present?
+      raise NotConnectedError,
+        'Rendering embedded or linked entries requires a connected RichTextRenderer.  Please use the one configured ' \
+        'in WCC::Contentful::Services.instance or pass a store to the RichTextRenderer constructor.'
+    end
+
     if target&.dig('sys', 'type') == 'Link'
       target = store.find(target.dig('sys', 'id'), hint: target.dig('sys', 'linkType'))
     end
@@ -265,20 +232,28 @@ class WCC::Contentful::RichTextRenderer
     return false unless uri&.host.present?
 
     app_uri =
-      begin
-        URI(config.app_url)
-      rescue StandardError
-        nil
+      if config&.app_url.present?
+        begin
+          URI(config.app_url)
+        rescue StandardError
+          nil
+        end
       end
     uri.host != app_uri&.host
   end
 
   def content_tag(*_args)
-    raise NotImplementedError, 'RichTextRenderer is an abstract class, please use an implementation subclass'
+    raise AbstractRendererError, 'RichTextRenderer is an abstract class, please use an implementation subclass'
   end
 
   def concat(*_args)
-    raise NotImplementedError, 'RichTextRenderer is an abstract class, please use an implementation subclass'
+    raise AbstractRendererError, 'RichTextRenderer is an abstract class, please use an implementation subclass'
+  end
+
+  class AbstractRendererError < StandardError
+  end
+
+  class NotConnectedError < AbstractRendererError
   end
 end
 

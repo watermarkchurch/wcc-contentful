@@ -339,6 +339,35 @@ RSpec.describe WCC::Contentful::Configuration do
     end
   end
 
+  describe '#rich_text_renderer' do
+    it 'services#rich_text_renderer raises error when not configured' do
+      expect {
+        services.rich_text_renderer
+      }.to raise_error(ArgumentError)
+    end
+
+    context 'when configured' do
+      it 'services#rich_text_renderer injects connected services' do
+        my_renderer =
+          Class.new(WCC::Contentful::RichTextRenderer) do
+            def call
+              [@config, @store, @model_namespace]
+            end
+          end
+        config.rich_text_renderer = my_renderer
+        services = WCC::Contentful::Services.new(config)
+
+        # act - we expect this to invoke the call method on my_renderer
+        injected_cfg, injected_store, injected_ns = services.rich_text_renderer.call(nil)
+
+        # expect
+        expect(injected_cfg).to eq(config)
+        expect(injected_store).to eq(services.store)
+        expect(injected_ns).to eq(WCC::Contentful::Model)
+      end
+    end
+  end
+
   describe '#validate!' do
     it 'permits non-master environment combined with sync delivery strategy' do
       config.space = 'test_space'

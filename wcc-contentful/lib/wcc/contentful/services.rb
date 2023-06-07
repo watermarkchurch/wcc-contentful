@@ -123,6 +123,29 @@ module WCC::Contentful
         end
     end
 
+    # Returns a callable object which can be used to render a rich text document.
+    # This object will have all the connected services injected into it.
+    # The implementation class is configured by {WCC::Contentful::Configuration#rich_text_renderer}.
+    def rich_text_renderer
+      unless implementation_class = configuration&.rich_text_renderer
+        raise ArgumentError,
+          'No rich text renderer implementation has been configured.  ' \
+          'Please install a supported implementation such as ActionView, ' \
+          'or set WCC::Contentful.configuration.rich_text_renderer to a custom implementation.'
+      end
+
+      # Wrap the call method in a lambda that connects the services before
+      # calling render.
+      ->(document, *args, **kwargs) do
+        instance = implementation_class.new(document, *args, **kwargs)
+        instance.config = configuration if instance.respond_to?(:config=)
+        instance.store = store if instance.respond_to?(:store=)
+        instance.model_namespace = WCC::Contentful::Model if instance.respond_to?(:model_namespace=)
+
+        instance.call
+      end
+    end
+
     # Gets the configured instrumentation adapter, defaulting to ActiveSupport::Notifications
     def instrumentation
       @instrumentation ||=

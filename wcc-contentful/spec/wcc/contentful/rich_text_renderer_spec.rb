@@ -19,15 +19,20 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
 
   # default implementation for test is ActionView, but ensure the renderer
   # class can be loaded without it.
-  context 'no action view', rails: false do
+  context 'no implementation configured' do
+    before do
+      allow(WCC::Contentful).to receive(:configuration)
+        .and_return(double('config', rich_text_renderer: nil))
+    end
+
     it 'requires an implementation' do
       expect {
         WCC::Contentful::RichTextRenderer.new(document)
-      }.to raise_error(NotImplementedError)
+      }.to raise_error(WCC::Contentful::RichTextRenderer::AbstractRendererError)
     end
   end
 
-  describe '#to_html' do
+  shared_examples 'rich text renderer' do
     context 'with text' do
       let(:content) {
         [
@@ -577,7 +582,7 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
         ]
       }
 
-      it 'renders an <a> tag' do
+      it 'renders an <a> tag when connected' do
         store = double('store', find: {
           'sys' => {
             'id' => '6mbnFhDqoOWFFAaE5O1HD9',
@@ -648,8 +653,10 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
 
         allow(subject).to receive(:store).and_return(store)
 
-        allow(WCC::Contentful::Model).to receive(:new_from_raw)
-          .and_return(double('page-model', href: '/some-page'))
+        allow(subject).to receive(:model_api).and_return(
+          double('model-api', new_from_raw:
+            double('page-model', href: '/some-page'))
+        )
 
         expect(subject.to_html).to match_inline_html_snapshot <<~HTML
           <div class="contentful-rich-text">
@@ -701,4 +708,16 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
       end
     end
   end
+
+  context 'with action view', rails: true do
+    before do
+      require 'wcc/contentful/rich_text_renderer/action_view_rich_text_renderer'
+    end
+
+    subject { WCC::Contentful::ActionViewRichTextRenderer.new(document) }
+
+    it_behaves_like 'rich text renderer'
+  end
+
+  # TODO: nokogiri implementation?
 end
