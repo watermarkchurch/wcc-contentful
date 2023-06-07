@@ -34,6 +34,8 @@ class WCC::Contentful::Middleman::Extension < ::Middleman::Extension
         config.public_send("#{k}=", v) if config.respond_to?("#{k}=")
       end
 
+      # TODO: create MiddlemanRichTextRenderer and set as default here
+
       instance_exec(config, &block) if block_given?
     end
 
