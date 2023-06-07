@@ -104,7 +104,7 @@ module WCC::Contentful
                 # when :DateTime
                 #   raw_value = Time.parse(raw_value).localtime
                 when :RichText
-                  raw_value = WCC::Contentful::RichText.tokenize(raw_value, context)
+                  raw_value = WCC::Contentful::RichText.tokenize(raw_value)
                 when :Int
                   raw_value = Integer(raw_value)
                 when :Float

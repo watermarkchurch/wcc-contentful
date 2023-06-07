@@ -40,7 +40,7 @@ module WCC::Contentful::RichText
         self.node_type == node_type
       end
 
-      def tokenize(raw, context = nil)
+      def tokenize(raw)
         raise ArgumentError, "Expected '#{node_type}', got '#{raw['nodeType']}'" unless matches?(raw['nodeType'])
 
         values =
@@ -49,7 +49,7 @@ module WCC::Contentful::RichText
 
             case symbol
             when :content
-              WCC::Contentful::RichText.tokenize(val, context)
+              WCC::Contentful::RichText.tokenize(val)
               # when :data
               # TODO: resolve links...
             else

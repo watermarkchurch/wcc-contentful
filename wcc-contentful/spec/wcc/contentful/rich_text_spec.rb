@@ -144,24 +144,23 @@ RSpec.describe WCC::Contentful::RichText do
   end
 
   describe WCC::Contentful::RichText::Heading do
+    let(:fixture) {
+      {
+        'nodeType' => 'heading-1',
+        'data' => {},
+        'content' => [
+          {
+            'nodeType' => 'text',
+            'value' => 'The Meaning Behind Our Name',
+            'marks' => [],
+            'data' => {}
+          }
+        ]
+      }
+    }
     it_behaves_like 'WCC::Contentful::RichText::Node'
 
     describe 'heading-1' do
-      let(:fixture) {
-        {
-          'nodeType' => 'heading-1',
-          'data' => {},
-          'content' => [
-            {
-              'nodeType' => 'text',
-              'value' => 'The Meaning Behind Our Name',
-              'marks' => [],
-              'data' => {}
-            }
-          ]
-        }
-      }
-
       it { is_expected.to be_a WCC::Contentful::RichText::Heading }
       it { is_expected.to have_node_type('heading-1') }
       it { expect(subject.size).to eq(1) }
