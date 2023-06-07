@@ -37,7 +37,7 @@ module WCC::Contentful::ModelAPI
         # try looking up the class heierarchy
         (superclass.services if superclass.respond_to?(:services)) ||
         # create it if we have a configuration
-        WCC::Contentful::Services.new(configuration)
+        WCC::Contentful::Services.new(configuration, model_namespace: self)
     end
 
     def store(preview = nil)

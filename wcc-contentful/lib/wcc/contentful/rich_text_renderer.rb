@@ -3,7 +3,7 @@
 class WCC::Contentful::RichTextRenderer
   class << self
     def call(document, *args, **kwargs)
-      new(document, *args, **kwargs).to_html
+      new(document, *args, **kwargs).call
     end
   end
 
@@ -14,12 +14,15 @@ class WCC::Contentful::RichTextRenderer
     @document = document
   end
 
+  def call
+    render.to_s
+  end
+
   def render
     content_tag(:div, class: 'contentful-rich-text') do
       render_content(document.content)
     end
   end
-  alias_method :call, :render
 
   def render_content(content)
     content&.each do |node|
@@ -199,10 +202,6 @@ class WCC::Contentful::RichTextRenderer
     raise AbstractRendererError,
       'Inline Entry embeds are not supported.  What should it look like? ' \
       'Please override this in your app-specific RichTextRenderer implementation.'
-  end
-
-  def to_html
-    render.to_s
   end
 
   private

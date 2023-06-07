@@ -838,6 +838,25 @@ RSpec.describe WCC::Contentful::ModelAPI do
         ]
       )
     end
+
+    it 'uses connected rich text renderer in services' do
+      my_renderer =
+        Class.new(WCC::Contentful::RichTextRenderer) do
+          def call
+            [config, store, model_namespace]
+          end
+        end
+
+      TestNamespace::Model.configure do |config|
+        config.schema_file = path_to_fixture('contentful/blog-contentful-schema.json')
+        config.rich_text_renderer = my_renderer
+      end
+
+      config, store, ns = TestNamespace::Model.services.rich_text_renderer.call(double('doc'))
+      expect(config).to eq(TestNamespace::Model.configuration)
+      expect(store).to eq(TestNamespace::Model.services.store)
+      expect(ns).to eq(TestNamespace::Model)
+    end
   end
 
   def reset_test_namespace!

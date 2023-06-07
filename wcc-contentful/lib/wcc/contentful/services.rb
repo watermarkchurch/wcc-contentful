@@ -11,10 +11,11 @@ module WCC::Contentful
 
     attr_reader :configuration
 
-    def initialize(configuration)
+    def initialize(configuration, model_namespace: nil)
       raise ArgumentError, 'Not yet configured!' unless configuration
 
       @configuration = configuration
+      @model_namespace = model_namespace
     end
 
     # Gets the data-store which executes the queries run against the dynamic
@@ -136,14 +137,20 @@ module WCC::Contentful
 
       # Wrap the call method in a lambda that connects the services before
       # calling render.
-      ->(document, *args, **kwargs) do
-        instance = implementation_class.new(document, *args, **kwargs)
-        instance.config = configuration if instance.respond_to?(:config=)
-        instance.store = store if instance.respond_to?(:store=)
-        instance.model_namespace = WCC::Contentful::Model if instance.respond_to?(:model_namespace=)
-
-        instance.call
-      end
+      @rich_text_renderer ||=
+        begin
+          store = self.store
+          config = configuration
+          model_namespace = @model_namespace || WCC::Contentful::Model
+          Class.new(implementation_class) do
+            define_method :initialize do |document, *args, **kwargs|
+              @store = store
+              @config = config
+              @model_namespace = model_namespace
+              super(document, *args, **kwargs)
+            end
+          end
+        end
     end
 
     # Gets the configured instrumentation adapter, defaulting to ActiveSupport::Notifications

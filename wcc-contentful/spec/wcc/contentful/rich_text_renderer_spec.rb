@@ -27,7 +27,7 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
 
     it 'requires an implementation' do
       expect {
-        WCC::Contentful::RichTextRenderer.new(document)
+        WCC::Contentful::RichTextRenderer.call(document)
       }.to raise_error(WCC::Contentful::RichTextRenderer::AbstractRendererError)
     end
   end
@@ -44,7 +44,7 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
       }
 
       it 'renders without a tag' do
-        expect(subject.to_html).to match_inline_html_snapshot <<~HTML
+        expect(subject.call).to match_inline_html_snapshot <<~HTML
           <div class="contentful-rich-text">Hello, world!</div>
         HTML
       end
@@ -69,7 +69,7 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
             ]
           }
 
-          expect(subject.to_html.strip).to eq <<~HTML.strip
+          expect(subject.call.strip).to eq <<~HTML.strip
             <div class="contentful-rich-text">This is <#{tag}>#{type}</#{tag}></div>
           HTML
         end
@@ -90,7 +90,7 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
           ]
         }
 
-        expect(subject.to_html.strip).to eq <<~HTML.strip
+        expect(subject.call.strip).to eq <<~HTML.strip
           <div class="contentful-rich-text">This is <em><strong>bold and italic</strong></em></div>
         HTML
       end
@@ -112,7 +112,7 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
       }
 
       it 'renders a <p> tag' do
-        expect(subject.to_html).to match_inline_html_snapshot <<~HTML
+        expect(subject.call).to match_inline_html_snapshot <<~HTML
           <div class="contentful-rich-text">
             <p>This year, we concentrated our efforts around four strategic priorities:</p>
           </div>
@@ -150,7 +150,7 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
       }
 
       it 'renders a <blockquote> tag' do
-        expect(subject.to_html).to match_inline_html_snapshot <<~HTML
+        expect(subject.call).to match_inline_html_snapshot <<~HTML
           <div class="contentful-rich-text">
             <blockquote>
               <p>If you confess with your mouth that Jesus is Lord and believe in your heart that God raised him from the dead, you will be saved.
@@ -171,7 +171,7 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
       }
 
       it 'renders a <hr> tag' do
-        expect(subject.to_html).to match_inline_html_snapshot <<~HTML
+        expect(subject.call).to match_inline_html_snapshot <<~HTML
           <div class="contentful-rich-text">
             <hr>
           </div>
@@ -204,7 +204,7 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
       }
 
       it 'renders header tags' do
-        expect(subject.to_html).to match_inline_html_snapshot <<~HTML
+        expect(subject.call).to match_inline_html_snapshot <<~HTML
           <div class="contentful-rich-text">
             <h1>Dear Watermark Family,</h1>
             <h2>2020 was a year like no other.</h2>
@@ -281,7 +281,7 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
       }
 
       it 'renders a <ul>' do
-        expect(subject.to_html).to match_inline_html_snapshot <<~HTML
+        expect(subject.call).to match_inline_html_snapshot <<~HTML
           <div class="contentful-rich-text">
             <ul>
               <li>
@@ -469,7 +469,7 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
       }
 
       it 'renders a <table>' do
-        expect(subject.to_html).to match_inline_html_snapshot <<~HTML
+        expect(subject.call).to match_inline_html_snapshot <<~HTML
           <div class="contentful-rich-text">
             <table>
               <tr>
@@ -541,7 +541,7 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
       }
 
       it 'renders an <a> tag' do
-        expect(subject.to_html).to match_inline_html_snapshot <<~HTML
+        expect(subject.call).to match_inline_html_snapshot <<~HTML
           <div class="contentful-rich-text">
             <p>This is a <a href="/some-page">Hyperlink</a></p>
           </div>
@@ -597,7 +597,7 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
 
         allow(subject).to receive(:store).and_return(store)
 
-        expect(subject.to_html).to match_inline_html_snapshot <<~HTML
+        expect(subject.call).to match_inline_html_snapshot <<~HTML
           <div class="contentful-rich-text">
             <p>This is a <a href="//images.ctfassets.net/abc123/asset.jpg" target="_blank">asset link</a></p>
           </div>
@@ -658,7 +658,7 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
             double('page-model', href: '/some-page'))
         )
 
-        expect(subject.to_html).to match_inline_html_snapshot <<~HTML
+        expect(subject.call).to match_inline_html_snapshot <<~HTML
           <div class="contentful-rich-text">
             <p>This is an <a href="/some-page">entry link</a></p>
           </div>
@@ -700,7 +700,7 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
 
         allow(subject).to receive(:store).and_return(store)
 
-        expect(subject.to_html).to match_inline_html_snapshot <<~HTML
+        expect(subject.call).to match_inline_html_snapshot <<~HTML
           <div class="contentful-rich-text">
             <img src="//images.ctfassets.net/abc123/asset.jpg" alt="John Smith, Sr Pastor">
           </div>
