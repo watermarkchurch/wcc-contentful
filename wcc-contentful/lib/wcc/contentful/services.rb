@@ -138,6 +138,7 @@ module WCC::Contentful
           # Wrap the implementation in a subclass that injects the services
           Class.new(implementation_class) do
             define_method :initialize do |document, *args, **kwargs|
+              # Implementation might choose to override these, so call super last
               @store = store
               @config = config
               @model_namespace = model_namespace

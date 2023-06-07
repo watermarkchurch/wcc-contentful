@@ -43,9 +43,9 @@ class WCC::Contentful::RichTextRenderer
 
   def initialize(document, config: nil, store: nil, model_namespace: nil)
     @document = document
-    @config = config
-    @store = store
-    @model_namespace = model_namespace
+    @config = config if config.present?
+    @store = store if store.present?
+    @model_namespace = model_namespace if model_namespace.present?
   end
 
   def call
