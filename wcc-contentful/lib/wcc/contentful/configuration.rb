@@ -78,10 +78,10 @@ class WCC::Contentful::Configuration
   # Default: 2.seconds
   attr_accessor :sync_retry_wait
 
-  # Sets the rich text renderer implementation.  This can be any object that responds
-  # to `:call` and returns a string.  The object will be passed a WCC::Contentful::RichText::Document.
-  # The default implementation is WCC::Contentful::ActionViewRichTextRenderer, which
-  # requires the `actionview` gem.
+  # Sets the rich text renderer implementation.  This must be a class that accepts a WCC::Contentful::RichText::Document
+  # in the constructor, and responds to `:call` with a string containing the HTML.
+  # In a Rails context, the implementation defaults to WCC::Contentful::ActionViewRichTextRenderer.
+  # In a non-Rails context, you must provide your own implementation.
   attr_accessor :rich_text_renderer
 
   # Returns true if the currently configured environment is pointing at `master`.
@@ -211,6 +211,12 @@ class WCC::Contentful::Configuration
     }
     @management_token = ENV.fetch('CONTENTFUL_MANAGEMENT_TOKEN', nil)
     @preview_token = ENV.fetch('CONTENTFUL_PREVIEW_TOKEN', nil)
+
+    if defined?(ActionView)
+      require 'wcc/contentful/action_view_rich_text_renderer'
+      @rich_text_renderer = WCC::Contentful::ActionViewRichTextRenderer
+    end
+
     @space = ENV.fetch('CONTENTFUL_SPACE_ID', nil)
     @default_locale = 'en-US'
     @locale_fallbacks = {}

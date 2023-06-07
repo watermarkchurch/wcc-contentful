@@ -341,6 +341,8 @@ RSpec.describe WCC::Contentful::Configuration do
 
   describe '#rich_text_renderer' do
     it 'services#rich_text_renderer raises error when not configured' do
+      config.rich_text_renderer = nil
+
       expect {
         services.rich_text_renderer
       }.to raise_error(ArgumentError)

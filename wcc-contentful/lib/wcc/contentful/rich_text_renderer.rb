@@ -255,5 +255,3 @@ class WCC::Contentful::RichTextRenderer
   class NotConnectedError < AbstractRendererError
   end
 end
-
-require 'wcc/contentful/rich_text_renderer/action_view_rich_text_renderer' if defined?(ActionView)

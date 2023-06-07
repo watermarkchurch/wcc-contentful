@@ -711,7 +711,7 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
 
   context 'with action view', rails: true do
     before do
-      require 'wcc/contentful/rich_text_renderer/action_view_rich_text_renderer'
+      require 'wcc/contentful/action_view_rich_text_renderer'
     end
 
     subject { WCC::Contentful::ActionViewRichTextRenderer.new(document) }
