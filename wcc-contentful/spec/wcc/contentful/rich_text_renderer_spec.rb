@@ -472,41 +472,45 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
         expect(subject.call).to match_inline_html_snapshot <<~HTML
           <div class="contentful-rich-text">
             <table>
-              <tr>
-                <th>
-                  <p>Star Wars Movie</p>
-                </th>
-                <th>
-                  <p>Rating</p>
-                </th>
-              </tr>
-              <tr>
-                <td>
-                  <p>Episode 4</p>
-                </td>
-                <td>
-                  <p>8</p>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <p>Episode 5</p>
-                </td>
-                <td>
-                  <p>10</p>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <p>Episode 6</p>
-                </td>
-                <td>
-                  <p>5</p>
-                  <p>
-                    <sub>(because of the ewoks duh)</sub>
-                  </p>
-                </td>
-              </tr>
+              <thead>
+                <tr>
+                  <th>
+                    <p>Star Wars Movie</p>
+                  </th>
+                  <th>
+                    <p>Rating</p>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <p>Episode 4</p>
+                  </td>
+                  <td>
+                    <p>8</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <p>Episode 5</p>
+                  </td>
+                  <td>
+                    <p>10</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <p>Episode 6</p>
+                  </td>
+                  <td>
+                    <p>5</p>
+                    <p>
+                      <sub>(because of the ewoks duh)</sub>
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
             </table>
           </div>
         HTML

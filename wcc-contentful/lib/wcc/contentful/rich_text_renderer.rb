@@ -105,7 +105,16 @@ class WCC::Contentful::RichTextRenderer
 
   def render_table(node)
     content_tag(:table) do
-      render_content(node.content)
+      # Check the first row - if it's a header row, render a <thead>
+      first, *rest = node.content
+      if first&.content&.all? { |cell| cell.node_type == 'table-header-cell' }
+        concat(content_tag(:thead) { render_content([first]) })
+      else
+        # Otherwise, render it inside the tbody with the rest
+        rest.unshift(first)
+      end
+
+      concat(content_tag(:tbody) { render_content(rest) })
     end
   end
 
