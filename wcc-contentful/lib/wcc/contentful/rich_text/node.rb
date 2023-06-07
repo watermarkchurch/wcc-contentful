@@ -29,8 +29,14 @@ module WCC::Contentful::RichText
         end
       end
 
+      # Set the renderer to use when rendering this node to HTML.
+      # By default a node does not have a renderer, and #to_html will raise an ArgumentError.
+      # However if a WCC::Contentful::RichText::Document node is created by the WCC::Contentful::ModelBuilder,
+      # it will inject the renderer configured in WCC::Contentful::Services#rich_text_renderer into the node.
       attr_accessor :renderer
 
+      # Render the node to HTML using the configured renderer.
+      # See WCC::Contentful::RichTextRenderer for more information.
       def to_html
         unless renderer
           raise ArgumentError,

@@ -1,5 +1,36 @@
 # frozen_string_literal: true
 
+# The abstract base class for rendering Rich Text.
+# This base class implements much of the recursive logic necessary for rendering
+# Rich Text nodes, but leaves the actual rendering of the HTML tags to the
+# subclasses.
+#
+# Subclasses can override any method to customize the rendering behavior.  At a minimum they must implement
+# the #content_tag and #concat methods to take advantage of the recursive rendering logic in the base class.
+# The API for these methods is assumed to be equivalent to the ActionView helpers of the same name.
+#
+# The canonical implementation is the WCC::Contentful::ActionViewRichTextRenderer, which uses the standard ActionView
+# helpers as-is to render the HTML tags.
+#
+# @example
+#   class MyRichTextRenderer < WCC::Contentful::RichTextRenderer
+#     def content_tag(name, options, &block)
+#       # your implementation here
+#       # for reference of expected behavior see
+#       # https://api.rubyonrails.org/classes/ActionView/Helpers/TagHelper.html#method-i-content_tag
+#     end
+#
+#     def concat(html_string)
+#       # your implementation here
+#       # for reference of expected behavior see
+#       # https://api.rubyonrails.org/classes/ActionView/Helpers/TextHelper.html#method-i-concat
+#     end
+#   end
+#
+#   renderer = MyRichTextRenderer.new(document)
+#   renderer.call
+#
+# @abstract
 class WCC::Contentful::RichTextRenderer
   class << self
     def call(document, *args, **kwargs)
@@ -10,8 +41,11 @@ class WCC::Contentful::RichTextRenderer
   attr_reader :document
   attr_accessor :config, :store, :model_namespace
 
-  def initialize(document)
+  def initialize(document, config: nil, store: nil, model_namespace: nil)
     @document = document
+    @config = config
+    @store = store
+    @model_namespace = model_namespace
   end
 
   def call

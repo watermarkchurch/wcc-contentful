@@ -127,6 +127,7 @@ module WCC::Contentful
     # Returns a callable object which can be used to render a rich text document.
     # This object will have all the connected services injected into it.
     # The implementation class is configured by {WCC::Contentful::Configuration#rich_text_renderer}.
+    # In a rails context the default implementation is {WCC::Contentful::ActionViewRichTextRenderer}.
     def rich_text_renderer
       @rich_text_renderer ||=
         if implementation_class = configuration&.rich_text_renderer

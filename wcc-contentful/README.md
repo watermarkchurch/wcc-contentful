@@ -15,6 +15,7 @@ Table of Contents:
 3. [Configuration](#configure)
 4. [Usage](#usage)
    1. [Model API](#wcccontentfulmodel-api)
+      * [Rich Text Support](#rich-text-support)
    2. [Store API](#store-api)
    3. [Direct CDN client](#direct-cdn-api-simpleclient)
    4. [Accessing the APIs](#accessing-the-apis-within-application-code)
@@ -146,7 +147,7 @@ WCC::Contentful.init!
 ```
 
 All configuration options can be found [in the rubydoc under
-WCC::Contentful::Configuration](https://watermarkchurch.github.io/wcc-contentful/latest/wcc-contentful/WCC/Contentful/Configuration) 
+WCC::Contentful::Configuration](https://watermarkchurch.github.io/wcc-contentful/latest/wcc-contentful/WCC/Contentful/Configuration)
 
 ## Usage
 
@@ -197,6 +198,57 @@ preview_redirect_object.href
 ```
 
 See the {WCC::Contentful::Model} documentation for more details.
+
+#### Rich Text support
+
+As of version 1.5.0, the Model API supports parsing and rendering Rich Text fields.
+
+Rich Text fields are retrieved from the API and parsed into the WCC::Contentful::RichText::Document object model.
+```rb
+Page.find_by(slug: '/some-slug').my_rich_text
+# => #<struct WCC::Contentful::RichText::Document ...
+```
+
+If you are using Rails, a rich text field can be rendered to HTML using the default renderer by
+calling #to_html:
+```rb
+my_rich_text.to_html
+# => "<div class=\"contentful-rich-text\"><h2>Dear Watermark Family,</h2>
+```
+
+If you are not using Rails, or if you want to override the default rendering behavior, you need to set the
+WCC::Contentful::Configuration#rich_text_field configuration option:
+```rb
+# lib/my_rich_text_renderer
+class MyRichTextRenderer < WCC::Contentful::ActionViewRichTextRenderer
+  def render_hyperlink(node)
+    # override the default logic for rendering hyperlinks
+  end
+end
+
+# config/initializers/wcc_contentful.rb
+WCC::Contentful.configure do |config|
+  config.rich_text_renderer = MyRichTextRenderer
+end
+```
+
+If you want to construct and render WCC::Contentful::RichText::Document objects directly, the #to_html method will
+raise an error.  Instead, you will need to construct and invoke your renderer directly.
+```rb
+my_document = WCC::Contentful::RichText.tokenize(JSON.parse(...contentful CDN rich text field representation...))
+# => #<struct WCC::Contentful::RichText::Document ...
+
+renderer = MyRichTextRenderer.new(my_document,
+  # (optional) inject services so the renderer can automatically resolve links to entries and assets.
+  # The renderer still works without this, but hyperlinks which reference Assets or Entries will raise an error.
+  config: WCC::Contentful.configuration,
+  store: WCC::Contentful::Services.instance.store,
+  model_namespace: WCC::Contentful::Model)
+# => #<MyRichTextRenderer:0x0000000005c71a78
+
+renderer.call
+# => "<div class=\"contentful-rich-text\"><h2>Dear Watermark Family,</h2>
+```
 
 ### Store API
 
@@ -359,7 +411,7 @@ From the bottom up:
 
 ### Client Layer
 
-The {WCC::Contentful::SimpleClient} provides methods to access the [Contentful 
+The {WCC::Contentful::SimpleClient} provides methods to access the [Contentful
 Content Delivery API](https://www.contentful.com/developers/docs/references/content-delivery-api/)
 through your favorite HTTP client gem.  The SimpleClient expects
 an Adapter that conforms to the Faraday interface.
@@ -403,7 +455,7 @@ require 'wcc/contentful/store/rspec_examples'
 
 RSpec.describe MyStore do
   it_behaves_like 'contentful store', {
-    # Set which store features your store implements.  
+    # Set which store features your store implements.
     nested_queries: true,  # Does your store implement JOINs?
     include_param: true    # Does your store resolve links when given the :include option?
   }
@@ -695,7 +747,7 @@ defined inside the `app` directory, this will have the effect of deleting all co
 as well as the constants generated from your schema.
 This will result in one of two errors:
 
-* `NameError (uninitialized constant MySecondSpace::MyContentType)`  
+* `NameError (uninitialized constant MySecondSpace::MyContentType)`
     if you try to reference a subclass such as `MyContentType < MySecondSpace::MyContentType`
 * `ArgumentError (Not yet configured!)`
     if you try to `MySecondSpace.find('xxxx')` to load an Entry or Asset
