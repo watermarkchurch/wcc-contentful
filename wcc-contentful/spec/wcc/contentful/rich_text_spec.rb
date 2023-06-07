@@ -75,6 +75,19 @@ RSpec.describe WCC::Contentful::RichText do
         subject.dig('content', 2, 'content', 2, 'data', 'target', 'sys', 'id')
       ).to eq('1D9ASgqWylh9frKnBv8pSM')
     end
+
+    it 'to_html returns HTML when connected' do
+      renderer_impl =
+        Class.new(WCC::Contentful::RichTextRenderer) do
+          def call
+            '<div>Some HTML</div>'.html_safe
+          end
+        end
+
+      document = described_class.tokenize(fixture, services: double(rich_text_renderer: renderer_impl))
+
+      expect(document.to_html).to eq('<div>Some HTML</div>')
+    end
   end
 
   describe WCC::Contentful::RichText::Paragraph do

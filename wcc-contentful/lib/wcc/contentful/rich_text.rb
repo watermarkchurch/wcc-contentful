@@ -23,7 +23,9 @@ require_relative './rich_text/node'
 module WCC::Contentful::RichText
   ##
   # Recursively converts a raw JSON-parsed hash into the RichText object model.
-  def self.tokenize(raw)
+  # If services are provided, the model will be able to resolve links to entries
+  # and enable direct rendering of documents to HTML.
+  def self.tokenize(raw, services: nil)
     return unless raw
     return raw.map { |c| tokenize(c) } if raw.is_a?(Array)
 
@@ -70,7 +72,7 @@ module WCC::Contentful::RichText
         Unknown
       end
 
-    klass.tokenize(raw)
+    klass.tokenize(raw, services: services)
   end
 
   Document =
