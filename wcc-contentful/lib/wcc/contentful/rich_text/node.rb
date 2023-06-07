@@ -29,16 +29,16 @@ module WCC::Contentful::RichText
         end
       end
 
-      attr_accessor :rich_text_renderer
+      attr_accessor :renderer
 
       def to_html
-        unless rich_text_renderer
+        unless renderer
           raise ArgumentError,
-            'No rich_text_renderer provided during tokenization.  ' \
+            'No renderer provided during tokenization.  ' \
             'Please configure the rich_text_renderer in your WCC::Contentful configuration.'
         end
 
-        rich_text_renderer.call(self)
+        renderer.call(self)
       end
     end
 
@@ -52,7 +52,7 @@ module WCC::Contentful::RichText
         self.node_type == node_type
       end
 
-      def tokenize(raw, services: nil)
+      def tokenize(raw, renderer: nil)
         raise ArgumentError, "Expected '#{node_type}', got '#{raw['nodeType']}'" unless matches?(raw['nodeType'])
 
         values =
@@ -61,16 +61,16 @@ module WCC::Contentful::RichText
 
             case symbol
             when :content
-              WCC::Contentful::RichText.tokenize(val, services: services)
+              WCC::Contentful::RichText.tokenize(val, renderer: renderer)
             else
               val
             end
           end
 
         new(*values).tap do |node|
-          next unless services
+          next unless renderer
 
-          node.rich_text_renderer = services.rich_text_renderer
+          node.renderer = renderer
         end
       end
     end

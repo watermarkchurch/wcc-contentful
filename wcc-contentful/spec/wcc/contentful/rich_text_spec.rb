@@ -84,7 +84,7 @@ RSpec.describe WCC::Contentful::RichText do
           end
         end
 
-      document = described_class.tokenize(fixture, services: double(rich_text_renderer: renderer_impl))
+      document = described_class.tokenize(fixture, renderer: renderer_impl)
 
       expect(document.to_html).to eq('<div>Some HTML</div>')
     end
