@@ -344,8 +344,8 @@ RSpec.describe WCC::Contentful::Configuration do
       config.rich_text_renderer = nil
 
       expect {
-        services.rich_text_renderer
-      }.to raise_error(ArgumentError)
+        services.rich_text_renderer.call(double('document'))
+      }.to raise_error(WCC::Contentful::RichTextRenderer::AbstractRendererError)
     end
 
     context 'when configured' do

@@ -128,26 +128,30 @@ module WCC::Contentful
     # This object will have all the connected services injected into it.
     # The implementation class is configured by {WCC::Contentful::Configuration#rich_text_renderer}.
     def rich_text_renderer
-      unless implementation_class = configuration&.rich_text_renderer
-        raise ArgumentError,
-          'No rich text renderer implementation has been configured.  ' \
-          'Please install a supported implementation such as ActionView, ' \
-          'or set WCC::Contentful.configuration.rich_text_renderer to a custom implementation.'
-      end
-
-      # Wrap the call method in a lambda that connects the services before
-      # calling render.
       @rich_text_renderer ||=
-        begin
+        if implementation_class = configuration&.rich_text_renderer
           store = self.store
           config = configuration
           model_namespace = @model_namespace || WCC::Contentful::Model
+
+          # Wrap the implementation in a subclass that injects the services
           Class.new(implementation_class) do
             define_method :initialize do |document, *args, **kwargs|
               @store = store
               @config = config
               @model_namespace = model_namespace
               super(document, *args, **kwargs)
+            end
+          end
+        else
+          # Create a renderer that renders a more helpful error message, but delay the error message until #to_html
+          # is actually invoked in case the user never actually uses the renderer.
+          Class.new(WCC::Contentful::RichTextRenderer) do
+            def call
+              raise WCC::Contentful::RichTextRenderer::AbstractRendererError,
+                'No rich text renderer implementation has been configured.  ' \
+                'Please install a supported implementation such as ActionView, ' \
+                'or set WCC::Contentful.configuration.rich_text_renderer to a custom implementation.'
             end
           end
         end

@@ -46,6 +46,12 @@ RSpec.describe 'Full Stack Integration' do
           config.store = :eager_sync
           config.schema_file = path_to_fixture('contentful/simple_space_content_types.json')
           config.update_schema_file = :never
+          config.rich_text_renderer =
+            Class.new(WCC::Contentful::RichTextRenderer) do
+              def call
+                '<div>Some HTML</div>'.html_safe
+              end
+            end
         end
 
         stub_request(:get, /https:\/\/cdn.contentful.com\/spaces\/.+\/sync/)
