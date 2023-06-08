@@ -843,7 +843,7 @@ RSpec.describe WCC::Contentful::ModelAPI do
       my_renderer =
         Class.new(WCC::Contentful::RichTextRenderer) do
           def call
-            [config, store, model_namespace]
+            [configuration, store, model_namespace]
           end
         end
 

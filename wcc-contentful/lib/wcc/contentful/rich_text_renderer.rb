@@ -39,11 +39,11 @@ class WCC::Contentful::RichTextRenderer
   end
 
   attr_reader :document
-  attr_accessor :config, :store, :model_namespace
+  attr_accessor :configuration, :store, :model_namespace
 
-  def initialize(document, config: nil, store: nil, model_namespace: nil)
+  def initialize(document, configuration: nil, store: nil, model_namespace: nil)
     @document = document
-    @config = config if config.present?
+    @configuration = configuration if configuration.present?
     @store = store if store.present?
     @model_namespace = model_namespace if model_namespace.present?
   end
@@ -274,9 +274,9 @@ class WCC::Contentful::RichTextRenderer
     return false unless uri&.host.present?
 
     app_uri =
-      if config&.app_url.present?
+      if configuration&.app_url.present?
         begin
-          URI(config.app_url)
+          URI(configuration.app_url)
         rescue StandardError
           nil
         end

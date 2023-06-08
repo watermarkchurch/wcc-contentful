@@ -11,6 +11,10 @@ module WCC::Contentful
 
     attr_reader :configuration
 
+    def model_namespace
+      @model_namespace || WCC::Contentful::Model
+    end
+
     def initialize(configuration, model_namespace: nil)
       raise ArgumentError, 'Not yet configured!' unless configuration
 
@@ -131,20 +135,7 @@ module WCC::Contentful
     def rich_text_renderer
       @rich_text_renderer ||=
         if implementation_class = configuration&.rich_text_renderer
-          store = self.store
-          config = configuration
-          model_namespace = @model_namespace || WCC::Contentful::Model
-
-          # Wrap the implementation in a subclass that injects the services
-          Class.new(implementation_class) do
-            define_method :initialize do |document, *args, **kwargs|
-              # Implementation might choose to override these, so call super last
-              @store = store
-              @config = config
-              @model_namespace = model_namespace
-              super(document, *args, **kwargs)
-            end
-          end
+          RichTextRendererFactory.new(implementation_class, services: self)
         else
           # Create a renderer that renders a more helpful error message, but delay the error message until #to_html
           # is actually invoked in case the user never actually uses the renderer.
