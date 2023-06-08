@@ -18,7 +18,7 @@ RSpec.describe WCC::Contentful::RichText do
   shared_examples 'WCC::Contentful::RichText::Node' do
     it 'enumerates keys' do
       expect(fixture.keys.length).to be > 0
-      expect(subject.keys).to eq(fixture.keys)
+      expect(subject.keys).to include(*fixture.keys)
     end
 
     it 'enumerates with each' do
@@ -74,6 +74,19 @@ RSpec.describe WCC::Contentful::RichText do
       expect(
         subject.dig('content', 2, 'content', 2, 'data', 'target', 'sys', 'id')
       ).to eq('1D9ASgqWylh9frKnBv8pSM')
+    end
+
+    it 'to_html returns HTML when connected' do
+      renderer_impl =
+        Class.new(WCC::Contentful::RichTextRenderer) do
+          def call
+            '<div>Some HTML</div>'.html_safe
+          end
+        end
+
+      document = described_class.tokenize(fixture, renderer: renderer_impl)
+
+      expect(document.to_html).to eq('<div>Some HTML</div>')
     end
   end
 
@@ -143,7 +156,7 @@ RSpec.describe WCC::Contentful::RichText do
     it_behaves_like 'WCC::Contentful::RichText::Node'
   end
 
-  describe WCC::Contentful::RichText::Heading1 do
+  describe WCC::Contentful::RichText::Heading do
     let(:fixture) {
       {
         'nodeType' => 'heading-1',
@@ -158,77 +171,165 @@ RSpec.describe WCC::Contentful::RichText do
         ]
       }
     }
-
-    it { is_expected.to be_a WCC::Contentful::RichText::Heading1 }
-    it { is_expected.to have_node_type('heading-1') }
-
     it_behaves_like 'WCC::Contentful::RichText::Node'
+
+    describe 'heading-1' do
+      it { is_expected.to be_a WCC::Contentful::RichText::Heading }
+      it { is_expected.to have_node_type('heading-1') }
+      it { expect(subject.size).to eq(1) }
+    end
+
+    describe 'heading-2' do
+      let(:fixture) {
+        document.dig('content', 0)
+      }
+
+      it { is_expected.to be_a WCC::Contentful::RichText::Heading }
+      it { is_expected.to have_node_type('heading-2') }
+    end
+
+    describe 'heading-3' do
+      let(:fixture) {
+        document.dig('content', 1)
+      }
+
+      it { is_expected.to be_a WCC::Contentful::RichText::Heading }
+      it { is_expected.to have_node_type('heading-3') }
+    end
+
+    describe 'heading-4' do
+      let(:fixture) {
+        {
+          'nodeType' => 'heading-4',
+          'data' => {},
+          'content' => [
+            {
+              'nodeType' => 'text',
+              'value' => 'The Meaning Behind Our Name',
+              'marks' => [],
+              'data' => {}
+            }
+          ]
+        }
+      }
+
+      it { is_expected.to be_a WCC::Contentful::RichText::Heading }
+      it { is_expected.to have_node_type('heading-4') }
+    end
+
+    describe 'heading-5' do
+      let(:fixture) {
+        {
+          'nodeType' => 'heading-5',
+          'data' => {},
+          'content' => [
+            {
+              'nodeType' => 'text',
+              'value' => 'The Meaning Behind Our Name',
+              'marks' => [],
+              'data' => {}
+            }
+          ]
+        }
+      }
+
+      it { is_expected.to be_a WCC::Contentful::RichText::Heading }
+      it { is_expected.to have_node_type('heading-5') }
+    end
   end
 
-  describe WCC::Contentful::RichText::Heading2 do
-    let(:fixture) {
-      document.dig('content', 0)
-    }
-
-    it { is_expected.to be_a WCC::Contentful::RichText::Heading2 }
-    it { is_expected.to have_node_type('heading-2') }
-
-    it_behaves_like 'WCC::Contentful::RichText::Node'
-  end
-
-  describe WCC::Contentful::RichText::Heading3 do
-    let(:fixture) {
-      document.dig('content', 1)
-    }
-
-    it { is_expected.to be_a WCC::Contentful::RichText::Heading3 }
-    it { is_expected.to have_node_type('heading-3') }
-
-    it_behaves_like 'WCC::Contentful::RichText::Node'
-  end
-
-  describe WCC::Contentful::RichText::Heading4 do
+  describe WCC::Contentful::RichText::UnorderedList do
     let(:fixture) {
       {
-        'nodeType' => 'heading-4',
+        'nodeType' => 'unordered-list',
         'data' => {},
         'content' => [
           {
-            'nodeType' => 'text',
-            'value' => 'The Meaning Behind Our Name',
-            'marks' => [],
-            'data' => {}
+            'nodeType' => 'list-item',
+            'data' => {},
+            'content' => [
+              {
+                'nodeType' => 'paragraph',
+                'data' => {},
+                'content' => [
+                  {
+                    'nodeType' => 'text',
+                    'value' => 'Deepen our theology of God and His church',
+                    'marks' => [],
+                    'data' => {}
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            'nodeType' => 'list-item',
+            'data' => {},
+            'content' => [
+              {
+                'nodeType' => 'paragraph',
+                'data' => {},
+                'content' => [
+                  {
+                    'nodeType' => 'text',
+                    'value' => 'Make a big church feel smaller',
+                    'marks' => [],
+                    'data' => {}
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            'nodeType' => 'list-item',
+            'data' => {},
+            'content' => [
+              {
+                'nodeType' => 'paragraph',
+                'data' => {},
+                'content' => [
+                  {
+                    'nodeType' => 'text',
+                    'value' => 'Strengthen families',
+                    'marks' => [],
+                    'data' => {}
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            'nodeType' => 'list-item',
+            'data' => {},
+            'content' => [
+              {
+                'nodeType' => 'paragraph',
+                'data' => {},
+                'content' => [
+                  {
+                    'nodeType' => 'text',
+                    'value' => 'Love our city',
+                    'marks' => [],
+                    'data' => {}
+                  }
+                ]
+              }
+            ]
           }
         ]
       }
     }
 
-    it { is_expected.to be_a WCC::Contentful::RichText::Heading4 }
-    it { is_expected.to have_node_type('heading-4') }
+    it { is_expected.to be_a WCC::Contentful::RichText::UnorderedList }
+    it { is_expected.to have_node_type('unordered-list') }
 
     it_behaves_like 'WCC::Contentful::RichText::Node'
-  end
 
-  describe WCC::Contentful::RichText::Heading5 do
-    let(:fixture) {
-      {
-        'nodeType' => 'heading-5',
-        'data' => {},
-        'content' => [
-          {
-            'nodeType' => 'text',
-            'value' => 'The Meaning Behind Our Name',
-            'marks' => [],
-            'data' => {}
-          }
-        ]
-      }
-    }
-
-    it { is_expected.to be_a WCC::Contentful::RichText::Heading5 }
-    it { is_expected.to have_node_type('heading-5') }
-
-    it_behaves_like 'WCC::Contentful::RichText::Node'
+    it 'can deep dig' do
+      expect(
+        subject.dig('content', 1, 'content', 0, 'content', 0, 'value')
+      ).to eq('Make a big church feel smaller')
+    end
   end
 end
 

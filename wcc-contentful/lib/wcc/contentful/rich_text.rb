@@ -23,9 +23,11 @@ require_relative './rich_text/node'
 module WCC::Contentful::RichText
   ##
   # Recursively converts a raw JSON-parsed hash into the RichText object model.
-  def self.tokenize(raw, context = nil)
+  # If renderer are provided, the model will be able to resolve links to entries
+  # and enable direct rendering of documents to HTML.
+  def self.tokenize(raw, renderer: nil)
     return unless raw
-    return raw.map { |c| tokenize(c, context) } if raw.is_a?(Array)
+    return raw.map { |c| tokenize(c) } if raw.is_a?(Array)
 
     klass =
       case raw['nodeType']
@@ -33,10 +35,26 @@ module WCC::Contentful::RichText
         Document
       when 'paragraph'
         Paragraph
+      when 'hr'
+        HR
       when 'blockquote'
         Blockquote
       when 'text'
         Text
+      when 'ordered-list'
+        OrderedList
+      when 'unordered-list'
+        UnorderedList
+      when 'list-item'
+        ListItem
+      when 'table'
+        Table
+      when 'table-row'
+        TableRow
+      when 'table-cell'
+        TableCell
+      when 'table-header-cell'
+        TableHeaderCell
       when 'embedded-entry-inline'
         EmbeddedEntryInline
       when 'embedded-entry-block'
@@ -44,13 +62,17 @@ module WCC::Contentful::RichText
       when 'embedded-asset-block'
         EmbeddedAssetBlock
       when /heading-(\d+)/
-        size = Regexp.last_match(1)
-        const_get("Heading#{size}")
+        Heading
+      when /(\w+-)?hyperlink/
+        Hyperlink
       else
+        # Future proofing for new node types introduced by Contentful.
+        # The best list of node types maintained by Contentful is here:
+        # https://github.com/contentful/rich-text/blob/master/packages/rich-text-types/src/blocks.ts
         Unknown
       end
 
-    klass.tokenize(raw, context)
+    klass.tokenize(raw, renderer: renderer)
   end
 
   Document =
@@ -63,6 +85,11 @@ module WCC::Contentful::RichText
       include WCC::Contentful::RichText::Node
     end
 
+  HR =
+    Struct.new(:nodeType, :data, :content) do
+      include WCC::Contentful::RichText::Node
+    end
+
   Blockquote =
     Struct.new(:nodeType, :data, :content) do
       include WCC::Contentful::RichText::Node
@@ -70,6 +97,41 @@ module WCC::Contentful::RichText
 
   Text =
     Struct.new(:nodeType, :value, :marks, :data) do
+      include WCC::Contentful::RichText::Node
+    end
+
+  OrderedList =
+    Struct.new(:nodeType, :data, :content) do
+      include WCC::Contentful::RichText::Node
+    end
+
+  UnorderedList =
+    Struct.new(:nodeType, :data, :content) do
+      include WCC::Contentful::RichText::Node
+    end
+
+  ListItem =
+    Struct.new(:nodeType, :data, :content) do
+      include WCC::Contentful::RichText::Node
+    end
+
+  Table =
+    Struct.new(:nodeType, :data, :content) do
+      include WCC::Contentful::RichText::Node
+    end
+
+  TableRow =
+    Struct.new(:nodeType, :data, :content) do
+      include WCC::Contentful::RichText::Node
+    end
+
+  TableCell =
+    Struct.new(:nodeType, :data, :content) do
+      include WCC::Contentful::RichText::Node
+    end
+
+  TableHeaderCell =
+    Struct.new(:nodeType, :data, :content) do
       include WCC::Contentful::RichText::Node
     end
 
@@ -88,18 +150,40 @@ module WCC::Contentful::RichText
       include WCC::Contentful::RichText::Node
     end
 
-  (1..5).each do |i|
-    struct =
-      Struct.new(:nodeType, :data, :content) do
-        include WCC::Contentful::RichText::Node
+  EmbeddedResourceBlock =
+    Struct.new(:nodeType, :data, :content) do
+      include WCC::Contentful::RichText::Node
+    end
+
+  Heading =
+    Struct.new(:nodeType, :data, :content) do
+      include WCC::Contentful::RichText::Node
+
+      def self.matches?(node_type)
+        node_type =~ /heading-(\d+)/
       end
-    sz = i
-    struct.define_singleton_method(:node_type) { "heading-#{sz}" }
-    const_set("Heading#{sz}", struct)
-  end
+
+      def size
+        @size ||= /heading-(\d+)/.match(nodeType)[1]&.to_i
+      end
+    end
+
+  Hyperlink =
+    Struct.new(:nodeType, :data, :content) do
+      include WCC::Contentful::RichText::Node
+
+      def self.matches?(node_type)
+        node_type =~ /(\w+-)?hyperlink/
+      end
+    end
 
   Unknown =
     Struct.new(:nodeType, :data, :content) do
       include WCC::Contentful::RichText::Node
+
+      # Unknown nodes are the catch all, so they always match anything that made it to the else case of the switch.
+      def self.matches?(_node_type)
+        true
+      end
     end
 end

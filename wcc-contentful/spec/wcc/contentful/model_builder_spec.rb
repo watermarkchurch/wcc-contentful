@@ -17,8 +17,17 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     load_store_from_sync
   }
 
+  let(:rich_text_renderer) {
+    Class.new(WCC::Contentful::RichTextRenderer) do
+      def call
+        '<div>Some HTML</div>'.html_safe
+      end
+    end
+  }
+
   let(:services) {
-    double('services', store: store, instrumentation: ActiveSupport::Notifications)
+    double('services', store: store, rich_text_renderer: rich_text_renderer,
+      instrumentation: ActiveSupport::Notifications)
   }
 
   before do
@@ -528,8 +537,8 @@ RSpec.describe WCC::Contentful::ModelBuilder do
           classes = block_text.rich_body['content'].map(&:class)
           expect(classes).to eq(
             [
-              WCC::Contentful::RichText::Heading2,
-              WCC::Contentful::RichText::Heading3,
+              WCC::Contentful::RichText::Heading,
+              WCC::Contentful::RichText::Heading,
               WCC::Contentful::RichText::Paragraph,
               WCC::Contentful::RichText::Blockquote,
               WCC::Contentful::RichText::Paragraph,
@@ -542,6 +551,14 @@ RSpec.describe WCC::Contentful::ModelBuilder do
               WCC::Contentful::RichText::Paragraph
             ]
           )
+        end
+
+        it 'renders HTML when #to_s is called' do
+          # act
+          block_text = WCC::Contentful::Model::SectionBlockText.find_by(id: '5op6hsU6BYvZCt7S0PjTVv')
+
+          # assert
+          expect(block_text.rich_body.to_html).to eq('<div>Some HTML</div>')
         end
       end
     end

@@ -28,6 +28,24 @@ module WCC::Contentful::RichText
           tuple
         end
       end
+
+      # Set the renderer to use when rendering this node to HTML.
+      # By default a node does not have a renderer, and #to_html will raise an ArgumentError.
+      # However if a WCC::Contentful::RichText::Document node is created by the WCC::Contentful::ModelBuilder,
+      # it will inject the renderer configured in WCC::Contentful::Services#rich_text_renderer into the node.
+      attr_accessor :renderer
+
+      # Render the node to HTML using the configured renderer.
+      # See WCC::Contentful::RichTextRenderer for more information.
+      def to_html
+        unless renderer
+          raise ArgumentError,
+            'No renderer provided during tokenization.  ' \
+            'Please configure the rich_text_renderer in your WCC::Contentful configuration.'
+        end
+
+        renderer.call(self)
+      end
     end
 
     class_methods do
@@ -36,8 +54,12 @@ module WCC::Contentful::RichText
         name.demodulize.underscore.dasherize
       end
 
-      def tokenize(raw, context = nil)
-        raise ArgumentError, "Expected '#{node_type}', got '#{raw['nodeType']}'" unless raw['nodeType'] == node_type
+      def matches?(node_type)
+        self.node_type == node_type
+      end
+
+      def tokenize(raw, renderer: nil)
+        raise ArgumentError, "Expected '#{node_type}', got '#{raw['nodeType']}'" unless matches?(raw['nodeType'])
 
         values =
           members.map do |symbol|
@@ -45,15 +67,17 @@ module WCC::Contentful::RichText
 
             case symbol
             when :content
-              WCC::Contentful::RichText.tokenize(val, context)
-              # when :data
-              # TODO: resolve links...
+              WCC::Contentful::RichText.tokenize(val, renderer: renderer)
             else
               val
             end
           end
 
-        new(*values)
+        new(*values).tap do |node|
+          next unless renderer
+
+          node.renderer = renderer
+        end
       end
     end
   end
