@@ -353,7 +353,7 @@ RSpec.describe WCC::Contentful::Configuration do
         my_renderer =
           Class.new(WCC::Contentful::RichTextRenderer) do
             def call
-              [@config, @store, @model_namespace]
+              [configuration, store, model_namespace]
             end
           end
         config.rich_text_renderer = my_renderer
