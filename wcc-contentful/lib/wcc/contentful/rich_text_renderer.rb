@@ -142,13 +142,45 @@ class WCC::Contentful::RichTextRenderer
       # Check the first row - if it's a header row, render a <thead>
       first, *rest = node.content
       if first&.content&.all? { |cell| cell.node_type == 'table-header-cell' }
-        concat(content_tag(:thead) { render_content([first]) })
+        concat(render_table_header(first))
       else
         # Otherwise, render it inside the tbody with the rest
         rest.unshift(first)
       end
 
       concat(content_tag(:tbody) { render_content(rest) })
+    end
+  end
+
+  def render_table_header(table_row_node)
+    # roll up blank table-header-cells into the previous cell w/ colspan
+    node_contents = []
+    table_row_node.content.each do |node|
+      if node.node_type == 'table-header-cell' &&
+          node_is_blank?(node) &&
+          node_contents.last&.node_type == 'table-header-cell'
+
+        # replace the previous node with a new node with colspan + 1
+        last_node = node_contents.pop
+        node_contents << WCC::Contentful::RichText.tokenize(
+          last_node.as_json.merge(
+            'data' => (last_node['data'] || {}).merge({
+              'colspan' => (last_node['data']&.try('colspan') || 1) + 1
+            })
+          )
+        )
+
+        # And skip adding this blank node
+        next
+      end
+
+      node_contents << node
+    end
+
+    content_tag(:thead) do
+      content_tag(:tr) do
+        render_content(node_contents)
+      end
     end
   end
 
@@ -160,14 +192,21 @@ class WCC::Contentful::RichTextRenderer
 
   def render_table_cell(node)
     content_tag(:td) do
-      render_content(node.content)
+      render_table_cell_content(node.content)
     end
   end
 
   def render_table_header_cell(node)
-    content_tag(:th) do
-      render_content(node.content)
+    content_tag(:th, colspan: node.data && node.data['colspan']) do
+      render_table_cell_content(node.content)
     end
+  end
+
+  def render_table_cell_content(content)
+    # If the content is a single paragraph, render it without the <p> tag
+    return render_content(content.first.content) if content.size == 1 && content.first.node_type == 'paragraph'
+
+    render_content(content)
   end
 
   def render_hyperlink(node)
@@ -248,6 +287,15 @@ class WCC::Contentful::RichTextRenderer
   end
 
   private
+
+  def node_is_blank?(node)
+    case node.node_type
+    when 'text'
+      node.value.blank?
+    else
+      node.content.all? { |n| node_is_blank?(n) }
+    end
+  end
 
   def resolve_target(target)
     unless store.present?

@@ -303,6 +303,34 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
     end
 
     context 'with a table' do
+      let(:header0content) {
+        [
+          {
+            'nodeType' => 'paragraph',
+            'content' => [
+              {
+                'nodeType' => 'text',
+                'value' => 'Star Wars Movie'
+              }
+            ]
+          }
+        ]
+      }
+      let(:header1content) {
+        [
+          {
+            'nodeType' => 'paragraph',
+            'content' => [
+              {
+                'nodeType' => 'text',
+                'value' => 'Rating'
+
+              }
+            ]
+          }
+        ]
+      }
+
       let(:content) {
         [
           {
@@ -313,33 +341,11 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
                 'content' => [
                   {
                     'nodeType' => 'table-header-cell',
-                    'content' => [
-                      {
-                        'nodeType' => 'paragraph',
-                        'content' => [
-                          {
-                            'nodeType' => 'text',
-                            'value' => 'Star Wars Movie'
-
-                          }
-                        ]
-                      }
-                    ]
+                    'content' => header0content
                   },
                   {
                     'nodeType' => 'table-header-cell',
-                    'content' => [
-                      {
-                        'nodeType' => 'paragraph',
-                        'content' => [
-                          {
-                            'nodeType' => 'text',
-                            'value' => 'Rating'
-
-                          }
-                        ]
-                      }
-                    ]
+                    'content' => header1content
                   }
                 ]
               },
@@ -474,35 +480,65 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
             <table>
               <thead>
                 <tr>
-                  <th>
-                    <p>Star Wars Movie</p>
-                  </th>
-                  <th>
-                    <p>Rating</p>
-                  </th>
+                  <th>Star Wars Movie</th>
+                  <th>Rating</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>
-                    <p>Episode 4</p>
-                  </td>
-                  <td>
-                    <p>8</p>
-                  </td>
+                  <td>Episode 4</td>
+                  <td>8</td>
                 </tr>
                 <tr>
-                  <td>
-                    <p>Episode 5</p>
-                  </td>
-                  <td>
-                    <p>10</p>
-                  </td>
+                  <td>Episode 5</td>
+                  <td>10</td>
                 </tr>
                 <tr>
+                  <td>Episode 6</td>
                   <td>
-                    <p>Episode 6</p>
+                    <p>5</p>
+                    <p>
+                      <sub>(because of the ewoks duh)</sub>
+                    </p>
                   </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        HTML
+      end
+
+      it 'renders a <table> header with colspan' do
+        # Assume an empty text node in header 1
+        header1content[0] = {
+          'nodeType' => 'paragraph',
+          'content' => [
+            {
+              'nodeType' => 'text',
+              'value' => ''
+            }
+          ]
+        }
+
+        expect(subject.call).to match_inline_html_snapshot <<~HTML
+          <div class="contentful-rich-text">
+            <table>
+              <thead>
+                <tr>
+                  <th colspan="2">Star Wars Movie</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Episode 4</td>
+                  <td>8</td>
+                </tr>
+                <tr>
+                  <td>Episode 5</td>
+                  <td>10</td>
+                </tr>
+                <tr>
+                  <td>Episode 6</td>
                   <td>
                     <p>5</p>
                     <p>
