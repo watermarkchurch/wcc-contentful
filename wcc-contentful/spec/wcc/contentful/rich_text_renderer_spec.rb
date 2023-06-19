@@ -474,35 +474,21 @@ RSpec.describe WCC::Contentful::RichTextRenderer, rails: true do
             <table>
               <thead>
                 <tr>
-                  <th>
-                    <p>Star Wars Movie</p>
-                  </th>
-                  <th>
-                    <p>Rating</p>
-                  </th>
+                  <th>Star Wars Movie</th>
+                  <th>Rating</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>
-                    <p>Episode 4</p>
-                  </td>
-                  <td>
-                    <p>8</p>
-                  </td>
+                  <td>Episode 4</td>
+                  <td>8</td>
                 </tr>
                 <tr>
-                  <td>
-                    <p>Episode 5</p>
-                  </td>
-                  <td>
-                    <p>10</p>
-                  </td>
+                  <td>Episode 5</td>
+                  <td>10</td>
                 </tr>
                 <tr>
-                  <td>
-                    <p>Episode 6</p>
-                  </td>
+                  <td>Episode 6</td>
                   <td>
                     <p>5</p>
                     <p>

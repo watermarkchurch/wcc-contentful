@@ -160,14 +160,21 @@ class WCC::Contentful::RichTextRenderer
 
   def render_table_cell(node)
     content_tag(:td) do
-      render_content(node.content)
+      render_table_cell_content(node.content)
     end
   end
 
   def render_table_header_cell(node)
     content_tag(:th) do
-      render_content(node.content)
+      render_table_cell_content(node.content)
     end
+  end
+
+  def render_table_cell_content(content)
+    # If the content is a single paragraph, render it without the <p> tag
+    return render_content(content.first.content) if content.size == 1 && content.first.node_type == 'paragraph'
+
+    render_content(content)
   end
 
   def render_hyperlink(node)
