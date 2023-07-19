@@ -74,9 +74,12 @@ We have successfully created caching layers using Memcached, Postgres, and an in
 
 ### Better Rails Integration
 
-When we initially got started with the Contentful ruby models, we encountered one problem that was more frustrating than all others: If a field exists in the content model, but the particular entry we're working with does not have that field populated, then accessing that field raised a `NoMethodError`.  This caused us to litter our code with `if defined?(entry.my_field)` which is bad practice.  (Note: this has since been fixed in contentful.rb v2).
+When we initially got started with the Contentful ruby models, we encountered one problem that was more frustrating than all others: If a field exists in the content model, but the particular entry we're working with does not have that field populated, then accessing that field raised a `NoMethodError`.  This caused us to litter our code with `if defined?(entry.my_field)` which is bad practice.  
 
 We decided it was better to not rely on `method_missing?` (what contentful.rb does), and instead to use `define_method` in an initializer to generate the methods for our models.  This has the advantage that calling `.instance_methods` on a model class includes all the fields present in the content model.
+
+    Note: it appears that [contentful_rb has added an opt-in configuration to return `nil` instead of raising `NoMethodError`](https://github.com/contentful/contentful_model#returning-nil-for-fields-which-arent-defined).
+    We think this should be the default setting, instead of being opt-in.
 
 We also took advantage of Rails' naming conventions to automatically infer the content type name based on the class name.  Thus in our code, we have `app/models/page.rb` which defines `class Page << WCC::Contentful::Model::Page`, and is automatically linked to the `page` content type ID.  (Note: this is overridable on a per-model basis)
 
