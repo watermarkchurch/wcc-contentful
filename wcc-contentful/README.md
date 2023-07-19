@@ -78,8 +78,9 @@ When we initially got started with the Contentful ruby models, we encountered on
 
 We decided it was better to not rely on `method_missing?` (what contentful.rb does), and instead to use `define_method` in an initializer to generate the methods for our models.  This has the advantage that calling `.instance_methods` on a model class includes all the fields present in the content model.
 
-    Note: it appears that [contentful_rb has added an opt-in configuration to return `nil` instead of raising `NoMethodError`](https://github.com/contentful/contentful_model#returning-nil-for-fields-which-arent-defined).
-    We think this should be the default setting, instead of being opt-in.
+    Note: it appears that [contentful_rb has added an opt-in configuration to return `nil`](https://github.com/contentful/contentful_model#returning-nil-for-fields-which-arent-defined).
+    instead of raising `NoMethodError. We think this should be the default setting,
+    rather than being opt-in.
 
 We also took advantage of Rails' naming conventions to automatically infer the content type name based on the class name.  Thus in our code, we have `app/models/page.rb` which defines `class Page << WCC::Contentful::Model::Page`, and is automatically linked to the `page` content type ID.  (Note: this is overridable on a per-model basis)
 
