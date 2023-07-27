@@ -97,6 +97,10 @@ workflows:
           ruby: 3.1.1
           gemfile: gemfiles/rails_6.1_ruby_3.1.gemfile
       - test:
+          name: test_rails-7.0_ruby-3.2
+          ruby: 3.2.2
+          gemfile: gemfiles/rails_7.0_ruby_3.2.gemfile
+      - test:
           name: test_middleman-4.2_ruby-2.7.6
           ruby: 2.7.6
           gemfile: gemfiles/middleman_4.2_ruby_2.7.6.gemfile
