@@ -62,8 +62,8 @@ module WCC::Contentful::Test::Factory
       },
       id: id || SecureRandom.urlsafe_base64,
       type: 'Entry',
-      createdAt: Time.now.to_s(:iso8601),
-      updatedAt: Time.now.to_s(:iso8601),
+      createdAt: Time.now.to_formatted_s(:iso8601),
+      updatedAt: Time.now.to_formatted_s(:iso8601),
       environment: {
         sys: {
           id: 'master',
