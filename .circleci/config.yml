@@ -103,8 +103,8 @@ workflows:
 
       - lint: 
           ruby: 2.7.6
-          gemfile: gemfiles/rails_5.2_ruby_2.7.6.gemfile
+          gemfile: gemfiles/rails_7.0_ruby_3.2.gemfile
           requires:
-            - test_rails-5.2_ruby-2.7.6
+            - test_rails-7.0_ruby-3.2
 
 
