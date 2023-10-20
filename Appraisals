@@ -1,17 +1,6 @@
 # frozen_string_literal: true
 
 
-appraise "rails-5.2_ruby-2.7.6" do
-  gem 'rails', '~> 5.2.0'
-  gem 'railties', '~> 5.2.0'
-
-  group :test do
-    gem 'rspec-rails', '~> 3.7'
-  end
-
-  ruby '2.7.6'
-end
-
 appraise "rails-6.1_ruby-2.7.6" do
   gem 'rails', '~> 6.1'
   gem 'railties', '~> 6.1'
