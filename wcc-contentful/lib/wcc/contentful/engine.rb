@@ -2,8 +2,8 @@
 
 module WCC::Contentful
   class Engine < ::Rails::Engine
-    initializer 'enable webhook' do
-      app.config.to_prepare do |app|
+    initializer 'enable webhook' do |app|
+      app.config.to_prepare do
         config = WCC::Contentful.configuration
 
         jobs = []
