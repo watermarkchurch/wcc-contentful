@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+appraise "rack-2.0_ruby-2.7.6" do
+  gem 'rack', '~> 2.0'
+
+  ruby '2.7.6'
+end
 
 appraise "rails-6.1_ruby-2.7.6" do
   gem 'rails', '~> 6.1'

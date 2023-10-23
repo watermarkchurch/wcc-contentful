@@ -21,6 +21,7 @@ the gem officially supports the following:
 * Framework versions:
   * Rails 7.0
   * Rails 6.1
+  * Rack 2 (w/o Rails)
 
 Pull requests are welcome to enable supporting other frameworks!
 
