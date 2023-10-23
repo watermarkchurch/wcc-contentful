@@ -32,7 +32,7 @@ end
 
 task :check do
   doc_version = Gem::Version.new(version).release.to_s.sub(/\.\d+$/, "")
-  unless File.exists?("docs/latest") && File.readlink("docs/latest") == "./#{doc_version}"
+  unless File.exist?("docs/latest") && File.readlink("docs/latest") == "./#{doc_version}"
     raise "docs/latest does not point to ./#{doc_version}.  Please run 'bin/doc'."
   end
 
@@ -46,7 +46,7 @@ task :check do
     end
 
     doc_folder = "docs/#{doc_version}/#{gem}"
-    unless File.exists?(doc_folder)
+    unless File.exist?(doc_folder)
       raise "Documentation does not exist in '#{doc_folder}'. please run 'bin/doc'"
     end
   end
