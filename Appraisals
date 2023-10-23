@@ -12,12 +12,6 @@ appraise "rails-6.1_ruby-2.7.6" do
   ruby '2.7.6'
 end
 
-appraise "middleman-4.2_ruby-2.7.6" do
-  gem 'middleman', '~> 4.2'
-
-  ruby '2.7.6'
-end
-
 appraise "rails-6.1_ruby-3.1" do
   gem 'rails', '~> 6.1'
   gem 'railties', '~> 6.1'

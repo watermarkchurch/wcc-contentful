@@ -5,7 +5,7 @@ Contentful.
 [![Coverage Status](https://coveralls.io/repos/github/watermarkchurch/wcc-contentful/badge.svg?branch=master)](https://coveralls.io/github/watermarkchurch/wcc-contentful?branch=master)
 
 * [wcc-contentful](./wcc-contentful) [![Gem Version](https://badge.fury.io/rb/wcc-contentful.svg)](https://rubygems.org/gems/wcc-contentful)
-* [wcc-contentful-middleman](./wcc-contentful-middleman) [![Gem Version](https://badge.fury.io/rb/wcc-contentful-middleman.svg)](https://rubygems.org/gems/wcc-contentful-middleman)
+* [(DEPRECATED) wcc-contentful-middleman](./wcc-contentful-middleman) [![Gem Version](https://badge.fury.io/rb/wcc-contentful-middleman.svg)](https://rubygems.org/gems/wcc-contentful-middleman)
 * [(DEPRECATED) wcc-contentful-graphql](./wcc-contentful-graphql) [![Gem Version](https://badge.fury.io/rb/wcc-contentful-graphql.svg)](https://rubygems.org/gems/wcc-contentful-graphql)
 
 ## Supported Rails versions
@@ -15,12 +15,12 @@ up-to-date list of supported framework environments.  At the time of this writin
 the gem officially supports the following:
 
 * Ruby versions:
+  * 3.2
   * 3.1
   * 2.7
 * Framework versions:
+  * Rails 7.0
   * Rails 6.1
-  * Rails 5.2
-  * Middleman 4.2
 
 Pull requests are welcome to enable supporting other frameworks!
 
@@ -40,7 +40,7 @@ into the gem's directory and run `bundle install` to install the gems.
 ### Adding a new Rails version
 
 To get started testing a new framework, add the appropriate combination of gems to the `Appraisals` file
-and run `bundle exec appraisal install` to generate the appropriate gemfile in the `gemfiles` directory:
+and run `bundle exec appraisal generate` to generate the appropriate gemfile in the `gemfiles` directory:
 
 ```diff
 diff --git a/Appraisals b/Appraisals
@@ -62,7 +62,7 @@ index 041abea..917142f 100644
 Then you can use the `bin/use` helper to check out that set of gems:
 
 ```bash
-$ bundle exec appraisal install
+$ bundle exec appraisal generate
 $ bin/use gemfiles/rails_6.1.gemfile
 ```
 
@@ -82,9 +82,7 @@ rescue Gem::LoadError => e
   warn "WARNING: Cannot load active_record - some tests will be skipped\n#{e}"
 end
 
-if defined?(ActiveJob)
-  ActiveJob::Base.queue_adapter = :test
-else
+unless defined?(ActiveRecord)
   RSpec.configure do |c|
     # skip active record based specs
     c.before(:each, active_record: true) do

@@ -9,8 +9,7 @@ version = WCC::Contentful::VERSION
 
 GEMS = [
   'wcc-contentful',
-  'wcc-contentful-app',
-  'wcc-contentful-middleman'
+  'wcc-contentful-app'
 ].freeze
 
 GEMS.each do |name|
