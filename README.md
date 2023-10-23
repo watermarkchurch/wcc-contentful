@@ -5,8 +5,8 @@ Contentful.
 [![Coverage Status](https://coveralls.io/repos/github/watermarkchurch/wcc-contentful/badge.svg?branch=master)](https://coveralls.io/github/watermarkchurch/wcc-contentful?branch=master)
 
 * [wcc-contentful](./wcc-contentful) [![Gem Version](https://badge.fury.io/rb/wcc-contentful.svg)](https://rubygems.org/gems/wcc-contentful)
-* [(DEPRECATED) wcc-contentful-middleman](./wcc-contentful-middleman) [![Gem Version](https://badge.fury.io/rb/wcc-contentful-middleman.svg)](https://rubygems.org/gems/wcc-contentful-middleman)
-* [(DEPRECATED) wcc-contentful-graphql](./wcc-contentful-graphql) [![Gem Version](https://badge.fury.io/rb/wcc-contentful-graphql.svg)](https://rubygems.org/gems/wcc-contentful-graphql)
+* [(DEPRECATED) wcc-contentful-middleman](https://watermarkchurch.github.io/wcc-contentful/1.6/wcc-contentful-middleman/) [![Gem Version](https://badge.fury.io/rb/wcc-contentful-middleman.svg)](https://rubygems.org/gems/wcc-contentful-middleman)
+* [(DEPRECATED) wcc-contentful-graphql](https://watermarkchurch.github.io/wcc-contentful/1.2/wcc-contentful-graphql/) [![Gem Version](https://badge.fury.io/rb/wcc-contentful-graphql.svg)](https://rubygems.org/gems/wcc-contentful-graphql)
 
 ## Supported Rails versions
 
