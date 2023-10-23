@@ -48,8 +48,8 @@ module WCC::Contentful::Test::Double
         },
         id: SecureRandom.urlsafe_base64,
         type: 'Asset',
-        createdAt: Time.now.to_s(:iso8601),
-        updatedAt: Time.now.to_s(:iso8601),
+        createdAt: Time.now.to_formatted_s(:iso8601),
+        updatedAt: Time.now.to_formatted_s(:iso8601),
         environment: {
           sys: {
             id: 'master',

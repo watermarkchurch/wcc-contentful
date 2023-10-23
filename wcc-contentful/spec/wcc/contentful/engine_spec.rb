@@ -7,6 +7,14 @@ RSpec.describe 'WCC::Contentful::Engine', rails: true do
     WCC::Contentful::Engine
   }
 
+  def run_initializers
+    app = Rails.application
+    described_class.initializers.each do |initializer|
+      initializer.run(app)
+    end
+    app.reloader.prepare!
+  end
+
   describe 'initializers' do
     let(:body) {
       JSON.parse(load_fixture('contentful/contentful_published_blog.json'))
@@ -30,7 +38,7 @@ RSpec.describe 'WCC::Contentful::Engine', rails: true do
     it 'runs a sync on Entry event' do
       expect(WCC::Contentful::SyncEngine::Job).to receive(:perform_later)
         .with(hash_including(body))
-      described_class.initializers.each(&:run)
+      run_initializers
 
       # act
       Wisper::GlobalListeners.registrations.each do |registration|
@@ -42,7 +50,7 @@ RSpec.describe 'WCC::Contentful::Engine', rails: true do
       WCC::Contentful.configure do |config|
         config.environment = 'staging'
       end
-      described_class.initializers.each(&:run)
+      run_initializers
 
       # expect
       expect(WCC::Contentful::SyncEngine::Job).to receive(:perform_later)
@@ -57,7 +65,7 @@ RSpec.describe 'WCC::Contentful::Engine', rails: true do
       my_job = double(perform_later: nil)
       expect(WCC::Contentful.configuration).to receive(:webhook_jobs)
         .and_return([my_job])
-      described_class.initializers.each(&:run)
+      run_initializers
 
       expect(my_job).to receive(:perform_later)
         .with(hash_including(body))
@@ -79,7 +87,7 @@ RSpec.describe 'WCC::Contentful::Engine', rails: true do
 
       expect(WCC::Contentful.configuration).to receive(:webhook_jobs)
         .and_return(jobs)
-      described_class.initializers.each(&:run)
+      run_initializers
 
       # act
       Wisper::GlobalListeners.registrations.each do |registration|

@@ -85,10 +85,6 @@ workflows:
   build:
     jobs:
       - test:
-          name: test_rails-5.2_ruby-2.7.6
-          ruby: 2.7.6
-          gemfile: gemfiles/rails_5.2_ruby_2.7.6.gemfile
-      - test:
           name: test_rails-6.1_ruby-2.7.6
           ruby: 2.7.6
           gemfile: gemfiles/rails_6.1_ruby_2.7.6.gemfile
@@ -97,14 +93,18 @@ workflows:
           ruby: 3.1.1
           gemfile: gemfiles/rails_6.1_ruby_3.1.gemfile
       - test:
+          name: test_rails-7.0_ruby-3.2
+          ruby: 3.2.2
+          gemfile: gemfiles/rails_7.0_ruby_3.2.gemfile
+      - test:
           name: test_middleman-4.2_ruby-2.7.6
           ruby: 2.7.6
           gemfile: gemfiles/middleman_4.2_ruby_2.7.6.gemfile
 
       - lint: 
-          ruby: 2.7.6
-          gemfile: gemfiles/rails_5.2_ruby_2.7.6.gemfile
+          ruby: 3.2.2
+          gemfile: gemfiles/rails_7.0_ruby_3.2.gemfile
           requires:
-            - test_rails-5.2_ruby-2.7.6
+            - test_rails-7.0_ruby-3.2
 
 
