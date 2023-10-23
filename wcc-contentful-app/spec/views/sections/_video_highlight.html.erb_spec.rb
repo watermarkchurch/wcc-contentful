@@ -28,7 +28,7 @@ RSpec.describe 'sections/video_highlight' do
 
     render partial: 'components/section', locals: { section: section }
 
-    body = Capybara.string(rendered)
+    body = Capybara.string(rendered.to_s)
     expect(body.find('.section-video-highlight__tag').text.strip).to eq('Some Video')
   end
 
@@ -38,7 +38,7 @@ RSpec.describe 'sections/video_highlight' do
 
     render partial: 'components/section', locals: { section: section }
 
-    body = Capybara.string(rendered)
+    body = Capybara.string(rendered.to_s)
     subtext = body.find('.section-video-highlight__subtext')
     expect(subtext.find('h2').text.strip).to eq('expect h2')
   end

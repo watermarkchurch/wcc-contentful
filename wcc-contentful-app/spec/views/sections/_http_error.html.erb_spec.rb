@@ -28,7 +28,7 @@ RSpec.describe 'sections/http_error' do
     render partial: 'components/section', locals: { section: section }
 
     expect(rendered).to have_css('section.section-http-error.default')
-    body = Capybara.string(rendered)
+    body = Capybara.string(rendered.to_s)
     expect(body.all('a').length).to eq(2)
   end
 end

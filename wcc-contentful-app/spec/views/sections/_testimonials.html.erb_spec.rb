@@ -23,7 +23,7 @@ RSpec.describe 'sections/testimonials' do
 
     render partial: 'components/section', locals: { section: section }
 
-    body = Capybara.string(rendered)
+    body = Capybara.string(rendered.to_s)
     items = body.all('.section-testimonials__item')
     expect(items.length).to eq(2)
   end
@@ -38,7 +38,7 @@ RSpec.describe 'sections/testimonials' do
 
     render partial: 'components/section', locals: { section: section }
 
-    body = Capybara.string(rendered)
+    body = Capybara.string(rendered.to_s)
     item = body.find('.section-testimonials__item')
     sidebar = item.find('.section-testimonials__item-sidebar')
     expect(sidebar['style']).to include("background-image: url(#{image.file.url})")

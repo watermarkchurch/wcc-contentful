@@ -28,7 +28,7 @@ RSpec.describe 'sections/video' do
 
     render partial: 'components/section', locals: { section: section }
 
-    body = Capybara.string(rendered)
+    body = Capybara.string(rendered.to_s)
     expect(body.find('.section-video-content__title').text.strip).to eq('Some Video')
   end
 end
