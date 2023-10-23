@@ -37,3 +37,6 @@ coverage
 
 # we use yarn
 package-lock.json
+
+# sqlite databases
+**/*.sqlite3
