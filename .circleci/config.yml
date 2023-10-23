@@ -97,6 +97,10 @@ workflows:
           ruby: 3.2.2
           gemfile: gemfiles/rails_7.0_ruby_3.2.gemfile
       - test:
+          name: test_rails-7.1_ruby-3.2
+          ruby: 3.2.2
+          gemfile: gemfiles/rails_7.1_ruby_3.2.gemfile
+      - test:
           name: test_rack-2.0_ruby-2.7.6
           ruby: 2.7.6
           gemfile: gemfiles/rack_2.0_ruby_2.7.6.gemfile
