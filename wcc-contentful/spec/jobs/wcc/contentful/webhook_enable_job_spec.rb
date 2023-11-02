@@ -130,5 +130,38 @@ RSpec.describe 'WCC::Contentful::WebhookEnableJob', type: :job do
       # act
       job.perform
     end
+
+    it 'invokes #post_webhook_definition with args' do
+      body = nil
+      expect_any_instance_of(WCC::Contentful::SimpleClient::Management)
+        .to receive(:post_webhook_definition) do |b|
+          body = b
+          double(raw: {})
+        end
+      allow(WCC::Contentful).to receive(:configuration)
+        .and_return(instance_double(WCC::Contentful::Configuration,
+          space: 'testspace',
+          management_token: 'testtoken',
+          app_url: 'https://test.url',
+          environment: 'master',
+          connection: nil,
+          webhook_username: nil,
+          webhook_password: nil))
+
+      # act
+      job.perform({
+        receive_url: 'https://test.url/webhook/receive',
+        webhook_username: 'testuser',
+        webhook_password: 'testpw'
+      })
+
+      # assert
+      expect(body).to include({
+        'name' => 'WCC::Contentful webhook',
+        'url' => 'https://test.url/webhook/receive',
+        'httpBasicUsername' => 'testuser',
+        'httpBasicPassword' => 'testpw'
+      })
+    end
   end
 end
