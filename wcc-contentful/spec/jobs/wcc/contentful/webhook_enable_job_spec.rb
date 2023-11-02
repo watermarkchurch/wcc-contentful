@@ -133,8 +133,11 @@ RSpec.describe 'WCC::Contentful::WebhookEnableJob', type: :job do
 
     it 'invokes #post_webhook_definition with args' do
       body = nil
+      allow_any_instance_of(WCC::Contentful::SimpleClient::Management)
+        .to receive(:webhook_definitions)
+        .and_return(double(items: []))
       expect_any_instance_of(WCC::Contentful::SimpleClient::Management)
-        .to receive(:post_webhook_definition) do |b|
+        .to receive(:post_webhook_definition) do |_instance, b|
           body = b
           double(raw: {})
         end

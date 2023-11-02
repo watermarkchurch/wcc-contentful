@@ -13,7 +13,7 @@ module WCC::Contentful
       client = WCC::Contentful::SimpleClient::Management.new(
         **args
       )
-      enable_webhook(client, args.slice(:receive_url, :webhook_username, :webhook_password))
+      enable_webhook(client, **args.slice(:receive_url, :webhook_username, :webhook_password))
     end
 
     def enable_webhook(client, receive_url:, webhook_username: nil, webhook_password: nil)
