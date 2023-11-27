@@ -54,7 +54,7 @@ RSpec.describe 'sections/faq' do
 
     render partial: 'components/section', locals: { section: section }
 
-    body = Capybara.string(rendered)
+    body = Capybara.string(rendered.to_s)
     rows = body.all('.section-faq__row')
     expect(rows.length).to eq(4)
 

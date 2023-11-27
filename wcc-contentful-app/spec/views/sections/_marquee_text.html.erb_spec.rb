@@ -20,7 +20,7 @@ RSpec.describe 'sections/marquee_text' do
     render partial: 'components/section', locals: { section: section }
 
     expect(rendered).to have_css('.section-marquee-text__tag')
-    body = Capybara.string(rendered)
+    body = Capybara.string(rendered.to_s)
     expect(body.find('.section-marquee-text__tag').text)
       .to eq('test-tag <div>escaped</div>')
   end
