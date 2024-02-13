@@ -11,6 +11,7 @@ class WCC::Contentful::App::MarkdownRenderer
     @extensions = {
       autolink: true,
       superscript: true,
+      strikethrough: true,
       disable_indented_code_blocks: true,
       tables: true
     }.merge!(options&.delete(:extensions) || {})
