@@ -2,6 +2,7 @@
 
 gem 'typhoeus'
 require 'typhoeus'
+require 'ostruct'
 
 class WCC::Contentful::SimpleClient::TyphoeusAdapter
   def get(url, params = {}, headers = {})

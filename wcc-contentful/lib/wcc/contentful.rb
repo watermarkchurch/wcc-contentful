@@ -24,6 +24,7 @@ require 'wcc/contentful/rich_text'
 require 'wcc/contentful/rich_text_renderer'
 require 'wcc/contentful/rich_text_renderer_factory'
 require 'wcc/contentful/sync_engine'
+require 'wcc/contentful/webhook_enable_job'
 require 'wcc/contentful/events'
 require 'wcc/contentful/middleware'
 

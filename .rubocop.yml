@@ -15,7 +15,6 @@ AllCops:
 
     # Config files
     - '*/Guardfile'
-    - 'Dangerfile'
     - 'Rakefile'
     - 'Appraisals'
 
@@ -99,10 +98,6 @@ Style/ModuleFunction:
   EnforcedStyle: extend_self
 
 Style/OpenStructUse:
-  Enabled: false
-
-# Danger uses the 'fail' keyword for reporting errors
-Style/SignalException:
   Enabled: false
 
 Layout/ParameterAlignment:

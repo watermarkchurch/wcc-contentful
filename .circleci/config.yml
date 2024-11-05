@@ -49,7 +49,6 @@ jobs:
       - run:
           name: Lint
           command: |
-            bundle exec danger
             bundle exec rubocop
             bundle exec erblint '*/app/views/**/*.erb'
             npm install
