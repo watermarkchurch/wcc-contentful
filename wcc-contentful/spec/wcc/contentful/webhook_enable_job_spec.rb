@@ -6,7 +6,6 @@ require 'wcc/contentful/webhook_enable_job'
 
 RSpec.describe 'WCC::Contentful::WebhookEnableJob', type: :job do
   subject(:job) {
-    require_relative '../../../../app/jobs/wcc/contentful/webhook_enable_job'
     WCC::Contentful::WebhookEnableJob.new
   }
 
