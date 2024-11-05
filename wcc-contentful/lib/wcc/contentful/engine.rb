@@ -32,9 +32,9 @@ module WCC::Contentful
         next unless config&.management_token.present?
         next unless config.app_url.present?
 
-        if defined?(ActiveJob)
-          require 'wcc/contentful/webhook_enable_job'
-          WebhookEnableJob.set(wait: 10.seconds).perform_later if Rails.env.production?
+        require 'wcc/contentful/webhook_enable_job'
+        if defined?(WCC::Contentful::WebhookEnableJob)
+          WCC::Contentful::WebhookEnableJob.set(wait: 10.seconds).perform_later if Rails.env.production?
         else
           Rails.logger.error 'ActiveJob is not defined, webhook enable job will not run'
         end
