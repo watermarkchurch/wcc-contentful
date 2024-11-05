@@ -32,7 +32,6 @@ module WCC::Contentful
         next unless config&.management_token.present?
         next unless config.app_url.present?
 
-        require 'wcc/contentful/webhook_enable_job'
         if defined?(WCC::Contentful::WebhookEnableJob)
           WCC::Contentful::WebhookEnableJob.set(wait: 10.seconds).perform_later if Rails.env.production?
         else
