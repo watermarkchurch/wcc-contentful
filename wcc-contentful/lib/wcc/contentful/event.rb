@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'singleton'
+require 'ostruct'
 
 module WCC::Contentful::Event
   extend ActiveSupport::Concern

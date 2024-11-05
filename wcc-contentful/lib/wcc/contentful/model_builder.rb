@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'ostruct'
 require_relative './link'
 require_relative './sys'
 require_relative './rich_text'
