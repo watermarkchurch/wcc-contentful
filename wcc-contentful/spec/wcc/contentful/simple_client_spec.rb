@@ -635,6 +635,71 @@ RSpec.describe WCC::Contentful::SimpleClient, :vcr do
         }.to instrument('sync.simpleclient.contentful.wcc')
       end
     end
+
+    describe 'tags' do
+      it 'gets all tags' do
+        stub_request(:get, "#{cdn_base}/tags")
+          .to_return(body: load_fixture('contentful/simple_client/tags.json'))
+
+        # act
+        resp = client.tags
+
+        # assert
+        resp.assert_ok!
+        expect(resp.status).to eq(200)
+        expect(resp.to_json['items'].length).to eq(1)
+
+        tag = resp.to_json['items'][0]
+        expect(tag['name']).to eq('NY Campaign')
+        expect(tag.dig('sys', 'id')).to eq('nyCampaign')
+        expect(tag.dig('sys', 'visibility')).to eq('public')
+        expect(tag.dig('sys', 'type')).to eq('Tag')
+      end
+
+      it 'gets tags with query params' do
+        stub_request(:get, "#{cdn_base}/tags?limit=2")
+          .to_return(body: load_fixture('contentful/simple_client/tags.json'))
+
+        # act
+        resp = client.tags({ limit: 2 })
+
+        # assert
+        resp.assert_ok!
+        expect(resp.status).to eq(200)
+        expect(resp.to_json['items'].length).to eq(1)
+      end
+
+      it 'notifies' do
+        stub_request(:get, "#{cdn_base}/tags")
+          .to_return(body: load_fixture('contentful/simple_client/tags.json'))
+
+        expect {
+          client.tags
+        }.to instrument('get_http.simpleclient.contentful.wcc')
+
+        expect {
+          client.tags
+        }.to instrument('tags.simpleclient.contentful.wcc')
+      end
+    end
+
+    describe 'tag' do
+      it 'gets a single tag by ID' do
+        stub_request(:get, "#{cdn_base}/tags/ministry-external-focus")
+          .to_return(body: load_fixture('contentful/simple_client/single-tag.json'))
+
+        # act
+        resp = client.tag('ministry-external-focus')
+
+        # assert
+        resp.assert_ok!
+        expect(resp.status).to eq(200)
+        expect(resp.to_json['name']).to eq('Ministry: External Focus')
+        expect(resp.to_json.dig('sys', 'id')).to eq('ministry-external-focus')
+        expect(resp.to_json.dig('sys', 'visibility')).to eq('private')
+        expect(resp.to_json.dig('sys', 'type')).to eq('Tag')
+      end
+    end
   end
 
   context 'with environment' do
