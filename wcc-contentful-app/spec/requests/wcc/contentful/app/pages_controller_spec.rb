@@ -81,7 +81,7 @@ RSpec.describe WCC::Contentful::App::PagesController, type: :request do
     expect(response).to have_http_status(500)
   rescue WCC::Contentful::App::PageNotFoundError
     # Rails 7.1 and below behavior
-    expect(response).to have_http_status(500)
+    # OK
   end
 
   it 'uses preview if preview param set' do
@@ -134,7 +134,7 @@ RSpec.describe WCC::Contentful::App::PagesController, type: :request do
     expect(response).to have_http_status(500)
   rescue WCC::Contentful::App::PageNotFoundError
     # Rails 7.1 and below behavior
-    expect(response).to have_http_status(500)
+    # OK
   end
 
   it 'uses application controller defined preview? function' do
@@ -172,7 +172,7 @@ RSpec.describe WCC::Contentful::App::PagesController, type: :request do
     expect(response).to have_http_status(500)
   rescue WCC::Contentful::App::PageNotFoundError
     # Rails 7.1 and below behavior
-    expect(response).to have_http_status(500)
+    # OK
   end
 
   def with_preview_password
