@@ -40,7 +40,7 @@ module WCC::Contentful
     attr_reader :configuration
 
     def types
-      ActiveSupport::Deprecation.warn('Use WCC::Contentful::Model.schema instead')
+      WCC::Contentful.deprecator.warn('Use WCC::Contentful::Model.schema instead')
       WCC::Contentful::Model.schema
     end
 
@@ -50,8 +50,19 @@ module WCC::Contentful
     end
 
     def logger
-      ActiveSupport::Deprecation.warn('Use WCC::Contentful::Services.instance.logger instead')
+      WCC::Contentful.deprecator.warn('Use WCC::Contentful::Services.instance.logger instead')
       WCC::Contentful::Services.instance.logger
+    end
+
+    def deprecator
+      @deprecator ||=
+        begin
+          next_major_version = WCC::Contentful::VERSION.split('.').first.next
+          ActiveSupport::Deprecation.new(
+            "#{next_major_version}.0",
+            'wcc-contentful'
+          )
+        end
     end
   end
 
