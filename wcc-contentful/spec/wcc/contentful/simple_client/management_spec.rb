@@ -251,6 +251,67 @@ RSpec.describe WCC::Contentful::SimpleClient::Management do
           }.to raise_error(WCC::Contentful::SimpleClient::RateLimitError)
         end
       end
+
+      describe '#tags' do
+        it 'queries tag list' do
+          stub_request(:get, 'https://api.contentful.com/spaces/testspace/environments/testenv/tags?limit=1000')
+            .with(headers: { Authorization: 'Bearer testtoken' })
+            .to_return(body: load_fixture('contentful/simple_client/tags.json'))
+
+          # act
+          resp = client.tags(limit: 1000)
+
+          # assert
+          resp.assert_ok!
+          item = resp.items.first
+          expect(item['name']).to eq('NY Campaign')
+          expect(item.dig('sys', 'id')).to eq('nyCampaign')
+        end
+
+        it 'gets single tag' do
+          stub_request(:get, 'https://api.contentful.com/spaces/testspace/environments/testenv/tags/nyCampaign')
+            .with(headers: { Authorization: 'Bearer testtoken' })
+            .to_return(body: load_fixture('contentful/simple_client/single-tag.json'))
+
+          # act
+          resp = client.tag('nyCampaign')
+
+          # assert
+          resp.assert_ok!
+          expect(resp.raw.dig('sys', 'id')).to eq('ministry-external-focus')
+          expect(resp.raw['name']).to eq('Ministry: External Focus')
+        end
+
+        it 'can create a tag' do
+          new_tag = JSON.parse <<~JSON
+            {
+              "name": "Ministry: Weddings at Watermark",
+              "sys": {
+                "visibility": "public",
+                "type": "Tag",
+                "id": "ministry_weddings"
+              }
+            }
+          JSON
+
+          stub_request(:post, 'https://api.contentful.com/spaces/testspace/environments/testenv/tags/ministry_weddings')
+            .with(headers: {
+              Authorization: 'Bearer testtoken',
+              'Content-Type' => 'application/vnd.contentful.management.v1+json'
+            })
+            .to_return(body: load_fixture('contentful/simple_client/tag_create.json'))
+
+          # act
+          resp = client.tag_create(new_tag)
+
+          # assert
+          resp.assert_ok!
+          expect(resp.raw.dig('sys', 'id')).to eq('ministry_weddings')
+          expect(resp.raw.dig('sys', 'visibility')).to eq('public')
+          expect(resp.raw.dig('sys', 'type')).to eq('Tag')
+          expect(resp.raw['name']).to eq('Ministry: Weddings at Watermark')
+        end
+      end
     end
   end
 end

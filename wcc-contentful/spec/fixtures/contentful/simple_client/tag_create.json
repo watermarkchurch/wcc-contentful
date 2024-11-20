@@ -1,0 +1,39 @@
+{
+  "name": "Ministry: Weddings at Watermark",
+  "sys": {
+    "visibility": "public",
+    "type": "Tag",
+    "id": "ministry_weddings",
+    "space": {
+      "sys": {
+        "type": "Link",
+        "linkType": "Space",
+        "id": "hw5pse7y1ojx"
+      }
+    },
+    "environment": {
+      "sys": {
+        "id": "dev",
+        "type": "Link",
+        "linkType": "Environment"
+      }
+    },
+    "version": 1,
+    "createdAt": "2024-11-20T21:11:23.571Z",
+    "createdBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "0SUbYs2vZlXjVR6bH6o83O"
+      }
+    },
+    "updatedAt": "2024-11-20T21:11:23.571Z",
+    "updatedBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "0SUbYs2vZlXjVR6bH6o83O"
+      }
+    }
+  }
+}

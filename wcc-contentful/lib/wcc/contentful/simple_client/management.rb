@@ -66,6 +66,34 @@ class WCC::Contentful::SimpleClient::Management < WCC::Contentful::SimpleClient
     resp.assert_ok!
   end
 
+  def tags(query = {})
+    resp =
+      _instrument 'tags', query: query do
+        get("/spaces/#{space}/environments/#{environment}/tags", query)
+      end
+    resp.assert_ok!
+  end
+
+  def tag(key, query = {})
+    resp =
+      _instrument 'tags', tag: key, query: query do
+        get("/spaces/#{space}/environments/#{environment}/tags/#{key}", query)
+      end
+    resp.assert_ok!
+  end
+
+  def tag_create(tag_definition)
+    unless tag_id = tag_definition.dig('sys', 'id')
+      raise ArgumentError, "Missing tag ID in #{tag_definition}"
+    end
+
+    resp =
+      _instrument 'tag_create' do
+        post("/spaces/#{space}/environments/#{environment}/tags/#{tag_id}", tag_definition)
+      end
+    resp.assert_ok!
+  end
+
   # {
   #   "name": "My webhook",
   #   "url": "https://www.example.com/test",

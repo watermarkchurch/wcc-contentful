@@ -26,7 +26,7 @@ module WCC::Contentful
   class SimpleClient
     include WCC::Contentful::Instrumentation
 
-    attr_reader :api_url, :space
+    attr_reader :api_url, :space, :environment
 
     # Creates a new SimpleClient with the given configuration.
     #
@@ -54,9 +54,10 @@ module WCC::Contentful
       # https://www.contentful.com/developers/docs/references/content-preview-api/#/introduction/api-rate-limits
       @rate_limit_wait_timeout = @options[:rate_limit_wait_timeout] || 1.5
 
-      return unless options[:environment].present?
+      @environment = options[:environment]
+      return unless @environment.present?
 
-      @api_url = URI.join(@api_url, 'environments/', "#{options[:environment]}/")
+      @api_url = URI.join(@api_url, 'environments/', "#{@environment}/")
     end
 
     # performs an HTTP GET request to the specified path within the configured
