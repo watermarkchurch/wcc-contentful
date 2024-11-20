@@ -818,6 +818,54 @@ RSpec.describe WCC::Contentful::ModelBuilder do
     end
   end
 
+  describe 'metadata' do
+    let(:entry_with_tags) {
+      JSON.parse <<~JSON
+        {
+          "fields": {
+            "title": "Hello, World!"
+          },
+          "metadata": {
+            "tags": [
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Tag",
+                  "id": "ministry-regeneration"
+                }
+              }
+            ]
+          },
+          "sys": {
+            "id": "5KsDBWseXY6QegucYAoacS",
+            "type": "Entry",
+            "contentType": {
+              "sys": {
+                "type": "Link",
+                "linkType": "ContentType",
+                "id": "page"
+              }
+            },
+            "createdAt": "2016-12-20T10:43:35.772Z",
+            "updatedAt": "2016-12-20T10:43:35.772Z",
+            "revision": 1,
+            "locale": "en-US"
+          }
+        }
+      JSON
+    }
+
+    it 'parses tags' do
+      @schema = subject.build_models
+
+      entry = WCC::Contentful::Model.new_from_raw(entry_with_tags)
+
+      expect(entry.metadata).to be_a(WCC::Contentful::Metadata)
+      expect(entry.metadata.tags.first).to be_a(WCC::Contentful::Link)
+      expect(entry.metadata.tags.first.id).to eq('ministry-regeneration')
+    end
+  end
+
   def with_tempfile(name, contents)
     file = Tempfile.open(name)
     begin
