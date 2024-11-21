@@ -294,7 +294,7 @@ RSpec.describe WCC::Contentful::SimpleClient::Management do
             }
           JSON
 
-          stub_request(:post, 'https://api.contentful.com/spaces/testspace/environments/testenv/tags/ministry_weddings')
+          stub_request(:put, 'https://api.contentful.com/spaces/testspace/environments/testenv/tags/ministry_weddings')
             .with(headers: {
               Authorization: 'Bearer testtoken',
               'Content-Type' => 'application/vnd.contentful.management.v1+json'
