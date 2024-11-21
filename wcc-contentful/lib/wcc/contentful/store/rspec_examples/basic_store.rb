@@ -224,6 +224,94 @@ RSpec.shared_examples 'basic store' do
       found2 = subject.find('1qLdW7i7g4Ycq6i4Cckg44')
       expect(found2.dig('fields', 'slug', 'en-US')).to eq('redirect-with-slug-and-url')
     end
+
+    it 'stores metadata including tags', focus: true do
+      entry_with_tags = JSON.parse <<~JSON
+        {
+          "metadata": {
+            "tags": [
+              {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Tag",
+                  "id": "ministry_careers-in-motion"
+                }
+              }
+            ],
+            "concepts": []
+          },
+          "sys": {
+            "space": {
+              "sys": {
+                "type": "Link",
+                "linkType": "Space",
+                "id": "hw5pse7y1ojx"
+              }
+            },
+            "id": "1h5ce0SYZq8cELhESiJFkA",
+            "type": "Entry",
+            "createdAt": "2020-02-06T20:25:19.188Z",
+            "updatedAt": "2024-11-21T19:02:37.381Z",
+            "environment": {
+              "sys": {
+                "id": "dev",
+                "type": "Link",
+                "linkType": "Environment"
+              }
+            },
+            "publishedVersion": 73,
+            "revision": 7,
+            "contentType": {
+              "sys": {
+                "type": "Link",
+                "linkType": "ContentType",
+                "id": "page"
+              }
+            }
+          },
+          "fields": {
+            "title": {
+              "en-US": "Finances and Career Care"
+            },
+            "slug": {
+              "en-US": "/ministries/financialcareers"
+            },
+            "sections": {
+              "en-US": [
+                {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Entry",
+                    "id": "4agnOGg0LQZrCbF4OeMEbj"
+                  }
+                },
+                {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Entry",
+                    "id": "614GfdpLaD5gjc0U3sITXY"
+                  }
+                },
+                {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Entry",
+                    "id": "xM5NWKiZSRUoUxXvoiYW4"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      JSON
+
+      # act
+      subject.set('1h5ce0SYZq8cELhESiJFkA', entry_with_tags)
+      found = subject.find('1h5ce0SYZq8cELhESiJFkA')
+
+      # assert
+      expect(found.dig('metadata', 'tags', 0, 'sys', 'id')).to eq('ministry_careers-in-motion')
+    end
   end
 
   describe '#delete' do
