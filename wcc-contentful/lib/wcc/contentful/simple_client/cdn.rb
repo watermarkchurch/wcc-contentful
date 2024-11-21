@@ -109,7 +109,7 @@ class WCC::Contentful::SimpleClient::Cdn < WCC::Contentful::SimpleClient
   private
 
   def sync_old(sync_token: nil, **query)
-    ActiveSupport::Deprecation.warn('Sync without a block is deprecated, please use new block syntax instead')
+    WCC::Contentful.deprecator.warn('Sync without a block is deprecated, please use new block syntax instead')
 
     sync_token =
       if sync_token

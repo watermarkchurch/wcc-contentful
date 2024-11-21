@@ -41,7 +41,7 @@ module WCC::Contentful::ModelAPI
     end
 
     def store(preview = nil)
-      ActiveSupport::Deprecation.warn('Use services.store instead')
+      WCC::Contentful.deprecator.warn('Use services.store instead')
 
       preview ? services.preview_store : services.store
     end

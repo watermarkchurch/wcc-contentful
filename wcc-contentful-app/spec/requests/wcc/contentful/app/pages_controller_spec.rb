@@ -75,9 +75,17 @@ RSpec.describe WCC::Contentful::App::PagesController, type: :request do
     expect(WCC::Contentful::Model::Redirect).to receive(:find_by)
       .and_return(nil)
 
-    expect {
+    if Rails.version >= '7.2'
       get '/not-found'
-    }.to raise_error(WCC::Contentful::App::PageNotFoundError)
+
+      # Rails 7.2 behavior
+      expect(response).to have_http_status(500)
+    else
+      # Rails 7.1 and below behavior
+      expect {
+        get '/not-found'
+      }.to raise_error(WCC::Contentful::App::PageNotFoundError)
+    end
   end
 
   it 'uses preview if preview param set' do
@@ -122,12 +130,19 @@ RSpec.describe WCC::Contentful::App::PagesController, type: :request do
     expect(WCC::Contentful::Model::Redirect).to receive(:find_by)
       .with(slug: '/test', options: { include: 0, preview: false })
 
-    # act
-    expect {
-      with_preview_password do |_pw|
+    with_preview_password do |_pw|
+      if Rails.version >= '7.2'
         get '/test', params: { preview: 'some other password' }
+
+        # Rails 7.2 behavior
+        expect(response).to have_http_status(500)
+      else
+        # Rails 7.1 and below behavior
+        expect {
+          get '/test', params: { preview: 'some other password' }
+        }.to raise_error(WCC::Contentful::App::PageNotFoundError)
       end
-    }.to raise_error(WCC::Contentful::App::PageNotFoundError)
+    end
   end
 
   it 'uses application controller defined preview? function' do
@@ -157,11 +172,19 @@ RSpec.describe WCC::Contentful::App::PagesController, type: :request do
       .with(slug: '/test', options: { include: 0, preview: false })
 
     # act
-    expect {
-      with_preview_password do |_pw|
+    with_preview_password do |_pw|
+      if Rails.version >= '7.2'
         get '/test', params: { preview: 'some other password' }
+
+        # Rails 7.2 behavior
+        expect(response).to have_http_status(500)
+      else
+        # Rails 7.1 and below behavior
+        expect {
+          get '/test', params: { preview: 'some other password' }
+        }.to raise_error(WCC::Contentful::App::PageNotFoundError)
       end
-    }.to raise_error(WCC::Contentful::App::PageNotFoundError)
+    end
   end
 
   def with_preview_password

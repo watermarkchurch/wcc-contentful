@@ -112,6 +112,16 @@ Layout/FirstHashElementIndentation:
 Layout/HashAlignment:
   # allow coder to get around alignment rules by explicitly defining the hash param
   EnforcedLastArgumentHashStyle: ignore_explicit
+  
+Layout/IndentationConsistency:
+  Exclude:
+    # This file causes an error in this cop
+    - 'wcc-contentful-app/spec/requests/wcc/contentful/app/pages_controller_spec.rb'
+
+Layout/IndentationWidth:
+  Exclude:
+    # This file causes an error in this cop
+    - 'wcc-contentful-app/spec/requests/wcc/contentful/app/pages_controller_spec.rb'
 
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented
