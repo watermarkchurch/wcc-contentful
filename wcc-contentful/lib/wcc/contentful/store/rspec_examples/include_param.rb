@@ -160,6 +160,119 @@ RSpec.shared_examples 'supports include param' do |feature_set|
         expect(link.dig('sys', 'type')).to eq('Entry')
         expect(link.dig('sys', 'id')).to eq('deep0')
       end
+
+      it 'preserves tags' do
+        entry_with_tags = JSON.parse <<~JSON
+          {
+            "metadata": {
+              "tags": [
+                {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Tag",
+                    "id": "ministry_careers-in-motion"
+                  }
+                }
+              ],
+              "concepts": []
+            },
+            "sys": {
+              "space": {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "Space",
+                  "id": "hw5pse7y1ojx"
+                }
+              },
+              "id": "1h5ce0SYZq8cELhESiJFkA",
+              "type": "Entry",
+              "createdAt": "2020-02-06T20:25:19.188Z",
+              "updatedAt": "2024-11-21T19:02:37.381Z",
+              "environment": {
+                "sys": {
+                  "id": "dev",
+                  "type": "Link",
+                  "linkType": "Environment"
+                }
+              },
+              "publishedVersion": 73,
+              "revision": 7,
+              "contentType": {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "ContentType",
+                  "id": "page"
+                }
+              }
+            },
+            "fields": {
+              "title": {
+                "en-US": "Finances and Career Care"
+              },
+              "slug": {
+                "en-US": "/ministries/financialcareers"
+              },
+              "sections": {
+                "en-US": [
+                  {
+                    "sys": {
+                      "type": "Link",
+                      "linkType": "Entry",
+                      "id": "4agnOGg0LQZrCbF4OeMEbj"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        JSON
+        linked_entry = JSON.parse(<<~JSON)
+          {
+            "metadata": {
+              "tags": [
+                {
+                  "sys": {
+                    "type": "Link",
+                    "linkType": "Tag",
+                    "id": "ministry_something-else"
+                  }
+                }
+              ],
+              "concepts": []
+            },
+            "sys": {
+              "id": "4agnOGg0LQZrCbF4OeMEbj",
+              "type": "Entry",
+              "contentType": {
+                "sys": {
+                  "type": "Link",
+                  "linkType": "ContentType",
+                  "id": "page"
+                }
+              }
+            },
+            "fields": {
+              "name": {
+                "en-US": "Linked Entry"
+              }
+            }
+          }
+        JSON
+
+        subject.set('1h5ce0SYZq8cELhESiJFkA', entry_with_tags)
+        subject.set('4agnOGg0LQZrCbF4OeMEbj', linked_entry)
+
+        # act
+        found = subject.find_by(content_type: 'page', filter: { slug: '/ministries/financialcareers' }, options: {
+          include: 1
+        })
+
+        # assert
+        expect(found.dig('metadata', 'tags', 0, 'sys', 'id')).to eq('ministry_careers-in-motion')
+        linked = found.dig('fields', 'sections', 'en-US', 0)
+        expect(linked.dig('fields', 'name', 'en-US')).to eq('Linked Entry')
+        expect(linked.dig('metadata', 'tags', 0, 'sys', 'id')).to eq('ministry_something-else')
+      end
     end
 
     describe '#find_all' do

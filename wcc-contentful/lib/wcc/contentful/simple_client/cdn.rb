@@ -65,6 +65,33 @@ class WCC::Contentful::SimpleClient::Cdn < WCC::Contentful::SimpleClient
     resp.assert_ok!
   end
 
+  # https://www.contentful.com/developers/docs/references/content-delivery-api/#/reference/tags/tag-collection/get-all-tags/console
+  def tags(query = {})
+    resp =
+      _instrument 'tags', query: query do
+        get('tags', query)
+      end
+    resp.assert_ok!
+  end
+
+  # Retrieves a single tag by ID
+  #
+  # @param id [String] The ID of the tag to retrieve
+  # @param query [Hash] Optional query parameters
+  # @return [Response] Response containing the tag
+  # @raise [ArgumentError] If id is nil or empty
+  # @example
+  #   client.tag('sports')
+  def tag(id, query = {})
+    raise ArgumentError, 'id cannot be nil or empty' if id.nil? || id.empty?
+
+    resp =
+      _instrument 'tags', id: id, query: query do
+        get("tags/#{id}", query)
+      end
+    resp.assert_ok!
+  end
+
   # Accesses the Sync API to get a list of items that have changed since
   # the last sync.  Accepts a block that receives each changed item, and returns
   # the next sync token.

@@ -1,0 +1,39 @@
+{
+  "sys": {
+    "type": "Tag",
+    "id": "ministry-external-focus",
+    "space": {
+      "sys": {
+        "type": "Link",
+        "linkType": "Space",
+        "id": "hw5pse7y1ojx"
+      }
+    },
+    "environment": {
+      "sys": {
+        "id": "dev",
+        "type": "Link",
+        "linkType": "Environment"
+      }
+    },
+    "createdBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "0SUbYs2vZlXjVR6bH6o83O"
+      }
+    },
+    "updatedBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "0SUbYs2vZlXjVR6bH6o83O"
+      }
+    },
+    "createdAt": "2024-11-20T15:07:07.311Z",
+    "updatedAt": "2024-11-20T15:07:07.311Z",
+    "version": 1,
+    "visibility": "private"
+  },
+  "name": "Ministry: External Focus"
+}

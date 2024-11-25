@@ -66,6 +66,34 @@ class WCC::Contentful::SimpleClient::Management < WCC::Contentful::SimpleClient
     resp.assert_ok!
   end
 
+  def tags(query = {})
+    resp =
+      _instrument 'tags', query: query do
+        get("/spaces/#{space}/environments/#{environment}/tags", query)
+      end
+    resp.assert_ok!
+  end
+
+  def tag(key, query = {})
+    resp =
+      _instrument 'tags', tag: key, query: query do
+        get("/spaces/#{space}/environments/#{environment}/tags/#{key}", query)
+      end
+    resp.assert_ok!
+  end
+
+  def tag_create(tag_definition)
+    unless tag_id = tag_definition.dig('sys', 'id')
+      raise ArgumentError, "Missing tag ID in #{tag_definition}"
+    end
+
+    resp =
+      _instrument 'tag_create' do
+        put("/spaces/#{space}/environments/#{environment}/tags/#{tag_id}", tag_definition)
+      end
+    resp.assert_ok!
+  end
+
   # {
   #   "name": "My webhook",
   #   "url": "https://www.example.com/test",
@@ -109,16 +137,29 @@ class WCC::Contentful::SimpleClient::Management < WCC::Contentful::SimpleClient
       resp)
   end
 
+  def put(path, body)
+    url = URI.join(@api_url, path)
+
+    resp =
+      _instrument 'put_http', url: url do
+        post_http(url, body, {}, :put)
+      end
+
+    Response.new(self,
+      { url: url, body: body },
+      resp)
+  end
+
   private
 
-  def post_http(url, body, headers = {})
+  def post_http(url, body, headers = {}, method = :post)
     headers = {
       Authorization: "Bearer #{@access_token}",
       'Content-Type' => 'application/vnd.contentful.management.v1+json'
     }.merge(headers || {})
 
     body = body.to_json unless body.is_a? String
-    resp = @post_adapter.post(url, body, headers)
+    resp = @post_adapter.public_send(method, url, body, headers)
 
     if [301, 302, 307].include?(resp.status) && !@options[:no_follow_redirects]
       resp = get_http(resp.headers['location'], nil, headers)

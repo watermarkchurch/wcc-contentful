@@ -13,6 +13,18 @@ RSpec.describe WCC::Contentful::EntryLocaleTransformer do
   let(:entry) do
     JSON.parse(<<~JSON)
       {
+        "metadata": {
+          "tags": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Tag",
+                "id": "ministry_careers-in-motion"
+              }
+            }
+          ],
+          "concepts": []
+        },
         "sys": {
           "space": {
             "sys": {
@@ -152,6 +164,14 @@ RSpec.describe WCC::Contentful::EntryLocaleTransformer do
       # assert
       expect(localized_entry.dig('sys', 'locale')).to eq('es-US')
       expect(localized_entry.key?('fields')).to be false
+    end
+
+    it 'preserves metadata' do
+      localized_entry = subject.transform_to_locale(entry, 'es-US')
+
+      expect(localized_entry.dig('metadata', 'tags', 0, 'sys', 'id')).to eq(
+        'ministry_careers-in-motion'
+      )
     end
   end
 

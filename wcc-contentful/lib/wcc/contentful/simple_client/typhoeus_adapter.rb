@@ -29,6 +29,18 @@ class WCC::Contentful::SimpleClient::TyphoeusAdapter
     )
   end
 
+  def put(url, body, headers = {}, proxy = {})
+    raise NotImplementedError, 'Proxying Not Yet Implemented' if proxy[:host]
+
+    Response.new(
+      Typhoeus.put(
+        url,
+        body: body.to_json,
+        headers: headers
+      )
+    )
+  end
+
   class Response < SimpleDelegator
     delegate :to_s, to: :body
 

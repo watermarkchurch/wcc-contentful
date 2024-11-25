@@ -3,6 +3,7 @@
 require 'ostruct'
 require_relative './link'
 require_relative './sys'
+require_relative './metadata'
 require_relative './rich_text'
 
 module WCC::Contentful
@@ -87,6 +88,10 @@ module WCC::Contentful
               OpenStruct.new(context).freeze
             )
 
+            @metadata = WCC::Contentful::Metadata.new(
+              raw['metadata']
+            )
+
             typedef.fields.each_value do |f|
               raw_value = raw.dig('fields', f.name)
 
@@ -120,6 +125,7 @@ module WCC::Contentful
           end
 
           attr_reader :sys
+          attr_reader :metadata
           attr_reader :raw
 
           delegate :id, to: :sys
