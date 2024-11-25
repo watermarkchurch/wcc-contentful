@@ -269,12 +269,12 @@ RSpec.describe WCC::Contentful::SimpleClient::Management do
         end
 
         it 'gets single tag' do
-          stub_request(:get, 'https://api.contentful.com/spaces/testspace/environments/testenv/tags/nyCampaign')
+          stub_request(:get, 'https://api.contentful.com/spaces/testspace/environments/testenv/tags/ministry-external-focus')
             .with(headers: { Authorization: 'Bearer testtoken' })
             .to_return(body: load_fixture('contentful/simple_client/single-tag.json'))
 
           # act
-          resp = client.tag('nyCampaign')
+          resp = client.tag('ministry-external-focus')
 
           # assert
           resp.assert_ok!
