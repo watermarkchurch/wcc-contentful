@@ -864,6 +864,70 @@ RSpec.describe WCC::Contentful::ModelBuilder do
       expect(entry.metadata.tags.first).to be_a(WCC::Contentful::Link)
       expect(entry.metadata.tags.first.id).to eq('ministry-regeneration')
     end
+
+    it 'metadata is nil when not present' do
+      @schema = subject.build_models
+
+      entry_without_metadata = JSON.parse <<~JSON
+        {
+          "fields": {
+            "title": "Hello, World!"
+          },
+          "sys": {
+            "id": "5KsDBWseXY6QegucYAoacS",
+            "type": "Entry",
+            "contentType": {
+              "sys": {
+                "type": "Link",
+                "linkType": "ContentType",
+                "id": "page"
+              }
+            },
+            "createdAt": "2016-12-20T10:43:35.772Z",
+            "updatedAt": "2016-12-20T10:43:35.772Z",
+            "revision": 1,
+            "locale": "en-US"
+          }
+        }
+      JSON
+
+      entry = WCC::Contentful::Model.new_from_raw(entry_without_metadata)
+      expect(entry.metadata).to_not be_nil
+      expect(entry.metadata.tags).to eq([])
+    end
+
+    it 'tags are empty when not present' do
+      @schema = subject.build_models
+
+      entry_without_metadata = JSON.parse <<~JSON
+        {
+          "fields": {
+            "title": "Hello, World!"
+          },
+          "metadata": {
+          },
+          "sys": {
+            "id": "5KsDBWseXY6QegucYAoacS",
+            "type": "Entry",
+            "contentType": {
+              "sys": {
+                "type": "Link",
+                "linkType": "ContentType",
+                "id": "page"
+              }
+            },
+            "createdAt": "2016-12-20T10:43:35.772Z",
+            "updatedAt": "2016-12-20T10:43:35.772Z",
+            "revision": 1,
+            "locale": "en-US"
+          }
+        }
+      JSON
+
+      entry = WCC::Contentful::Model.new_from_raw(entry_without_metadata)
+      expect(entry.metadata).to_not be_nil
+      expect(entry.metadata.tags).to eq([])
+    end
   end
 
   def with_tempfile(name, contents)

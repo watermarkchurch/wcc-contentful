@@ -89,7 +89,7 @@ module WCC::Contentful
             )
 
             @metadata = WCC::Contentful::Metadata.new(
-              raw['metadata']
+              raw['metadata'] || {}
             )
 
             typedef.fields.each_value do |f|
