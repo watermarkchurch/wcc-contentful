@@ -359,6 +359,22 @@ RSpec.describe WCC::Contentful::App::SectionHelper, type: :helper do
       end
     end
 
+    context 'when content includes marks' do
+      it 'should apply the class to strikethrough marks' do
+        markdown_string =
+          <<-STRING
+            [~~some strikethrough text~~ some normal text](/home){: .text }
+          STRING
+        html_to_render =
+          helper.markdown(markdown_string)
+
+        expect(html_to_render.strip).to eq <<~HTML.strip
+          <div class="formatted-content"><p><a href="/home" class="text"><del>some strikethrough text</del> some normal text</a></p>
+          </div>
+        HTML
+      end
+    end
+
     it 'renders tables with bootstrap .table class' do
       html = helper.markdown(<<~MARKDOWN)
         | col1 | col2 |
