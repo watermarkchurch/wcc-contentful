@@ -56,8 +56,4 @@ module WCC::Contentful::App
     )
     @initialized = true
   end
-
-  def self.db_connected?
-    @db_connected
-  end
 end

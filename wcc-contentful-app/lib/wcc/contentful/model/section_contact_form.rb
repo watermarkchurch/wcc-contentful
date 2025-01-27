@@ -33,10 +33,6 @@ class WCC::Contentful::Model::SectionContactForm < WCC::Contentful::Model
   end
 
   def save_contact_form(data)
-    return unless ::WCC::Contentful::App.db_connected?
-    return unless ::ActiveRecord::Base.connection
-      .table_exists? 'wcc_contentful_app_contact_form_submissions'
-
     ::WCC::Contentful::App::ContactFormSubmission.create!(form_id: id, data: data)
   end
 end
