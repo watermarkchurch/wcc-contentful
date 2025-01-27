@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'simplecov'
+require 'logger'
 
 SimpleCov.start do
   root File.expand_path('../..', __dir__)
