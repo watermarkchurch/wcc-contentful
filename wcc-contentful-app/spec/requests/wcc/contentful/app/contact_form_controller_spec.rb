@@ -18,6 +18,17 @@ RSpec.describe WCC::Contentful::App::ContactFormController, type: :request do
   before do
     allow(::WCC::Contentful::App::ContactMailer).to receive(:contact_form_email)
       .and_return(mailer)
+
+    # Ensure the table wcc_contentful_app_contact_form_submissions exists
+    ActiveRecord::Base.connection.execute <<~SQL
+      CREATE TABLE IF NOT EXISTS wcc_contentful_app_contact_form_submissions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        form_id TEXT,
+        data JSON,
+        created_at DATETIME,
+        updated_at DATETIME
+      )
+    SQL
   end
 
   it 'does not allow sending arbitrary email to :recipient_email' do
@@ -45,6 +56,8 @@ RSpec.describe WCC::Contentful::App::ContactFormController, type: :request do
       id: form.id,
       email_object_id: 'TestPerson'
     }
+
+    expect(response).to have_http_status(:ok)
   end
 
   context 'section model is extended' do
