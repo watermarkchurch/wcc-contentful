@@ -32,7 +32,7 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency 'coveralls'
   spec.add_development_dependency 'dotenv', '~> 2.2'
-  spec.add_development_dependency 'erb_lint', '~> 0.0.26'
+  spec.add_development_dependency 'erb_lint'
   spec.add_development_dependency 'httplog', '~> 1.0'
   spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
