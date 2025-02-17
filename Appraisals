@@ -56,6 +56,8 @@ appraise "rails-8.0_ruby-3.4" do
   gem 'rails', '~> 8.0.0'
   gem 'railties', '~> 8.0.0'
 
+  gem 'sqlite3', '>= 2.1'
+
   group :test do
     gem 'rspec-rails', '~> 6.0'
   end
