@@ -15,10 +15,10 @@ up-to-date list of supported framework environments.  At the time of this writin
 the gem officially supports the following:
 
 * Ruby versions:
-  * 3.2
-  * 3.1
+  * 3.1 - 3.4
   * 2.7
 * Framework versions:
+  * Rails 8.0
   * Rails 7.0
   * Rails 6.1
   * Rack 2 (w/o Rails)
@@ -92,6 +92,26 @@ unless defined?(ActiveRecord)
   end
 end
 
+```
+
+Finally, make sure you add it to the build matrix in `.circleci/config.yml`:
+
+```diff
+diff --git a/.circleci/config.yml b/.circleci/config.yml
+index 317cde6..f5c439f 100644
+--- a/.circleci/config.yml
++++ b/.circleci/config.yml
+@@ -107,6 +107,10 @@ workflows:
+           name: test_rails-7.2_ruby-3.3
+           ruby: 3.3.5
+           gemfile: gemfiles/rails_7.2_ruby_3.3.gemfile
++      - test:
++          name: sinatra-2.0_ruby-3.3
++          ruby: 3.3.5
++          gemfile: gemfiles/sinatra_2.0_ruby_3.3.gemfile
+       - lint:
+           ruby: 3.3.5
+           gemfile: gemfiles/rails_7.2_ruby_3.3.gemfile
 ```
 
 ## License

@@ -41,17 +41,6 @@ appraise "rails-7.0_ruby-3.2" do
   ruby '3.2.2'
 end
 
-appraise "rails-7.1_ruby-3.2" do
-  gem 'rails', '~> 7.1.0'
-  gem 'railties', '~> 7.1.0'
-
-  group :test do
-    gem 'rspec-rails', '~> 6.0'
-  end
-
-  ruby '3.2.2'
-end
-
 appraise "rails-7.2_ruby-3.3" do
   gem 'rails', '~> 7.2.0'
   gem 'railties', '~> 7.2.0'
@@ -61,4 +50,15 @@ appraise "rails-7.2_ruby-3.3" do
   end
 
   ruby '3.3.5'
+end
+
+appraise "rails-8.0_ruby-3.4" do
+  gem 'rails', '~> 8.0.0'
+  gem 'railties', '~> 8.0.0'
+
+  group :test do
+    gem 'rspec-rails', '~> 6.0'
+  end
+
+  ruby '3.4.2'
 end
