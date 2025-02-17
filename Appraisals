@@ -20,8 +20,11 @@ end
 appraise "rails-6.1_ruby-3.1" do
   gem 'rails', '~> 6.1'
   gem 'railties', '~> 6.1'
+
   # https://stackoverflow.com/a/70500221
   gem 'net-smtp', require: false
+
+  gem 'sqlite3', '~> 1.4'
 
   group :test do
     gem 'rspec-rails', '~> 5.0'
@@ -33,6 +36,8 @@ end
 appraise "rails-7.0_ruby-3.2" do
   gem 'rails', '~> 7.0.0'
   gem 'railties', '~> 7.0.0'
+
+  gem 'sqlite3', '~> 1.4'
 
   group :test do
     gem 'rspec-rails', '~> 6.0'
