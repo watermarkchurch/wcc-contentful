@@ -55,7 +55,7 @@ Gem::Specification.new do |spec|
   # wcc-contentful-app needs rails to function, so require it for specs.
   spec.add_development_dependency 'rails', '~> 5'
   spec.add_development_dependency 'rspec-rails', '~> 3.7'
-  spec.add_development_dependency 'sqlite3', '~> 1.4'
+  spec.add_development_dependency 'sqlite3'
   spec.add_development_dependency 'timecop', '~> 0.9.1'
   spec.add_development_dependency 'typhoeus', '~> 1.4.0'
 
