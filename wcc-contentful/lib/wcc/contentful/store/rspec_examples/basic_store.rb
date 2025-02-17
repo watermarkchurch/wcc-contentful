@@ -225,7 +225,7 @@ RSpec.shared_examples 'basic store' do
       expect(found2.dig('fields', 'slug', 'en-US')).to eq('redirect-with-slug-and-url')
     end
 
-    it 'stores metadata including tags', focus: true do
+    it 'stores metadata including tags' do
       entry_with_tags = JSON.parse <<~JSON
         {
           "metadata": {
